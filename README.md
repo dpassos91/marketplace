@@ -1,6 +1,12 @@
-# jorge-nuno-diogo-proj3
+# Grupo 5 | Projeto 3 | PAJ
 
-Grupo 5 - Projeto 3 - AOR | PAJ
+### jorge-nuno-diogo-proj3
+
+<ul>
+  <li>Jorge Cruz</li>
+  <li>Diogos Passos</li>
+  <li>Nuno Gonçalves</li>
+</ul>
 
 # Tabela de Requisitos
 
