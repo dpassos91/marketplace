@@ -60,3 +60,79 @@
 | Testes                         | Pelo menos 10 testes da função principal em java usando Junit                      | Todos      |             |
 | Testes                         | Pelo menos 5 testes da função principal em java usando Jest                        | Todos      |             |
 | Testes                         | Implementar testes no postman, 3 testes JUNIT e 2 testes Jest para a retrospetiva. | Grupo de 3 |             |
+
+### **Objetivo**
+
+- Extensão da aplicação do projeto 2
+- Utilização de PostgreSQL para persistência de dados no servidor
+- Utilização de JPA e criação de endpoints REST
+- Tecnologias: JAX-RS, EJBs, Git, Maven
+
+### **Data de Entrega**
+
+- 5 de março de 2025
+
+### **Grupos**
+
+- Definidos pelos docentes
+- Composto por dois elementos
+
+### **Arquitetura do Sistema**
+
+- Backend: Projeto Maven interagindo com PostgreSQL usando Jakarta Persistence API e Hibernate
+- API REST: Formato JSON, consumida por endpoints do Postman
+
+### **Especificação de Funcionalidades**
+
+#### **Tipos de Utilizadores**
+
+- Cliente (Comprador/Vendedor)
+- Administrador
+
+#### **Dados a Persistir**
+
+**Utilizadores:**
+
+- Primeiro nome, último nome, username, password, email, número de telemóvel, fotografia (URL), token de autenticação
+
+**Produtos:**
+
+- Título, descrição, preço, categoria, localização, vendedor, estado, data de publicação
+
+#### **Funcionalidades**
+
+**Cliente:**
+
+1. Alterar perfil e imagem
+2. Adicionar produto
+3. Editar produto de sua autoria
+4. Alterar estado de produto
+
+**Administrador (além das funcionalidades de Cliente):**
+
+1. Editar produtos de outros utilizadores
+2. Apagar produtos (seus e de outros)
+3. Consultar perfil de utilizador específico
+4. Filtrar lista de produtos por utilizador/categoria
+5. Consultar produtos alterados
+6. Adicionar/apagar categoria de produto
+7. Apagar um utilizador (soft delete)
+8. Apagar/excluir permanentemente produtos/utilizadores
+
+### **Testes**
+
+- Endpoints de teste no Postman
+- Ficheiros de teste utilizando JUnit (mínimo 10 testes) e Mockito
+- JavaScript testing com Jest (mínimo 5 testes)
+
+### **Funcionalidades Adicionais para Grupo de 3**
+
+- Implementação do sistema de avaliação de vendedores
+- Guardar título, comentário, data da avaliação, nota da avaliação
+- Funcionalidades: Adicionar, editar, excluir, listar avaliações
+- Testes adicionais no Postman, JUnit (3) e Jest (2)
+
+### **Entrega e Avaliação**
+
+- Repositório Git com código final
+- Defesa do projeto com inscrição prévia e duração de 45 minutos
