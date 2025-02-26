@@ -1,19 +1,16 @@
-<datasource jta="true" jndi-name="java:/postgresDS" pool-name="postgresDS" enabled="true" use-java-context="true" use-ccm="false">
-    <connection-url>jdbc:postgresql://localhost:5432/jorge-nuno-diogo-proj3</connection-url>
-    <driver-class>org.postgresql.Driver</driver-class>
-    <driver>postgresql</driver>
-    <pool>
-        <min-pool-size>2</min-pool-size>
-        <max-pool-size>20</max-pool-size>
-    </pool>
-    <security user-name="postgres" password="postgres"/>
-    <validation>
-        <validate-on-match>false</validate-on-match>
-        <background-validation>false</background-validation>
-        <background-validation-millis>60000</background-validation-millis>
-    </validation>
-    <statement>
-        <prepared-statement-cache-size>0</prepared-statement-cache-size>
-        <share-prepared-statements>false</share-prepared-statements>
-    </statement>
-</datasource>
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0"
+    xmlns="https://jakarta.ee/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    <persistence-unit name="projeto3" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:/postgresDS</jta-data-source>
+        <properties>
+            <!-- table generation policies: validate, update, create, create-drop -->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform"/>
+        </properties>
+    </persistence-unit>
+</persistence>
