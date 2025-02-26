@@ -1,0 +1,93 @@
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="formulario_novo_produto" id="formulario_novo_produto">
+      <form class="conteudo_form" id="form-novo-produto">
+        <h1>Adicionar Novo Produto</h1>
+
+        <div class="Título">
+          <label for="text"><b>Título</b></label>
+          <input
+            id="titulo"
+            type="text"
+            placeholder="Introduza um título para o seu produto"
+            id="titulo"
+            required
+          />
+        </div>
+
+        <div class="Descrição">
+          <label for="nome"><b>Descrição</b></label>
+          <input
+            id="descricao"
+            type="text"
+            id="descricao"
+            name="descricao"
+            title="Descrição do produto"
+            placeholder="Introduza a descrição do produto"
+            required
+          />
+        </div>
+
+        <div class="Categoria">
+          <label for="text"><b>Categoria</b></label>
+          <br />
+          <select name="categoria" id="categoria" title="Categoria do produto">
+            <option value="homem">Homem</option>
+            <option value="mulher">Mulher</option>
+            <option value="crianca">Criança</option>
+            <option value="NA">Não aplicável</option>
+          </select>
+          <br />
+        </div>
+        <br />
+        <div class="Tamanho">
+          <label for="text"><b>Tamanho</b></label>
+          <br />
+          <select name="tamanho" id="tamanho" title="Tamanho do produto">
+            <option value="s">S</option>
+            <option value="m">M</option>
+            <option value="l">L</option>
+            <option value="NA">Não aplicável</option>
+          </select>
+        </div>
+
+        <br />
+        <div class="preco">
+          <label for="text"><b>Preço</b></label>
+          <input
+            id="preco"
+            type="text"
+            placeholder="Introduza o preço de venda"
+            required
+          />
+        </div>
+
+        <div class="Foto">
+          <label for="imagem"><b> Insira um link da imagem:</b></label>
+          <input
+            type="text"
+            id="imagem"
+            placeholder="Cole o link da imagem aqui"
+            required
+          />
+        </div>
+
+        <div class="Localização">
+          <label for="text"><b>Localização</b></label>
+          <input
+            id="localizacao"
+            type="text"
+            placeholder="Em que zona do país é que se encontra?"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">
+          Submeter produto
+        </button>
+        <button type="button" class="btn cancel" id="cancelar">Cancelar</button>
+      </form>
+    </div>
+  </div>
+</div>
