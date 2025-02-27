@@ -4,16 +4,16 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class AvaliacaoDto {
+public class EvaluationDto {
     private String autor;
     private String data;
     private String texto;
     private int estrelas;
 
-    public AvaliacaoDto() {
+    public EvaluationDto() {
     }
 
-    public AvaliacaoDto(String autor, String data, String texto, int estrelas) {
+    public EvaluationDto(String autor, String data, String texto, int estrelas) {
         this.autor = autor;
         this.data = data;
         this.texto = texto;

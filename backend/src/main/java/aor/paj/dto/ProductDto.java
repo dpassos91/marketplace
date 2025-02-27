@@ -21,7 +21,7 @@ public class ProductDto {
     private String id;
     private String dataDePublicacao;
     private String userAutor;
-    private List<AvaliacaoDto> avaliacoes;
+    private List<EvaluationDto> avaliacoes;
     private EstadosDoProduto estado;
 
     public ProductDto() {
@@ -32,7 +32,7 @@ public class ProductDto {
 
     public ProductDto(String titulo, String categoria, double preco,
             String imagem, String local, String descricao, String dataDePublicacao, String userAutor,
-            List<AvaliacaoDto> avaliacoes, int stateId) {
+            List<EvaluationDto> avaliacoes, int stateId) {
         this.titulo = titulo;
         this.categoria = categoria;
         this.preco = preco;
@@ -134,11 +134,11 @@ public class ProductDto {
     }
 
     @XmlElement
-    public List<AvaliacaoDto> getAvaliacoes() {
+    public List<EvaluationDto> getAvaliacoes() {
         return new ArrayList<>(avaliacoes);
     }
 
-    public void setAvaliacoes(List<AvaliacaoDto> avaliacoes) {
+    public void setAvaliacoes(List<EvaluationDto> avaliacoes) {
         this.avaliacoes = avaliacoes;
     }
 
