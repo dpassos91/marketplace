@@ -1,7 +1,7 @@
 'use strict';
 
-const rootPath = 'http://localhost:8080/mariana-jorge-proj2/rest';
-const productsPath = `${rootPath}/products`;
+import * as userAPI from './api/userAPI.js';
+import * as productAPI from './api/productAPI.js';
 
 export async function loadCommonElements() {
   fetch('common/header.html')
@@ -75,7 +75,6 @@ async function addModalListeners() {
   const span = document.getElementsByClassName('close')[0];
   const cancel = document.getElementById('cancelar');
   const form = document.getElementById('form-novo-produto');
-  const submitBtn = document.getElementById('submitBtn');
 
   btn.onclick = function () {
     modal.style.display = 'block';
@@ -131,7 +130,8 @@ async function addNewProduct() {
     };
 
     try {
-      const result = await sendNewProductReq(novoProduto);
+      // Use the productAPI to handle the request
+      const result = await productAPI.sendNewProductReq(novoProduto);
       if (!loggedInUser.produtos) {
         loggedInUser.produtos = [];
       }
@@ -139,7 +139,7 @@ async function addNewProduct() {
       sessionStorage.setItem('user', JSON.stringify(loggedInUser));
       const productIds = loggedInUser.produtos.map(product => product.id);
       const updatedUser = { ...loggedInUser, produtos: productIds };
-      await updateUser(updatedUser);
+      await userAPI.updateUser(updatedUser);
       alert('Produto criado com sucesso!');
       modal.style.display = 'none';
       form.reset();
@@ -148,46 +148,4 @@ async function addNewProduct() {
       console.error('Erro ao enviar o produto:', error);
     }
   });
-}
-
-export async function updateUser(user) {
-  try {
-    const requestURL = `${rootPath}/users/${user.username}`;
-    const response = await fetch(requestURL, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    });
-    if (!response.ok) {
-      throw new Error(`Erro ao atualizar o usuário: ${response.statusText}`);
-    }
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Erro ao atualizar o usuário:', error);
-    throw error;
-  }
-}
-
-async function sendNewProductReq(product) {
-  try {
-    const requestURL = productsPath;
-    const response = await fetch(requestURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(product),
-    });
-    if (!response.ok) {
-      throw new Error(`Erro ao enviar o produto: ${response.statusText}`);
-    }
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Erro ao enviar o produto:', error);
-    throw error;
-  }
 }
