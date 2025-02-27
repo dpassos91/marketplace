@@ -1,121 +1,83 @@
 package aor.paj.service;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 import aor.paj.dto.ProductDto;
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
+import aor.paj.bean.ProductBean;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-@ApplicationScoped
+@Path("/products")
 public class ProductService {
-    private final String filename = "../database/products.json";
-    private Map<String, ProductDto> productMap;
 
-    @PostConstruct
-    public void init() {
-        loadProductsFromFile();
+    @Inject
+    ProductBean productBean;
+
+    @GET
+    @Path("/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllProducts() {
+        List<ProductDto> products = productBean.getAllProducts();
+        return Response.ok(products).build();
     }
 
-    public void loadProductsFromFile() {
-        File file = new File(filename);
-        if (file.exists()) {
-            try (FileReader fileReader = new FileReader(file)) {
-                Jsonb jsonb = JsonbBuilder.create();
-                Type productListType = new ArrayList<ProductDto>() {
-                }.getClass().getGenericSuperclass();
-                List<ProductDto> products = jsonb.fromJson(fileReader,
-                        productListType);
-                productMap = new HashMap<>();
-                for (ProductDto product : products) {
-                    productMap.put(product.getId(), product);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            productMap = new HashMap<>();
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductById(@PathParam("id") String id) {
+        ProductDto productDto = productBean.getProductById(id);
+        return productDto == null ? Response.status(200).entity("Produto não encontrado!").build()
+                : Response.ok(productDto).build();
+    }
+
+    @GET
+    @Path("/details")
+    public Response getProductDetails(@QueryParam("id") String productId) {
+        return Response.seeOther(URI.create("/detalhes-produto.html?id=" + productId)).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addProduct(ProductDto productDto) {
+        productBean.addProduct(productDto);
+        return Response.status(Response.Status.CREATED).entity(productDto).build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateProduct(@PathParam("id") String id, ProductDto productDto) {
+        ProductDto existingProduct = productBean.getProductById(id);
+        if (existingProduct == null) {
+            return Response.status(404).entity("Product not found!").build();
         }
+        productDto.setId(id);
+        productBean.updateProduct(productDto);
+        return Response.ok(productDto).build();
     }
 
-    public ProductDto getProductById(String id) {
-        return productMap.get(id);
-    }
-
-    public void addProduct(ProductDto product) {
-        productMap.put(product.getId(), product);
-        saveProductsToFile();
-    }
-
-    public void updateProduct(ProductDto productDto) {
-        if (productMap.containsKey(productDto.getId())) {
-            ProductDto existingProduct = productMap.get(productDto.getId());
-
-            if (productDto.getTitulo() != null) {
-                existingProduct.setTitulo(productDto.getTitulo());
-            }
-            if (productDto.getCategoria() != null) {
-                existingProduct.setCategoria(productDto.getCategoria());
-            }
-            if (productDto.getPreco() != 0) {
-                existingProduct.setPreco(productDto.getPreco());
-            }
-            if (productDto.getImagem() != null) {
-                existingProduct.setImagem(productDto.getImagem());
-            }
-            if (productDto.getLocal() != null) {
-                existingProduct.setLocal(productDto.getLocal());
-            }
-            if (productDto.getDescricao() != null) {
-                existingProduct.setDescricao(productDto.getDescricao());
-            }
-            if (productDto.getDataDePublicacao() != null) {
-                existingProduct.setDataDePublicacao(productDto.getDataDePublicacao());
-            }
-            if (productDto.getUserAutor() != null) {
-                existingProduct.setUserAutor(productDto.getUserAutor());
-            }
-            if (productDto.getAvaliacoes() != null && !productDto.getAvaliacoes().isEmpty() &&
-                    productDto.getAvaliacoes().size() > existingProduct.getAvaliacoes().size()) {
-                existingProduct.setAvaliacoes(new ArrayList<>(productDto.getAvaliacoes()));
-            }
-            if (productDto.getEstado() != null) {
-                existingProduct.setEstado(productDto.getEstado());
-            }
-
-            saveProductsToFile();
-        } else {
-            throw new IllegalArgumentException("Product not found with id: " + productDto.getId());
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response deleteProduct(@PathParam("id") String id) {
+        ProductDto existingProduct = productBean.getProductById(id);
+        if (existingProduct == null) {
+            return Response.status(404).entity("Product not found!").build();
         }
-    }
-
-    public void deleteProduct(String id) {
-        productMap.remove(id);
-        saveProductsToFile();
-    }
-
-    public List<ProductDto> getAllProducts() {
-        return new ArrayList<>(productMap.values());
-    }
-
-    private void saveProductsToFile() {
-        File file = new File(filename);
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            List<ProductDto> products = new ArrayList<>(productMap.values());
-            Jsonb jsonb = JsonbBuilder.create();
-            jsonb.toJson(products, fileWriter);
-        } catch (IOException e) {
-            System.err.println("IOException: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
+        productBean.deleteProduct(id);
+        return Response.noContent().build();
     }
 }

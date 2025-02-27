@@ -1,113 +1,91 @@
 package aor.paj.service;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import aor.paj.dto.UserDto;
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
+import aor.paj.bean.UserBean;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-@ApplicationScoped
+@Path("/users")
 public class UserService {
 
-    private Map<String, UserDto> users = new HashMap<>();
-    private static final String USERS_FILE = "../database/users.json";
+    @Inject
+    UserBean userBean;
 
-    @PostConstruct
-    public void init() {
-        loadUsersFromFile();
+    @POST
+    @Path("/register")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response registerUser(UserDto userDto) {
+        UserDto createdUser = userBean.registerUser(userDto);
+        return Response.ok(createdUser).build();
     }
 
-    private void loadUsersFromFile() {
-        File file = new File(USERS_FILE);
-        if (file.exists()) {
-            try (FileReader fileReader = new FileReader(file)) {
-                Jsonb jsonb = JsonbBuilder.create();
-                Type userListType = new ArrayList<UserDto>() {
-                }.getClass().getGenericSuperclass();
-                List<UserDto> userList = jsonb.fromJson(fileReader, userListType);
-                users = new HashMap<>();
-                for (UserDto user : userList) {
-                    users.put(user.getUsername(), user);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            users = new HashMap<>();
+    @POST
+    @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loginUser(@HeaderParam("Username") String username,
+            @HeaderParam("Password") String password) {
+        try {
+            UserDto loggedInUser = userBean.loginUser(username, password);
+            return Response.ok(loggedInUser).build();
+        } catch (RuntimeException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(
+                    "Credenciais Inválidas!").build();
         }
     }
 
-    private void saveUsersToFile() {
-        try (FileWriter fileWriter = new FileWriter(USERS_FILE)) {
-            Jsonb jsonb = JsonbBuilder.create();
-            List<UserDto> userList = new ArrayList<>(users.values());
-            jsonb.toJson(userList, fileWriter);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @GET
+    @Path("/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUser(@PathParam("username") String username) {
+        UserDto userDto = userBean.getUserByUsername(username);
+        return Response.ok(userDto).build();
     }
 
-    public UserDto registerUser(UserDto userDto) {
-        if (users.containsKey(userDto.getUsername())) {
-            throw new RuntimeException("Username já existente!");
-        }
-        users.put(userDto.getUsername(), userDto);
-        saveUsersToFile();
-        return userDto;
+    @DELETE
+    @Path("/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteUser(@PathParam("username") String username) {
+        userBean.deleteUserByUsername(username);
+        return Response.noContent().build();
     }
 
-    public UserDto loginUser(String username, String password) {
-        UserDto existingUser = users.get(username);
-        if (existingUser == null || !existingUser.getPassword().equals(password)) {
-            throw new RuntimeException("Credenciais inválidas!");
-        }
-        return existingUser;
+    @GET
+    @Path("/check-username")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkUsernameExists(@QueryParam("username") String username) {
+        boolean exists = userBean.checkUsernameExists(username);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("exists", exists);
+        return Response.ok(response).build();
     }
 
-    public UserDto getUserByUsername(String username) {
-        UserDto userDto = users.get(username);
-        if (userDto == null) {
-            throw new RuntimeException("Utilizador não encontrado!");
+    @PUT
+    @Path("/{username}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(@PathParam("username") String username, UserDto updatedUser) {
+        try {
+            UserDto user = userBean.updateUser(username, updatedUser);
+            return Response.ok(user).build();
+        } catch (RuntimeException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Erro ao atualizar os dados do usuário.")
+                    .build();
         }
-        return userDto;
-    }
-
-    public void deleteUserByUsername(String username) {
-        if (!users.containsKey(username)) {
-            throw new RuntimeException("User not found");
-        }
-        users.remove(username);
-        saveUsersToFile();
-    }
-
-    public boolean checkUsernameExists(String username) {
-        return users.containsKey(username);
-    }
-
-    public UserDto updateUser(String username, UserDto updatedUser) {
-        UserDto existingUser = users.get(username);
-        if (existingUser == null) {
-            throw new RuntimeException("Utilizador não encontrado.");
-        }
-        existingUser.setNome(updatedUser.getNome());
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setTelefone(updatedUser.getTelefone());
-        existingUser.setImagem(updatedUser.getImagem());
-        if (updatedUser.getPassword() != null) {
-            existingUser.setPassword(updatedUser.getPassword());
-        }
-        users.put(username, existingUser);
-        saveUsersToFile();
-        return existingUser;
     }
 }

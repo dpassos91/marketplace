@@ -1,4 +1,4 @@
-package aor.paj.dto;
+package aor.paj.util;
 
 public enum EstadosDoProduto {
   RASCUNHO(1),

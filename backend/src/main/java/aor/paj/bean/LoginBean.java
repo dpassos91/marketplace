@@ -1,4 +1,4 @@
-package aor.paj.service;
+package aor.paj.bean;
 /*
 import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
