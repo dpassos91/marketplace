@@ -73,9 +73,7 @@
       <version>2.24.3</version>
     </dependency>
 
-
   </dependencies>
-
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
@@ -92,7 +90,6 @@
           </webResources>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.wildfly.plugins</groupId>
         <artifactId>wildfly-maven-plugin</artifactId>
@@ -106,7 +103,6 @@
           <auto-reload>true</auto-reload>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -116,7 +112,16 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.2</version>
       </plugin>
-
     </plugins>
   </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+        <version>2.1.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
