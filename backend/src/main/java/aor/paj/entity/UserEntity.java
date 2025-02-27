@@ -42,17 +42,36 @@ public class UserEntity implements Serializable {
     @Column(name="is_admin", nullable = false, unique = false, updatable = true)
     private boolean isAdmin;
 
+    // TODO: Dúvidas sobre "cascade" e "orphanRemoval"
+    // "cascade" permite que operações no UserEntity sejam propagadas para os produtos à venda. Faz sentido aplicá-lo aqui?
+    // "orphanRemoval" remove produtos se o UserEntity for apagado. Isso é desejável?
     @OneToMany(mappedBy = "seller")
-    private Set<ProductEntity> products;
+    private Set<ProductEntity> soldProducts;
 
     @OneToMany(mappedBy = "buyer")
-    private Set<ProductEntity> products;
+    private Set<ProductEntity> purchasedProducts;
 
     @OneToMany(mappedBy = "seller")
-    private Set<EvaluationEntity> evaluations;
+    private Set<EvaluationEntity> givenEvaluations;
 
     @OneToMany(mappedBy = "buyer")
-    private Set<EvaluationEntity> evaluations;
+    private Set<EvaluationEntity> receivedEvaluations;
+
+    // Constructors
+    public UserEntity() {}
+
+    public UserEntity(String username, String firstName, String lastName, String password, String token,
+                      String email, String phone, boolean isActive, boolean isAdmin) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.token = token;
+        this.email = email;
+        this.phone = phone;
+        this.isActive = isActive;
+        this.isAdmin = isAdmin;
+    }
 
     // Getters
     public Long getId() {
@@ -131,4 +150,48 @@ public class UserEntity implements Serializable {
     public void setAdmin(boolean admin) {
         isAdmin = admin;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        // Verifica se as instâncias são a mesma (mesmo endereço de memória)
+        if (this == object) {
+            return true;
+        }
+        // Verifica se object é nulo ou de classe diferente
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        // Como já sabe que object é da classe UserEntity, faz o cast sem recear uma ClassCastException
+        UserEntity that = (UserEntity) object;
+        // Verifica se o id da instância atual não é nulo (se não for, compara com o id do outro objeto)
+        if (id != null) {
+            return id.equals(that.id);
+        } else {
+            return that.id == null; // Se o id da instância for nulo, vai verificar se o id de object também é nulo
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", isActive=" + isActive +
+                ", isAdmin=" + isAdmin +
+                '}';
+    }
+
 }
