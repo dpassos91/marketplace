@@ -138,4 +138,8 @@ class UserDaoTest {
     @Test
     void findByUsername() {
     }
+
+    @Test
+    void findByToken() {
+    }
 }

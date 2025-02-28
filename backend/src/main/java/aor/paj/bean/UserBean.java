@@ -143,6 +143,9 @@ public class UserBean {
             if (userEntity.checkPassword(user.getPassword())) {
                 String token = generateNewToken();
                 userEntity.setToken(token);
+
+                userDao.update(userEntity);
+
                 return token;
             }
         }
@@ -161,6 +164,7 @@ public class UserBean {
         UserEntity userEntity = userDao.findByToken(token);
         if (userEntity != null) {
             userEntity.setToken(null);
+            userDao.update(userEntity);
             return true;
         }
         return false;
