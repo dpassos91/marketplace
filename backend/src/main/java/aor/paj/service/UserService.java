@@ -84,8 +84,8 @@ public class UserService {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("id") Long id) {
-        boolean deleted = userBean.deleteUser(id);
+    public Response deleteUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
+        boolean deleted = userBean.deleteUser(id, token);
 
         if (deleted) {
             return Response.ok().entity("User deleted successfully").build();
@@ -94,14 +94,6 @@ public class UserService {
                     .entity("User with ID " + id + " not found!")
                     .build();
         }
-    }
-
-    private boolean verifyActiveUser(String token) {
-        return false;
-    }
-
-    private boolean verifyAdmin(String token) {
-        return false;
     }
 
     // TODO: métodos do projeto 2

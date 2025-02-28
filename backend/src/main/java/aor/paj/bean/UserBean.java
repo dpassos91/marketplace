@@ -196,8 +196,15 @@ public class UserBean {
         return toDto(userEntity);
     }
 
-    public boolean deleteUser(Long id) {
-        return userDao.delete(id);
+    public boolean deleteUser(Long id, String token) {
+        if (token == null || token.isEmpty()) return false;
+
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (authenticatedUser == null) return false;
+
+        if (authenticatedUser.isAdmin()) return userDao.delete(id);
+
+        return false;
     }
 
     public void suspendUser(Long id) {
@@ -205,16 +212,16 @@ public class UserBean {
     }
 
     public boolean isAuthorized(Long userId, String token) {
-        if (token == null || token.isEmpty()) {
-            return false;
-        }
+        if (token == null || token.isEmpty()) return false;
 
-        UserEntity authenticatedUser = userDao.findById(userId);
-        if (authenticatedUser == null) {
-            return false;
-        }
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (authenticatedUser == null) return false;
 
-        return authenticatedUser.getId().equals(userId) || authenticatedUser.isAdmin();
+        if (authenticatedUser.getId().equals(userId)) return true;
+
+        if (authenticatedUser.isAdmin()) return true;
+
+        return false;
     }
 
     public UserEntity toEntity(UserDto userDto) {
