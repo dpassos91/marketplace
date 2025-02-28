@@ -34,6 +34,16 @@ public class UserService {
         return Response.ok(createdUser).build();
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUser(@PathParam("id") Long id) {
+        UserDto user = userBean.getUserById(id);
+        return Response.ok(user).build();
+    }
+
+    // TODO: métodos do projeto 2
+    /*
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -88,4 +98,5 @@ public class UserService {
                     .build();
         }
     }
+    */
 }

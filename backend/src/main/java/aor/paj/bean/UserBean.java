@@ -10,6 +10,7 @@ import aor.paj.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import org.mindrot.jbcrypt.BCrypt;
 
 @ApplicationScoped
@@ -26,7 +27,7 @@ public class UserBean {
         // loadUsersFromFile();
     }
 
-    // TODO: leitura e escrita em ficheiro
+    // TODO: métodos do projeto anterior incluíndo leitura e escrita em ficheiro
     /*
     private void loadUsersFromFile() {
         File file = new File(USERS_FILE);
@@ -56,6 +57,51 @@ public class UserBean {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+            public UserDto loginUser(String username, String password) {
+        UserDto existingUser = users.get(username);
+        if (existingUser == null || !existingUser.getPassword().equals(password)) {
+            throw new RuntimeException("Credenciais inválidas!");
+        }
+        return existingUser;
+    }
+
+            public UserDto getUserByUsername(String username) {
+        UserDto userDto = users.get(username);
+        if (userDto == null) {
+            throw new RuntimeException("Utilizador não encontrado!");
+        }
+        return userDto;
+    }
+
+    public void deleteUserByUsername(String username) {
+        if (!users.containsKey(username)) {
+            throw new RuntimeException("User not found");
+        }
+        users.remove(username);
+        // saveUsersToFile();
+    }
+
+    public boolean checkUsernameExists(String username) {
+        return users.containsKey(username);
+    }
+
+    public UserDto updateUser(String username, UserDto updatedUser) {
+        UserDto existingUser = users.get(username);
+        if (existingUser == null) {
+            throw new RuntimeException("Utilizador não encontrado.");
+        }
+        // existingUser.setNome(updatedUser.getNome());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setTelefone(updatedUser.getTelefone());
+        existingUser.setImagem(updatedUser.getImagem());
+        if (updatedUser.getPassword() != null) {
+            existingUser.setPassword(updatedUser.getPassword());
+        }
+        users.put(username, existingUser);
+        // saveUsersToFile();
+        return existingUser;
+    }
     }*/
 
     public UserDto registerUser(UserDto userDto) {
@@ -91,54 +137,9 @@ public class UserBean {
     public UserDto getUserById(Long id) {
         UserEntity userEntity = userDao.findById(id);
         if (userEntity == null) {
-            // TODO: como tratar?
+            throw new EntityNotFoundException("User with ID " + id + " not found!");
         }
         return toDto(userEntity);
-    }
-
-    public UserDto loginUser(String username, String password) {
-        UserDto existingUser = users.get(username);
-        if (existingUser == null || !existingUser.getPassword().equals(password)) {
-            throw new RuntimeException("Credenciais inválidas!");
-        }
-        return existingUser;
-    }
-
-    public UserDto getUserByUsername(String username) {
-        UserDto userDto = users.get(username);
-        if (userDto == null) {
-            throw new RuntimeException("Utilizador não encontrado!");
-        }
-        return userDto;
-    }
-
-    public void deleteUserByUsername(String username) {
-        if (!users.containsKey(username)) {
-            throw new RuntimeException("User not found");
-        }
-        users.remove(username);
-        // saveUsersToFile();
-    }
-
-    public boolean checkUsernameExists(String username) {
-        return users.containsKey(username);
-    }
-
-    public UserDto updateUser(String username, UserDto updatedUser) {
-        UserDto existingUser = users.get(username);
-        if (existingUser == null) {
-            throw new RuntimeException("Utilizador não encontrado.");
-        }
-        // existingUser.setNome(updatedUser.getNome());
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setTelefone(updatedUser.getTelefone());
-        existingUser.setImagem(updatedUser.getImagem());
-        if (updatedUser.getPassword() != null) {
-            existingUser.setPassword(updatedUser.getPassword());
-        }
-        users.put(username, existingUser);
-        // saveUsersToFile();
-        return existingUser;
     }
 
     public UserEntity toEntity(UserDto userDto) {
