@@ -95,6 +95,14 @@ public class UserService {
         }
     }
 
+    private boolean verifyActiveUser(String token) {
+        return false;
+    }
+
+    private boolean verifyAdmin(String token) {
+        return false;
+    }
+
     // TODO: métodos do projeto 2
     /*
     @POST
