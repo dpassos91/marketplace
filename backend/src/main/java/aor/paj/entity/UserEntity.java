@@ -75,10 +75,10 @@ public class UserEntity implements Serializable {
     @OneToMany(mappedBy = "buyer")
     private Set<ProductEntity> purchasedProducts;
 
-    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "evaluator", cascade = CascadeType.ALL)
     private Set<EvaluationEntity> givenEvaluations;
 
-    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "evaluated", cascade = CascadeType.ALL)
     private Set<EvaluationEntity> receivedEvaluations;
 
     // Constructors
@@ -90,7 +90,10 @@ public class UserEntity implements Serializable {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
-        setPassword(password);
+        // Directly set the password to avoid calling an overridable method in the
+        // constructor
+        this.password = password != null && !password.startsWith("$2a$") ? BCrypt.hashpw(password, BCrypt.gensalt(12))
+                : password;
         this.token = token;
         this.email = email;
         this.phone = phone;
