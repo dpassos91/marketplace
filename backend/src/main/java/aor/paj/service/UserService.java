@@ -1,8 +1,5 @@
 package aor.paj.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import aor.paj.dto.LoginRequestDto;
 import aor.paj.dto.UserDto;
 import aor.paj.bean.UserBean;
@@ -17,7 +14,6 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -69,13 +65,18 @@ public class UserService {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateUser(@PathParam("id") Long id, UserDto userDto) {
+    public Response updateUser(@PathParam("id") Long id, @HeaderParam("token") String token, UserDto userDto) {
         try {
+            if (!userBean.isAuthorized(id, token)) {
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity("You're not allowed to update this user.")
+                        .build();
+            }
             UserDto user = userBean.updateUser(id, userDto);
             return Response.ok(user).build();
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException exception) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity(e.getMessage())
+                    .entity(exception.getMessage())
                     .build();
         }
     }

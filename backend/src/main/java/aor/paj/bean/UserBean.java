@@ -204,6 +204,19 @@ public class UserBean {
 
     }
 
+    public boolean isAuthorized(Long userId, String token) {
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
+
+        UserEntity authenticatedUser = userDao.findById(userId);
+        if (authenticatedUser == null) {
+            return false;
+        }
+
+        return authenticatedUser.getId().equals(userId) || authenticatedUser.isAdmin();
+    }
+
     public UserEntity toEntity(UserDto userDto) {
         if (userDto == null) {
             return null;
