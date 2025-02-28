@@ -66,13 +66,26 @@ class UserDaoTest {
 
     @Test
     void testDelete() {
+        // 1. Arrange
+        Long userId = 1L; // ID fictício
+        UserEntity user = new UserEntity();
 
+        when(entityManager.createNamedQuery("User.findById", UserEntity.class)).thenReturn(typedQuery);
+        when(typedQuery.setParameter("id", userId)).thenReturn(typedQuery);
+        when(typedQuery.getResultStream()).thenAnswer(invocation -> Stream.of(user));
+
+        // 2. Act
+        boolean result = userDao.delete(userId);
+
+        // 3. Assert
+        assertTrue(result);
+        verify(entityManager).remove(user);
     }
 
     @Test
     void testFindById() {
         // 1. Arrange
-        Long userId = 1L; // ID fictício "1L"
+        Long userId = 1L; // ID fictício
         UserEntity expectedUser = new UserEntity(); // user fictício
         expectedUser.setId(userId); // é definido o ID para o user criado
         // Em baixo vão ser simulados os comportamentos do entityManager e typedQuery
@@ -103,6 +116,18 @@ class UserDaoTest {
     }
 
     @Test
-    void findAllActive() {
+    void testFindAllActive() {
+        // 1. Arrange
+        List<UserEntity> expectedUsers = Arrays.asList( new UserEntity(), new UserEntity());
+
+        when(entityManager.createNamedQuery("User.findByActive", UserEntity.class)).thenReturn(typedQuery);
+        when(typedQuery.setParameter("isActive", true)).thenReturn(typedQuery);
+        when(typedQuery.getResultList()).thenReturn(expectedUsers);
+
+        // 2. Act
+        List<UserEntity> result = userDao.findAllActive();
+
+        // 3. Assert
+        assertEquals(expectedUsers, result);
     }
 }
