@@ -24,6 +24,7 @@ import jakarta.validation.constraints.NotBlank;
         @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user"),
         @NamedQuery(name = "User.findById", query = "SELECT user FROM UserEntity user WHERE user.id = :id"),
         @NamedQuery(name = "User.findByActive", query = "SELECT user FROM UserEntity user WHERE user.isActive = :isActive"),
+        @NamedQuery(name = "User.findAllUsername", query = "SELECT user.username FROM UserEntity user")
 })
 public class UserEntity implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -138,6 +139,10 @@ public class UserEntity implements Serializable {
     }
 
     // Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -290,5 +295,4 @@ public class UserEntity implements Serializable {
                 ", isAdmin=" + isAdmin +
                 '}';
     }
-
 }

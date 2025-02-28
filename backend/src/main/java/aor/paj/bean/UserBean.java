@@ -1,32 +1,34 @@
 package aor.paj.bean;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import aor.paj.dao.UserDao;
 import aor.paj.dto.UserDto;
+import aor.paj.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
+import org.mindrot.jbcrypt.BCrypt;
 
 @ApplicationScoped
 public class UserBean {
 
+    @Inject
+    private UserDao userDao;
+
     private Map<String, UserDto> users = new HashMap<>();
-    private static final String USERS_FILE = "../database/users.json";
+    // private static final String USERS_FILE = "../database/users.json";
 
     @PostConstruct
     public void init() {
-        loadUsersFromFile();
+        // loadUsersFromFile();
     }
 
+    // TODO: métodos do projeto anterior incluíndo leitura e escrita em ficheiro
+    /*
     private void loadUsersFromFile() {
         File file = new File(USERS_FILE);
         if (file.exists()) {
@@ -55,18 +57,8 @@ public class UserBean {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
 
-    public UserDto registerUser(UserDto userDto) {
-        if (users.containsKey(userDto.getUsername())) {
-            throw new RuntimeException("Username já existente!");
-        }
-        users.put(userDto.getUsername(), userDto);
-        saveUsersToFile();
-        return userDto;
-    }
-
-    public UserDto loginUser(String username, String password) {
+            public UserDto loginUser(String username, String password) {
         UserDto existingUser = users.get(username);
         if (existingUser == null || !existingUser.getPassword().equals(password)) {
             throw new RuntimeException("Credenciais inválidas!");
@@ -74,7 +66,7 @@ public class UserBean {
         return existingUser;
     }
 
-    public UserDto getUserByUsername(String username) {
+            public UserDto getUserByUsername(String username) {
         UserDto userDto = users.get(username);
         if (userDto == null) {
             throw new RuntimeException("Utilizador não encontrado!");
@@ -87,7 +79,7 @@ public class UserBean {
             throw new RuntimeException("User not found");
         }
         users.remove(username);
-        saveUsersToFile();
+        // saveUsersToFile();
     }
 
     public boolean checkUsernameExists(String username) {
@@ -99,7 +91,7 @@ public class UserBean {
         if (existingUser == null) {
             throw new RuntimeException("Utilizador não encontrado.");
         }
-        existingUser.setNome(updatedUser.getNome());
+        // existingUser.setNome(updatedUser.getNome());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setTelefone(updatedUser.getTelefone());
         existingUser.setImagem(updatedUser.getImagem());
@@ -107,7 +99,78 @@ public class UserBean {
             existingUser.setPassword(updatedUser.getPassword());
         }
         users.put(username, existingUser);
-        saveUsersToFile();
+        // saveUsersToFile();
         return existingUser;
+    }
+    }*/
+
+    public UserDto registerUser(UserDto userDto) {
+        if (!isValidUsername(userDto.getUsername())) {
+            throw new IllegalArgumentException("Username already in use");
+        }
+
+        UserEntity userEntity = toEntity(userDto);
+
+        userEntity.setPassword(hashPassword(userDto.getPassword()));
+        userEntity.setActive(true);
+        userEntity.setAdmin(false);
+
+        userEntity = userDao.create(userEntity);
+        return toDto(userEntity);
+    }
+
+    private boolean isValidUsername(String username) {
+        List<String> allUsername = userDao.findAllUsername();
+
+        for (String existingUsername : allUsername) {
+            if (existingUsername.equals(username)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public UserDto getUserById(Long id) {
+        UserEntity userEntity = userDao.findById(id);
+        if (userEntity == null) {
+            throw new EntityNotFoundException("User with ID " + id + " not found!");
+        }
+        return toDto(userEntity);
+    }
+
+    public UserEntity toEntity(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
+
+        UserEntity entity = new UserEntity();
+        entity.setUsername(userDto.getUsername());
+        entity.setPassword(userDto.getPassword());
+        entity.setFirstName(userDto.getFirstName());
+        entity.setLastName(userDto.getLastName());
+        entity.setEmail(userDto.getEmail());
+        entity.setPhone(userDto.getTelefone());
+
+        return entity;
+    }
+
+    public UserDto toDto(UserEntity userEntity) {
+        if (userEntity == null) {
+            return null;
+        }
+
+        UserDto dto = new UserDto();
+        dto.setUsername(userEntity.getUsername());
+        // A password não é devolvida por questões de segurança
+        dto.setFirstName(userEntity.getFirstName());
+        dto.setLastName(userEntity.getLastName());
+        dto.setEmail(userEntity.getEmail());
+        dto.setTelefone(userEntity.getPhone());
+
+        return dto;
     }
 }
