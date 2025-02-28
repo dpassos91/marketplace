@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,7 +88,18 @@ class UserDaoTest {
     }
 
     @Test
-    void findAll() {
+    void testFindAll() {
+        // 1. Arrange
+        List<UserEntity> expectedUsers = Arrays.asList( new UserEntity(), new UserEntity());
+
+        when(entityManager.createNamedQuery("User.findAll", UserEntity.class)).thenReturn(typedQuery);
+        when(typedQuery.getResultList()).thenReturn(expectedUsers);
+
+        // 2. Act
+        List<UserEntity> result = userDao.findAll();
+
+        // 3. Assert
+        assertEquals(expectedUsers, result);
     }
 
     @Test
