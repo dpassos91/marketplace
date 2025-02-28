@@ -7,6 +7,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user")
+@NamedQueries({
+        @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user"),
+        @NamedQuery(name = "User.findById", query = "SELECT user FROM UserEntity user WHERE user.id = :id"),
+        @NamedQuery(name = "User.findByActive", query = "SELECT user FROM UserEntity user WHERE user.isActive = :isActive"),
+})
 public class UserEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
