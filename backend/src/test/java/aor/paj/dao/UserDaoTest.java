@@ -130,4 +130,8 @@ class UserDaoTest {
         // 3. Assert
         assertEquals(expectedUsers, result);
     }
+
+    @Test
+    void findAllUsername() {
+    }
 }

@@ -1,6 +1,7 @@
 package aor.paj.bean;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import aor.paj.dao.UserDao;
@@ -9,6 +10,7 @@ import aor.paj.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.mindrot.jbcrypt.BCrypt;
 
 @ApplicationScoped
 public class UserBean {
@@ -57,12 +59,33 @@ public class UserBean {
     }*/
 
     public UserDto registerUser(UserDto userDto) {
+        if (!isValidUsername(userDto.getUsername())) {
+            throw new IllegalArgumentException("Username already in use");
+        }
+
         UserEntity userEntity = toEntity(userDto);
-        // TODO: verificar se o user já existe e fazer a encriptação da password
+
+        userEntity.setPassword(hashPassword(userDto.getPassword()));
         userEntity.setActive(true);
         userEntity.setAdmin(false);
+
         userEntity = userDao.create(userEntity);
         return toDto(userEntity);
+    }
+
+    private boolean isValidUsername(String username) {
+        List<String> allUsername = userDao.findAllUsername();
+
+        for (String existingUsername : allUsername) {
+            if (existingUsername.equals(username)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     public UserDto getUserById(Long id) {
