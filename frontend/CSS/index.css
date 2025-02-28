@@ -21,6 +21,14 @@
   font-family: 'Poppins', sans-serif;
 }
 
+:root {
+  --danger-color: #dc3545; /* Vermelho */
+  --info-color: #17a2b8; /* Azul claro */
+  --warning-color: #ffc107; /* Amarelo */
+  --light-color: #f8f9fa; /* Cinza muito claro */
+  --dark-color: #343a40; /* Cinza escuro */
+}
+
 @font-face {
   font-family: 'Nature Impact Demo';
   src: url('../fonts/Nature Impact Demo.otf') format('opentype');
@@ -213,6 +221,95 @@ main {
     position: static; /* Remove o sticky */
   }
 }
+
+/* Botões container principal admin */
+
+.user-management-buttons {
+  display: flex;
+  justify-content: center; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  margin-top: 20px;
+  width: 100%; /* Garante que ocupa toda a largura disponível */
+  position: relative; /* Necessário para posicionar os botões */
+  height: 350px; /* Ajusta a altura do contêiner conforme necessário */
+}
+
+.user-management-buttons .btn-card {
+  /* Estilos base para os botões */
+  background-color: var(--white-100);
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: var(--box-shadow);
+  width: 300px; /* Largura fixa para os botões */
+  height: 150px; /* Altura fixa para os botões */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--primary-400);
+  font-weight: bold;
+}
+
+.user-management-buttons .btn-card:hover {
+  transform: scale(1.05);
+  background-color: var(--primary-100);
+  color: var(--primary-400);
+}
+
+/* Cores específicas dos botões */
+.user-management-buttons .btn-danger {
+  color: var(--white-100);
+  background-color: var(--secondary-color);
+}
+
+.user-management-buttons .btn-danger:hover {
+  background-color: var(--secondary-300);
+  color: var(--white-100);
+}
+
+.user-management-buttons .btn-warning {
+  color: var(--white-100);
+  background-color: var(--primary-color);
+}
+
+.user-management-buttons .btn-warning:hover {
+  background-color: var(--primary-300);
+  color: var(--white-100);
+}
+
+.user-management-buttons .btn-info {
+  color: var(--white-100);
+  background-color: var(--secondary-400);
+}
+
+.user-management-buttons .btn-info:hover {
+  background-color: var(--secondary-300);
+  color: var(--white-100);
+}
+
+/* Posicionamento dos botões para criar o efeito de plano superior */
+.user-management-buttons .btn-card:nth-child(2) { /* Botão central */
+  position: absolute;
+  top: 0; /* Alinha ao topo do contêiner */
+  z-index: 1; /* Garante que fica em cima dos outros botões */
+}
+
+.user-management-buttons .btn-card:nth-child(1) { /* Primeiro botão */
+  position: absolute;
+  bottom: 0; /* Alinha à parte inferior do contêiner */
+  left: 20%; /* Posiciona à esquerda */
+}
+
+.user-management-buttons .btn-card:nth-child(3) { /* Terceiro botão */
+  position: absolute;
+  bottom: 0; /* Alinha à parte inferior do contêiner */
+  right: 20%; /* Posiciona à direita */
+}
+
 
 
 .login {
