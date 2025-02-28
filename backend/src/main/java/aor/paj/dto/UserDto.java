@@ -13,7 +13,7 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String email;
-    private String telefone;
+    private String phone;
     private String imagem;
     private List<String> produtos;
 
@@ -22,13 +22,13 @@ public class UserDto {
     }
 
     public UserDto(String username, String password, String firstName, String lastName, String email,
-            String telefone, String imagem, List<String> produtos) {
+                   String phone, String imagem, List<String> produtos) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.telefone = telefone;
+        this.phone = phone;
         this.imagem = imagem;
         this.produtos = (produtos != null) ? produtos : new ArrayList<>();
     }
@@ -79,12 +79,12 @@ public class UserDto {
     }
 
     @XmlElement
-    public String getTelefone() {
-        return telefone;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     @XmlElement

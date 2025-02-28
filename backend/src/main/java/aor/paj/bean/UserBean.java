@@ -136,9 +136,27 @@ public class UserBean {
 
     public UserDto getUserById(Long id) {
         UserEntity userEntity = userDao.findById(id);
+
         if (userEntity == null) {
             throw new EntityNotFoundException("User with ID " + id + " not found!");
         }
+        return toDto(userEntity);
+    }
+
+    public UserDto updateUser(Long id, UserDto userDto) {
+        UserEntity userEntity = userDao.findById(id);
+
+        if (userEntity == null) {
+            throw new EntityNotFoundException("User with ID " + id + " not found!");
+        }
+
+        if (userDto.getFirstName() != null) userEntity.setFirstName(userDto.getFirstName());
+        if (userDto.getLastName() != null) userEntity.setLastName(userDto.getLastName());
+        if (userDto.getEmail() != null) userEntity.setEmail(userDto.getEmail());
+        if (userDto.getPhone() != null) userEntity.setPhone(userDto.getPhone());
+
+        userEntity = userDao.update(userEntity);
+
         return toDto(userEntity);
     }
 
@@ -153,7 +171,7 @@ public class UserBean {
         entity.setFirstName(userDto.getFirstName());
         entity.setLastName(userDto.getLastName());
         entity.setEmail(userDto.getEmail());
-        entity.setPhone(userDto.getTelefone());
+        entity.setPhone(userDto.getPhone());
 
         return entity;
     }
@@ -169,7 +187,7 @@ public class UserBean {
         dto.setFirstName(userEntity.getFirstName());
         dto.setLastName(userEntity.getLastName());
         dto.setEmail(userEntity.getEmail());
-        dto.setTelefone(userEntity.getPhone());
+        dto.setPhone(userEntity.getPhone());
 
         return dto;
     }
