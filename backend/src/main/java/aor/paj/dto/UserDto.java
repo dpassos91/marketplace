@@ -10,7 +10,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 public class UserDto {
     private String username;
     private String password;
-    private String nome;
+    private String firstName;
+    private String lastName;
     private String email;
     private String telefone;
     private String imagem;
@@ -20,11 +21,12 @@ public class UserDto {
         this.produtos = new ArrayList<>();
     }
 
-    public UserDto(String username, String password, String nome, String email,
+    public UserDto(String username, String password, String firstName, String lastName, String email,
             String telefone, String imagem, List<String> produtos) {
         this.username = username;
         this.password = password;
-        this.nome = nome;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.telefone = telefone;
         this.imagem = imagem;
@@ -50,12 +52,21 @@ public class UserDto {
     }
 
     @XmlElement
-    public String getNome() {
-        return nome;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @XmlElement
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @XmlElement

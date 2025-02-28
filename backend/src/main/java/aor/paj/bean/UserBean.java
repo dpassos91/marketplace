@@ -1,32 +1,26 @@
 package aor.paj.bean;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import aor.paj.dto.UserDto;
+import aor.paj.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
 
 @ApplicationScoped
 public class UserBean {
 
     private Map<String, UserDto> users = new HashMap<>();
-    private static final String USERS_FILE = "../database/users.json";
+    // private static final String USERS_FILE = "../database/users.json";
 
     @PostConstruct
     public void init() {
-        loadUsersFromFile();
+        // loadUsersFromFile();
     }
 
+    // TODO: leitura e escrita em ficheiro
+    /*
     private void loadUsersFromFile() {
         File file = new File(USERS_FILE);
         if (file.exists()) {
@@ -55,14 +49,14 @@ public class UserBean {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     public UserDto registerUser(UserDto userDto) {
         if (users.containsKey(userDto.getUsername())) {
             throw new RuntimeException("Username já existente!");
         }
         users.put(userDto.getUsername(), userDto);
-        saveUsersToFile();
+        // saveUsersToFile();
         return userDto;
     }
 
@@ -87,7 +81,7 @@ public class UserBean {
             throw new RuntimeException("User not found");
         }
         users.remove(username);
-        saveUsersToFile();
+        // saveUsersToFile();
     }
 
     public boolean checkUsernameExists(String username) {
@@ -99,7 +93,7 @@ public class UserBean {
         if (existingUser == null) {
             throw new RuntimeException("Utilizador não encontrado.");
         }
-        existingUser.setNome(updatedUser.getNome());
+        // existingUser.setNome(updatedUser.getNome());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setTelefone(updatedUser.getTelefone());
         existingUser.setImagem(updatedUser.getImagem());
@@ -107,7 +101,38 @@ public class UserBean {
             existingUser.setPassword(updatedUser.getPassword());
         }
         users.put(username, existingUser);
-        saveUsersToFile();
+        // saveUsersToFile();
         return existingUser;
+    }
+
+    public UserEntity toEntity(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
+
+        UserEntity entity = new UserEntity();
+        entity.setUsername(userDto.getUsername());
+        entity.setPassword(userDto.getPassword()); // TODO: pode ser necessário encriptar antes de gravar
+        entity.setFirstName(userDto.getFirstName());
+        entity.setLastName(userDto.getLastName());
+        entity.setEmail(userDto.getEmail());
+        entity.setPhone(userDto.getTelefone());
+
+        return entity;
+    }
+
+    public UserDto toDto(UserEntity userEntity) {
+        if (userEntity == null) {
+            return null;
+        }
+
+        UserDto dto = new UserDto();
+        dto.setUsername(userEntity.getUsername());
+        dto.setFirstName(userEntity.getFirstName());
+        dto.setLastName(userEntity.getLastName());
+        dto.setEmail(userEntity.getEmail());
+        dto.setTelefone(userEntity.getPhone());
+
+        return dto;
     }
 }
