@@ -3,13 +3,18 @@ package aor.paj.bean;
 import java.util.HashMap;
 import java.util.Map;
 
+import aor.paj.dao.UserDao;
 import aor.paj.dto.UserDto;
 import aor.paj.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class UserBean {
+
+    @Inject
+    private UserDao userDao;
 
     private Map<String, UserDto> users = new HashMap<>();
     // private static final String USERS_FILE = "../database/users.json";
@@ -52,12 +57,11 @@ public class UserBean {
     }*/
 
     public UserDto registerUser(UserDto userDto) {
-        if (users.containsKey(userDto.getUsername())) {
-            throw new RuntimeException("Username já existente!");
-        }
-        users.put(userDto.getUsername(), userDto);
-        // saveUsersToFile();
-        return userDto;
+        UserEntity userEntity = toEntity(userDto);
+        userEntity.setActive(true);
+        userEntity.setAdmin(false);
+        userDao.create(userEntity);
+        return toDto(userEntity);
     }
 
     public UserDto loginUser(String username, String password) {
