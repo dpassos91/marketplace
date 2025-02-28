@@ -157,6 +157,15 @@ public class UserBean {
         return base64Encoder.encodeToString(randomBytes);
     }
 
+    public boolean logOut(String token) {
+        UserEntity userEntity = userDao.findByToken(token);
+        if (userEntity != null) {
+            userEntity.setToken(null);
+            return true;
+        }
+        return false;
+    }
+
     public UserDto getUserById(Long id) {
         UserEntity userEntity = userDao.findById(id);
 

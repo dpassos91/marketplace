@@ -60,5 +60,13 @@ public class UserDao {
                 .findFirst().orElse(null);
     }
 
+    public UserEntity findByToken(String token) {
+        return entityManager.createNamedQuery("User.findByToken", UserEntity.class)
+                .setParameter("token", token)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+    }
+
 
 }

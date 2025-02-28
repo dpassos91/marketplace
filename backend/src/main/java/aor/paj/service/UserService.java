@@ -48,6 +48,15 @@ public class UserService {
         return Response.status(403).entity("Invalid Username or Password!").build();
     }
 
+    @POST
+    @Path("/logout")
+    public Response logout(@HeaderParam("token") String token){
+        if (userBean.logOut(token)) {
+            return Response.status(200).entity("Successfully logged out!").build();
+        }
+        return Response.status(401).entity("Invalid Token!").build();
+    }
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
