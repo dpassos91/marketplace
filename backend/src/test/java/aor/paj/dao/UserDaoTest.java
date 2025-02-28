@@ -45,7 +45,7 @@ class UserDaoTest {
     }
 
     @Test
-    void update() {
+    void testUpdate() {
         // Arrange
         UserEntity user = new UserEntity();
         user.setUsername("Joca321");
