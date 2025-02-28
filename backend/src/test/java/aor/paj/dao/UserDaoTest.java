@@ -10,10 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.Type;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class UserDaoTest {
     @InjectMocks
@@ -32,20 +31,33 @@ class UserDaoTest {
 
     @Test
     void testCreate() {
-        // Arrange
+        // Arrange, Act e Assert (AAA) é uma abordagem comum para estruturar testes unitários de forma clara e organizada em três fases
+        // Arrange (fase de preparação do teste)
         UserEntity user = new UserEntity();
         user.setUsername("Joca123");
 
-        // Act
+        // Act (fase de execução da funcionalidade)
         UserEntity result = userDao.create(user);
 
-        // Assert
+        // Assert (fase de validação do resultado)
         verify(entityManager).persist(user);
         assertEquals(user, result);
     }
 
     @Test
     void update() {
+        // Arrange
+        UserEntity user = new UserEntity();
+        user.setUsername("Joca321");
+
+        when(entityManager.merge(user)).thenReturn(user);
+
+        // Act
+        UserEntity result = userDao.update(user);
+
+        // Assert
+        verify(entityManager).merge(user);
+        assertEquals(user, result);
     }
 
     @Test
