@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "app_user")
 @NamedQueries({
         @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user"),
         @NamedQuery(name = "User.findById", query = "SELECT user FROM UserEntity user WHERE user.id = :id"),
@@ -17,7 +17,7 @@ public class UserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // gera o ID automaticamente
-    @Column(name = "id", nullable = false, unique = true, updatable = false)
+    @Column(name = "user_id", nullable = false, unique = true, updatable = false)
     private Long id;
 
     @Column(name = "username", nullable = false, unique = true, updatable = false)
