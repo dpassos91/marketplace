@@ -160,6 +160,14 @@ public class UserBean {
         return toDto(userEntity);
     }
 
+    public boolean deleteUser(Long id) {
+        return userDao.delete(id);
+    }
+
+    public void suspendUser(Long id) {
+
+    }
+
     public UserEntity toEntity(UserDto userDto) {
         if (userDto == null) {
             return null;

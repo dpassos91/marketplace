@@ -58,6 +58,21 @@ public class UserService {
         }
     }
 
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteUser(@PathParam("id") Long id) {
+        boolean deleted = userBean.deleteUser(id);
+
+        if (deleted) {
+            return Response.ok().entity("User deleted successfully").build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User with ID " + id + " not found!")
+                    .build();
+        }
+    }
+
     // TODO: métodos do projeto 2
     /*
     @POST
