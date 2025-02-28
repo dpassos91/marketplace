@@ -1,10 +1,13 @@
 package aor.paj.bean;
 
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import aor.paj.dao.UserDao;
+import aor.paj.dto.LoginRequestDto;
 import aor.paj.dto.UserDto;
 import aor.paj.entity.UserEntity;
 import jakarta.annotation.PostConstruct;
@@ -132,6 +135,26 @@ public class UserBean {
 
     public String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public String logIn(LoginRequestDto user) {
+        UserEntity userEntity = userDao.findByUsername(user.getUsername());
+        if (userEntity != null) {
+            if (userEntity.checkPassword(user.getPassword())) {
+                String token = generateNewToken();
+                userEntity.setToken(token);
+                return token;
+            }
+        }
+        return null;
+    }
+
+    private String generateNewToken() {
+        SecureRandom secureRandom = new SecureRandom(); //threadsafe
+        Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //threadsafe
+        byte[] randomBytes = new byte[24];
+        secureRandom.nextBytes(randomBytes);
+        return base64Encoder.encodeToString(randomBytes);
     }
 
     public UserDto getUserById(Long id) {

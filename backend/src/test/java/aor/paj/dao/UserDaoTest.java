@@ -134,4 +134,8 @@ class UserDaoTest {
     @Test
     void findAllUsername() {
     }
+
+    @Test
+    void findByUsername() {
+    }
 }

@@ -3,6 +3,7 @@ package aor.paj.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import aor.paj.dto.LoginRequestDto;
 import aor.paj.dto.UserDto;
 import aor.paj.bean.UserBean;
 import jakarta.inject.Inject;
@@ -33,6 +34,18 @@ public class UserService {
     public Response registerUser(UserDto userDto) {
         UserDto createdUser = userBean.registerUser(userDto);
         return Response.ok(createdUser).build();
+    }
+
+    @POST
+    @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response login(LoginRequestDto user){
+        String token = userBean.logIn(user);
+        if(token != null){
+            return Response.status(200).entity(token).build();
+        }
+        return Response.status(403).entity("Invalid Username or Password!").build();
     }
 
     @GET

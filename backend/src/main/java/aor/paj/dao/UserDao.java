@@ -53,5 +53,12 @@ public class UserDao {
         return entityManager.createNamedQuery("User.findAllUsername", String.class).getResultList();
     }
 
+    public UserEntity findByUsername(String username) {
+        return entityManager.createNamedQuery("User.findByUsername", UserEntity.class)
+                .setParameter("username", username)
+                .getResultStream()
+                .findFirst().orElse(null);
+    }
+
 
 }
