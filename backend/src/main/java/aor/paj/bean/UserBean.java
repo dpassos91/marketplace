@@ -58,9 +58,18 @@ public class UserBean {
 
     public UserDto registerUser(UserDto userDto) {
         UserEntity userEntity = toEntity(userDto);
+        // TODO: verificar se o user já existe e fazer a encriptação da password
         userEntity.setActive(true);
         userEntity.setAdmin(false);
-        userDao.create(userEntity);
+        userEntity = userDao.create(userEntity);
+        return toDto(userEntity);
+    }
+
+    public UserDto getUserById(Long id) {
+        UserEntity userEntity = userDao.findById(id);
+        if (userEntity == null) {
+            // TODO: como tratar?
+        }
         return toDto(userEntity);
     }
 
@@ -116,7 +125,7 @@ public class UserBean {
 
         UserEntity entity = new UserEntity();
         entity.setUsername(userDto.getUsername());
-        entity.setPassword(userDto.getPassword()); // TODO: pode ser necessário encriptar antes de gravar
+        entity.setPassword(userDto.getPassword());
         entity.setFirstName(userDto.getFirstName());
         entity.setLastName(userDto.getLastName());
         entity.setEmail(userDto.getEmail());
@@ -132,6 +141,7 @@ public class UserBean {
 
         UserDto dto = new UserDto();
         dto.setUsername(userEntity.getUsername());
+        // A password não é devolvida por questões de segurança
         dto.setFirstName(userEntity.getFirstName());
         dto.setLastName(userEntity.getLastName());
         dto.setEmail(userEntity.getEmail());
