@@ -40,7 +40,7 @@ public class UserService {
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(LoginRequestDto user){
+    public Response logIn(LoginRequestDto user){
         String token = userBean.logIn(user);
         if(token != null){
             return Response.status(200).entity(token).build();
