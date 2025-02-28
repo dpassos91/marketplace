@@ -310,7 +310,79 @@ main {
   right: 20%; /* Posiciona à direita */
 }
 
+/* Botões de Produto para admin */
 
+/* Estilos para o container dos botões */
+.product-management-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Estilos base para os botões */
+.product-management-buttons .btn-card {
+  background-color: var(--white-100);
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  box-shadow: var(--box-shadow);
+  width: 250px; /* Largura fixa para os botões */
+  height: 100px; /* Altura fixa para os botões */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary-400);
+}
+
+.product-management-buttons .btn-card:hover {
+  transform: scale(1.05);
+  background-color: var(--primary-100);
+  color: var(--primary-400);
+}
+
+/* Cores específicas dos botões (podes ajustar conforme necessário) */
+.product-management-buttons .btn-edit {
+  background-color: var(--secondary-color);
+  color: var(--white-100);
+}
+
+.product-management-buttons .btn-edit:hover {
+  background-color: var(--secondary-300);
+}
+
+.product-management-buttons .btn-consult {
+  background-color: var(--primary-color);
+  color: var(--white-100);
+}
+
+.product-management-buttons .btn-consult:hover {
+  background-color: var(--primary-300);
+}
+
+.product-management-buttons .btn-add {
+  background-color: var(--secondary-400);
+  color: var(--white-100);
+}
+
+.product-management-buttons .btn-add:hover {
+  background-color: var(--secondary-300);
+}
+
+.product-management-buttons .btn-filter {
+  background-color: var(--primary-400);
+  color: var(--white-100);
+}
+
+.product-management-buttons .btn-filter:hover {
+  background-color: var(--primary-300);
+}
 
 .login {
   display: flex;
