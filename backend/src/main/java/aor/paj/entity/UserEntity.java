@@ -135,6 +135,10 @@ public class UserEntity implements Serializable {
     }
 
     // Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -287,5 +291,4 @@ public class UserEntity implements Serializable {
                 ", isAdmin=" + isAdmin +
                 '}';
     }
-
 }
