@@ -6,6 +6,7 @@ import java.util.Map;
 import aor.paj.dto.UserDto;
 import aor.paj.bean.UserBean;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -40,6 +41,36 @@ public class UserService {
     public Response getUser(@PathParam("id") Long id) {
         UserDto user = userBean.getUserById(id);
         return Response.ok(user).build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(@PathParam("id") Long id, UserDto userDto) {
+        try {
+            UserDto user = userBean.updateUser(id, userDto);
+            return Response.ok(user).build();
+        } catch (EntityNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .build();
+        }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteUser(@PathParam("id") Long id) {
+        boolean deleted = userBean.deleteUser(id);
+
+        if (deleted) {
+            return Response.ok().entity("User deleted successfully").build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User with ID " + id + " not found!")
+                    .build();
+        }
     }
 
     // TODO: métodos do projeto 2
