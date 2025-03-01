@@ -60,6 +60,9 @@ public class UserEntity implements Serializable {
     @Column(name = "phone", nullable = false, unique = false, updatable = true)
     private String phone;
 
+    @Column(name = "picture", nullable = false, unique = false, updatable = true)
+    private String picture;
+
     @Column(name = "is_active", nullable = false, unique = false, updatable = true)
     private boolean isActive;
 
@@ -88,7 +91,7 @@ public class UserEntity implements Serializable {
     }
 
     public UserEntity(String username, String firstName, String lastName, String password, String token,
-            String email, String phone, boolean isActive, boolean isAdmin) {
+            String email, String phone, String picture, boolean isActive, boolean isAdmin) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -99,6 +102,7 @@ public class UserEntity implements Serializable {
         this.token = token;
         this.email = email;
         this.phone = phone;
+        this.picture = picture;
         this.isActive = isActive;
         this.isAdmin = isAdmin;
     }
@@ -130,6 +134,10 @@ public class UserEntity implements Serializable {
 
     public String getPhone() {
         return phone;
+    }
+
+    public String getPicture() {
+        return picture;
     }
 
     public boolean isActive() {
@@ -211,6 +219,10 @@ public class UserEntity implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public void SetPicture(String picture) {
+        this.picture = picture;
     }
 
     public void setActive(boolean active) {

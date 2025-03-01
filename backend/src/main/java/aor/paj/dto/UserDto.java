@@ -14,20 +14,22 @@ public class UserDto {
     private String lastName;
     private String email;
     private String phone;
-    private String image;
+    private String picture;
+    private boolean isAdmin;
 
     public UserDto() {
     }
 
     public UserDto(String username, String password, String firstName, String lastName, String email,
-                   String phone, String image) {
+                   String phone, String picture) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
-        this.image = image;
+        this.picture = picture;
+        this.isAdmin = false;
     }
 
     @XmlElement
@@ -85,11 +87,15 @@ public class UserDto {
     }
 
     @XmlElement
-    public String getImage() {
-        return image;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }
