@@ -14,23 +14,20 @@ public class UserDto {
     private String lastName;
     private String email;
     private String phone;
-    private String imagem;
-    private List<String> produtos;
+    private String image;
 
     public UserDto() {
-        this.produtos = new ArrayList<>();
     }
 
     public UserDto(String username, String password, String firstName, String lastName, String email,
-                   String phone, String imagem, List<String> produtos) {
+                   String phone, String image) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
-        this.imagem = imagem;
-        this.produtos = (produtos != null) ? produtos : new ArrayList<>();
+        this.image = image;
     }
 
     @XmlElement
@@ -88,20 +85,11 @@ public class UserDto {
     }
 
     @XmlElement
-    public String getImagem() {
-        return imagem;
+    public String getImage() {
+        return image;
     }
 
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
-    }
-
-    @XmlElement
-    public List<String> getProdutos() {
-        return produtos;
-    }
-
-    public void setProdutos(List<String> produtos) {
-        this.produtos = produtos;
+    public void setImage(String image) {
+        this.image = image;
     }
 }
