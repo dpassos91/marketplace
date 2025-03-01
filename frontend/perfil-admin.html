@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./CSS/index.css" />
     <link rel="shortcut icon" href="favicon.png" type="image/png" />
-    <script defer type="module" src="./javaScript/index.js"></script>
+    <script defer type="module" src="./javaScript/perfil-admin.js"></script>
 
     <title>Painel de Administração</title>
 </head>
@@ -58,6 +58,16 @@
                 </div>
             </section>
 
+            <section id="editarProdutos" class="hidden">
+                <h1>Editar produtos</h1>
+                <div class="user-management-buttons">
+                    <button class="btn-card btn-danger" id="apagarProduto">Apagar produto</button>
+                    <button class="btn-card btn-info" id="alterarProduto">Alterar produto</button>  
+                  <button class="btn-card btn-warning" id="excluirProduto">Excluir produto</button>
+                </div>
+              </section>
+              
+
             <section id="dashboard">
                 <h1>Dashboard</h1>
             </section>
@@ -66,48 +76,6 @@
 
     <footer id="footer"></footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const links = document.querySelectorAll('.admin-sidebar a');
-            const sections = document.querySelectorAll('.admin-content > section');
-
-            links.forEach(link => {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-
-                    // Esconde todas as sections
-                    sections.forEach(section => {
-                        section.classList.add('hidden');
-                    });
-
-                    // Mostra a section correspondente ao link clicado
-                    let targetId = this.getAttribute('id');
-                    if (targetId === 'gestao-utilizadores') {
-                        targetId = 'utilizadores';
-                    } else if (targetId === 'gestao-produtos') {
-                        targetId = 'produtos';
-                    } else if (targetId === 'ver-dashboard') {
-                        targetId = 'dashboard';
-                    }
-                    document.getElementById(targetId).classList.remove('hidden');
-                });
-            });
-
-            // Evento de clique para o botão "Filtrar"
-            const filtrarButton = document.getElementById('adminFiltrarProd');
-            filtrarButton.addEventListener('click', function (event) {
-                event.preventDefault(); // Impede o comportamento padrão do link
-
-                // Esconde todas as sections
-                sections.forEach(section => {
-                    section.classList.add('hidden');
-                });
-
-                // Mostra a secção de filtros
-                document.getElementById('filtros').classList.remove('hidden');
-            });
-        });
-    </script>
 </body>
 
 </html>
