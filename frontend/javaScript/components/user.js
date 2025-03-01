@@ -5,27 +5,23 @@ import * as productAPI from '../api/productAPI.js';
 import * as productComponent from './product.js';
 
 export async function submitLoginForm() {
-  var username = document.getElementById('username').value;
-  var password = document.getElementById('password').value;
+  const credentials = {
+    username: document.getElementById('username').value,
+    password: document.getElementById('password').value,
+  };
+
+    // TODO: apagar logs quando estiver resolvido
+  console.log("entra na função submitLoginForm", credentials);
+  console.log("userAPI.loginUser:", userAPI.loginUser);
 
   try {
-    const result = await userAPI.loginUser(username, password);
+    const result = await userAPI.loginUser(credentials);
+
     alert('Login bem sucedido! Bem- vindo/a, ' + result.firstName);
     console.log('login successful', result);
 
-    sessionStorage.setItem(
-      'user',
-      JSON.stringify({
-        username: result.username,
-        firstName: result.firstName,
-        lastName: result.lastName,
-        email: result.email,
-        phone: result.phone,
-        picture: result.picture,
-        token: result.token,
-        isAdmin: result.isAdmin,
-      })
-    );
+    sessionStorage.setItem('userToken', result.token);
+    
     window.location.href = 'index.html';
   } catch (error) {
     alert('Login falhou! Por favor verifique as suas credenciais.');
@@ -156,18 +152,16 @@ export async function addNewUser() {
           picture: document.getElementById('fotografia').value,
         };
 
-        console.log(newUser);
-
         try {
           await userAPI.registerUser(newUser);
           alert('Utilizador registado! Bem-vindo/a, ' + newUser.firstName);
           window.location.href = 'pagina-login.html';
         } catch (error) {
-          alert('2º Erro ao registar utilizador. Tente novamente.');
+          alert('Erro ao registar utilizador. Tente novamente.');
           console.error(error);
         }
       } else {
-        alert('1º Erro ao registar utilizador. Tente novamente.');
+        alert('Erro ao registar utilizador. Tente novamente.');
         return;
       }
     });

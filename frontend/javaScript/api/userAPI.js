@@ -3,15 +3,17 @@
 import { API_ENDPOINTS, DEFAULT_OPTIONS } from '../config/apiConfig.js';
 
 // User API functions
-export async function loginUser(username, password) {
+export async function loginUser(credentials) {
+
+  // TODO: apagar logs quando estiver resolvido
+  console.log("Dados enviados para o backend:", credentials);
+  console.log("Endpoint de login:", API_ENDPOINTS.users.login);
+
   try {
     const response = await fetch(API_ENDPOINTS.users.login, {
       method: 'POST',
-      headers: {
-        ...DEFAULT_OPTIONS.headers,
-        Username: username,
-        Password: password,
-      },
+      headers: DEFAULT_OPTIONS.headers,
+      body: JSON.stringify(credentials),
     });
 
     if (!response.ok) {
