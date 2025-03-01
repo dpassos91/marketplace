@@ -37,6 +37,9 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response logIn(LoginRequestDto user){
+
+        System.out.println("Tentativa de login com: " + user.getUsername() + " / " + user.getPassword());
+
         String token = userBean.logIn(user);
         if(token != null){
             return Response.status(200).entity(token).build();
