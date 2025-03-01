@@ -16,9 +16,13 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Path("/users")
 public class UserService {
+
+    private static final Logger logger = LogManager.getLogger(UserService.class);
 
     @Inject
     UserBean userBean;
@@ -28,7 +32,9 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUser(UserDto userDto) {
+        logger.info("Registration attempt by user: {}", userDto.getUsername());
         UserDto createdUser = userBean.registerUser(userDto);
+        logger.info("User successfully registered: {}", createdUser.getUsername());
         return Response.ok(createdUser).build();
     }
 
