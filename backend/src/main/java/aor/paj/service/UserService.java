@@ -43,14 +43,15 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response logIn(LoginRequestDto user){
-
-        System.out.println("Tentativa de login com: " + user.getUsername() + " / " + user.getPassword());
+        logger.info("Login attempt by user: {}", user.getUsername());
 
         String token = userBean.logIn(user);
         if(token != null){
+            logger.info("Successful login by user: {}", user.getUsername());
             return Response.status(200).entity(token).build();
         }
-        return Response.status(403).entity("Invalid Username or Password!").build();
+            logger.warn("Failed login attempt by user: {}", user.getUsername());
+            return Response.status(403).entity("Invalid Username or Password!").build();
     }
 
     @POST
