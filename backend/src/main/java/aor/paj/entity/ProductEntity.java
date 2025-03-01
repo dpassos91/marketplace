@@ -24,7 +24,8 @@ import jakarta.persistence.Table;
     @NamedQuery(name = "Product.findByStatus", query = "SELECT p FROM ProductEntity p WHERE p.status = :status"),
     @NamedQuery(name = "Product.findByActive", query = "SELECT p FROM ProductEntity p WHERE p.active = :active"),
     @NamedQuery(name = "Product.findByCategory", query = "SELECT p FROM ProductEntity p WHERE p.category.id = :categoryId"),
-    @NamedQuery(name = "Product.findByUser", query = "SELECT p FROM ProductEntity p WHERE p.seller.id = :userId")
+    @NamedQuery(name = "Product.findByUser", query = "SELECT p FROM ProductEntity p WHERE p.seller.id = :userId"),
+    @NamedQuery(name = "Product.findByBuyer", query = "SELECT p FROM ProductEntity p WHERE p.buyer.id = :userId AND p.status = :status")
 })
 public class ProductEntity implements Serializable {
 
@@ -64,12 +65,12 @@ public class ProductEntity implements Serializable {
   private CategoryEntity category;
 
   @ManyToOne
-  @JoinColumn(name = "app_user_user_id", referencedColumnName = "user_id")
-  private UserEntity buyer;
+  @JoinColumn(name = "seller_id")
+  private UserEntity seller;
 
   @ManyToOne
-  @JoinColumn(name = "app_user_user_id1", referencedColumnName = "user_id", nullable = false)
-  private UserEntity seller;
+  @JoinColumn(name = "buyer_id")
+  private UserEntity buyer; // Will be null until product is sold
 
   // Constructors
   public ProductEntity() {

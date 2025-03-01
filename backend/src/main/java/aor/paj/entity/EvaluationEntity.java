@@ -1,7 +1,6 @@
 package aor.paj.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -32,38 +31,43 @@ public class EvaluationEntity implements Serializable {
   @Column(name = "evaluation_id")
   private Long id;
 
-  @Column(name = "evaluation_title", nullable = false, length = 512)
+  @Column(name = "title")
   private String title;
 
-  @Column(name = "evaluation_comment", nullable = false, columnDefinition = "TEXT")
+  @Column(name = "comment", length = 500)
   private String comment;
 
-  @Column(name = "evaluation_date", nullable = false)
+  @Column(name = "date")
   private LocalDate date;
 
-  @Column(name = "evaluation_grade", nullable = false, precision = 8, scale = 2)
-  private BigDecimal grade;
+  @Column(name = "rating")
+  private Integer rating;
 
   @ManyToOne
-  @JoinColumn(name = "app_user_user_id", referencedColumnName = "user_id", nullable = false)
+  @JoinColumn(name = "evaluator_id")
   private UserEntity evaluator; // User who gives the evaluation
 
   @ManyToOne
-  @JoinColumn(name = "app_user_user_id1", referencedColumnName = "user_id", nullable = false)
+  @JoinColumn(name = "evaluated_id")
   private UserEntity evaluated; // User who receives the evaluation
+
+  @ManyToOne
+  @JoinColumn(name = "product_id")
+  private ProductEntity product; // The product that was purchased
 
   // Constructors
   public EvaluationEntity() {
   }
 
-  public EvaluationEntity(String title, String comment, LocalDate date, BigDecimal grade,
-      UserEntity evaluator, UserEntity evaluated) {
+  public EvaluationEntity(String title, String comment, LocalDate date, Integer rating,
+      UserEntity evaluator, UserEntity evaluated, ProductEntity product) {
     this.title = title;
     this.comment = comment;
     this.date = date;
-    this.grade = grade;
+    this.rating = rating;
     this.evaluator = evaluator;
     this.evaluated = evaluated;
+    this.product = product;
   }
 
   // Getters and setters
@@ -99,12 +103,12 @@ public class EvaluationEntity implements Serializable {
     this.date = date;
   }
 
-  public BigDecimal getGrade() {
-    return grade;
+  public Integer getRating() {
+    return rating;
   }
 
-  public void setGrade(BigDecimal grade) {
-    this.grade = grade;
+  public void setRating(Integer rating) {
+    this.rating = rating;
   }
 
   public UserEntity getEvaluator() {
@@ -121,6 +125,14 @@ public class EvaluationEntity implements Serializable {
 
   public void setEvaluated(UserEntity evaluated) {
     this.evaluated = evaluated;
+  }
+
+  public ProductEntity getProduct() {
+    return product;
+  }
+
+  public void setProduct(ProductEntity product) {
+    this.product = product;
   }
 
   @Override
@@ -146,7 +158,7 @@ public class EvaluationEntity implements Serializable {
         "id=" + id +
         ", title='" + title + '\'' +
         ", date=" + date +
-        ", grade=" + grade +
+        ", rating=" + rating +
         '}';
   }
 }

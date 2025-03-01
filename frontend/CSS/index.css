@@ -321,6 +321,18 @@ main {
   margin-top: 20px;
 }
 
+/* Estilos para o container dos botões */
+.product-management-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centraliza os botões */
+  align-items: center; /* Alinha os botões verticalmente */
+  gap: 20px;
+  margin-top: 20px;
+  position: relative; /* Permite posicionamento absoluto dos botões */
+  height: 300px; /* Ajusta a altura conforme necessário */
+}
+
 /* Estilos base para os botões */
 .product-management-buttons .btn-card {
   background-color: var(--white-100);
@@ -338,16 +350,14 @@ main {
   justify-content: center;
   font-size: 1rem;
   font-weight: bold;
-  color: var(--primary-400);
+  position: absolute; /* Permite posicionar os botões */
 }
 
 .product-management-buttons .btn-card:hover {
   transform: scale(1.05);
-  background-color: var(--primary-100);
-  color: var(--primary-400);
 }
 
-/* Cores específicas dos botões (podes ajustar conforme necessário) */
+/* Cores específicas dos botões */
 .product-management-buttons .btn-edit {
   background-color: var(--secondary-color);
   color: var(--white-100);
@@ -382,6 +392,87 @@ main {
 
 .product-management-buttons .btn-filter:hover {
   background-color: var(--primary-300);
+}
+
+/* Posicionamento dos botões */
+.product-management-buttons .btn-card:nth-child(1) {
+  top: 20px;
+  left: 20%;
+}
+
+.product-management-buttons .btn-card:nth-child(2) {
+  top: 20px;
+  right: 20%;
+}
+
+.product-management-buttons .btn-card:nth-child(3) {
+  bottom: 20px;
+  left: 20%;
+}
+
+.product-management-buttons .btn-card:nth-child(4) {
+  bottom: 20px;
+  right: 20%;
+}
+
+/* Estilos para os botões de filtro */
+/* Estilos para os botões de filtro */
+.filter-options {
+  display: flex;
+  /*justify-content: center;  Removido */
+  justify-content: space-around; /* Adicionado */
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  position: relative;
+  height: 200px;
+}
+
+.filter-options .btn-card {
+  /* Estilos base para os botões */
+  background-color: var(--white-100);
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: var(--box-shadow);
+  width: 300px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--primary-400);
+  font-weight: bold;
+}
+
+.filter-options .btn-card:hover {
+  transform: scale(1.05);
+  background-color: var(--primary-100);
+  color: var(--primary-400);
+}
+
+/* Cores específicas dos botões */
+.filter-options .btn-danger {
+  color: var(--white-100);
+  background-color: var(--secondary-color);
+}
+
+.filter-options .btn-danger:hover {
+  background-color: var(--secondary-300);
+  color: var(--white-100);
+}
+
+.filter-options .btn-warning {
+  color: var(--white-100);
+  background-color: var(--primary-color);
+}
+
+.filter-options .btn-warning:hover {
+  background-color: var(--primary-300);
+  color: var(--white-100);
 }
 
 .login {

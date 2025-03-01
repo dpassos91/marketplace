@@ -2,84 +2,113 @@
 <html lang="pt-PT">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="./CSS/index.css" />
-  <link rel="shortcut icon" href="favicon.png" type="image/png" />
-  <script defer type="module" src="./javaScript/index.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./CSS/index.css" />
+    <link rel="shortcut icon" href="favicon.png" type="image/png" />
+    <script defer type="module" src="./javaScript/index.js"></script>
 
-  <title>Painel de Administração</title>
+    <title>Painel de Administração</title>
 </head>
 
 <body>
-  <header id="header"></header>
+    <header id="header"></header>
 
-  <main class="main-container">
-    <aside class="admin-sidebar">
-      <h2>Painel de Administração</h2>
-      <nav>
-        <ul>
-          <li><a href="#" class="btn-produtos" id="gestao-utilizadores">Gestão de Utilizadores</a></li>
-          <li><a href="#" class="btn-produtos" id="gestao-produtos">Gestão de Produtos</a></li>
-            <li><a href="#" class="btn-produtos" id="ver-dashboard">Dashboard</a></li>
-      </nav>
-    </aside>
+    <main class="main-container">
+        <aside class="admin-sidebar">
+            <h2>Painel de Administração</h2>
+            <nav>
+                <ul>
+                    <li><a href="#" class="btn-produtos" id="gestao-utilizadores">Gestão de Utilizadores</a></li>
+                    <li><a href="#" class="btn-produtos" id="gestao-produtos">Gestão de Produtos</a></li>
+                    <li><a href="#" class="btn-produtos" id="ver-dashboard">Dashboard</a></li>
+                </ul>
+            </nav>
+        </aside>
 
-    <div class="admin-content">
-      <section id="utilizadores" class="hidden">
-        <h1>Gestão de Utilizadores</h1>
-        <div class="user-management-buttons">
-          <a href="#" id="deleteUser" class="btn-card btn-danger">Apagar utilizador</a>
-          <a href="#" id="viewUserProfile" class="btn-card btn-info">Consultar perfil de utilizador</a>
-          <a href="#" id="permanentlyDeleteUser" class="btn-card btn-warning">Excluir permanentemente um utilizador</a>
+        <div class="admin-content">
+            <section id="utilizadores" class="hidden">
+                <h1>Gestão de Utilizadores</h1>
+                <div class="user-management-buttons">
+                    <a href="#" id="deleteUser" class="btn-card btn-danger">Apagar utilizador</a>
+                    <a href="#" id="viewUserProfile" class="btn-card btn-info">Consultar perfil de utilizador</a>
+                    <a href="#" id="permanentlyDeleteUser" class="btn-card btn-warning">Excluir permanentemente um utilizador</a>
+                </div>
+            </section>
+
+            <section id="produtos" class="hidden">
+                <h1>Gestão de Produtos</h1>
+                <div class="product-management-buttons">
+                    <a href="#" id="adminEditarProd" class="btn-card btn-edit">Editar produtos de utilizadores</a>
+                    <button class="btn-card btn-consult">Consultar produtos alterados</button>
+                    <button class="btn-card btn-add">Adicionar nova categoria</button>
+                    <a href="#" id="adminFiltrarProd" class="btn-card btn-filter">Filtrar</a>
+                </div>
+            </section>
+
+            <section id="filtros" class="hidden">
+                <h1>Filtros</h1>
+                <div class="filter-options">
+                    <button class="btn-card btn-danger" id="filtrarPorPreco">Filtrar por Preço</button>
+                    <button class="btn-card btn-warning" id="filtrarPorCategoria">Filtrar por Categoria</button>
+                </div>
+            </section>
+
+            <section id="dashboard">
+                <h1>Dashboard</h1>
+            </section>
         </div>
-      </section>
+    </main>
 
-      <section id="produtos" class="hidden">
-        <h1>Gestão de Produtos</h1>
-        <div class="product-management-buttons">
-          <button class="btn-card btn-edit">Editar produtos de utilizadores</button>
-          <button class="btn-card btn-consult">Consultar produtos alterados</button>
-          <button class="btn-card btn-add">Adicionar nova categoria</button>
-          <button class="btn-card btn-filter">Filtrar</button>
-        </div>
-      </section>
+    <footer id="footer"></footer>
 
-      <section id="dashboard">
-        <h1>Dashboard</h1>
-      </section>
-    </div>
-  </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.admin-sidebar a');
+            const sections = document.querySelectorAll('.admin-content > section');
 
-  <footer id="footer"></footer>
+            links.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const links = document.querySelectorAll('.admin-sidebar a');
-      const sections = document.querySelectorAll('.admin-content > section');
+                    // Esconde todas as sections
+                    sections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
 
-      links.forEach(link => {
-        link.addEventListener('click', function (event) {
-          event.preventDefault();
+                    // Mostra a section correspondente ao link clicado
+                    let targetId = this.getAttribute('id');
+                    if (targetId === 'gestao-utilizadores') {
+                        targetId = 'utilizadores';
+                    } else if (targetId === 'gestao-produtos') {
+                        targetId = 'produtos';
+                    } else if (targetId === 'ver-dashboard') {
+                        targetId = 'dashboard';
+                    }
+                    document.getElementById(targetId).classList.remove('hidden');
+                });
+            });
 
-          // Esconde todas as sections
-          sections.forEach(section => {
-            section.classList.add('hidden');
-          });
+            // Evento de clique para o botão "Filtrar"
+            const filtrarButton = document.getElementById('adminFiltrarProd');
+            filtrarButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Impede o comportamento padrão do link
 
-          // Mostra a section correspondente ao link clicado
-          const targetId = this.getAttribute('id').replace('gestao-', '').replace('ver-', '');
-          document.getElementById(targetId).classList.remove('hidden');
+                // Esconde todas as sections
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                // Mostra a secção de filtros
+                document.getElementById('filtros').classList.remove('hidden');
+            });
         });
-      });
-    });
-  </script>
+    </script>
 </body>
 
 </html>
+

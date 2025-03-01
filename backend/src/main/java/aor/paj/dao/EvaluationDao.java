@@ -178,4 +178,31 @@ public class EvaluationDao {
         .setParameter("userId", userId)
         .getSingleResult();
   }
+
+  /**
+   * Check if a buyer already evaluated a seller for a specific product
+   */
+  public boolean existsByBuyerSellerAndProduct(Long buyerId, Long sellerId, Long productId) {
+    TypedQuery<Long> query = em.createQuery(
+        "SELECT COUNT(e) FROM EvaluationEntity e " +
+            "WHERE e.evaluator.id = :buyerId " +
+            "AND e.evaluated.id = :sellerId " +
+            "AND e.product.id = :productId",
+        Long.class);
+    query.setParameter("buyerId", buyerId);
+    query.setParameter("sellerId", sellerId);
+    query.setParameter("productId", productId);
+    return query.getSingleResult() > 0;
+  }
+
+  /**
+   * Find evaluations for purchases from a specific seller
+   */
+  public List<EvaluationEntity> findBySeller(Long sellerId) {
+    TypedQuery<EvaluationEntity> query = em.createQuery(
+        "SELECT e FROM EvaluationEntity e WHERE e.evaluated.id = :sellerId",
+        EvaluationEntity.class);
+    query.setParameter("sellerId", sellerId);
+    return query.getResultList();
+  }
 }
