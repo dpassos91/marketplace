@@ -4,6 +4,8 @@ import java.util.List;
 
 import aor.paj.bean.CategoryBean;
 import aor.paj.dto.CategoryDto;
+import aor.paj.exception.BadRequestException;
+import aor.paj.exception.ResourceNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -76,7 +78,7 @@ public class CategoryService {
     public Response getCategoryById(@PathParam("id") Long id) {
         CategoryDto category = categoryBean.getCategoryById(id);
         if (category == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new ResourceNotFoundException("Category with id " + id + " not found");
         }
         return Response.ok(category).build();
     }
@@ -92,7 +94,7 @@ public class CategoryService {
     public Response getCategoryByName(@PathParam("name") String name) {
         CategoryDto category = categoryBean.getCategoryByName(name);
         if (category == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new ResourceNotFoundException("Category with name '" + name + "' not found");
         }
         return Response.ok(category).build();
     }
@@ -119,13 +121,12 @@ public class CategoryService {
     @POST
     public Response createCategory(CategoryDto categoryDto) {
         if (categoryDto == null || categoryDto.getName() == null || categoryDto.getName().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Category name is required").build();
+            throw new BadRequestException("Category name is required");
         }
 
         CategoryDto createdCategory = categoryBean.addCategory(categoryDto);
         if (createdCategory == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Category with this name already exists").build();
+            throw new BadRequestException("Category with name '" + categoryDto.getName() + "' already exists");
         }
 
         return Response.status(Response.Status.CREATED).entity(createdCategory).build();
@@ -142,21 +143,19 @@ public class CategoryService {
     @Path("/{id}")
     public Response updateCategory(@PathParam("id") Long id, CategoryDto categoryDto) {
         if (categoryDto == null || categoryDto.getName() == null || categoryDto.getName().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Category name is required").build();
+            throw new BadRequestException("Category name is required");
         }
 
         // Ensure ID in path matches the one in DTO
         if (categoryDto.getId() == null) {
             categoryDto.setId(id);
         } else if (!categoryDto.getId().equals(id)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("ID in path doesn't match ID in category").build();
+            throw new BadRequestException("ID in path doesn't match ID in category");
         }
 
         CategoryDto updatedCategory = categoryBean.updateCategory(categoryDto);
         if (updatedCategory == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Category not found or name already in use")
-                    .build();
+            throw new ResourceNotFoundException("Category not found or name already in use");
         }
 
         return Response.ok(updatedCategory).build();
@@ -173,7 +172,7 @@ public class CategoryService {
     public Response deleteCategory(@PathParam("id") Long id) {
         boolean deleted = categoryBean.deleteCategory(id);
         if (!deleted) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new ResourceNotFoundException("Category with id " + id + " not found");
         }
         return Response.noContent().build();
     }

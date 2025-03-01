@@ -4,6 +4,8 @@ import java.util.List;
 
 import aor.paj.bean.ProductBean;
 import aor.paj.dto.ProductDto;
+import aor.paj.exception.BadRequestException;
+import aor.paj.exception.ResourceNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -100,7 +102,7 @@ public class ProductService {
     public Response getProductById(@PathParam("id") Long id) {
         ProductDto product = productBean.getProductById(id);
         if (product == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Product not found").build();
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
         return Response.ok(product).build();
     }
@@ -141,7 +143,7 @@ public class ProductService {
     @Path("/search")
     public Response getProductsByTitle(@QueryParam("title") String title) {
         if (title == null || title.trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Title parameter is required").build();
+            throw new BadRequestException("Title parameter is required");
         }
 
         List<ProductDto> products = productBean.getProductsByTitle(title);
@@ -183,7 +185,7 @@ public class ProductService {
     @POST
     public Response createProduct(ProductDto productDto) {
         if (productDto == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Product data is required").build();
+            throw new BadRequestException("Product data is required");
         }
 
         // Validate required fields
@@ -192,15 +194,13 @@ public class ProductService {
                 productDto.getPrice() == null || productDto.getPrice() <= 0 ||
                 productDto.getLocation() == null || productDto.getLocation().trim().isEmpty() ||
                 productDto.getCategoryId() == null || productDto.getSellerId() == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Missing required fields: title, description, price, location, category and seller")
-                    .build();
+            throw new BadRequestException(
+                    "Missing required fields: title, description, price, location, category and seller");
         }
 
         ProductDto createdProduct = productBean.addProduct(productDto);
         if (createdProduct == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Could not create product. Verify that the seller and category exist.").build();
+            throw new BadRequestException("Could not create product. Verify that the seller and category exist.");
         }
 
         return Response.status(Response.Status.CREATED).entity(createdProduct).build();
@@ -217,20 +217,19 @@ public class ProductService {
     @Path("/{id}")
     public Response updateProduct(@PathParam("id") Long id, ProductDto productDto) {
         if (productDto == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Product data is required").build();
+            throw new BadRequestException("Product data is required");
         }
 
         // Ensure ID in path matches the one in DTO
         if (productDto.getId() == null) {
             productDto.setId(id);
         } else if (!productDto.getId().equals(id)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("ID in path doesn't match ID in product").build();
+            throw new BadRequestException("ID in path doesn't match ID in product");
         }
 
         ProductDto updatedProduct = productBean.updateProduct(productDto);
         if (updatedProduct == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Product not found").build();
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
 
         return Response.ok(updatedProduct).build();
@@ -250,7 +249,7 @@ public class ProductService {
             @PathParam("stateId") int stateId) {
         ProductDto updatedProduct = productBean.updateProductStatus(id, stateId);
         if (updatedProduct == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Product not found").build();
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
 
         return Response.ok(updatedProduct).build();
@@ -270,9 +269,8 @@ public class ProductService {
             @PathParam("buyerId") Long buyerId) {
         ProductDto updatedProduct = productBean.markProductAsPurchased(id, buyerId);
         if (updatedProduct == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Cannot complete purchase. Verify that the product is available and the buyer is not the seller.")
-                    .build();
+            throw new BadRequestException(
+                    "Cannot complete purchase. Verify that the product is available and the buyer is not the seller.");
         }
 
         return Response.ok(updatedProduct).build();
@@ -289,7 +287,7 @@ public class ProductService {
     public Response deleteProduct(@PathParam("id") Long id) {
         boolean deleted = productBean.deleteProduct(id);
         if (!deleted) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
         return Response.noContent().build();
     }

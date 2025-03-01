@@ -5,6 +5,8 @@ import java.util.List;
 import aor.paj.bean.EvaluationBean;
 import aor.paj.dto.EvaluationDto;
 import aor.paj.dto.ProductDto;
+import aor.paj.exception.BadRequestException;
+import aor.paj.exception.ResourceNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -37,7 +39,7 @@ public class EvaluationService {
   @Path("/eligible/{userId}")
   public Response getEligibleProductsToEvaluate(@PathParam("userId") Long userId) {
     if (userId == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("User ID is required").build();
+      throw new BadRequestException("User ID is required");
     }
 
     List<ProductDto> eligibleProducts = evaluationBean.getProductsEligibleForEvaluation(userId);
@@ -93,12 +95,12 @@ public class EvaluationService {
   @Path("/{id}")
   public Response getEvaluationById(@PathParam("id") Long id) {
     if (id == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluation ID is required").build();
+      throw new BadRequestException("Evaluation ID is required");
     }
 
     EvaluationDto evaluation = evaluationBean.getEvaluationById(id);
     if (evaluation == null) {
-      return Response.status(Response.Status.NOT_FOUND).build();
+      throw new ResourceNotFoundException("Evaluation with id " + id + " not found");
     }
     return Response.ok(evaluation).build();
   }
@@ -113,7 +115,7 @@ public class EvaluationService {
   @Path("/evaluator/{evaluatorId}")
   public Response getEvaluationsByEvaluator(@PathParam("evaluatorId") Long evaluatorId) {
     if (evaluatorId == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluator ID is required").build();
+      throw new BadRequestException("Evaluator ID is required");
     }
 
     List<EvaluationDto> evaluations = evaluationBean.getEvaluationsByEvaluator(evaluatorId);
@@ -135,7 +137,7 @@ public class EvaluationService {
       @QueryParam("page") @DefaultValue("0") int page,
       @QueryParam("size") @DefaultValue("10") int size) {
     if (evaluatorId == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluator ID is required").build();
+      throw new BadRequestException("Evaluator ID is required");
     }
 
     List<EvaluationDto> evaluations = evaluationBean.getEvaluationsByEvaluatorPaginated(evaluatorId, page, size);
@@ -152,7 +154,7 @@ public class EvaluationService {
   @Path("/evaluated/{evaluatedId}")
   public Response getEvaluationsByEvaluated(@PathParam("evaluatedId") Long evaluatedId) {
     if (evaluatedId == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluated ID is required").build();
+      throw new BadRequestException("Evaluated ID is required");
     }
 
     List<EvaluationDto> evaluations = evaluationBean.getEvaluationsByEvaluated(evaluatedId);
@@ -174,7 +176,7 @@ public class EvaluationService {
       @QueryParam("page") @DefaultValue("0") int page,
       @QueryParam("size") @DefaultValue("10") int size) {
     if (evaluatedId == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluated ID is required").build();
+      throw new BadRequestException("Evaluated ID is required");
     }
 
     List<EvaluationDto> evaluations = evaluationBean.getEvaluationsByEvaluatedPaginated(evaluatedId, page, size);
@@ -191,7 +193,7 @@ public class EvaluationService {
   @Path("/evaluated/{evaluatedId}/count")
   public Response getEvaluationCountByEvaluated(@PathParam("evaluatedId") Long evaluatedId) {
     if (evaluatedId == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluated ID is required").build();
+      throw new BadRequestException("Evaluated ID is required");
     }
 
     Long count = evaluationBean.getEvaluationCountByEvaluated(evaluatedId);
@@ -208,7 +210,7 @@ public class EvaluationService {
   @Path("/evaluated/{evaluatedId}/average")
   public Response getAverageRatingForUser(@PathParam("evaluatedId") Long evaluatedId) {
     if (evaluatedId == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluated ID is required").build();
+      throw new BadRequestException("Evaluated ID is required");
     }
 
     Double averageRating = evaluationBean.getAverageRatingForUser(evaluatedId);
@@ -227,7 +229,7 @@ public class EvaluationService {
   @POST
   public Response createEvaluation(EvaluationDto evaluationDto) {
     if (evaluationDto == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluation data is required").build();
+      throw new BadRequestException("Evaluation data is required");
     }
 
     // Input validation
@@ -235,21 +237,18 @@ public class EvaluationService {
         evaluationDto.getEvaluatedId() == null ||
         evaluationDto.getRating() == null ||
         evaluationDto.getProductId() == null) {
-      return Response.status(Response.Status.BAD_REQUEST)
-          .entity("Missing required fields: evaluator, evaluated, rating, and product").build();
+      throw new BadRequestException("Missing required fields: evaluator, evaluated, rating, and product");
     }
 
     // Validate rating range
     if (evaluationDto.getRating() < 1 || evaluationDto.getRating() > 5) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Rating must be between 1 and 5").build();
+      throw new BadRequestException("Rating must be between 1 and 5");
     }
 
     EvaluationDto savedEvaluation = evaluationBean.addEvaluation(evaluationDto);
     if (savedEvaluation == null) {
-      return Response.status(Response.Status.BAD_REQUEST)
-          .entity(
-              "Cannot create evaluation. Verify that the product was purchased by this user and has not been evaluated yet.")
-          .build();
+      throw new BadRequestException(
+          "Cannot create evaluation. Verify that the product was purchased by this user and has not been evaluated yet.");
     }
     return Response.status(Response.Status.CREATED).entity(savedEvaluation).build();
   }
@@ -265,26 +264,24 @@ public class EvaluationService {
   @Path("/{id}")
   public Response updateEvaluation(@PathParam("id") Long id, EvaluationDto evaluationDto) {
     if (id == null || evaluationDto == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluation ID and data are required").build();
+      throw new BadRequestException("Evaluation ID and data are required");
     }
 
     // Ensure ID in path matches the one in DTO
     if (evaluationDto.getId() == null) {
       evaluationDto.setId(id);
     } else if (!id.equals(evaluationDto.getId())) {
-      return Response.status(Response.Status.BAD_REQUEST)
-          .entity("ID in path doesn't match ID in evaluation").build();
+      throw new BadRequestException("ID in path doesn't match ID in evaluation");
     }
 
     // Validate rating range if provided
     if (evaluationDto.getRating() != null && (evaluationDto.getRating() < 1 || evaluationDto.getRating() > 5)) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Rating must be between 1 and 5").build();
+      throw new BadRequestException("Rating must be between 1 and 5");
     }
 
     EvaluationDto updatedEvaluation = evaluationBean.updateEvaluation(evaluationDto);
     if (updatedEvaluation == null) {
-      return Response.status(Response.Status.NOT_FOUND)
-          .entity("Evaluation not found or you don't have permission to update it").build();
+      throw new ResourceNotFoundException("Evaluation not found or you don't have permission to update it");
     }
     return Response.ok(updatedEvaluation).build();
   }
@@ -299,12 +296,12 @@ public class EvaluationService {
   @Path("/{id}")
   public Response deleteEvaluation(@PathParam("id") Long id) {
     if (id == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Evaluation ID is required").build();
+      throw new BadRequestException("Evaluation ID is required");
     }
 
     boolean deleted = evaluationBean.deleteEvaluation(id);
     if (!deleted) {
-      return Response.status(Response.Status.NOT_FOUND).build();
+      throw new ResourceNotFoundException("Evaluation with id " + id + " not found");
     }
     return Response.noContent().build();
   }
