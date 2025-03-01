@@ -236,6 +236,7 @@ public class UserBean {
         entity.setLastName(userDto.getLastName());
         entity.setEmail(userDto.getEmail());
         entity.setPhone(userDto.getPhone());
+        entity.SetPicture(userDto.getPicture());
 
         return entity;
     }
@@ -252,6 +253,8 @@ public class UserBean {
         dto.setLastName(userEntity.getLastName());
         dto.setEmail(userEntity.getEmail());
         dto.setPhone(userEntity.getPhone());
+        dto.setPicture(userEntity.getPicture());
+        dto.setAdmin(userEntity.isAdmin());
 
         return dto;
     }
