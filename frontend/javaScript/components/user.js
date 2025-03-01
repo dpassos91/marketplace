@@ -10,23 +10,20 @@ export async function submitLoginForm() {
 
   try {
     const result = await userAPI.loginUser(username, password);
-    alert('Login bem sucedido! Bem- vindo/a, ' + result.nome);
+    alert('Login bem sucedido! Bem- vindo/a, ' + result.firstName);
     console.log('login successful', result);
 
-    const userProducts = await productComponent.getProductsByIds(
-      result.produtos
-    );
     sessionStorage.setItem(
       'user',
       JSON.stringify({
         username: result.username,
-        password: result.password,
-        nome: result.nome,
+        firstName: result.firstName,
+        lastName: result.lastName,
         email: result.email,
-        telefone: result.telefone,
-        localizacao: result.localizacao,
-        imagem: result.imagem,
-        produtos: userProducts,
+        phone: result.phone,
+        picture: result.picture,
+        token: result.token,
+        isAdmin: result.isAdmin,
       })
     );
     window.location.href = 'index.html';
@@ -150,24 +147,27 @@ export async function addNewUser() {
         }
 
         const newUser = {
-          nome: document.getElementById('nome').value,
+          firstName: document.getElementById('primeiro nome').value,
+          lastName: document.getElementById('ultimo nome').value,
           username: document.getElementById('username').value,
           email: document.getElementById('email').value,
           password: document.getElementById('password').value,
-          telefone: document.getElementById('telefone').value,
-          imagem: document.getElementById('fotografia').value,
+          phone: document.getElementById('telefone').value,
+          picture: document.getElementById('fotografia').value,
         };
+
+        console.log(newUser);
 
         try {
           await userAPI.registerUser(newUser);
-          alert('Utilizador registado! Bem-vindo/a, ' + newUser.nome);
+          alert('Utilizador registado! Bem-vindo/a, ' + newUser.firstName);
           window.location.href = 'pagina-login.html';
         } catch (error) {
-          alert('Erro ao registar utilizador. Tente novamente.');
+          alert('2º Erro ao registar utilizador. Tente novamente.');
           console.error(error);
         }
       } else {
-        alert('Erro ao registar utilizador. Tente novamente.');
+        alert('1º Erro ao registar utilizador. Tente novamente.');
         return;
       }
     });

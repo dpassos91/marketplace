@@ -22,14 +22,6 @@ public class UserBean {
     @Inject
     private UserDao userDao;
 
-    private Map<String, UserDto> users = new HashMap<>();
-    // private static final String USERS_FILE = "../database/users.json";
-
-    @PostConstruct
-    public void init() {
-        // loadUsersFromFile();
-    }
-
     public UserDto registerUser(UserDto userDto) {
         if (!isValidUsername(userDto.getUsername())) {
             throw new IllegalArgumentException("Username already in use");
