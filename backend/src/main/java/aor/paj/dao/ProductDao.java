@@ -3,6 +3,7 @@ package aor.paj.dao;
 import java.util.List;
 
 import aor.paj.entity.ProductEntity;
+import aor.paj.util.ProductStateId;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -140,8 +141,15 @@ public class ProductDao {
      * @return a list of products with the specified status
      */
     public List<ProductEntity> findByStatus(String status) {
-        return em.createNamedQuery("Product.findByStatus", ProductEntity.class)
-                .setParameter("status", status)
+        // Convert status description to stateId
+        ProductStateId stateEnum = ProductStateId.fromDescription(status);
+        if (stateEnum == null) {
+            return List.of(); // Return empty list if invalid status
+        }
+        int stateId = stateEnum.getStateId();
+
+        return em.createQuery("SELECT p FROM ProductEntity p WHERE p.stateId = :stateId", ProductEntity.class)
+                .setParameter("stateId", stateId)
                 .getResultList();
     }
 
@@ -259,9 +267,23 @@ public class ProductDao {
      * @return a list of products purchased by the specified user
      */
     public List<ProductEntity> findPurchasedByUser(Long userId) {
-        return em.createNamedQuery("Product.findByBuyer", ProductEntity.class)
+        return em.createQuery(
+                "SELECT p FROM ProductEntity p WHERE p.buyer.id = :userId AND p.stateId = :stateId",
+                ProductEntity.class)
                 .setParameter("userId", userId)
-                .setParameter("status", "Comprado")
+                .setParameter("stateId", ProductStateId.COMPRADO.getStateId())
+                .getResultList();
+    }
+
+    /**
+     * Gets products by stateId
+     * 
+     * @param stateId the stateId to search for
+     * @return a list of products with the specified stateId
+     */
+    public List<ProductEntity> findByStateId(int stateId) {
+        return em.createQuery("SELECT p FROM ProductEntity p WHERE p.stateId = :stateId", ProductEntity.class)
+                .setParameter("stateId", stateId)
                 .getResultList();
     }
 }

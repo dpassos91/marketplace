@@ -3,6 +3,7 @@ package aor.paj.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import aor.paj.util.ProductStateId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,11 +22,11 @@ import jakarta.persistence.Table;
     @NamedQuery(name = "Product.findById", query = "SELECT p FROM ProductEntity p WHERE p.id = :id"),
     @NamedQuery(name = "Product.findByTitle", query = "SELECT p FROM ProductEntity p WHERE p.title = :title"),
     @NamedQuery(name = "Product.findByLocation", query = "SELECT p FROM ProductEntity p WHERE p.location = :location"),
-    @NamedQuery(name = "Product.findByStatus", query = "SELECT p FROM ProductEntity p WHERE p.status = :status"),
+    @NamedQuery(name = "Product.findByStateId", query = "SELECT p FROM ProductEntity p WHERE p.stateId = :stateId"),
     @NamedQuery(name = "Product.findByActive", query = "SELECT p FROM ProductEntity p WHERE p.active = :active"),
     @NamedQuery(name = "Product.findByCategory", query = "SELECT p FROM ProductEntity p WHERE p.category.id = :categoryId"),
     @NamedQuery(name = "Product.findByUser", query = "SELECT p FROM ProductEntity p WHERE p.seller.id = :userId"),
-    @NamedQuery(name = "Product.findByBuyer", query = "SELECT p FROM ProductEntity p WHERE p.buyer.id = :userId AND p.status = :status")
+    @NamedQuery(name = "Product.findByBuyer", query = "SELECT p FROM ProductEntity p WHERE p.buyer.id = :userId AND p.stateId = :stateId")
 })
 public class ProductEntity implements Serializable {
 
@@ -48,8 +49,8 @@ public class ProductEntity implements Serializable {
   @Column(name = "product_location", nullable = false, length = 512)
   private String location;
 
-  @Column(name = "product_status", nullable = false, length = 512)
-  private String status;
+  @Column(name = "status")
+  private Integer stateId;
 
   @Column(name = "product_active", nullable = false)
   private boolean active;
@@ -70,20 +71,40 @@ public class ProductEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "buyer_id")
-  private UserEntity buyer; // Will be null until product is sold
+  private UserEntity buyer;
 
   // Constructors
   public ProductEntity() {
   }
 
   public ProductEntity(String title, String description, Double price, String location,
-      String status, boolean active, LocalDate date, CategoryEntity category,
+      Integer stateId, boolean active, LocalDate date, CategoryEntity category,
       UserEntity seller) {
     this.title = title;
     this.description = description;
     this.price = price;
     this.location = location;
-    this.status = status;
+    this.stateId = stateId;
+    this.active = active;
+    this.date = date;
+    this.category = category;
+    this.seller = seller;
+  }
+
+  // Alternate constructor that takes a status string
+  public ProductEntity(String title, String description, Double price, String location,
+      String statusDescription, boolean active, LocalDate date, CategoryEntity category,
+      UserEntity seller) {
+    this.title = title;
+    this.description = description;
+    this.price = price;
+    this.location = location;
+    if (statusDescription != null) {
+      ProductStateId state = ProductStateId.fromDescription(statusDescription);
+      if (state != null) {
+        this.stateId = state.getStateId();
+      }
+    }
     this.active = active;
     this.date = date;
     this.category = category;
@@ -131,12 +152,29 @@ public class ProductEntity implements Serializable {
     this.location = location;
   }
 
-  public String getStatus() {
-    return status;
+  public Integer getStateId() {
+    return stateId;
   }
 
-  public void setStatus(String status) {
-    this.status = status;
+  public void setStateId(Integer stateId) {
+    this.stateId = stateId;
+  }
+
+  public String getStatus() {
+    return stateId != null ? ProductStateId.fromStateId(stateId).getDescription() : null;
+  }
+
+  public void setStatus(String statusDescription) {
+    if (statusDescription != null) {
+      ProductStateId state = ProductStateId.fromDescription(statusDescription);
+      if (state != null) {
+        this.stateId = state.getStateId();
+      }
+    }
+  }
+
+  public void setStateId(ProductStateId state) {
+    this.stateId = state != null ? state.getStateId() : null;
   }
 
   public boolean isActive() {
@@ -210,7 +248,7 @@ public class ProductEntity implements Serializable {
         "id=" + id +
         ", title='" + title + '\'' +
         ", price=" + price +
-        ", status='" + status + '\'' +
+        ", status='" + getStatus() + '\'' +
         ", active=" + active +
         '}';
   }

@@ -55,7 +55,7 @@ public class ProductBean {
         productEntity.setCategory(category);
         productEntity.setDate(LocalDate.now());
         productEntity.setActive(true);
-        productEntity.setStatus(ProductStateId.DISPONIVEL.getDescription());
+        productEntity.setStateId(ProductStateId.DISPONIVEL.getStateId());
 
         // Save product to database
         ProductEntity savedProduct = productDao.create(productEntity);
@@ -242,7 +242,7 @@ public class ProductBean {
         }
 
         ProductStateId state = ProductStateId.fromStateId(stateId);
-        product.setStatus(state.getDescription());
+        product.setStateId(state.getStateId());
         product.setEditDate(LocalDate.now());
 
         ProductEntity updatedProduct = productDao.update(product);
@@ -265,8 +265,9 @@ public class ProductBean {
         }
 
         // Verify product is available for purchase
-        if (!product.getStatus().equals(ProductStateId.DISPONIVEL.getDescription()) &&
-                !product.getStatus().equals(ProductStateId.RESERVADO.getDescription())) {
+        int currentStateId = product.getStateId();
+        if (currentStateId != ProductStateId.DISPONIVEL.getStateId() &&
+                currentStateId != ProductStateId.RESERVADO.getStateId()) {
             return null;
         }
 
@@ -276,7 +277,7 @@ public class ProductBean {
         }
 
         // Update product status to purchased
-        product.setStatus(ProductStateId.COMPRADO.getDescription());
+        product.setStateId(ProductStateId.COMPRADO.getStateId());
         product.setBuyer(buyer);
         product.setEditDate(LocalDate.now());
 

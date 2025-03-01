@@ -62,7 +62,7 @@ public class EvaluationBean {
         if (!product.getSeller().getId().equals(seller.getId()) ||
                 product.getBuyer() == null ||
                 !product.getBuyer().getId().equals(buyer.getId()) ||
-                !product.getStatus().equals(ProductStateId.COMPRADO.getDescription())) {
+                product.getStateId() != ProductStateId.COMPRADO.getStateId()) {
             return null; // Not a valid purchase
         }
 
