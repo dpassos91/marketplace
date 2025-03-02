@@ -156,6 +156,16 @@ public class UserBean {
         return false;
     }
 
+    public UserDto getUserByUsername(String username) {
+        UserEntity userEntity = userDao.findByUsername(username);
+
+        // TODO: faltam os logs
+        if (userEntity == null) {
+            throw new EntityNotFoundException("User with username " + username + " not found!");
+        }
+        return toDto(userEntity);
+    }
+
     public UserEntity toEntity(UserDto userDto) {
         if (userDto == null) {
             return null;
@@ -179,6 +189,7 @@ public class UserBean {
         }
 
         UserDto dto = new UserDto();
+        dto.setId(userEntity.getId());
         dto.setUsername(userEntity.getUsername());
         // A password não é devolvida por questões de segurança
         dto.setFirstName(userEntity.getFirstName());

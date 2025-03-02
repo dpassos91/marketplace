@@ -124,4 +124,15 @@ public class UserService {
         }
     }
 
+    @GET
+    @Path("/username/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserByUsername(@PathParam("username") String username) {
+        // TODO: falta colocar aqui os loggers
+
+        UserDto user = userBean.getUserByUsername(username);
+
+        return Response.ok(user).build();
+    }
+
 }
