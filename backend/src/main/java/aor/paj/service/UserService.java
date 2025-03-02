@@ -138,7 +138,7 @@ public class UserService {
     }
 
     @GET
-    @Path("all")
+    @Path("users/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
         List allUsers = userBean.getAllUsers();
