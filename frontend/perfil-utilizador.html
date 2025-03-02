@@ -45,12 +45,14 @@
           <h2>Página Pessoal</h2>
           <form id="perfil-form">
             <section class="nome-wrapper">
-              <label for="nome">Primeiro nome:</label>
-              <input type="text" id="firstName" name="firstName" value="" required readonly>
+              <label for="firstName">Primeiro nome:</label>
+              <input type="text" id="firstName" name="firstName" value="" required readonly title="Primeiro nome"
+                placeholder="Primeiro nome">
             </section>
             <section class="nome-wrapper">
-              <label for="nome">Último nome:</label>
-              <input type="text" id="lastName" name="lastName" value="" required readonly>
+              <label for="lastName">Último nome:</label>
+              <input type="text" id="lastName" name="lastName" value="" required readonly title="Último nome"
+                placeholder="Último nome">
             </section>
             <section class="username-wrapper">
               <label for="username">Username:</label>
@@ -65,16 +67,18 @@
               <input type="password" id="confirm-password" name="confirm-password" value="" required readonly>
             </section>
             <section class="telefone-wrapper">
-              <label for="telefone">Telefone:</label>
-              <input type="text" id="phone" name="phone" value="" required readonly>
+              <label for="phone">Telefone:</label>
+              <input type="text" id="phone" name="phone" value="" required readonly title="Telefone"
+                placeholder="Telefone">
             </section>
             <section class="email-wrapper">
               <label for="email">Email:</label>
               <input type="email" id="email" name="email" value="" required readonly>
             </section>
             <section class="img-link-wrapper">
-              <label for="profile-pic">Foto de Perfil: (Link)</label>
-              <input type="profile-pic" id="picture" name="picture" value="" required readonly>
+              <label for="picture">Foto de Perfil: (Link)</label>
+              <input type="profile-pic" id="picture" name="picture" value="" required readonly
+                title="Link para a foto de perfil" placeholder="Link para a foto de perfil">
             </section>
             <section class="buttons-wrapper">
               <button type="button" class="editar-pag-pessoal" id="toggle-readonly" title="Editar dados pessoais">Editar
@@ -93,19 +97,19 @@
         <h1>Os meus Produtos</h1>
         <section class="card-container"></section>
       </div>
-    </div>
-  </main>
-  <div class="container mt-5" id="evaluationsSection">
-    <div class="row">
-      <div class="col-12">
-        <h2>Seller Evaluations</h2>
-        <div id="evaluationsContainer" class="evaluations-container">
-          <!-- Evaluations will be loaded here -->
-          <div class="loading">Loading evaluations...</div>
+      <div class="container mt-5" id="evaluationsSection">
+        <div class="row">
+          <div class="col-12">
+            <h2>Avaliações / Reviews</h2>
+            <div id="evaluationsContainer" class="evaluations-container">
+              <!-- Evaluations will be loaded here -->
+              <div class="loading">A carregar avaliações...</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
   <footer id="footer"></footer>
 </body>
 
