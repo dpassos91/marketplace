@@ -123,13 +123,17 @@ public class UserBean {
     }
 
     public boolean deleteUser(Long id, String token) {
-        if (token == null || token.isEmpty()) return false;
+        if (token == null || token.isEmpty()) {
+            logger.warn("Invalid token provided for delete attempt for user with id: {}", id);
+            return false;
+        }
 
         UserEntity authenticatedUser = userDao.findByToken(token);
         if (authenticatedUser == null) return false;
 
         if (authenticatedUser.isAdmin()) return userDao.delete(id);
 
+        logger.warn("Non-admin user tried to delete user with id: {}", id);
         return false;
     }
 
