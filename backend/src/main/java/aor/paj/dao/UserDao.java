@@ -31,6 +31,8 @@ public class UserDao {
         return false;
     }
 
+
+
     public UserEntity findById(Long id){
         return entityManager.createNamedQuery("User.findById", UserEntity.class)
                 .setParameter("id", id)
