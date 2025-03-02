@@ -6,7 +6,6 @@ import java.util.List;
 
 import aor.paj.dao.UserDao;
 import aor.paj.dto.LoginRequestDto;
-import aor.paj.dto.LoginResponseDto;
 import aor.paj.dto.UserDto;
 import aor.paj.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -62,7 +61,7 @@ public class UserBean {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-    public LoginResponseDto logIn(LoginRequestDto user) {
+    public String logIn(LoginRequestDto user) {
         UserEntity userEntity = userDao.findByUsername(user.getUsername());
         if (userEntity != null) {
             if (userEntity.checkPassword(user.getPassword())) {
@@ -71,12 +70,8 @@ public class UserBean {
 
                 userDao.update(userEntity);
 
-                LoginResponseDto loginResponseDto = new LoginResponseDto();
-                loginResponseDto.setId(userEntity.getId());
-                loginResponseDto.setToken(token);
-
                 logger.info("Successful login for user: {}", user.getUsername());
-                return loginResponseDto;
+                return token;
             }
         }
         return null;
