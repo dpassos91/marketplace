@@ -152,7 +152,7 @@ public class EvaluationDao {
    */
   public Double calculateAverageRating(Long userId) {
     return em.createQuery(
-        "SELECT AVG(e.grade) FROM EvaluationEntity e WHERE e.evaluated.id = :userId", Double.class)
+        "SELECT AVG(e.rating) FROM EvaluationEntity e WHERE e.evaluated.id = :userId", Double.class)
         .setParameter("userId", userId)
         .getSingleResult();
   }

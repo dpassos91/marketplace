@@ -129,7 +129,7 @@ export async function addNewUser() {
       if (validateFormPassword() === true) {
         const username = document.getElementById('username').value;
         // Verificar se o username já existe
-        const usernameExists = await userAPI.checkUsernameExists(username);
+        const usernameExists = await userAPI.checkUsername(username);
         if (usernameExists) {
           const usernameInput = document.getElementById('username');
           usernameInput.setCustomValidity(
