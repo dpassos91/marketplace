@@ -76,6 +76,7 @@ public class UserService {
 
         UserDto user = userBean.getUserById(id);
         if (user != null) {
+            logger.info("Successful view of user with id: {}", id);
             return Response.ok(user).build();
         }
         logger.warn("Failed view attempt of user with id: {}", id);
@@ -87,15 +88,21 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("id") Long id, @HeaderParam("token") String token, UserDto userDto) {
+        logger.info("Update attempt of user with id: {}", id);
+
         try {
             if (!userBean.isAuthorized(id, token)) {
+                logger.warn("Unauthorized attempt of updating user with id: {}", id);
                 return Response.status(Response.Status.FORBIDDEN)
                         .entity("You're not allowed to update this user.")
                         .build();
             }
             UserDto user = userBean.updateUser(id, userDto);
+
+            logger.info("Successful update of user with id: {}", id);
             return Response.ok(user).build();
         } catch (EntityNotFoundException exception) {
+            logger.error("User with id: {} not found!", id);
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(exception.getMessage())
                     .build();
