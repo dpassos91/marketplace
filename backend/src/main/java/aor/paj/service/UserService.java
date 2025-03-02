@@ -19,6 +19,8 @@ import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 @Path("/users")
 public class UserService {
 
@@ -135,4 +137,11 @@ public class UserService {
         return Response.ok(user).build();
     }
 
+    @GET
+    @Path("all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllUsers() {
+        List allUsers = userBean.getAllUsers();
+        return Response.ok(allUsers).build();
+    }
 }

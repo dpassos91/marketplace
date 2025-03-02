@@ -166,6 +166,10 @@ public class UserBean {
         return toDto(userEntity);
     }
 
+    public List getAllUsers() {
+        return userDao.findAll();
+    }
+
     public UserEntity toEntity(UserDto userDto) {
         if (userDto == null) {
             return null;
