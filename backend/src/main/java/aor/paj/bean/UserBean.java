@@ -99,6 +99,7 @@ public class UserBean {
         UserEntity userEntity = userDao.findById(id);
 
         if (userEntity == null) {
+            logger.warn("User with id: {} not found during update attempt", id);
             throw new EntityNotFoundException("User with ID " + id + " not found!");
         }
         return toDto(userEntity);

@@ -58,13 +58,13 @@ public class UserService {
     @POST
     @Path("/logout")
     public Response logout(@HeaderParam("token") String token){
-        logger.info("Logout attempt by user: {}", token);
+        logger.info("Logout attempt with token: {}", token);
 
         if (userBean.logOut(token)) {
-            logger.info("Successful logout by user: {}", token);
+            logger.info("Successful logout with token: {}", token);
             return Response.status(200).entity("Successfully logged out!").build();
         }
-        logger.warn("Failed logout attempt by user: {}", token);
+        logger.warn("Failed logout attempt with token: {}", token);
         return Response.status(401).entity("Invalid Token!").build();
     }
 
@@ -75,12 +75,9 @@ public class UserService {
         logger.info("View attempt of user with id: {}", id);
 
         UserDto user = userBean.getUserById(id);
-        if (user != null) {
-            logger.info("Successful view of user with id: {}", id);
-            return Response.ok(user).build();
-        }
-        logger.warn("Failed view attempt of user with id: {}", id);
-        return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
+
+        logger.info("Successful view of user with id: {}", id);
+        return Response.ok(user).build();
     }
 
     @PUT
