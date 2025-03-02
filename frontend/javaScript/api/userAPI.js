@@ -115,12 +115,16 @@ export async function getUserById(userId) {
 }
 
 // Update user
-export async function updateUser(userId, userData) {
+export async function updateUser(token, userId, userData) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.update(userId),
       {
         method: 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+          "token": token  // O backend espera o token no cabeçalho "token"
+        },
         body: JSON.stringify(userData),
       }
     );

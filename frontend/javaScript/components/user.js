@@ -246,17 +246,32 @@ export async function updateExistentUser() {
     } else {
       confirmPasswordInput.setCustomValidity('');
       updatedUser = {
-        nome: document.getElementById('nome').value,
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
         username: loggedInUser.username, // Username não pode ser alterado
         email: document.getElementById('email').value,
-        telefone: document.getElementById('telefone').value,
-        imagem: document.getElementById('profile-pic').value,
+        phone: document.getElementById('phone').value,
+        picture: document.getElementById('picture').value,
         password: password,
       };
       console.log('As passwords foram validadas');
       console.log(updatedUser);
     }
   }
+
+  const userData = sessionStorage.getItem("user");
+  const user = JSON.parse(userData);
+
+  // TODO: log depuração
+  console.log("user: ", user);
+
+  const userId = user.id;
+    // TODO: log depuração
+  console.log("userId: ", userId);
+
+  const token = sessionStorage.getItem("authToken");
+      // TODO: log depuração
+      console.log("authToken: ", token);
 
   document
     .getElementById('perfil-form')
@@ -265,7 +280,7 @@ export async function updateExistentUser() {
 
       if (validateFormPassword() == true) {
         try {
-          const result = await userAPI.updateUser(updatedUser);
+          const result = await userAPI.updateUser(token, userId, updatedUser);
           if (result.produtos && result.produtos.length > 0) {
             const userProducts = await productComponent.getProductsByIds(
               result.produtos
