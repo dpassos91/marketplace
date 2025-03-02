@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class UserDto {
+    private long id;
     private String username;
     private String password;
     private String firstName;
@@ -20,8 +21,9 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String username, String password, String firstName, String lastName, String email,
+    public UserDto(long id, String username, String password, String firstName, String lastName, String email,
                    String phone, String picture) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -30,6 +32,15 @@ public class UserDto {
         this.phone = phone;
         this.picture = picture;
         this.isAdmin = false;
+    }
+
+    @XmlElement
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @XmlElement

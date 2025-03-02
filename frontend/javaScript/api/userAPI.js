@@ -93,7 +93,9 @@ export async function logoutUser() {
 
 // Get user by ID
 export async function getUserById(userId) {
+  console.log("chamou o método")
   try {
+    // TODO: vou para já ignorar o makeAuthenticatedRequest (tenho que estudar esta função)
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.byId(userId),
       {

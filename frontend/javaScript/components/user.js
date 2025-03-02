@@ -28,18 +28,55 @@ export async function submitLoginForm() {
 }
 
 export async function displayUser() {
-  const user = getCurrentUser();
+  // TODO: comentei a instrução anterior que ia buscar os detalhes à sessionStorage
+  // const user = getCurrentUser();
+
+  const userData = sessionStorage.getItem("user");
+  const user = JSON.parse(userData);
+
+  // TODO: log depuração
+  console.log("user: ", user);
+
+  const userId = user.id;
+    // TODO: log depuração
+  console.log("userId: ", userId);
+
+  const userDetails = await userAPI.getUserById(userId); // agora vai buscar os detalhes a esta função
+  // TODO: log depuração
+  console.log("userDetails: ", userDetails);
   if (!user) {
     document.getElementById('perfil-utilizador').innerHTML =
       '<p>Utilizador não encontrado</p>';
     return;
   }
-  document.getElementById('nome').value = user.nome;
-  document.getElementById('username').value = user.username;
-  document.getElementById('telefone').value = user.telefone;
-  document.getElementById('email').value = user.email;
-  document.getElementById('profile-pic').value = user.imagem;
-  document.querySelector('.imagem-perfil').src = user.imagem;
+
+  // TODO: logs de depuração:
+  console.log("First Name:", userDetails.firstName);
+console.log("Last Name:", userDetails.lastName);
+console.log("Username:", userDetails.username);
+console.log("Phone:", userDetails.phone);
+console.log("Email:", userDetails.email);
+console.log("Picture URL:", userDetails.picture);
+
+  // TODO: Verificar se os campos do formulário existem antes de tentar preencher
+  console.log('Verificando elementos do DOM:');
+  console.log('firstName:', document.getElementById('firstName'));
+  console.log('lastName:', document.getElementById('lastName'));
+  console.log('username:', document.getElementById('username'));
+  console.log('phone:', document.getElementById('phone'));
+  console.log('email:', document.getElementById('email'));
+  console.log('picture:', document.getElementById('picture'));
+  console.log('imagem-perfil:', document.querySelector('.imagem-perfil'));
+
+  document.getElementById('firstName').value = userDetails.firstName;
+  document.getElementById('lastName').value = userDetails.lastName;
+  document.getElementById('username').value = userDetails.username;
+  document.getElementById('phone').value = userDetails.phone;
+  document.getElementById('email').value = userDetails.email;
+  document.getElementById('picture').value = userDetails.picture;
+  document.querySelector('.imagem-perfil').src = userDetails.picture;
+
+  // TODO: o objeto user também vai trazer consigo a confirmação de se o user é Admin (usar isso para moldar a página consoante)
 
   const productsContainer = document.querySelector('.card-container');
   productsContainer.innerHTML = '';
