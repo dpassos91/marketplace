@@ -142,6 +142,8 @@ public class UserBean {
     }
 
     public boolean isAuthorized(Long userId, String token) {
+        logger.info("Authorization check for user with id: {} and token: {}", userId, token);
+
         if (token == null || token.isEmpty()) return false;
 
         UserEntity authenticatedUser = userDao.findByToken(token);
