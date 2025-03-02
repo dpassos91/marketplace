@@ -1,6 +1,7 @@
 package aor.paj.service;
 
 import aor.paj.dto.LoginRequestDto;
+import aor.paj.dto.LoginResponseDto;
 import aor.paj.dto.UserDto;
 import aor.paj.bean.UserBean;
 import jakarta.inject.Inject;
@@ -46,10 +47,10 @@ public class UserService {
     public Response logIn(LoginRequestDto user){
         logger.info("Login attempt by user: {}", user.getUsername());
 
-        String token = userBean.logIn(user);
-        if(token != null){
+        LoginResponseDto loginResponseDto = userBean.logIn(user);
+        if(loginResponseDto != null){
             logger.info("Successful login by user: {}", user.getUsername());
-            return Response.status(200).entity(token).build();
+            return Response.status(200).entity(loginResponseDto).build();
         }
         logger.warn("Failed login attempt by user: {}", user.getUsername());
         return Response.status(403).entity("Invalid Username or Password!").build();
