@@ -53,8 +53,8 @@ async function welcomeMessage() {
     logoutButton.classList.remove('hidden');
     loginButton.classList.add('hidden');
     profilePicture.classList.remove('hidden');
-    profilePicture.src = user.imagem;
-    welcomeMessage.innerHTML = `<a href="perfil-utilizador.html">Bem-vindo/a ${user.nome}</a>!`;
+    profilePicture.src = user.picture;
+    welcomeMessage.innerHTML = `<a href="perfil-utilizador.html">Bem-vindo/a ${user.firstName} ${user.lastName}</a>!`;
 
     logoutButton.addEventListener('click', () => {
       sessionStorage.clear();
@@ -75,6 +75,12 @@ async function addModalListeners() {
   const span = document.getElementsByClassName('close')[0];
   const cancel = document.getElementById('cancelar');
   const form = document.getElementById('form-novo-produto');
+
+  // Clear any existing onclick handlers
+  btn.onclick = null;
+  span.onclick = null;
+  cancel.onclick = null;
+  window.onclick = null;
 
   btn.onclick = function () {
     modal.style.display = 'block';
@@ -102,50 +108,85 @@ async function addModalListeners() {
 async function addNewProduct() {
   const loggedInUser = JSON.parse(sessionStorage.getItem('user'));
   const form = document.getElementById('form-novo-produto');
+  const modal = document.getElementById('modal');
 
-  form.addEventListener('submit', async function (event) {
+  // Remove any existing event listeners before adding a new one
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+
+  newForm.addEventListener('submit', async function (event) {
     event.preventDefault();
 
-    const titulo = document.getElementById('titulo').value;
-    const descricao = document.getElementById('descricao').value;
-    const categoria =
-      document.querySelector("select[name='categoria']").value || 'N/A';
-    const tamanho =
-      document.querySelector("select[name='tamanho']").value || 'N/A';
-    const preco = document.getElementById('preco').value;
-    const imagem = document.getElementById('imagem').value;
-    const localizacao = document.getElementById('localizacao').value;
-    const dataDePublicacao = new Date().toISOString().split('T')[0];
+    // Updated to match new IDs in newProductModal.html
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const categorySelect = document.getElementById('category');
+    const categoryId = parseInt(categorySelect.value);
+    const price = document.getElementById('price').value;
+    const imageUrl = document.getElementById('imageURL').value;
+    const location = document.getElementById('location').value;
+    const publicationDate = new Date().toISOString().split('T')[0];
 
-    const novoProduto = {
-      titulo: titulo,
-      descricao: descricao,
-      categoria: categoria,
-      tamanho: tamanho,
-      preco: parseFloat(preco).toFixed(2),
-      imagem: imagem,
-      local: localizacao,
-      dataDePublicacao: dataDePublicacao,
-      userAutor: loggedInUser.username,
+    // Create the product object according to your backend API expectations
+    const newProduct = {
+      title: title,
+      description: description,
+      categoryId: categoryId,
+      price: parseFloat(price),
+      imageUrl: imageUrl,
+      location: location,
+      publicationDate: publicationDate,
+      sellerId: loggedInUser.id,
+      active: true,
     };
 
     try {
-      // Use the productAPI to handle the request
-      const result = await productAPI.sendNewProductReq(novoProduto);
+      // Use the productAPI to create the product using the existing createProduct method
+      const result = await productAPI.createProduct(newProduct);
+
+      // Update user in session storage with the new product
       if (!loggedInUser.produtos) {
         loggedInUser.produtos = [];
       }
       loggedInUser.produtos.push(result);
       sessionStorage.setItem('user', JSON.stringify(loggedInUser));
-      const productIds = loggedInUser.produtos.map(product => product.id);
-      const updatedUser = { ...loggedInUser, produtos: productIds };
-      await userAPI.updateUser(updatedUser);
+
+      // Show success message
       alert('Produto criado com sucesso!');
+
+      // Close modal and reset form
       modal.style.display = 'none';
-      form.reset();
+      newForm.reset();
+
+      // Reload the page to reflect changes
       window.location.reload();
     } catch (error) {
       console.error('Erro ao enviar o produto:', error);
+      alert('Erro ao criar o produto. Por favor, tente novamente.');
     }
   });
+
+  // Load categories for the dropdown
+  try {
+    const categories = await categoryAPI.getAllCategories();
+    // Updated to match new ID in newProductModal.html
+    const categorySelect = document.getElementById('category');
+
+    // Clear existing options except the first one
+    while (categorySelect.options.length > 1) {
+      categorySelect.remove(1);
+    }
+
+    // Add new options
+    if (categories && categories.length > 0) {
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+      });
+    }
+  } catch (error) {
+    console.error('Erro ao carregar categorias:', error);
+  }
 }
