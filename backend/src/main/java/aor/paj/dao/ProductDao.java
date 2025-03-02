@@ -117,20 +117,24 @@ public class ProductDao {
      * @return a list of products matching the title
      */
     public List<ProductEntity> findByTitle(String title) {
+        if (title == null) {
+            return List.of(); // Return empty list for null input
+        }
+
         return em.createNamedQuery("Product.findByTitle", ProductEntity.class)
                 .setParameter("title", "%" + title + "%")
                 .getResultList();
     }
 
     /**
-     * Gets products by location
+     * Gets products by location (partial match)
      * 
      * @param location the location to search for
      * @return a list of products in the specified location
      */
     public List<ProductEntity> findByLocation(String location) {
         return em.createNamedQuery("Product.findByLocation", ProductEntity.class)
-                .setParameter("location", location)
+                .setParameter("location", "%" + location + "%")
                 .getResultList();
     }
 

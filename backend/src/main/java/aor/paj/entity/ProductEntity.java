@@ -20,8 +20,8 @@ import jakarta.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "Product.findAll", query = "SELECT p FROM ProductEntity p"),
     @NamedQuery(name = "Product.findById", query = "SELECT p FROM ProductEntity p WHERE p.id = :id"),
-    @NamedQuery(name = "Product.findByTitle", query = "SELECT p FROM ProductEntity p WHERE p.title = :title"),
-    @NamedQuery(name = "Product.findByLocation", query = "SELECT p FROM ProductEntity p WHERE p.location = :location"),
+    @NamedQuery(name = "Product.findByTitle", query = "SELECT p FROM ProductEntity p WHERE LOWER(p.title) LIKE LOWER(:title)"),
+    @NamedQuery(name = "Product.findByLocation", query = "SELECT p FROM ProductEntity p WHERE LOWER(p.location) LIKE LOWER(:location)"),
     @NamedQuery(name = "Product.findByStateId", query = "SELECT p FROM ProductEntity p WHERE p.stateId = :stateId"),
     @NamedQuery(name = "Product.findByActive", query = "SELECT p FROM ProductEntity p WHERE p.active = :active"),
     @NamedQuery(name = "Product.findByCategory", query = "SELECT p FROM ProductEntity p WHERE p.category.id = :categoryId"),
