@@ -280,7 +280,7 @@ public class EvaluationDaoTest {
     Long userId = 1L;
     Double expectedRating = 4.5;
 
-    when(em.createQuery("SELECT AVG(e.grade) FROM EvaluationEntity e WHERE e.evaluated.id = :userId", Double.class))
+    when(em.createQuery("SELECT AVG(e.rating) FROM EvaluationEntity e WHERE e.evaluated.id = :userId", Double.class))
         .thenReturn(doubleQuery);
     when(doubleQuery.setParameter("userId", userId)).thenReturn(doubleQuery);
     when(doubleQuery.getSingleResult()).thenReturn(expectedRating);
