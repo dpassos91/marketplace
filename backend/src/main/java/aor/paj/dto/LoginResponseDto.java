@@ -5,19 +5,19 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class LoginResponseDto {
-    private String id;
+    private Long id;
     private String token;
 
     public LoginResponseDto() {
     }
 
-    public LoginResponseDto(String id, String token) {
+    public LoginResponseDto(Long id, String token) {
         this.id = id;
         this.token = token;
     }
 
     @XmlElement
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -26,7 +26,7 @@ public class LoginResponseDto {
         return token;
     }
 
-    public void setId(String id) {}
+    public void setId(Long id) {this.id = id;}
 
-    public void setToken(String token) {}
+    public void setToken(String token) {this.token = token;}
 }
