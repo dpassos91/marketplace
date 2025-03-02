@@ -123,7 +123,6 @@ async function addNewProduct() {
     const price = document.getElementById('price').value;
     const imageUrl = document.getElementById('imageURL').value;
     const location = document.getElementById('location').value;
-    const publicationDate = new Date().toISOString().split('T')[0];
 
     // Create the product object according to your backend API expectations
     const newProduct = {
@@ -133,7 +132,6 @@ async function addNewProduct() {
       price: parseFloat(price),
       imageUrl: imageUrl,
       location: location,
-      publicationDate: publicationDate,
       sellerId: user.id,
       active: true,
     };

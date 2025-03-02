@@ -37,6 +37,9 @@ public class ProductDto implements Serializable {
     @XmlElement(name = "location")
     private String location;
 
+    @XmlElement(name = "imageUrl")
+    private String imageUrl;
+
     @XmlElement(name = "status")
     private String status;
 
@@ -80,13 +83,14 @@ public class ProductDto implements Serializable {
     }
 
     // Constructor with essential fields
-    public ProductDto(String title, String description, Double price, String location,
+    public ProductDto(String title, String description, Double price, String location, String imageUrl,
             Long categoryId, String categoryName, Long sellerId, String sellerUsername) {
         this();
         this.title = title;
         this.description = description;
         this.price = price;
         this.location = location;
+        this.imageUrl = imageUrl;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.sellerId = sellerId;
@@ -95,7 +99,16 @@ public class ProductDto implements Serializable {
         this.date = LocalDate.now().toString();
     }
 
-    // Getters and setters
+    // Getter and setter for imageUrl
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    // Existing getters and setters...
     public Long getId() {
         return id;
     }

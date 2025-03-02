@@ -198,6 +198,10 @@ public class ProductBean {
             existingProduct.setLocation(productDto.getLocation());
         }
 
+        if (productDto.getImageUrl() != null) {
+            existingProduct.setImageUrl(productDto.getImageUrl());
+        }
+
         if (productDto.getStatus() != null) {
             existingProduct.setStatus(productDto.getStatus());
         }
@@ -345,6 +349,7 @@ public class ProductBean {
         dto.setDescription(entity.getDescription());
         dto.setPrice(entity.getPrice());
         dto.setLocation(entity.getLocation());
+        dto.setImageUrl(entity.getImageUrl());
         dto.setStatus(entity.getStatus());
         dto.setActive(entity.isActive());
 
@@ -400,6 +405,7 @@ public class ProductBean {
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setLocation(dto.getLocation());
+        entity.setImageUrl(dto.getImageUrl()); // Add imageUrl field
         entity.setStatus(dto.getStatus());
         entity.setActive(dto.isActive());
 

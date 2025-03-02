@@ -49,6 +49,9 @@ public class ProductEntity implements Serializable {
   @Column(name = "product_location", nullable = false, length = 512)
   private String location;
 
+  @Column(name = "product_image_url", length = 1024)
+  private String imageUrl;
+
   @Column(name = "status")
   private Integer stateId;
 
@@ -79,7 +82,7 @@ public class ProductEntity implements Serializable {
 
   public ProductEntity(String title, String description, Double price, String location,
       Integer stateId, boolean active, LocalDate date, CategoryEntity category,
-      UserEntity seller) {
+      UserEntity seller, String imageUrl) {
     this.title = title;
     this.description = description;
     this.price = price;
@@ -89,12 +92,13 @@ public class ProductEntity implements Serializable {
     this.date = date;
     this.category = category;
     this.seller = seller;
+    this.imageUrl = imageUrl;
   }
 
   // Alternate constructor that takes a status string
   public ProductEntity(String title, String description, Double price, String location,
       String statusDescription, boolean active, LocalDate date, CategoryEntity category,
-      UserEntity seller) {
+      UserEntity seller, String imageUrl) {
     this.title = title;
     this.description = description;
     this.price = price;
@@ -109,9 +113,18 @@ public class ProductEntity implements Serializable {
     this.date = date;
     this.category = category;
     this.seller = seller;
+    this.imageUrl = imageUrl;
   }
 
-  // Getters and setters
+  // Getter and setter methods
+  public String getImageUrl() {
+    return imageUrl;
+  }
+
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
+
   public Long getId() {
     return id;
   }
