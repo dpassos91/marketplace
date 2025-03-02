@@ -7,7 +7,7 @@ import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 export async function getEvaluationsForSeller(sellerId) {
   try {
     const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.bySeller(sellerId),
+      API_ENDPOINTS.evaluations.byEvaluated(sellerId),
       {
         method: 'GET',
       }

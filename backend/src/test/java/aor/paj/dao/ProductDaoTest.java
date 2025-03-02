@@ -244,7 +244,7 @@ public class ProductDaoTest {
                 new ProductEntity());
 
         when(em.createNamedQuery("Product.findByLocation", ProductEntity.class)).thenReturn(typedQuery);
-        when(typedQuery.setParameter("location", location)).thenReturn(typedQuery);
+        when(typedQuery.setParameter("location", "%" + location + "%")).thenReturn(typedQuery);
         when(typedQuery.getResultList()).thenReturn(expectedProducts);
 
         // Act
@@ -252,7 +252,7 @@ public class ProductDaoTest {
 
         // Assert
         assertEquals(expectedProducts, result);
-        verify(typedQuery).setParameter("location", location);
+        verify(typedQuery).setParameter("location", "%" + location + "%");
     }
 
     @Test
