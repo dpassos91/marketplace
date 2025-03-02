@@ -34,6 +34,7 @@ public class UserService {
     public Response registerUser(UserDto userDto) {
         logger.info("Registration attempt by user: {}", userDto.getUsername());
         UserDto createdUser = userBean.registerUser(userDto);
+
         logger.info("User successfully registered: {}", createdUser.getUsername());
         return Response.ok(createdUser).build();
     }
@@ -50,16 +51,20 @@ public class UserService {
             logger.info("Successful login by user: {}", user.getUsername());
             return Response.status(200).entity(token).build();
         }
-            logger.warn("Failed login attempt by user: {}", user.getUsername());
-            return Response.status(403).entity("Invalid Username or Password!").build();
+        logger.warn("Failed login attempt by user: {}", user.getUsername());
+        return Response.status(403).entity("Invalid Username or Password!").build();
     }
 
     @POST
     @Path("/logout")
     public Response logout(@HeaderParam("token") String token){
+        logger.info("Logout attempt by user: {}", token);
+
         if (userBean.logOut(token)) {
+            logger.info("Successful logout by user: {}", token);
             return Response.status(200).entity("Successfully logged out!").build();
         }
+        logger.warn("Failed logout attempt by user: {}", token);
         return Response.status(401).entity("Invalid Token!").build();
     }
 
