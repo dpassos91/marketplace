@@ -93,9 +93,7 @@ export async function logoutUser() {
 
 // Get user by ID
 export async function getUserById(userId) {
-  console.log("chamou o método")
   try {
-    // TODO: vou para já ignorar o makeAuthenticatedRequest (tenho que estudar esta função)
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.byId(userId),
       {
@@ -115,16 +113,12 @@ export async function getUserById(userId) {
 }
 
 // Update user
-export async function updateUser(token, userId, userData) {
+export async function updateUser(userId, userData) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.update(userId),
       {
         method: 'PUT',
-        headers: {
-          "Content-Type": "application/json",
-          "token": token  // O backend espera o token no cabeçalho "token"
-        },
         body: JSON.stringify(userData),
       }
     );
@@ -207,5 +201,20 @@ export async function checkUsername(username) {
   } catch (error) {
     console.error('Error checking username:', error);
     return false;
+  }
+}
+
+// Get total number of users
+export async function getTotalUsers() {
+  try {
+    const response = await fetch(API_ENDPOINTS.users.all); // Assumindo que você tem um endpoint para obter o total de utilizadores
+    if (!response.ok) {
+      throw new Error(`Erro ao obter o total de utilizadores: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.total; // Assumindo que a resposta contém um campo 'total'
+  } catch (error) {
+    console.error('Erro ao obter o total de utilizadores:', error);
+    return 0;
   }
 }
