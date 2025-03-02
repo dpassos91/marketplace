@@ -2,28 +2,30 @@ package aor.paj.bean;
 
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import aor.paj.dao.UserDao;
 import aor.paj.dto.LoginRequestDto;
 import aor.paj.dto.UserDto;
 import aor.paj.entity.UserEntity;
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
 @ApplicationScoped
 public class UserBean {
+
+    private static final Logger logger = LogManager.getLogger(UserBean.class);
 
     @Inject
     private UserDao userDao;
 
     public UserDto registerUser(UserDto userDto) {
         if (!isValidUsername(userDto.getUsername())) {
+            logger.warn("Username already in use: {}", userDto.getUsername());
             throw new IllegalArgumentException("Username already in use");
         }
 
@@ -33,7 +35,14 @@ public class UserBean {
         userEntity.setActive(true);
         userEntity.setAdmin(false);
 
-        userEntity = userDao.create(userEntity);
+        try {
+            userEntity = userDao.create(userEntity);
+            logger.info("User successfully registered: {}", userDto.getUsername());
+        } catch (Exception exception) {
+            logger.error("Error during registration for user: {}", userDto.getUsername(), exception);
+            throw exception;
+        }
+
         return toDto(userEntity);
     }
 
