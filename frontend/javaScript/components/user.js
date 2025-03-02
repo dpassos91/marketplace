@@ -4,6 +4,7 @@ import * as userAPI from '../api/userAPI.js';
 import * as productAPI from '../api/productAPI.js';
 import * as productComponent from './product.js';
 import { logout, setCurrentUser, getCurrentUser } from '../utils/authUtils.js';
+import { loadSellerEvaluations } from '../components/evaluationComponent.js';
 
 export async function submitLoginForm() {
   const credentials = {
@@ -52,6 +53,7 @@ export async function displayUser() {
       productsContainer.appendChild(card);
     });
   }
+  loadSellerEvaluations(user.id, '#evaluationsContainer');
 }
 
 export async function toggleFormUserEdit() {

@@ -67,6 +67,7 @@ const API_ENDPOINTS = {
     create: `${API_BASE_URL}/evaluations`,
     update: id => `${API_BASE_URL}/evaluations/${id}`,
     delete: id => `${API_BASE_URL}/evaluations/${id}`,
+    hasEvaluated: `${API_BASE_URL}/evaluations/check`,
   },
 };
 

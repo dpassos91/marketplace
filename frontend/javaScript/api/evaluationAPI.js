@@ -1,57 +1,80 @@
 'use strict';
 
-import { API_ENDPOINTS, DEFAULT_OPTIONS } from '../config/apiConfig.js';
+import { API_ENDPOINTS } from '../config/apiConfig.js';
+import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 
 // Get all evaluations for a seller
-export async function getSellerEvaluations(sellerId) {
+export async function getEvaluationsForSeller(sellerId) {
   try {
-    const response = await fetch(API_ENDPOINTS.evaluations.bySeller(sellerId), {
-      method: 'GET',
-      headers: DEFAULT_OPTIONS.headers,
-    });
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.evaluations.bySeller(sellerId),
+      {
+        method: 'GET',
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(
-        `Error fetching seller evaluations: ${response.statusText}`
-      );
+      throw new Error(`Error fetching evaluations: ${response.statusText}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching seller evaluations:', error);
-    return [];
+    console.error('Error fetching evaluations:', error);
+    throw error;
+  }
+}
+
+// Get evaluation by ID
+export async function getEvaluationById(evaluationId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.evaluations.byId(evaluationId),
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error fetching evaluation: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching evaluation:', error);
+    throw error;
   }
 }
 
 // Add a new evaluation
-export async function addEvaluation(evaluation) {
+export async function addEvaluation(evaluationData) {
   try {
-    const response = await fetch(API_ENDPOINTS.evaluations.create, {
-      method: 'POST',
-      headers: DEFAULT_OPTIONS.headers,
-      body: JSON.stringify(evaluation),
-    });
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.evaluations.create,
+      {
+        method: 'POST',
+        body: JSON.stringify(evaluationData),
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(`Error adding evaluation: ${response.statusText}`);
+      throw new Error(`Error creating evaluation: ${response.statusText}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error adding evaluation:', error);
+    console.error('Error creating evaluation:', error);
     throw error;
   }
 }
 
 // Update an evaluation
-export async function updateEvaluation(evaluationId, updatedEvaluation) {
+export async function updateEvaluation(evaluationData) {
   try {
-    const response = await fetch(
-      API_ENDPOINTS.evaluations.update(evaluationId),
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.evaluations.update(evaluationData.id),
       {
         method: 'PUT',
-        headers: DEFAULT_OPTIONS.headers,
-        body: JSON.stringify(updatedEvaluation),
+        body: JSON.stringify(evaluationData),
       }
     );
 
@@ -69,11 +92,10 @@ export async function updateEvaluation(evaluationId, updatedEvaluation) {
 // Delete an evaluation
 export async function deleteEvaluation(evaluationId) {
   try {
-    const response = await fetch(
+    const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.delete(evaluationId),
       {
         method: 'DELETE',
-        headers: DEFAULT_OPTIONS.headers,
       }
     );
 
@@ -81,9 +103,32 @@ export async function deleteEvaluation(evaluationId) {
       throw new Error(`Error deleting evaluation: ${response.statusText}`);
     }
 
-    return true;
+    return await response.text();
   } catch (error) {
     console.error('Error deleting evaluation:', error);
     throw error;
+  }
+}
+
+// Check if a user has already evaluated a seller
+export async function hasUserEvaluatedSeller(sellerId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      `${API_ENDPOINTS.evaluations.hasEvaluated}?sellerId=${sellerId}`,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Error checking evaluation status: ${response.statusText}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error checking evaluation status:', error);
+    return false;
   }
 }
