@@ -148,13 +148,19 @@ public class EvaluationDao {
    * Calculates the average rating for a specific user
    * 
    * @param userId the id of the user
-   * @return the average rating for the user, or null if no ratings exist
+   * @return the average rating for the user, or 0.0 if no ratings exist
    */
   public Double calculateAverageRating(Long userId) {
-    return em.createQuery(
-        "SELECT AVG(e.rating) FROM EvaluationEntity e WHERE e.evaluated.id = :userId", Double.class)
-        .setParameter("userId", userId)
-        .getSingleResult();
+    try {
+      Double result = em.createQuery(
+          "SELECT AVG(e.rating) FROM EvaluationEntity e WHERE e.evaluated.id = :userId", Double.class)
+          .setParameter("userId", userId)
+          .getSingleResult();
+      return result != null ? result : 0.0; // Return 0.0 instead of null
+    } catch (Exception e) {
+      // Handle any exceptions that might occur
+      return 0.0;
+    }
   }
 
   /**
@@ -199,10 +205,15 @@ public class EvaluationDao {
    * Find evaluations for purchases from a specific seller
    */
   public List<EvaluationEntity> findBySeller(Long sellerId) {
-    TypedQuery<EvaluationEntity> query = em.createQuery(
-        "SELECT e FROM EvaluationEntity e WHERE e.evaluated.id = :sellerId",
-        EvaluationEntity.class);
-    query.setParameter("sellerId", sellerId);
-    return query.getResultList();
+    try {
+      TypedQuery<EvaluationEntity> query = em.createQuery(
+          "SELECT e FROM EvaluationEntity e WHERE e.evaluated.id = :sellerId",
+          EvaluationEntity.class);
+      query.setParameter("sellerId", sellerId);
+      return query.getResultList();
+    } catch (Exception e) {
+      // Return empty list on error
+      return List.of();
+    }
   }
 }

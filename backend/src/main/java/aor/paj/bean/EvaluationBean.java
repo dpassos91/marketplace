@@ -242,10 +242,11 @@ public class EvaluationBean {
      * Calculates the average rating for a specific user
      * 
      * @param userId The ID of the user
-     * @return The average rating or null if no evaluations exist
+     * @return The average rating or 0.0 if no evaluations exist
      */
     public Double getAverageRatingForUser(Long userId) {
-        return evaluationDao.calculateAverageRating(userId);
+        Double average = evaluationDao.calculateAverageRating(userId);
+        return average != null ? average : 0.0;
     }
 
     /**

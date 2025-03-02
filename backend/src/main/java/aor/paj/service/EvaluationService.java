@@ -204,7 +204,7 @@ public class EvaluationService {
    * Get average rating for a specific user
    * 
    * @param evaluatedId ID of the evaluated user
-   * @return Response with average rating or 404 if no ratings exist
+   * @return Response with average rating or 0.0 if no ratings exist
    */
   @GET
   @Path("/evaluated/{evaluatedId}/average")
@@ -214,10 +214,7 @@ public class EvaluationService {
     }
 
     Double averageRating = evaluationBean.getAverageRatingForUser(evaluatedId);
-    if (averageRating == null) {
-      return Response.ok(0.0).build(); // Return 0.0 if no ratings exist
-    }
-    return Response.ok(averageRating).build();
+    return Response.ok(averageRating != null ? averageRating : 0.0).build();
   }
 
   /**
