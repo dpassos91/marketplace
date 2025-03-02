@@ -70,6 +70,7 @@ public class UserBean {
 
                 userDao.update(userEntity);
 
+                logger.info("Successful login for user: {}", user.getUsername());
                 return token;
             }
         }
