@@ -45,6 +45,7 @@ const API_ENDPOINTS = {
     byId: id => `${API_BASE_URL}/users/${id}`,
     update: id => `${API_BASE_URL}/users/${id}`,
     delete: id => `${API_BASE_URL}/users/${id}`,
+    byUsername: username => `${API_BASE_URL}/users/username/${username}`,
   },
 
   // Category endpoints
