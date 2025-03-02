@@ -1,36 +1,33 @@
 'use strict';
 
-import * as userAPI from './api/userAPI.js';
 import * as productAPI from './api/productAPI.js';
+import * as categoryAPI from './api/categoryAPI.js';
 
 export async function loadCommonElements() {
-  fetch('common/header.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('header').innerHTML = data;
-    })
-    .then(() => {
-      welcomeMessage();
-    })
-    .then(() => new Promise(resolve => setTimeout(resolve, 1000)))
-    .then(() => {
-      addModalListeners();
-    })
-    .catch(error => console.error('Erro ao carregar o cabeçalho:', error));
-  // Wait for 1 second
-  fetch('common/newProductModal.html')
-    .then(response => response.text())
-    .then(data => {
-      document.body.insertAdjacentHTML('beforeend', data);
-    })
-    .catch(error => console.error('Erro ao carregar o modal:', error));
+  try {
+    // Load header
+    const headerResponse = await fetch('common/header.html');
+    const headerData = await headerResponse.text();
+    document.getElementById('header').innerHTML = headerData;
 
-  fetch('common/footer.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('footer').innerHTML = data;
-    })
-    .catch(error => console.error('Erro ao carregar o rodapé:', error));
+    // Setup welcome message
+    await welcomeMessage();
+
+    // Load modal
+    const modalResponse = await fetch('common/newProductModal.html');
+    const modalData = await modalResponse.text();
+    document.body.insertAdjacentHTML('beforeend', modalData);
+
+    // Add event listeners after both header and modal are loaded
+    addModalListeners();
+
+    // Load footer
+    const footerResponse = await fetch('common/footer.html');
+    const footerData = await footerResponse.text();
+    document.getElementById('footer').innerHTML = footerData;
+  } catch (error) {
+    console.error('Error loading common elements:', error);
+  }
 }
 
 async function welcomeMessage() {
@@ -73,14 +70,8 @@ async function addModalListeners() {
   const modal = document.getElementById('modal');
   const btn = document.getElementById('openModalBtn');
   const span = document.getElementsByClassName('close')[0];
-  const cancel = document.getElementById('cancelar');
+  const cancel = document.getElementById('newProductFormCancelBtn');
   const form = document.getElementById('form-novo-produto');
-
-  // Clear any existing onclick handlers
-  btn.onclick = null;
-  span.onclick = null;
-  cancel.onclick = null;
-  window.onclick = null;
 
   btn.onclick = function () {
     modal.style.display = 'block';
@@ -106,9 +97,16 @@ async function addModalListeners() {
 }
 
 async function addNewProduct() {
-  const loggedInUser = JSON.parse(sessionStorage.getItem('user'));
+  // Get the current user from session storage
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const form = document.getElementById('form-novo-produto');
   const modal = document.getElementById('modal');
+
+  if (!user || !user.id) {
+    alert('You must be logged in to add a product');
+    modal.style.display = 'none';
+    return;
+  }
 
   // Remove any existing event listeners before adding a new one
   const newForm = form.cloneNode(true);
@@ -117,7 +115,7 @@ async function addNewProduct() {
   newForm.addEventListener('submit', async function (event) {
     event.preventDefault();
 
-    // Updated to match new IDs in newProductModal.html
+    // Get form field values
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
     const categorySelect = document.getElementById('category');
@@ -136,23 +134,23 @@ async function addNewProduct() {
       imageUrl: imageUrl,
       location: location,
       publicationDate: publicationDate,
-      sellerId: loggedInUser.id,
+      sellerId: user.id,
       active: true,
     };
 
     try {
-      // Use the productAPI to create the product using the existing createProduct method
-      const result = await productAPI.createProduct(newProduct);
-
-      // Update user in session storage with the new product
-      if (!loggedInUser.produtos) {
-        loggedInUser.produtos = [];
+      // Disable the submit button to prevent multiple submissions
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
       }
-      loggedInUser.produtos.push(result);
-      sessionStorage.setItem('user', JSON.stringify(loggedInUser));
+
+      // Create the product using the API
+      await productAPI.createProduct(newProduct);
 
       // Show success message
-      alert('Produto criado com sucesso!');
+      alert('Product created successfully!');
 
       // Close modal and reset form
       modal.style.display = 'none';
@@ -161,15 +159,21 @@ async function addNewProduct() {
       // Reload the page to reflect changes
       window.location.reload();
     } catch (error) {
-      console.error('Erro ao enviar o produto:', error);
-      alert('Erro ao criar o produto. Por favor, tente novamente.');
+      console.error('Error creating product:', error);
+      alert('Error creating product. Please try again.');
+
+      // Re-enable the submit button on error
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+      }
     }
   });
 
   // Load categories for the dropdown
   try {
     const categories = await categoryAPI.getAllCategories();
-    // Updated to match new ID in newProductModal.html
     const categorySelect = document.getElementById('category');
 
     // Clear existing options except the first one
@@ -187,6 +191,6 @@ async function addNewProduct() {
       });
     }
   } catch (error) {
-    console.error('Erro ao carregar categorias:', error);
+    console.error('Error loading categories:', error);
   }
 }
