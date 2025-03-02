@@ -6,12 +6,13 @@ import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 // Get all products
 export async function getAllProducts() {
   try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.products.all,
-      {
-        method: 'GET',
-      }
-    );
+    const response = await fetch(API_ENDPOINTS.products.all, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -27,12 +28,13 @@ export async function getAllProducts() {
 // Get all active products
 export async function getAllActiveProducts() {
   try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.products.active,
-      {
-        method: 'GET',
-      }
-    );
+    const response = await fetch(API_ENDPOINTS.products.active, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -48,12 +50,13 @@ export async function getAllActiveProducts() {
 // Get paginated products
 export async function getProductsPaginated(page = 0, size = 10) {
   try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.products.paginated(page, size),
-      {
-        method: 'GET',
-      }
-    );
+    const response = await fetch(API_ENDPOINTS.products.paginated(page, size), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -69,12 +72,13 @@ export async function getProductsPaginated(page = 0, size = 10) {
 // Get product by ID
 export async function getProductById(productId) {
   try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.products.byId(productId),
-      {
-        method: 'GET',
-      }
-    );
+    const response = await fetch(API_ENDPOINTS.products.byId(productId), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`Error fetching product: ${response.statusText}`);
@@ -90,10 +94,14 @@ export async function getProductById(productId) {
 // Get products by category
 export async function getProductsByCategory(categoryId) {
   try {
-    const response = await makeAuthenticatedRequest(
+    const response = await fetch(
       API_ENDPOINTS.products.byCategory(categoryId),
       {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
       }
     );
 
