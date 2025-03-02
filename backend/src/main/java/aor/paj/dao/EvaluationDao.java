@@ -200,20 +200,4 @@ public class EvaluationDao {
     query.setParameter("productId", productId);
     return query.getSingleResult() > 0;
   }
-
-  /**
-   * Find evaluations for purchases from a specific seller
-   */
-  public List<EvaluationEntity> findBySeller(Long sellerId) {
-    try {
-      TypedQuery<EvaluationEntity> query = em.createQuery(
-          "SELECT e FROM EvaluationEntity e WHERE e.evaluated.id = :sellerId",
-          EvaluationEntity.class);
-      query.setParameter("sellerId", sellerId);
-      return query.getResultList();
-    } catch (Exception e) {
-      // Return empty list on error
-      return List.of();
-    }
-  }
 }

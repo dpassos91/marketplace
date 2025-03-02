@@ -376,25 +376,4 @@ public class EvaluationDaoTest {
     // Assert
     assertFalse(result);
   }
-
-  @Test
-  public void testFindBySeller() {
-    // Arrange
-    Long sellerId = 1L;
-    List<EvaluationEntity> expectedEvaluations = Arrays.asList(
-        new EvaluationEntity(),
-        new EvaluationEntity());
-
-    when(em.createQuery("SELECT e FROM EvaluationEntity e WHERE e.evaluated.id = :sellerId",
-        EvaluationEntity.class))
-        .thenReturn(typedQuery);
-    when(typedQuery.setParameter("sellerId", sellerId)).thenReturn(typedQuery);
-    when(typedQuery.getResultList()).thenReturn(expectedEvaluations);
-
-    // Act
-    List<EvaluationEntity> result = evaluationDao.findBySeller(sellerId);
-
-    // Assert
-    assertEquals(expectedEvaluations, result);
-  }
 }

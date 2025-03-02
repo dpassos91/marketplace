@@ -63,12 +63,22 @@ const API_ENDPOINTS = {
 
   // Evaluation endpoints
   evaluations: {
-    bySeller: sellerId => `${API_BASE_URL}/evaluations/seller/${sellerId}`,
     byId: id => `${API_BASE_URL}/evaluations/${id}`,
     create: `${API_BASE_URL}/evaluations`,
     update: id => `${API_BASE_URL}/evaluations/${id}`,
     delete: id => `${API_BASE_URL}/evaluations/${id}`,
-    hasEvaluated: `${API_BASE_URL}/evaluations/check`,
+    hasEvaluated: (buyerId, sellerId, productId) =>
+      `${API_BASE_URL}/evaluations/check?buyerId=${buyerId}&sellerId=${sellerId}&productId=${productId}`,
+    all: `${API_BASE_URL}/evaluations`,
+    byEvaluator: evaluatorId =>
+      `${API_BASE_URL}/evaluations/evaluator/${evaluatorId}`,
+    byEvaluated: evaluatedId =>
+      `${API_BASE_URL}/evaluations/evaluated/${evaluatedId}`,
+    averageRating: userId =>
+      `${API_BASE_URL}/evaluations/evaluated/${userId}/average`,
+    count: `${API_BASE_URL}/evaluations/count`,
+    countByEvaluated: userId =>
+      `${API_BASE_URL}/evaluations/evaluated/${userId}/count`,
   },
 };
 
