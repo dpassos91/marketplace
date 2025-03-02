@@ -158,6 +158,30 @@ export async function deleteUser(token, userId) {
   }
 }
 
+// Suspend user
+export async function suspendUser(token, userId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.users.suspend(userId),
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          "token": token,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error suspending user: ${response.statusText}`);
+    }
+
+  } catch (error) {
+    console.error('Error suspending user:', error);
+    throw error;
+  }
+}
+
 // Get user by username
 export async function getUserByUsername(username) {
   try {

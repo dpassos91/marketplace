@@ -319,14 +319,6 @@ export async function handleLogout() {
   }
 }
 
-export async function softDeleteUser() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const productId =  urlParams.get("id");
-
-  const token = sessionStorage.getItem('authToken');
-
-}
-
 export async function hardDeleteUser() {
   const urlParams = new URLSearchParams(window.location.search);
   const userId =  urlParams.get("id");
@@ -342,6 +334,30 @@ export async function hardDeleteUser() {
     await userAPI.deleteUser(token, userId);
 
     alert('User deleted with success!');
+
+    // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
+    window.location.reload();
+  } catch (error) {
+    alert('Error trying to delete user. Please try again!');
+    console.error(error);
+  }
+}
+
+export async function softDeleteUser() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId =  urlParams.get("id");
+
+  const token = sessionStorage.getItem('authToken');
+
+  if (!userId) {
+    alert('Invalid user ID!');
+    return;
+  }
+
+  try {
+    await userAPI.suspendUser(token, userId);
+
+    alert('User suspended with success!');
 
     // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
     window.location.reload();
