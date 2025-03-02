@@ -36,7 +36,6 @@ export async function displayAllProducts() {
   const products = await getAvailableProducts();
 
   if (!container) {
-    console.log('Não está a chegar ao html');
     return;
   }
   container.innerHTML = '';
