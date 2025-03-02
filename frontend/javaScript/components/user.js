@@ -3,6 +3,7 @@
 import * as userAPI from '../api/userAPI.js';
 import * as productAPI from '../api/productAPI.js';
 import * as productComponent from './product.js';
+import { logout, setCurrentUser, getCurrentUser } from '../utils/authUtils.js';
 
 export async function submitLoginForm() {
   const credentials = {
@@ -10,18 +11,14 @@ export async function submitLoginForm() {
     password: document.getElementById('password').value,
   };
 
-    // TODO: apagar logs quando estiver resolvido
-  console.log("entra na função submitLoginForm", credentials);
-  console.log("userAPI.loginUser:", userAPI.loginUser);
-
   try {
-    const result = await userAPI.loginUser(credentials);
+    const userData = await userAPI.loginUser(credentials);
 
-    alert('Login bem sucedido! Bem- vindo/a, ' + result.firstName);
-    console.log('login successful', result);
+    setCurrentUser(userData);
 
-    sessionStorage.setItem('userToken', result.token);
-    
+    alert('Login bem sucedido! Bem-vindo/a, ' + userData.firstName);
+    console.log('login successful', userData);
+
     window.location.href = 'index.html';
   } catch (error) {
     alert('Login falhou! Por favor verifique as suas credenciais.');
@@ -30,7 +27,7 @@ export async function submitLoginForm() {
 }
 
 export async function displayUser() {
-  const user = JSON.parse(sessionStorage.getItem('user')) || [];
+  const user = getCurrentUser();
   if (!user) {
     document.getElementById('perfil-utilizador').innerHTML =
       '<p>Utilizador não encontrado</p>';
@@ -189,7 +186,7 @@ export function validateFormPassword() {
 
 export async function updateExistentUser() {
   let updatedUser = {};
-  const loggedInUser = JSON.parse(sessionStorage.getItem('user'));
+  const loggedInUser = getCurrentUser();
   const passwordInput = document.getElementById('password');
   const confirmPasswordInput = document.getElementById('confirm-password');
 
@@ -239,7 +236,7 @@ export async function updateExistentUser() {
             result.produtos = [];
           }
           alert('Dados atualizados com sucesso!');
-          sessionStorage.setItem('user', JSON.stringify(result));
+          setCurrentUser(result);
           window.location.reload();
         } catch (error) {
           alert('Erro ao atualizar os dados. Tente novamente.');
@@ -247,4 +244,14 @@ export async function updateExistentUser() {
         }
       }
     });
+}
+
+export async function handleLogout() {
+  try {
+    await userAPI.logoutUser();
+    logout(); // This will clear both token and user data
+    window.location.href = 'index.html';
+  } catch (error) {
+    console.error('Error during logout:', error);
+  }
 }

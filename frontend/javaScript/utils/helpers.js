@@ -1,5 +1,6 @@
 'use strict';
 
+// Since ratings are for users, for now this function is not being used
 export function gerarRating(avaliacoes) {
   if (!avaliacoes) {
     avaliacoes = [];
