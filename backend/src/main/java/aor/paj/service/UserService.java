@@ -72,8 +72,14 @@ public class UserService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") Long id) {
+        logger.info("View attempt of user with id: {}", id);
+
         UserDto user = userBean.getUserById(id);
-        return Response.ok(user).build();
+        if (user != null) {
+            return Response.ok(user).build();
+        }
+        logger.warn("Failed view attempt of user with id: {}", id);
+        return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
     }
 
     @PUT
