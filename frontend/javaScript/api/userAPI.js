@@ -175,9 +175,7 @@ export async function getUserByUsername(username) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.byUsername(username),
-      {
-        method: 'GET',
-      }
+      { method: 'GET' }
     );
 
     if (!response.ok) {

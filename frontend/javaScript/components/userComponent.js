@@ -333,8 +333,7 @@ export async function hardDeleteUser() {
 
     alert('User deleted with success!');
 
-    // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
-    window.location.reload();
+    window.location.href = 'perfil-admin.html';
   } catch (error) {
     alert('Error trying to delete user. Please try again!');
     console.error(error);
@@ -355,8 +354,7 @@ export async function softDeleteUser() {
 
     alert('User suspended with success!');
 
-    // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
-    window.location.reload();
+    window.location.href = 'perfil-admin.html';
   } catch (error) {
     alert('Error trying to delete user. Please try again!');
     console.error(error);
