@@ -96,9 +96,7 @@ export async function getUserById(userId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.byId(userId),
-      {
-        method: 'GET',
-      }
+      { method: 'GET' }
     );
 
     if (!response.ok) {
