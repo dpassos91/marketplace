@@ -135,12 +135,16 @@ export async function updateUser(userId, userData) {
 }
 
 // Delete user
-export async function deleteUser(userId) {
+export async function deleteUser(token, userId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.delete(userId),
       {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          "token": token,
+        },
       }
     );
 
@@ -148,9 +152,32 @@ export async function deleteUser(userId) {
       throw new Error(`Error deleting user: ${response.statusText}`);
     }
 
-    return await response.text();
   } catch (error) {
     console.error('Error deleting user:', error);
+    throw error;
+  }
+}
+
+// Suspend user
+export async function suspendUser(token, userId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.users.suspend(userId),
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          "token": token,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error suspending user: ${response.statusText}`);
+    }
+
+  } catch (error) {
+    console.error('Error suspending user:', error);
     throw error;
   }
 }

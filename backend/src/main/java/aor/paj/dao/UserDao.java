@@ -31,6 +31,15 @@ public class UserDao {
         return false;
     }
 
+    public boolean suspendUser(Long id) {
+        UserEntity user = findById(id);
+        if (user != null) {
+            user.setActive(false);
+            return true;
+        }
+        return false;
+    }
+
     public UserEntity findById(Long id){
         return entityManager.createNamedQuery("User.findById", UserEntity.class)
                 .setParameter("id", id)

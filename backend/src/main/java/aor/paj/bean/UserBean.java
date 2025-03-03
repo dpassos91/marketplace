@@ -124,7 +124,7 @@ public class UserBean {
 
     public boolean deleteUser(Long id, String token) {
         if (token == null || token.isEmpty()) {
-            logger.warn("Invalid token provided for delete attempt for user with id: {}", id);
+            logger.warn("Invalid token provided for deletion attempt of user with id: {}", id);
             return false;
         }
 
@@ -137,8 +137,19 @@ public class UserBean {
         return false;
     }
 
-    public void suspendUser(Long id) {
+    public boolean suspendUser(Long id, String token) {
+        if (token == null || token.isEmpty()) {
+            logger.warn("Invalid token provided for suspension attempt of user with id: {}", id);
+            return false;
+        }
 
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (authenticatedUser == null) return false;
+
+        if (authenticatedUser.isAdmin()) return userDao.suspendUser(id);
+
+        logger.warn("Non-admin user tried to suspend user with id: {}", id);
+        return false;
     }
 
     public boolean isAuthorized(Long userId, String token) {
