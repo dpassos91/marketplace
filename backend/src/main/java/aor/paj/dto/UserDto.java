@@ -106,6 +106,11 @@ public class UserDto {
         this.picture = picture;
     }
 
+    @XmlElement
+    public boolean getAdmin() {
+        return isAdmin;
+    }
+
     public void setAdmin(boolean admin) {
         isAdmin = admin;
     }

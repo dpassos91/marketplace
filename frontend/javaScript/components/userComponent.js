@@ -28,45 +28,18 @@ export async function submitLoginForm() {
 }
 
 export async function displayUser() {
-  // TODO: comentei a instrução anterior que ia buscar os detalhes à sessionStorage
-  // const user = getCurrentUser();
-
   const userData = sessionStorage.getItem('user');
   const user = JSON.parse(userData);
 
-  // TODO: log depuração
-  console.log('user: ', user);
-
   const userId = user.id;
-  // TODO: log depuração
-  console.log('userId: ', userId);
 
   const userDetails = await userAPI.getUserById(userId); // agora vai buscar os detalhes a esta função
-  // TODO: log depuração
-  console.log('userDetails: ', userDetails);
+
   if (!user) {
     document.getElementById('perfil-utilizador').innerHTML =
       '<p>Utilizador não encontrado</p>';
     return;
   }
-
-  // TODO: logs de depuração:
-  console.log('First Name:', userDetails.firstName);
-  console.log('Last Name:', userDetails.lastName);
-  console.log('Username:', userDetails.username);
-  console.log('Phone:', userDetails.phone);
-  console.log('Email:', userDetails.email);
-  console.log('Picture URL:', userDetails.picture);
-
-  // TODO: Verificar se os campos do formulário existem antes de tentar preencher
-  console.log('Verificando elementos do DOM:');
-  console.log('firstName:', document.getElementById('firstName'));
-  console.log('lastName:', document.getElementById('lastName'));
-  console.log('username:', document.getElementById('username'));
-  console.log('phone:', document.getElementById('phone'));
-  console.log('email:', document.getElementById('email'));
-  console.log('picture:', document.getElementById('picture'));
-  console.log('imagem-perfil:', document.querySelector('.imagem-perfil'));
 
   document.getElementById('firstName').value = userDetails.firstName;
   document.getElementById('lastName').value = userDetails.lastName;
@@ -75,8 +48,6 @@ export async function displayUser() {
   document.getElementById('email').value = userDetails.email;
   document.getElementById('picture').value = userDetails.picture;
   document.querySelector('.imagem-perfil').src = userDetails.picture;
-
-  // TODO: o objeto user também vai trazer consigo a confirmação de se o user é Admin (usar isso para moldar a página consoante)
 
   const productsContainer = document.querySelector('.card-container');
   productsContainer.innerHTML = '';
@@ -271,16 +242,7 @@ export async function updateExistentUser() {
   const userData = sessionStorage.getItem('user');
   const user = JSON.parse(userData);
 
-  // TODO: log depuração
-  console.log('user: ', user);
-
   const userId = user.id;
-  // TODO: log depuração
-  console.log('userId: ', userId);
-
-  const token = sessionStorage.getItem('authToken');
-  // TODO: log depuração
-  console.log('authToken: ', token);
 
   document
     .getElementById('perfil-form')
@@ -289,7 +251,7 @@ export async function updateExistentUser() {
 
       if (validateFormPassword() == true) {
         try {
-          const result = await userAPI.updateUser(token, userId, updatedUser);
+          const result = await userAPI.updateUser(userId, updatedUser);
           if (result.produtos && result.produtos.length > 0) {
             const userProducts = await productComponent.getProductsByIds(
               result.produtos
@@ -323,20 +285,17 @@ export async function hardDeleteUser() {
   const urlParams = new URLSearchParams(window.location.search);
   const userId =  urlParams.get("id");
 
-  const token = sessionStorage.getItem('authToken');
-
   if (!userId) {
     alert('Invalid user ID!');
     return;
   }
 
   try {
-    await userAPI.deleteUser(token, userId);
+    await userAPI.deleteUser(userId);
 
     alert('User deleted with success!');
 
-    // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
-    window.location.reload();
+    window.location.href = 'perfil-admin.html';
   } catch (error) {
     alert('Error trying to delete user. Please try again!');
     console.error(error);
@@ -347,20 +306,17 @@ export async function softDeleteUser() {
   const urlParams = new URLSearchParams(window.location.search);
   const userId =  urlParams.get("id");
 
-  const token = sessionStorage.getItem('authToken');
-
   if (!userId) {
     alert('Invalid user ID!');
     return;
   }
 
   try {
-    await userAPI.suspendUser(token, userId);
+    await userAPI.suspendUser(userId);
 
     alert('User suspended with success!');
 
-    // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
-    window.location.reload();
+    window.location.href = 'perfil-admin.html';
   } catch (error) {
     alert('Error trying to delete user. Please try again!');
     console.error(error);

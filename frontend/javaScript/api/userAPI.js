@@ -96,9 +96,7 @@ export async function getUserById(userId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.byId(userId),
-      {
-        method: 'GET',
-      }
+      { method: 'GET' }
     );
 
     if (!response.ok) {
@@ -135,17 +133,11 @@ export async function updateUser(userId, userData) {
 }
 
 // Delete user
-export async function deleteUser(token, userId) {
+export async function deleteUser(userId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.delete(userId),
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          "token": token,
-        },
-      }
+      { method: 'DELETE' }
     );
 
     if (!response.ok) {
@@ -159,17 +151,11 @@ export async function deleteUser(token, userId) {
 }
 
 // Suspend user
-export async function suspendUser(token, userId) {
+export async function suspendUser(userId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.suspend(userId),
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          "token": token,
-        },
-      }
+      { method: 'PATCH' }
     );
 
     if (!response.ok) {
@@ -187,9 +173,7 @@ export async function getUserByUsername(username) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.byUsername(username),
-      {
-        method: 'GET',
-      }
+      { method: 'GET' }
     );
 
     if (!response.ok) {
