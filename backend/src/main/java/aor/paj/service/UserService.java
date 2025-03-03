@@ -122,18 +122,7 @@ public class UserService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
-        logger.info("Suspend attempt of user with id: {}", id);
-        boolean suspended = userBean.suspendUser(id, token);
-
-        if (suspended) {
-            logger.info("Successful suspension of user with id: {}", id);
-            return Response.ok().entity("User suspended successfully").build();
-        } else {
-            logger.warn("Failed suspension of user with id: {}", id);
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with ID " + id + " not found!")
-                    .build();
-        }
+        return userBean.suspendUser(id, token);
     }
 
     @GET

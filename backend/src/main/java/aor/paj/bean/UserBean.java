@@ -12,6 +12,7 @@ import aor.paj.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
@@ -138,19 +139,39 @@ public class UserBean {
         return false;
     }
 
-    public boolean suspendUser(Long id, String token) {
+    public Response suspendUser(Long id, String token) {
         if (token == null || token.isEmpty()) {
             logger.warn("Invalid token provided for suspension attempt of user with id: {}", id);
-            return false;
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Invalid or missing authentication token.")
+                    .build();
         }
 
         UserEntity authenticatedUser = userDao.findByToken(token);
-        if (authenticatedUser == null) return false;
+        if (authenticatedUser == null) {
+            logger.warn("Token does not match any user.");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Invalid authentication token.")
+                    .build();
+        }
 
-        if (authenticatedUser.isAdmin()) return userDao.suspendUser(id);
+        if (!authenticatedUser.isAdmin()) {
+            logger.warn("User without admin rights attempted to suspend another user.");
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("You do not have permission to suspend users.")
+                    .build();
+        }
 
-        logger.warn("Non-admin user tried to suspend user with id: {}", id);
-        return false;
+        boolean success = userDao.suspendUser(id);
+        if (!success) {
+            logger.warn("User with id {} not found.", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User with ID " + id + " not found!")
+                    .build();
+        }
+
+        logger.info("Successful suspension of user with id: {}", id);
+        return Response.ok("User suspended successfully").build();
     }
 
     public boolean isAuthorized(Long userId, String token) {
