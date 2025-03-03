@@ -523,12 +523,15 @@ main {
   background-color: var(--primary-200);
   box-shadow: var(--box-shadow);
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Adiciona transições suaves */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Adiciona transições suaves */
 }
 
 .user-card:hover {
-  transform: scale(1.05); /* Aumenta ligeiramente o tamanho no hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Aumenta a sombra no hover */
+  transform: scale(1.05);
+  /* Aumenta ligeiramente o tamanho no hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  /* Aumenta a sombra no hover */
 }
 
 .user-card img {
@@ -539,25 +542,31 @@ main {
   object-fit: cover;
   border-radius: 50%;
   margin-bottom: 10px;
-  transition: transform 0.3s ease; /* Adiciona transição à imagem também */
+  transition: transform 0.3s ease;
+  /* Adiciona transição à imagem também */
 }
 
 .user-card:hover img {
-  transform: rotate(5deg); /* Roda ligeiramente a imagem no hover */
+  transform: rotate(5deg);
+  /* Roda ligeiramente a imagem no hover */
 }
 
 .user-card h1 {
   font-size: 1.2rem;
   margin: 5px 0;
   color: var(--secondary-400);
-  transition: color 0.3s ease; /* Adiciona transição à cor do texto */
+  transition: color 0.3s ease;
+  /* Adiciona transição à cor do texto */
 }
 
 .user-card:hover h1 {
-  color: var(--secondary-300); /* Altera a cor do texto no hover */
+  color: var(--secondary-300);
+  /* Altera a cor do texto no hover */
 }
 
-.user-card h4, .user-card h2, .user-card span {
+.user-card h4,
+.user-card h2,
+.user-card span {
   font-size: 1rem;
   margin: 5px 0;
   color: var(--primary-400);
@@ -1301,4 +1310,64 @@ aside {
 
 .stars i:hover {
   color: #ffc107;
+}
+
+/* Categories Container */
+.category-card {
+  transition: transform 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.category-card img {
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.category-card p {
+  margin: 10px 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.category-card button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 8px;
+}
+
+.category-card button:hover {
+  background-color: #45a049;
+}
+
+.no-products-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin: 50px 0;
+}
+
+.error-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #d9534f;
+  margin: 50px 0;
+}
+
+/* Add title to the product-total page when filtering */
+.product-list-title {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
 }

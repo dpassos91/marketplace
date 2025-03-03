@@ -1,6 +1,7 @@
 package aor.paj.bean;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import aor.paj.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
@@ -105,65 +107,106 @@ public class UserBean {
         return toDto(userEntity);
     }
 
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public Response updateUser(Long id, String token, UserDto userDto) {
+        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Missing authentication token.").build();
+
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (!isAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
+
+        if (!isUserAdmin(authenticatedUser) || !isUserSelf(authenticatedUser, id)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to update this user.").build();
+
         UserEntity userEntity = userDao.findById(id);
 
         if (userEntity == null) {
-            throw new EntityNotFoundException("User with ID " + id + " not found!");
+            logger.warn("User with id {} not found.", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User with ID " + id + " not found!")
+                    .build();
         }
 
         if (userDto.getFirstName() != null) userEntity.setFirstName(userDto.getFirstName());
         if (userDto.getLastName() != null) userEntity.setLastName(userDto.getLastName());
         if (userDto.getEmail() != null) userEntity.setEmail(userDto.getEmail());
         if (userDto.getPhone() != null) userEntity.setPhone(userDto.getPhone());
+        // TODO: falta permitir a atualização da foto
 
         userEntity = userDao.update(userEntity);
 
-        return toDto(userEntity);
+        logger.info("Successful update of user with id: {}", id);
+        return Response.ok(toDto(userEntity)).build();
     }
 
-    public boolean deleteUser(Long id, String token) {
-        if (token == null || token.isEmpty()) {
-            logger.warn("Invalid token provided for deletion attempt of user with id: {}", id);
-            return false;
+    public Response deleteUser(Long id, String token) {
+        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Missing authentication token.").build();
+
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (!isAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
+
+        if (!isUserAdmin(authenticatedUser)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to suspend users.").build();
+
+        boolean success = userDao.delete(id);
+        if (!success) {
+            logger.warn("User with id {} not found.", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User with ID " + id + " not found!")
+                    .build();
         }
 
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (authenticatedUser == null) return false;
-
-        if (authenticatedUser.isAdmin()) return userDao.delete(id);
-
-        logger.warn("Non-admin user tried to delete user with id: {}", id);
-        return false;
+        logger.info("Successful deletion of user with id: {}", id);
+        return Response.ok("User deleted successfully").build();
     }
 
-    public boolean suspendUser(Long id, String token) {
-        if (token == null || token.isEmpty()) {
-            logger.warn("Invalid token provided for suspension attempt of user with id: {}", id);
-            return false;
+    public Response suspendUser(Long id, String token) {
+        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Missing authentication token.").build();
+
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (!isAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
+
+        if (!isUserAdmin(authenticatedUser)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to suspend users.").build();
+
+        boolean success = userDao.suspendUser(id);
+        if (!success) {
+            logger.warn("User with id {} not found.", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User with ID " + id + " not found!")
+                    .build();
         }
 
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (authenticatedUser == null) return false;
-
-        if (authenticatedUser.isAdmin()) return userDao.suspendUser(id);
-
-        logger.warn("Non-admin user tried to suspend user with id: {}", id);
-        return false;
+        logger.info("Successful suspension of user with id: {}", id);
+        return Response.ok("User suspended successfully").build();
     }
 
-    public boolean isAuthorized(Long userId, String token) {
-        logger.info("Authorization check for user with id: {} and token: {}", userId, token);
+    private boolean isTokenAvailable(String token) {
+        if (token == null || token.isEmpty()) {
+            logger.warn("No token provided");
+            return false;
+        }
+        return true;
+    }
 
-        if (token == null || token.isEmpty()) return false;
+    private boolean isAuthenticated(UserEntity authenticatedUser) {
+        if (authenticatedUser == null) {
+            logger.warn("Token provided does not match any user.");
+            return false;
+        }
+        return true;
+    }
 
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (authenticatedUser == null) return false;
+    private boolean isUserAdmin(UserEntity authenticatedUser) {
+        if (!authenticatedUser.isAdmin()) {
+            logger.warn("User without admin rights attempted to suspend another user.");
+            return false;
+        }
+        return true;
+    }
 
-        if (authenticatedUser.getId().equals(userId)) return true;
-
-        if (authenticatedUser.isAdmin()) return true;
-
+    private boolean isUserSelf(UserEntity authenticatedUser, Long userId) {
+        if (authenticatedUser.getId().equals(userId)) {
+            return true;
+        }
         return false;
     }
 
@@ -177,8 +220,26 @@ public class UserBean {
         return toDto(userEntity);
     }
 
-    public List getAllUsers() {
-        return userDao.findAll();
+    public List<UserDto> getAllUsers() {
+        List<UserEntity> userEntities = userDao.findAll();
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (UserEntity userEntity : userEntities) {
+            userDtos.add(toDto(userEntity));
+        }
+
+        return userDtos;
+    }
+
+    public List<UserDto> getAllActiveUsers() {
+        List<UserEntity> userEntities = userDao.findAllActive();
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (UserEntity userEntity : userEntities) {
+            userDtos.add(toDto(userEntity));
+        }
+
+        return userDtos;
     }
 
     public UserEntity toEntity(UserDto userDto) {

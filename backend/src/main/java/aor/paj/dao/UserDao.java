@@ -49,7 +49,8 @@ public class UserDao {
     }
 
     public List<UserEntity> findAll() {
-        return entityManager.createNamedQuery("User.findAll", UserEntity.class).getResultList();
+        return entityManager.createNamedQuery("User.findAll", UserEntity.class)
+                .getResultList();
     }
 
     public List<UserEntity> findAllActive() {

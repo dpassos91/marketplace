@@ -79,61 +79,21 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("id") Long id, @HeaderParam("token") String token, UserDto userDto) {
-        logger.info("Update attempt of user with id: {}", id);
-
-        try {
-            if (!userBean.isAuthorized(id, token)) {
-                logger.warn("Unauthorized attempt of updating user with id: {}", id);
-                return Response.status(Response.Status.FORBIDDEN)
-                        .entity("You're not allowed to update this user.")
-                        .build();
-            }
-            UserDto user = userBean.updateUser(id, userDto);
-
-            logger.info("Successful update of user with id: {}", id);
-            return Response.ok(user).build();
-        } catch (EntityNotFoundException exception) {
-            logger.error("User with id: {} not found!", id);
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(exception.getMessage())
-                    .build();
-        }
+        return userBean.updateUser(id, token, userDto);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
-        logger.info("Delete attempt of user with id: {}", id);
-        boolean deleted = userBean.deleteUser(id, token);
-
-        if (deleted) {
-            logger.info("Successful deletion of user with id: {}", id);
-            return Response.ok().entity("User deleted successfully").build();
-        } else {
-            logger.warn("Failed deletion of user with id: {}", id);
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with ID " + id + " not found!")
-                    .build();
-        }
+        return userBean.deleteUser(id, token);
     }
 
     @PATCH
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
-        logger.info("Suspend attempt of user with id: {}", id);
-        boolean suspended = userBean.suspendUser(id, token);
-
-        if (suspended) {
-            logger.info("Successful suspension of user with id: {}", id);
-            return Response.ok().entity("User suspended successfully").build();
-        } else {
-            logger.warn("Failed suspension of user with id: {}", id);
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with ID " + id + " not found!")
-                    .build();
-        }
+        return userBean.suspendUser(id, token);
     }
 
     @GET
@@ -151,7 +111,15 @@ public class UserService {
     @Path("users/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
-        List allUsers = userBean.getAllUsers();
+        List<UserDto> allUsers = userBean.getAllUsers();
         return Response.ok(allUsers).build();
+    }
+
+    @GET
+    @Path("users/active")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllActiveUsers() {
+        List<UserDto> allActiveUsers = userBean.getAllActiveUsers();
+        return Response.ok(allActiveUsers).build();
     }
 }

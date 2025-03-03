@@ -5,7 +5,6 @@ import * as userAPI from '../api/userAPI.js';
 import * as helpers from '../utils/helpers.js';
 
 export function createCard(product) {
-  const rating = helpers.gerarRating(product.avaliacoes);
   const card = document.createElement('div');
   card.className = 'card';
   card.innerHTML = `
@@ -14,7 +13,6 @@ export function createCard(product) {
       <h1>${product.title}</h1>
       <h4>${product.location}</h4>
       <h2>${product.categoryName}</h2>
-      <h3 class="rating">refactoring...</h3>
       <span>${parseFloat(product.price).toFixed(2)}€</span>
       <button type="button" title="descricao">Saber mais</button>
     </div>
@@ -33,16 +31,42 @@ export async function getAvailableProducts() {
 
 export async function displayAllProducts() {
   const container = document.querySelector('.product-list');
-  const products = await getAvailableProducts();
-
   if (!container) {
     return;
   }
-  container.innerHTML = '';
-  products.forEach(product => {
-    const card = createCard(product);
-    container.appendChild(card);
-  });
+
+  // Check if there's a category filter in the URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoryId = urlParams.get('category');
+
+  const products = await getAvailableProducts();
+
+  // If we have a category filter
+  if (categoryId) {
+    // Import the categoryComponent dynamically to avoid circular dependencies
+    const categoryComponent = await import('./categoryComponent.js');
+
+    // Get filtered products
+    const filteredProducts = await categoryComponent.displayProductsByCategory(
+      products,
+      categoryId
+    );
+
+    if (filteredProducts && filteredProducts.length > 0) {
+      // Display the filtered products
+      filteredProducts.forEach(product => {
+        const card = createCard(product);
+        container.appendChild(card);
+      });
+    }
+  } else {
+    // No filter, show all products
+    container.innerHTML = '';
+    products.forEach(product => {
+      const card = createCard(product);
+      container.appendChild(card);
+    });
+  }
 }
 
 export async function displayMostRecentProducts() {
@@ -58,6 +82,7 @@ export async function displayMostRecentProducts() {
   });
 }
 
+/* avaliação de produtos não implementada
 export async function displayMostRatedProducts() {
   const mainContainer = document.querySelector('.most-rated-products');
   const products = await getAvailableProducts();
@@ -74,124 +99,97 @@ export async function displayMostRatedProducts() {
     mainContainer.appendChild(card);
   });
 }
+  */
 
 export async function gerarDetalhesDoProduto() {
-  const produtos = await productAPI.getAllProducts();
-  const containerDetalhes = document.querySelector('.detalhes-container');
+  const containerDetails = document.querySelector('.detalhes-container');
   const urlParams = new URLSearchParams(window.location.search);
-  const idDoProduto = urlParams.get('id');
-  containerDetalhes.innerHTML = '';
+  const productId = urlParams.get('id');
+  containerDetails.innerHTML = '';
 
-  const produto = produtos.find(prod => prod.id === idDoProduto);
-  if (!produto) {
-    alert('Produto não encontrado!');
-    return;
+  try {
+    const product = await productAPI.getProductById(productId);
+
+    if (!product) {
+      alert('Produto não encontrado!');
+      return;
+    }
+
+    containerDetails.innerHTML = `
+      <div class="imagem">
+        <img src="${product.imageUrl}" alt="${product.title}" />
+      </div>
+      <form id="detalhes-produto-form">
+        <label for="nome-produto">Nome do Produto:</label>
+        <input type="text" id="nome-produto" value="${
+          product.title
+        }" readonly />
+
+        <label for="localizacao">Localização:</label>
+        <input type="text" id="localizacao" value="${
+          product.location
+        }" readonly />
+
+        <label for="categoria">Categoria:</label>
+        <input type="text" id="categoria" value="${
+          product.categoryName
+        }" readonly />
+
+        <label for="preco">Preço:</label>
+        <input type="text" id="preco" value="${parseFloat(
+          product.price
+        ).toFixed(2)}€" readonly />
+
+        <label for="publicado-por">Publicado por:</label>
+        <input type="text" id="publicado-por" value="${
+          product.sellerUsername
+        }" readonly />
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" readonly>${product.description}</textarea>
+
+        <label for="estado-produto-readonly">Estado:</label>
+        <input type="text" id="estado-produto-readonly" value="${
+          product.status
+        }" readonly />
+
+        <label class="hidden" for="estado-produto">Estado:</label>
+        <select class="hidden" name="estado-produto" id="estado-produto" title="Estado do Produto">
+          <option value="rascunho">Rascunho</option>
+          <option value="disponivel" selected>Disponível</option>
+          <option value="reservado">Reservado</option>
+          <option value="comprado">Comprado</option>
+        </select>
+
+        <section class="detalhes-form-buttons">
+          <button id="enviar-mensagem" type="button" title="Enviar Mensagem\nFuncionalidade não implementada">
+            Enviar Mensagem <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+          </button>
+
+          <button id="comprar-produto" type="button" title="Comprar" data-produto-id="${
+            product.id
+          }">
+            Comprar <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+          </button>
+
+          <button class="hidden" id="editar-produto" type="button" title="Editar Produto">
+            Editar <i class="fa fa-pencil" aria-hidden="true"></i>
+          </button>
+          <button class="hidden" id="eliminar-produto" type="button" title="Eliminar Produto">
+            Eliminar <i class="fa fa-times" aria-hidden="true"></i>
+          </button>
+        </section>
+      </form>
+    `;
+
+    toggleProductButtons(product);
+    setupComprarButton();
+    setupEditProductButton();
+    setupDeleteProductButton();
+  } catch (error) {
+    console.error('Error loading product details:', error);
+    containerDetails.innerHTML = '<p>Erro ao carregar detalhes do produto.</p>';
   }
-
-  const rating = helpers.gerarRating(produto.avaliacoes);
-
-  containerDetalhes.innerHTML = `
-    <div class="imagem">
-      <img src="${produto.imagem}" alt="${produto.titulo}" />
-    </div>
-    <form id="detalhes-produto-form">
-      <label for="nome-produto">Nome do Produto:</label>
-      <input type="text" id="nome-produto" value="${produto.titulo}" readonly />
-
-      <label for="localizacao">Localização:</label>
-      <input type="text" id="localizacao" value="${produto.local}" readonly />
-
-      <label for="categoria">Categoria:</label>
-      <input type="text" id="categoria" value="${produto.categoria}" readonly />
-
-      <label for="avaliacoes">Avaliações:</label>
-      <a id="link-avaliacoes" href="#" title="Ver avaliações">
-        <h3 id="estrelas">${
-          produto.avaliacoes.length == 0 ? 'Sem avaliações' : rating.estrelas
-        }
-        <span id="numero-avaliacoes">(${
-          produto.avaliacoes.length
-        } avaliações)</span></h3>
-      </a>
-
-      <label for="preco">Preço:</label>
-      <input type="text" id="preco" value="${parseFloat(produto.preco).toFixed(
-        2
-      )}€" readonly />
-
-      <label for="publicado-por">Publicado por:</label>
-      <input type="text" id="publicado-por" value="${
-        produto.userAutor
-      }" readonly />
-
-      <label for="descricao">Descrição:</label>
-      <textarea id="descricao" readonly>${produto.descricao}</textarea>
-
-      <label for="estado-produto-readonly">Estado:</label>
-      <input type="text" id="estado-produto-readonly" value="${
-        produto.estado
-      }" readonly />
-
-      <label class="hidden" for="estado-produto">Estado:</label>
-      <select class="hidden" name="estado-produto" id="estado-produto" title="Estado do Produto">
-        <option value="rascunho">Rascunho</option>
-        <option value="disponivel" selected>Disponível</option>
-        <option value="reservado">Reservado</option>
-        <option value="comprado">Comprado</option>
-      </select>
-
-      <section class="detalhes-form-buttons">
-        <button id="enviar-mensagem" type="button" title="Enviar Mensagem\nFuncionalidade não implementada">
-          Enviar Mensagem <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-        </button>
-
-        <button id="comprar-produto" type="button" title="Comprar" data-produto-id="${
-          produto.id
-        }">
-          Comprar <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-        </button>
-
-        <button class="hidden" id="editar-produto" type="button" title="Editar Produto">
-          Editar <i class="fa fa-pencil" aria-hidden="true"></i>
-        </button>
-        <button class="hidden" id="eliminar-produto" type="button" title="Eliminar Produto">
-          Eliminar <i class="fa fa-times" aria-hidden="true"></i>
-        </button>
-      </section>
-    </form>
-  `;
-
-  let avaliacoesVisiveis = false;
-  document
-    .getElementById('link-avaliacoes')
-    .addEventListener('click', function (event) {
-      event.preventDefault();
-      const avaliacoesContainer = document.querySelector('.avaliacoes');
-      if (avaliacoesVisiveis) {
-        avaliacoesContainer.innerHTML = '';
-      } else {
-        avaliacoesContainer.innerHTML = '';
-        produto.avaliacoes.forEach(avaliacao => {
-          const avaliacaoElement = document.createElement('div');
-          avaliacaoElement.className = 'avaliacao';
-          avaliacaoElement.innerHTML = `
-            <h4>
-            ${avaliacao.autor}  <span>(${avaliacao.data})<span>
-            </h4>
-            <div class="rating">${helpers.gerarRating([avaliacao])}</div>
-            <p>${avaliacao.texto}</p>
-            <hr id="separador" />
-          `;
-          avaliacoesContainer.appendChild(avaliacaoElement);
-        });
-      }
-      avaliacoesVisiveis = !avaliacoesVisiveis;
-    });
-
-  toggleProductButtons(produto);
-  setupComprarButton();
-  setupEditProductButton();
-  setupDeleteProductButton();
 }
 
 export function setupDeleteProductButton() {
