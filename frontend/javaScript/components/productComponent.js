@@ -74,116 +74,94 @@ export async function displayMostRatedProducts() {
 }
 
 export async function gerarDetalhesDoProduto() {
-  const products = await productAPI.getAllProducts();
   const containerDetails = document.querySelector('.detalhes-container');
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('id');
   containerDetails.innerHTML = '';
 
-  const product = products.find(prod => prod.id === productId);
-  if (!product) {
-    alert('Produto não encontrado!');
-    return;
+  try {
+    const product = await productAPI.getProductById(productId);
+
+    if (!product) {
+      alert('Produto não encontrado!');
+      return;
+    }
+
+    containerDetails.innerHTML = `
+      <div class="imagem">
+        <img src="${product.imageUrl}" alt="${product.title}" />
+      </div>
+      <form id="detalhes-produto-form">
+        <label for="nome-produto">Nome do Produto:</label>
+        <input type="text" id="nome-produto" value="${
+          product.title
+        }" readonly />
+
+        <label for="localizacao">Localização:</label>
+        <input type="text" id="localizacao" value="${
+          product.location
+        }" readonly />
+
+        <label for="categoria">Categoria:</label>
+        <input type="text" id="categoria" value="${
+          product.categoryName
+        }" readonly />
+
+        <label for="preco">Preço:</label>
+        <input type="text" id="preco" value="${parseFloat(
+          product.price
+        ).toFixed(2)}€" readonly />
+
+        <label for="publicado-por">Publicado por:</label>
+        <input type="text" id="publicado-por" value="${
+          product.sellerUsername
+        }" readonly />
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" readonly>${product.description}</textarea>
+
+        <label for="estado-produto-readonly">Estado:</label>
+        <input type="text" id="estado-produto-readonly" value="${
+          product.status
+        }" readonly />
+
+        <label class="hidden" for="estado-produto">Estado:</label>
+        <select class="hidden" name="estado-produto" id="estado-produto" title="Estado do Produto">
+          <option value="rascunho">Rascunho</option>
+          <option value="disponivel" selected>Disponível</option>
+          <option value="reservado">Reservado</option>
+          <option value="comprado">Comprado</option>
+        </select>
+
+        <section class="detalhes-form-buttons">
+          <button id="enviar-mensagem" type="button" title="Enviar Mensagem\nFuncionalidade não implementada">
+            Enviar Mensagem <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+          </button>
+
+          <button id="comprar-produto" type="button" title="Comprar" data-produto-id="${
+            product.id
+          }">
+            Comprar <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+          </button>
+
+          <button class="hidden" id="editar-produto" type="button" title="Editar Produto">
+            Editar <i class="fa fa-pencil" aria-hidden="true"></i>
+          </button>
+          <button class="hidden" id="eliminar-produto" type="button" title="Eliminar Produto">
+            Eliminar <i class="fa fa-times" aria-hidden="true"></i>
+          </button>
+        </section>
+      </form>
+    `;
+
+    toggleProductButtons(product);
+    setupComprarButton();
+    setupEditProductButton();
+    setupDeleteProductButton();
+  } catch (error) {
+    console.error('Error loading product details:', error);
+    containerDetails.innerHTML = '<p>Erro ao carregar detalhes do produto.</p>';
   }
-
-  containerDetails.innerHTML = `
-    <div class="imagem">
-      <img src="${product.imageUrl}" alt="${product.title}" />
-    </div>
-    <form id="detalhes-produto-form">
-      <label for="nome-produto">Nome do Produto:</label>
-      <input type="text" id="nome-produto" value="${product.title}" readonly />
-
-      <label for="localizacao">Localização:</label>
-      <input type="text" id="localizacao" value="${
-        product.location
-      }" readonly />
-
-      <label for="categoria">Categoria:</label>
-      <input type="text" id="categoria" value="${
-        product.categoryName
-      }" readonly />
-
-      <label for="preco">Preço:</label>
-      <input type="text" id="preco" value="${parseFloat(product.price).toFixed(
-        2
-      )}€" readonly />
-
-      <label for="publicado-por">Publicado por:</label>
-      <input type="text" id="publicado-por" value="${
-        product.sellerUsername
-      }" readonly />
-
-      <label for="descricao">Descrição:</label>
-      <textarea id="descricao" readonly>${product.description}</textarea>
-
-      <label for="estado-produto-readonly">Estado:</label>
-      <input type="text" id="estado-produto-readonly" value="${
-        product.status
-      }" readonly />
-
-      <label class="hidden" for="estado-produto">Estado:</label>
-      <select class="hidden" name="estado-produto" id="estado-produto" title="Estado do Produto">
-        <option value="rascunho">Rascunho</option>
-        <option value="disponivel" selected>Disponível</option>
-        <option value="reservado">Reservado</option>
-        <option value="comprado">Comprado</option>
-      </select>
-
-      <section class="detalhes-form-buttons">
-        <button id="enviar-mensagem" type="button" title="Enviar Mensagem\nFuncionalidade não implementada">
-          Enviar Mensagem <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-        </button>
-
-        <button id="comprar-produto" type="button" title="Comprar" data-produto-id="${
-          product.id
-        }">
-          Comprar <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-        </button>
-
-        <button class="hidden" id="editar-produto" type="button" title="Editar Produto">
-          Editar <i class="fa fa-pencil" aria-hidden="true"></i>
-        </button>
-        <button class="hidden" id="eliminar-produto" type="button" title="Eliminar Produto">
-          Eliminar <i class="fa fa-times" aria-hidden="true"></i>
-        </button>
-      </section>
-    </form>
-  `;
-
-  /* Avaliações deixam de ser do produto. Implementadas no vendedor;
-  let avaliacoesVisiveis = false;
-  document
-    .getElementById('link-avaliacoes')
-    .addEventListener('click', function (event) {
-      event.preventDefault();
-      const avaliacoesContainer = document.querySelector('.avaliacoes');
-      if (avaliacoesVisiveis) {
-        avaliacoesContainer.innerHTML = '';
-      } else {
-        avaliacoesContainer.innerHTML = '';
-        product.avaliacoes.forEach(avaliacao => {
-          const avaliacaoElement = document.createElement('div');
-          avaliacaoElement.className = 'avaliacao';
-          avaliacaoElement.innerHTML = `
-            <h4>
-            ${avaliacao.autor}  <span>(${avaliacao.data})<span>
-            </h4>
-            <div class="rating">${helpers.gerarRating([avaliacao])}</div>
-            <p>${avaliacao.texto}</p>
-            <hr id="separador" />
-          `;
-          avaliacoesContainer.appendChild(avaliacaoElement);
-        });
-      }
-      avaliacoesVisiveis = !avaliacoesVisiveis;
-    });
-    */
-
-  toggleProductButtons(product);
-  setupComprarButton();
-  setupEditProductButton();
-  setupDeleteProductButton();
 }
 
 export function setupDeleteProductButton() {
