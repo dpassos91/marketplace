@@ -579,6 +579,68 @@ main {
   background-color: var(--secondary-300);
 }
 
+/* Admin-avaliações */
+/* Estilos para o contêiner dos botões */
+.review-management-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  position: relative;
+  height: 350px; /* Ajustar a altura do contêiner conforme necessário */
+}
+
+/* Estilos base para os botões */
+.review-management-buttons .btn-card {
+  background-color: var(--white-100);
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: var(--box-shadow);
+  width: 300px; /* Largura fixa para os botões */
+  height: 150px; /* Altura fixa para os botões */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--primary-400);
+  font-weight: bold;
+}
+
+.review-management-buttons .btn-card:hover {
+  transform: scale(1.05);
+  background-color: var(--primary-100);
+  color: var(--primary-400);
+}
+
+/* Cores específicas dos botões */
+.review-management-buttons .btn-info {
+  color: var(--white-100);
+  background-color: var(--secondary-color);
+}
+
+.review-management-buttons .btn-info:hover {
+  background-color: var(--secondary-300);
+  color: var(--white-100);
+}
+
+/* Posicionamento dos botões para criar o efeito de plano superior */
+.review-management-buttons .btn-card:nth-child(1) {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
+.review-management-buttons .btn-card:nth-child(2) {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+}
+
 
 .login {
   display: flex;

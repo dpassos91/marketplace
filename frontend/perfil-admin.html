@@ -23,20 +23,25 @@
             <h2>Painel de Administração</h2>
             <nav>
                 <ul>
-                    <li><a href="#" class="btn-produtos" id="gestao-utilizadores">Gestão de Utilizadores</a></li>
-                    <li><a href="#" class="btn-produtos" id="gestao-produtos">Gestão de Produtos</a></li>
                     <li><a href="#" class="btn-produtos" id="ver-dashboard">Dashboard</a></li>
+                    <li><a href="#" class="btn-produtos" id="gestao-avaliacoes">Gestão de Avaliações</a></li>
+                    <li><a href="#" class="btn-produtos" id="gestao-produtos">Gestão de Produtos</a></li>
+                    <li><a href="#" class="btn-produtos" id="gestao-utilizadores">Gestão de Utilizadores</a></li>
                 </ul>
             </nav>
         </aside>
 
         <div class="admin-content">
-            <section id="utilizadores" class="hidden">
-                <h1>Gestão de Utilizadores</h1>
-                <div class="user-management-buttons">
-                    <a href="#" id="deleteUser" class="btn-card btn-danger">Apagar utilizador</a>
-                    <a href="#" id="viewUserProfile" class="btn-card btn-info">Consultar perfil de utilizador</a>
-                    <a href="#" id="permanentlyDeleteUser" class="btn-card btn-warning">Excluir permanentemente um utilizador</a>
+
+            <section id="dashboard">
+                <h1>Dashboard</h1>
+                <div id="userCardsContainer"></div>
+            </section>
+            
+            <section id="avaliacoes" class="hidden">
+                <h1>Gestão de Avaliações</h1>
+                <div class="review-management-buttons">
+                    <button class="btn-card btn-info">Excluir avaliação</button>
                 </div>
             </section>
 
@@ -53,7 +58,7 @@
             <section id="filtros" class="hidden">
                 <h1>Filtros</h1>
                 <div class="filter-options">
-                    <button class="btn-card btn-danger" id="filtrarPorPreco">Filtrar por Preço</button>
+                    <button class="btn-card btn-danger" id="filtrarPorPreco">Filtrar por Utilizador</button>
                     <button class="btn-card btn-warning" id="filtrarPorCategoria">Filtrar por Categoria</button>
                 </div>
             </section>
@@ -67,9 +72,13 @@
                 </div>
               </section>
               
-              <section id="dashboard">
-                <h1>Dashboard</h1>
-                <div id="userCardsContainer"></div>
+              <section id="utilizadores" class="hidden">
+                <h1>Gestão de Utilizadores</h1>
+                <div class="user-management-buttons">
+                    <a href="#" id="deleteUser" class="btn-card btn-danger">Apagar utilizador</a>
+                    <a href="#" id="viewUserProfile" class="btn-card btn-info">Consultar perfil de utilizador</a>
+                    <a href="#" id="permanentlyDeleteUser" class="btn-card btn-warning">Excluir utilizador</a>
+                </div>
             </section>
         </div>
     </main>
