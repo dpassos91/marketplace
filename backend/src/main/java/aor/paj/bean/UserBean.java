@@ -189,6 +189,17 @@ public class UserBean {
         return userDtos;
     }
 
+    public List<UserDto> getAllActiveUsers() {
+        List<UserEntity> userEntities = userDao.findAllActive();
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (UserEntity userEntity : userEntities) {
+            userDtos.add(toDto(userEntity));
+        }
+
+        return userDtos;
+    }
+
     public UserEntity toEntity(UserDto userDto) {
         if (userDto == null) {
             return null;
