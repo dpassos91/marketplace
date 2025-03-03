@@ -34,16 +34,38 @@ export async function displayCategories() {
   try {
     const categories = await categoryAPI.getAllCategories();
 
-    container.innerHTML = '';
+    // Create carousel structure
+    container.innerHTML = `
+      <div class="categories-carousel-wrapper">
+        <button class="carousel-control prev">&lt;</button>
+        <div class="categories-carousel">
+          <div class="categories-carousel-inner"></div>
+        </div>
+        <button class="carousel-control next">&gt;</button>
+      </div>
+    `;
+
+    const carouselInner = container.querySelector('.categories-carousel-inner');
+    const prevButton = container.querySelector('.carousel-control.prev');
+    const nextButton = container.querySelector('.carousel-control.next');
 
     if (categories.length === 0) {
-      container.innerHTML = '<p>Nenhuma categoria disponível.</p>';
+      carouselInner.innerHTML = '<p>Nenhuma categoria disponível.</p>';
       return;
     }
 
     categories.forEach(category => {
       const card = createCategoryCard(category);
-      container.appendChild(card);
+      carouselInner.appendChild(card);
+    });
+
+    // Add event listeners for navigation buttons
+    prevButton.addEventListener('click', () => {
+      carouselInner.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+
+    nextButton.addEventListener('click', () => {
+      carouselInner.scrollBy({ left: 300, behavior: 'smooth' });
     });
   } catch (error) {
     console.error('Error displaying categories:', error);
