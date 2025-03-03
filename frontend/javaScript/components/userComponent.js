@@ -271,16 +271,7 @@ export async function updateExistentUser() {
   const userData = sessionStorage.getItem('user');
   const user = JSON.parse(userData);
 
-  // TODO: log depuração
-  console.log('user: ', user);
-
   const userId = user.id;
-  // TODO: log depuração
-  console.log('userId: ', userId);
-
-  const token = sessionStorage.getItem('authToken');
-  // TODO: log depuração
-  console.log('authToken: ', token);
 
   document
     .getElementById('perfil-form')
@@ -289,7 +280,7 @@ export async function updateExistentUser() {
 
       if (validateFormPassword() == true) {
         try {
-          const result = await userAPI.updateUser(token, userId, updatedUser);
+          const result = await userAPI.updateUser(userId, updatedUser);
           if (result.produtos && result.produtos.length > 0) {
             const userProducts = await productComponent.getProductsByIds(
               result.produtos
