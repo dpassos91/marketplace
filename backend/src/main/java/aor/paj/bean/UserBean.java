@@ -1,6 +1,7 @@
 package aor.paj.bean;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -177,8 +178,26 @@ public class UserBean {
         return toDto(userEntity);
     }
 
-    public List getAllUsers() {
-        return userDao.findAll();
+    public List<UserDto> getAllUsers() {
+        List<UserEntity> userEntities = userDao.findAll();
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (UserEntity userEntity : userEntities) {
+            userDtos.add(toDto(userEntity));
+        }
+
+        return userDtos;
+    }
+
+    public List<UserDto> getAllActiveUsers() {
+        List<UserEntity> userEntities = userDao.findAllActive();
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (UserEntity userEntity : userEntities) {
+            userDtos.add(toDto(userEntity));
+        }
+
+        return userDtos;
     }
 
     public UserEntity toEntity(UserDto userDto) {
