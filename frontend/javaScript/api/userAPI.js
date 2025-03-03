@@ -159,17 +159,11 @@ export async function deleteUser(token, userId) {
 }
 
 // Suspend user
-export async function suspendUser(token, userId) {
+export async function suspendUser(userId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.users.suspend(userId),
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          "token": token,
-        },
-      }
+      { method: 'PATCH' }
     );
 
     if (!response.ok) {

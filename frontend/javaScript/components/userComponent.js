@@ -347,15 +347,13 @@ export async function softDeleteUser() {
   const urlParams = new URLSearchParams(window.location.search);
   const userId =  urlParams.get("id");
 
-  const token = sessionStorage.getItem('authToken');
-
   if (!userId) {
     alert('Invalid user ID!');
     return;
   }
 
   try {
-    await userAPI.suspendUser(token, userId);
+    await userAPI.suspendUser(userId);
 
     alert('User suspended with success!');
 
