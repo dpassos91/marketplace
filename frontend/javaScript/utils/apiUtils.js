@@ -8,7 +8,7 @@ export async function makeAuthenticatedRequest(url, options = {}) {
   const token = getAuthToken();
   const headers = {
     ...DEFAULT_OPTIONS.headers,
-    ...(token && { Authorization: `Bearer ${token}` }),
+    ...(token && { token: token }),
     ...options.headers,
   };
 
