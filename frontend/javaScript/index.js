@@ -1,8 +1,8 @@
 'use strict';
 
 import { loadCommonElements } from './loadCommons.js';
-import * as productComponent from './components/product.js';
-import * as userComponent from './components/user.js';
+import * as productComponent from './components/productComponent.js';
+import * as userComponent from './components/userComponent.js';
 
 init();
 

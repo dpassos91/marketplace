@@ -9,13 +9,13 @@ export function createCard(product) {
   const card = document.createElement('div');
   card.className = 'card';
   card.innerHTML = `
-    <img src="${product.imagem}" alt="${product.titulo}" />
+    <img src="${product.imageUrl}" alt="${product.title}" />
     <div>
-      <h1>${product.titulo}</h1>
-      <h4>${product.local}</h4>
-      <h2>${product.categoria}</h2>
-      <h3 class="rating">${rating.estrelas}</h3>
-      <span>${parseFloat(product.preco).toFixed(2)}€</span>
+      <h1>${product.title}</h1>
+      <h4>${product.location}</h4>
+      <h2>${product.categoryName}</h2>
+      <h3 class="rating">refactoring...</h3>
+      <span>${parseFloat(product.price).toFixed(2)}€</span>
       <button type="button" title="descricao">Saber mais</button>
     </div>
   `;
@@ -27,8 +27,8 @@ export function createCard(product) {
 }
 
 export async function getAvailableProducts() {
-  const products = await productAPI.getAllProducts();
-  return products.filter(product => product.estado === 'DISPONIVEL');
+  const products = await productAPI.getAllActiveProducts();
+  return products;
 }
 
 export async function displayAllProducts() {
@@ -36,12 +36,10 @@ export async function displayAllProducts() {
   const products = await getAvailableProducts();
 
   if (!container) {
-    console.log('Não está a chegar ao html');
     return;
   }
   container.innerHTML = '';
   products.forEach(product => {
-    console.log('Estou a carregar os cartões dos produtos');
     const card = createCard(product);
     container.appendChild(card);
   });

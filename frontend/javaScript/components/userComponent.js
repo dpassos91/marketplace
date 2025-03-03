@@ -2,9 +2,9 @@
 
 import * as userAPI from '../api/userAPI.js';
 import * as productAPI from '../api/productAPI.js';
-import * as productComponent from './product.js';
+import * as productComponent from './productComponent.js';
 import { logout, setCurrentUser, getCurrentUser } from '../utils/authUtils.js';
-import { loadSellerEvaluations } from '../components/evaluationComponent.js';
+import { loadSellerEvaluations } from './evaluationComponent.js';
 
 export async function submitLoginForm() {
   const credentials = {
@@ -31,19 +31,19 @@ export async function displayUser() {
   // TODO: comentei a instrução anterior que ia buscar os detalhes à sessionStorage
   // const user = getCurrentUser();
 
-  const userData = sessionStorage.getItem("user");
+  const userData = sessionStorage.getItem('user');
   const user = JSON.parse(userData);
 
   // TODO: log depuração
-  console.log("user: ", user);
+  console.log('user: ', user);
 
   const userId = user.id;
-    // TODO: log depuração
-  console.log("userId: ", userId);
+  // TODO: log depuração
+  console.log('userId: ', userId);
 
   const userDetails = await userAPI.getUserById(userId); // agora vai buscar os detalhes a esta função
   // TODO: log depuração
-  console.log("userDetails: ", userDetails);
+  console.log('userDetails: ', userDetails);
   if (!user) {
     document.getElementById('perfil-utilizador').innerHTML =
       '<p>Utilizador não encontrado</p>';
@@ -51,12 +51,12 @@ export async function displayUser() {
   }
 
   // TODO: logs de depuração:
-  console.log("First Name:", userDetails.firstName);
-console.log("Last Name:", userDetails.lastName);
-console.log("Username:", userDetails.username);
-console.log("Phone:", userDetails.phone);
-console.log("Email:", userDetails.email);
-console.log("Picture URL:", userDetails.picture);
+  console.log('First Name:', userDetails.firstName);
+  console.log('Last Name:', userDetails.lastName);
+  console.log('Username:', userDetails.username);
+  console.log('Phone:', userDetails.phone);
+  console.log('Email:', userDetails.email);
+  console.log('Picture URL:', userDetails.picture);
 
   // TODO: Verificar se os campos do formulário existem antes de tentar preencher
   console.log('Verificando elementos do DOM:');
@@ -80,15 +80,24 @@ console.log("Picture URL:", userDetails.picture);
 
   const productsContainer = document.querySelector('.card-container');
   productsContainer.innerHTML = '';
-  const products = user.produtos || [];
-  if (products.length === 0) {
+
+  try {
+    // Fetch products by seller ID from the API
+    const products = await productAPI.getProductsBySeller(user.id);
+
+    if (!products || products.length === 0) {
+      productsContainer.innerHTML =
+        '<h2>Ainda não adicionou nenhum produto para venda!</h2>';
+    } else {
+      products.forEach(product => {
+        const card = productComponent.createCard(product);
+        productsContainer.appendChild(card);
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching user products:', error);
     productsContainer.innerHTML =
-      '<h2>Ainda não adicionou nenhum produto para venda!</h2>';
-  } else {
-    products.forEach(product => {
-      const card = productComponent.createCard(product);
-      productsContainer.appendChild(card);
-    });
+      '<h2>Não foi possível carregar os produtos</h2>';
   }
   loadSellerEvaluations(user.id, '#evaluationsContainer');
 }
@@ -259,19 +268,19 @@ export async function updateExistentUser() {
     }
   }
 
-  const userData = sessionStorage.getItem("user");
+  const userData = sessionStorage.getItem('user');
   const user = JSON.parse(userData);
 
   // TODO: log depuração
-  console.log("user: ", user);
+  console.log('user: ', user);
 
   const userId = user.id;
-    // TODO: log depuração
-  console.log("userId: ", userId);
+  // TODO: log depuração
+  console.log('userId: ', userId);
 
-  const token = sessionStorage.getItem("authToken");
-      // TODO: log depuração
-      console.log("authToken: ", token);
+  const token = sessionStorage.getItem('authToken');
+  // TODO: log depuração
+  console.log('authToken: ', token);
 
   document
     .getElementById('perfil-form')
@@ -307,5 +316,53 @@ export async function handleLogout() {
     window.location.href = 'index.html';
   } catch (error) {
     console.error('Error during logout:', error);
+  }
+}
+
+export async function hardDeleteUser() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId =  urlParams.get("id");
+
+  const token = sessionStorage.getItem('authToken');
+
+  if (!userId) {
+    alert('Invalid user ID!');
+    return;
+  }
+
+  try {
+    await userAPI.deleteUser(token, userId);
+
+    alert('User deleted with success!');
+
+    // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
+    window.location.reload();
+  } catch (error) {
+    alert('Error trying to delete user. Please try again!');
+    console.error(error);
+  }
+}
+
+export async function softDeleteUser() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId =  urlParams.get("id");
+
+  const token = sessionStorage.getItem('authToken');
+
+  if (!userId) {
+    alert('Invalid user ID!');
+    return;
+  }
+
+  try {
+    await userAPI.suspendUser(token, userId);
+
+    alert('User suspended with success!');
+
+    // TODO: perceber para que página é que ele deve voltar (esperar que o Diogo apresente a esturutra final):
+    window.location.reload();
+  } catch (error) {
+    alert('Error trying to delete user. Please try again!');
+    console.error(error);
   }
 }
