@@ -2,6 +2,7 @@
 
 import { loadCommonElements } from './loadCommons.js';
 import * as productComponent from './components/productComponent.js';
+import * as categoryComponent from './components/categoryComponent.js';
 import * as userComponent from './components/userComponent.js';
 
 init();
@@ -11,9 +12,12 @@ function init() {
     await loadCommonElements();
 
     // Route handling based on the current page
-    if (window.location.pathname.endsWith('index.html')) {
+    if (
+      window.location.pathname.endsWith('index.html') ||
+      window.location.pathname.endsWith('/')
+    ) {
       await productComponent.displayMostRecentProducts();
-      await productComponent.displayMostRatedProducts();
+      await categoryComponent.displayCategories();
     }
 
     if (window.location.pathname.endsWith('pagina-login.html')) {

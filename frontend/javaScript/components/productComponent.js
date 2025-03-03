@@ -31,16 +31,42 @@ export async function getAvailableProducts() {
 
 export async function displayAllProducts() {
   const container = document.querySelector('.product-list');
-  const products = await getAvailableProducts();
-
   if (!container) {
     return;
   }
-  container.innerHTML = '';
-  products.forEach(product => {
-    const card = createCard(product);
-    container.appendChild(card);
-  });
+
+  // Check if there's a category filter in the URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoryId = urlParams.get('category');
+
+  const products = await getAvailableProducts();
+
+  // If we have a category filter
+  if (categoryId) {
+    // Import the categoryComponent dynamically to avoid circular dependencies
+    const categoryComponent = await import('./categoryComponent.js');
+
+    // Get filtered products
+    const filteredProducts = await categoryComponent.displayProductsByCategory(
+      products,
+      categoryId
+    );
+
+    if (filteredProducts && filteredProducts.length > 0) {
+      // Display the filtered products
+      filteredProducts.forEach(product => {
+        const card = createCard(product);
+        container.appendChild(card);
+      });
+    }
+  } else {
+    // No filter, show all products
+    container.innerHTML = '';
+    products.forEach(product => {
+      const card = createCard(product);
+      container.appendChild(card);
+    });
+  }
 }
 
 export async function displayMostRecentProducts() {
@@ -56,6 +82,7 @@ export async function displayMostRecentProducts() {
   });
 }
 
+/* avaliação de produtos não implementada
 export async function displayMostRatedProducts() {
   const mainContainer = document.querySelector('.most-rated-products');
   const products = await getAvailableProducts();
@@ -72,6 +99,7 @@ export async function displayMostRatedProducts() {
     mainContainer.appendChild(card);
   });
 }
+  */
 
 export async function gerarDetalhesDoProduto() {
   const containerDetails = document.querySelector('.detalhes-container');
