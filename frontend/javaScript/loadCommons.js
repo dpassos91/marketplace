@@ -2,6 +2,7 @@
 
 import * as productAPI from './api/productAPI.js';
 import * as categoryAPI from './api/categoryAPI.js';
+import { handleLogout } from './components/userComponent.js';
 
 export async function loadCommonElements() {
   try {
@@ -53,8 +54,8 @@ async function welcomeMessage() {
     profilePicture.src = user.picture;
     welcomeMessage.innerHTML = `<a href="perfil-utilizador.html">Bem-vindo/a ${user.firstName} ${user.lastName}</a>!`;
 
-    logoutButton.addEventListener('click', () => {
-      sessionStorage.clear();
+    logoutButton.addEventListener('click', async () => {
+      await handleLogout();
       window.location.href = 'index.html';
     });
   } else {
