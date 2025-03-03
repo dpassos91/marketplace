@@ -5,7 +5,6 @@ import * as userAPI from '../api/userAPI.js';
 import * as helpers from '../utils/helpers.js';
 
 export function createCard(product) {
-  const rating = helpers.gerarRating(product.avaliacoes);
   const card = document.createElement('div');
   card.className = 'card';
   card.innerHTML = `
@@ -14,7 +13,6 @@ export function createCard(product) {
       <h1>${product.title}</h1>
       <h4>${product.location}</h4>
       <h2>${product.categoryName}</h2>
-      <h3 class="rating">refactoring...</h3>
       <span>${parseFloat(product.price).toFixed(2)}€</span>
       <button type="button" title="descricao">Saber mais</button>
     </div>
@@ -76,60 +74,52 @@ export async function displayMostRatedProducts() {
 }
 
 export async function gerarDetalhesDoProduto() {
-  const produtos = await productAPI.getAllProducts();
-  const containerDetalhes = document.querySelector('.detalhes-container');
+  const products = await productAPI.getAllProducts();
+  const containerDetails = document.querySelector('.detalhes-container');
   const urlParams = new URLSearchParams(window.location.search);
-  const idDoProduto = urlParams.get('id');
-  containerDetalhes.innerHTML = '';
+  const productId = urlParams.get('id');
+  containerDetails.innerHTML = '';
 
-  const produto = produtos.find(prod => prod.id === idDoProduto);
-  if (!produto) {
+  const product = products.find(prod => prod.id === productId);
+  if (!product) {
     alert('Produto não encontrado!');
     return;
   }
 
-  const rating = helpers.gerarRating(produto.avaliacoes);
-
-  containerDetalhes.innerHTML = `
+  containerDetails.innerHTML = `
     <div class="imagem">
-      <img src="${produto.imagem}" alt="${produto.titulo}" />
+      <img src="${product.imageUrl}" alt="${product.title}" />
     </div>
     <form id="detalhes-produto-form">
       <label for="nome-produto">Nome do Produto:</label>
-      <input type="text" id="nome-produto" value="${produto.titulo}" readonly />
+      <input type="text" id="nome-produto" value="${product.title}" readonly />
 
       <label for="localizacao">Localização:</label>
-      <input type="text" id="localizacao" value="${produto.local}" readonly />
+      <input type="text" id="localizacao" value="${
+        product.location
+      }" readonly />
 
       <label for="categoria">Categoria:</label>
-      <input type="text" id="categoria" value="${produto.categoria}" readonly />
-
-      <label for="avaliacoes">Avaliações:</label>
-      <a id="link-avaliacoes" href="#" title="Ver avaliações">
-        <h3 id="estrelas">${
-          produto.avaliacoes.length == 0 ? 'Sem avaliações' : rating.estrelas
-        }
-        <span id="numero-avaliacoes">(${
-          produto.avaliacoes.length
-        } avaliações)</span></h3>
-      </a>
+      <input type="text" id="categoria" value="${
+        product.categoryName
+      }" readonly />
 
       <label for="preco">Preço:</label>
-      <input type="text" id="preco" value="${parseFloat(produto.preco).toFixed(
+      <input type="text" id="preco" value="${parseFloat(product.price).toFixed(
         2
       )}€" readonly />
 
       <label for="publicado-por">Publicado por:</label>
       <input type="text" id="publicado-por" value="${
-        produto.userAutor
+        product.sellerUsername
       }" readonly />
 
       <label for="descricao">Descrição:</label>
-      <textarea id="descricao" readonly>${produto.descricao}</textarea>
+      <textarea id="descricao" readonly>${product.description}</textarea>
 
       <label for="estado-produto-readonly">Estado:</label>
       <input type="text" id="estado-produto-readonly" value="${
-        produto.estado
+        product.status
       }" readonly />
 
       <label class="hidden" for="estado-produto">Estado:</label>
@@ -146,7 +136,7 @@ export async function gerarDetalhesDoProduto() {
         </button>
 
         <button id="comprar-produto" type="button" title="Comprar" data-produto-id="${
-          produto.id
+          product.id
         }">
           Comprar <i class="fa fa-shopping-cart" aria-hidden="true"></i>
         </button>
@@ -161,6 +151,7 @@ export async function gerarDetalhesDoProduto() {
     </form>
   `;
 
+  /* Avaliações deixam de ser do produto. Implementadas no vendedor;
   let avaliacoesVisiveis = false;
   document
     .getElementById('link-avaliacoes')
@@ -171,7 +162,7 @@ export async function gerarDetalhesDoProduto() {
         avaliacoesContainer.innerHTML = '';
       } else {
         avaliacoesContainer.innerHTML = '';
-        produto.avaliacoes.forEach(avaliacao => {
+        product.avaliacoes.forEach(avaliacao => {
           const avaliacaoElement = document.createElement('div');
           avaliacaoElement.className = 'avaliacao';
           avaliacaoElement.innerHTML = `
@@ -187,8 +178,9 @@ export async function gerarDetalhesDoProduto() {
       }
       avaliacoesVisiveis = !avaliacoesVisiveis;
     });
+    */
 
-  toggleProductButtons(produto);
+  toggleProductButtons(product);
   setupComprarButton();
   setupEditProductButton();
   setupDeleteProductButton();
