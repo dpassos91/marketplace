@@ -323,15 +323,13 @@ export async function hardDeleteUser() {
   const urlParams = new URLSearchParams(window.location.search);
   const userId =  urlParams.get("id");
 
-  const token = sessionStorage.getItem('authToken');
-
   if (!userId) {
     alert('Invalid user ID!');
     return;
   }
 
   try {
-    await userAPI.deleteUser(token, userId);
+    await userAPI.deleteUser(userId);
 
     alert('User deleted with success!');
 
