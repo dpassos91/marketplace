@@ -151,7 +151,7 @@ public class UserService {
     @Path("users/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
-        List allUsers = userBean.getAllUsers();
+        List<UserDto> allUsers = userBean.getAllUsers();
         return Response.ok(allUsers).build();
     }
 }
