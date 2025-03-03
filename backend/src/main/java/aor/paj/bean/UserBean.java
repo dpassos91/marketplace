@@ -65,7 +65,7 @@ public class UserBean {
 
     public String logIn(LoginRequestDto user) {
         UserEntity userEntity = userDao.findByUsername(user.getUsername());
-        if (userEntity != null) {
+        if (userEntity != null && userEntity.isActive()) {
             if (userEntity.checkPassword(user.getPassword())) {
                 String token = generateNewToken();
                 userEntity.setToken(token);
@@ -222,10 +222,6 @@ public class UserBean {
         if (userEntity == null) {
             throw new EntityNotFoundException("User with username " + username + " not found!");
         }
-
-        // TODO: para depuração
-        System.out.println("para depuração"+userEntity.isAdmin());
-
         return toDto(userEntity);
     }
 
