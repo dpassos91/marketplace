@@ -104,18 +104,7 @@ public class UserService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
-        logger.info("Delete attempt of user with id: {}", id);
-        boolean deleted = userBean.deleteUser(id, token);
-
-        if (deleted) {
-            logger.info("Successful deletion of user with id: {}", id);
-            return Response.ok().entity("User deleted successfully").build();
-        } else {
-            logger.warn("Failed deletion of user with id: {}", id);
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with ID " + id + " not found!")
-                    .build();
-        }
+        return userBean.deleteUser(id, token);
     }
 
     @PATCH
