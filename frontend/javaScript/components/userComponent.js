@@ -27,38 +27,116 @@ export async function submitLoginForm() {
   }
 }
 
-export async function displayUser() {
-  const userData = sessionStorage.getItem('user');
-  const user = JSON.parse(userData);
+export async function displayUserProfile() {
+  // Check if we're viewing a specific user profile from URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileUserId = urlParams.get('id');
 
-  const userId = user.id;
+  // Get the current logged-in user
+  const currentUser = getCurrentUser();
 
-  const userDetails = await userAPI.getUserById(userId); // agora vai buscar os detalhes a esta função
+  // Determine which user profile to display
+  let userToDisplay;
+  let isOwnProfile = false;
 
-  if (!user) {
+  if (profileUserId) {
+    // We're viewing a specific user's profile
+    userToDisplay = await userAPI.getUserById(profileUserId);
+    isOwnProfile = currentUser && currentUser.id === profileUserId;
+  } else if (currentUser) {
+    // No ID in URL, display the logged-in user's profile
+    userToDisplay = await userAPI.getUserById(currentUser.id);
+    isOwnProfile = true;
+  } else {
+    // No ID and no logged-in user - redirect to login
+    window.location.href = 'pagina-login.html';
+    return;
+  }
+
+  if (!userToDisplay) {
     document.getElementById('perfil-utilizador').innerHTML =
       '<p>Utilizador não encontrado</p>';
     return;
   }
 
-  document.getElementById('firstName').value = userDetails.firstName;
-  document.getElementById('lastName').value = userDetails.lastName;
-  document.getElementById('username').value = userDetails.username;
-  document.getElementById('phone').value = userDetails.phone;
-  document.getElementById('email').value = userDetails.email;
-  document.getElementById('picture').value = userDetails.picture;
-  document.querySelector('.imagem-perfil').src = userDetails.picture;
+  // Update UI based on whose profile we're viewing
+  updateProfileUI(userToDisplay, isOwnProfile);
 
+  // Load products for the displayed user
+  await loadUserProducts(userToDisplay.id, isOwnProfile);
+
+  // Load evaluations for the displayed user
+  loadSellerEvaluations(userToDisplay.id, '#evaluationsContainer');
+
+  // Only attach edit handlers if viewing own profile
+  if (isOwnProfile) {
+    toggleFormUserEdit();
+  }
+}
+
+// Helper function to update profile UI elements
+function updateProfileUI(user, isOwnProfile) {
+  // Update the header text
+  const productsHeader = document.querySelector('#productsHeader');
+  if (productsHeader) {
+    productsHeader.textContent = isOwnProfile
+      ? 'Os meus Produtos'
+      : 'Produtos deste vendedor';
+  }
+
+  // Update form fields
+  document.getElementById('firstName').value = user.firstName;
+  document.getElementById('lastName').value = user.lastName;
+  document.getElementById('username').value = user.username;
+  document.getElementById('phone').value = user.phone;
+  document.getElementById('email').value = user.email;
+  document.getElementById('picture').value = user.picture;
+
+  // Update profile picture
+  const profileImage = document.querySelector('.imagem-perfil');
+  if (profileImage) {
+    profileImage.src = user.picture;
+  }
+
+  // Show/hide edit buttons based on profile ownership
+  const editButton = document.getElementById('toggle-readonly');
+  const formInputs = document.querySelectorAll('#perfil-form input');
+
+  if (!isOwnProfile) {
+    // Hide edit button
+    if (editButton) {
+      editButton.classList.add('hidden');
+    }
+
+    // Ensure all fields are readonly
+    formInputs.forEach(input => {
+      input.setAttribute('readonly', 'readonly');
+    });
+
+    // Hide password fields
+    const passwordWrapper = document.querySelector('.password-wrapper');
+    const confirmPasswordWrapper = document.querySelector(
+      '.confirm-password-wrapper'
+    );
+    if (passwordWrapper) passwordWrapper.classList.add('hidden');
+    if (confirmPasswordWrapper) confirmPasswordWrapper.classList.add('hidden');
+  }
+}
+
+// Helper function to load and display user products
+async function loadUserProducts(userId, isOwnProfile) {
   const productsContainer = document.querySelector('.card-container');
   productsContainer.innerHTML = '';
 
   try {
     // Fetch products by seller ID from the API
-    const products = await productAPI.getProductsBySeller(user.id);
+    const products = await productAPI.getProductsBySeller(userId);
 
     if (!products || products.length === 0) {
-      productsContainer.innerHTML =
-        '<h2>Ainda não adicionou nenhum produto para venda!</h2>';
+      const emptyMessage = isOwnProfile
+        ? '<h2>Ainda não adicionou nenhum produto para venda!</h2>'
+        : '<h2>Este utilizador ainda não tem produtos para venda.</h2>';
+      productsContainer.innerHTML = emptyMessage;
     } else {
       products.forEach(product => {
         const card = productComponent.createCard(product);
@@ -70,7 +148,6 @@ export async function displayUser() {
     productsContainer.innerHTML =
       '<h2>Não foi possível carregar os produtos</h2>';
   }
-  loadSellerEvaluations(user.id, '#evaluationsContainer');
 }
 
 export async function toggleFormUserEdit() {
@@ -283,7 +360,7 @@ export async function handleLogout() {
 
 export async function hardDeleteUser() {
   const urlParams = new URLSearchParams(window.location.search);
-  const userId =  urlParams.get("id");
+  const userId = urlParams.get('id');
 
   if (!userId) {
     alert('Invalid user ID!');
@@ -304,7 +381,7 @@ export async function hardDeleteUser() {
 
 export async function softDeleteUser() {
   const urlParams = new URLSearchParams(window.location.search);
-  const userId =  urlParams.get("id");
+  const userId = urlParams.get('id');
 
   if (!userId) {
     alert('Invalid user ID!');
