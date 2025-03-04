@@ -73,7 +73,47 @@ export async function displayUserProfile() {
 
   // Only attach edit handlers if viewing own profile
   if (isOwnProfile) {
-    toggleFormUserEdit();
+    setupProfileEditHandlers(userToDisplay.id);
+  }
+}
+
+/**
+ * Loads and displays products associated with a specific user
+ * @param {string|number} userId - The ID of the user whose products to load
+ * @param {boolean} isOwnProfile - Whether this is the current user's own profile
+ */
+async function loadUserProducts(userId, isOwnProfile) {
+  try {
+    // Get the container where products will be displayed
+    const container = document.querySelector('.card-container');
+    if (!container) return;
+
+    // Fetch user's products from the API
+    const products = await productAPI.getProductsBySeller(userId);
+
+    // Clear previous content
+    container.innerHTML = '';
+
+    // Display message if no products
+    if (products.length === 0) {
+      container.innerHTML =
+        '<p class="no-products-message">' +
+        (isOwnProfile
+          ? 'Não tem produtos para venda.'
+          : 'Este utilizador não tem produtos para venda.') +
+        '</p>';
+      return;
+    }
+
+    // Create and append product cards
+    products.forEach(product => {
+      const card = productComponent.createCard(product);
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error('Error loading user products:', error);
+    document.querySelector('.card-container').innerHTML =
+      '<p class="error-message">Erro ao carregar produtos.</p>';
   }
 }
 
@@ -104,97 +144,154 @@ function updateProfileUI(user, isOwnProfile) {
   // Show/hide edit buttons based on profile ownership
   const editButton = document.getElementById('toggle-readonly');
   const formInputs = document.querySelectorAll('#perfil-form input');
+  const saveButton = document.querySelector('.save-user-changes');
 
   if (!isOwnProfile) {
-    // Hide edit button
-    if (editButton) {
-      editButton.classList.add('hidden');
-    }
+    // Hide edit and save buttons
+    if (editButton) editButton.classList.add('hidden');
+    if (saveButton) saveButton.classList.add('hidden');
 
     // Ensure all fields are readonly
     formInputs.forEach(input => {
       input.setAttribute('readonly', 'readonly');
     });
-
-    // Hide password fields
-    const passwordWrapper = document.querySelector('.password-wrapper');
-    const confirmPasswordWrapper = document.querySelector(
-      '.confirm-password-wrapper'
-    );
-    if (passwordWrapper) passwordWrapper.classList.add('hidden');
-    if (confirmPasswordWrapper) confirmPasswordWrapper.classList.add('hidden');
   }
+
+  // Always hide password fields initially
+  const passwordWrapper = document.querySelector('.password-wrapper');
+  const confirmPasswordWrapper = document.querySelector(
+    '.confirm-password-wrapper'
+  );
+  if (passwordWrapper) passwordWrapper.classList.add('hidden');
+  if (confirmPasswordWrapper) confirmPasswordWrapper.classList.add('hidden');
 }
 
-// Helper function to load and display user products
-async function loadUserProducts(userId, isOwnProfile) {
-  const productsContainer = document.querySelector('.card-container');
-  productsContainer.innerHTML = '';
+// New function to set up edit handlers for own profile
+function setupProfileEditHandlers(userId) {
+  const editButton = document.getElementById('toggle-readonly');
+  const saveButton = document.querySelector('.save-user-changes');
+  const passwordWrapper = document.querySelector('.password-wrapper');
+  const confirmPasswordWrapper = document.querySelector(
+    '.confirm-password-wrapper'
+  );
+  const formInputs = document.querySelectorAll('#perfil-form input');
 
-  try {
-    // Fetch products by seller ID from the API
-    const products = await productAPI.getProductsBySeller(userId);
+  let isEditMode = false;
 
-    if (!products || products.length === 0) {
-      const emptyMessage = isOwnProfile
-        ? '<h2>Ainda não adicionou nenhum produto para venda!</h2>'
-        : '<h2>Este utilizador ainda não tem produtos para venda.</h2>';
-      productsContainer.innerHTML = emptyMessage;
-    } else {
-      products.forEach(product => {
-        const card = productComponent.createCard(product);
-        productsContainer.appendChild(card);
-      });
-    }
-  } catch (error) {
-    console.error('Error fetching user products:', error);
-    productsContainer.innerHTML =
-      '<h2>Não foi possível carregar os produtos</h2>';
-  }
-}
+  // Set up edit toggle button
+  editButton.addEventListener('click', function () {
+    isEditMode = !isEditMode;
 
-export async function toggleFormUserEdit() {
-  document
-    .getElementById('toggle-readonly')
-    .addEventListener('click', function () {
-      const formElements = document.querySelectorAll('#perfil-form input');
-      const passwordWrapper = document.querySelector('.password-wrapper');
-      const confirmPasswordWrapper = document.querySelector(
-        '.confirm-password-wrapper'
-      );
-      const saveChangesToUser = document.querySelector('.save-user-changes');
-
-      let isReadOnly = true;
-
-      formElements.forEach(element => {
-        if (element.id !== 'username') {
-          if (element.hasAttribute('readonly')) {
-            element.removeAttribute('readonly');
-            isReadOnly = false;
-          } else {
-            element.setAttribute('readonly', 'readonly');
-          }
+    // Toggle readonly attribute on input fields (except username)
+    formInputs.forEach(input => {
+      if (input.id !== 'username') {
+        if (isEditMode) {
+          input.removeAttribute('readonly');
+        } else {
+          input.setAttribute('readonly', 'readonly');
         }
-      });
-
-      if (isReadOnly) {
-        passwordWrapper.classList.add('hidden');
-        confirmPasswordWrapper.classList.add('hidden');
-        saveChangesToUser.classList.add('hidden');
-      } else {
-        passwordWrapper.classList.remove('hidden');
-        confirmPasswordWrapper.classList.remove('hidden');
-        saveChangesToUser.classList.remove('hidden');
-        updateExistentUser();
-      }
-
-      const button = document.getElementById('toggle-readonly');
-      if (isReadOnly) {
-        button.textContent = 'Editar';
-      } else {
-        button.textContent = 'Cancelar';
       }
     });
+
+    // Toggle visibility of password fields and save button
+    if (isEditMode) {
+      passwordWrapper.classList.remove('hidden');
+      confirmPasswordWrapper.classList.remove('hidden');
+      saveButton.classList.remove('hidden');
+      editButton.textContent = 'Cancelar';
+    } else {
+      passwordWrapper.classList.add('hidden');
+      confirmPasswordWrapper.classList.add('hidden');
+      saveButton.classList.add('hidden');
+      editButton.textContent = 'Editar Informação do Utilizador';
+    }
+  });
+
+  // Set up form submission
+  const form = document.getElementById('perfil-form');
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    if (!validateFormPassword()) {
+      return;
+    }
+
+    const updatedUser = {
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      username: document.getElementById('username').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      picture: document.getElementById('picture').value,
+      password: document.getElementById('password').value,
+    };
+
+    try {
+      const result = await userAPI.updateUser(userId, updatedUser);
+
+      if (result.produtos && result.produtos.length > 0) {
+        const userProducts = await productComponent.getProductsByIds(
+          result.produtos
+        );
+        result.produtos = userProducts;
+      } else {
+        result.produtos = [];
+      }
+
+      alert('Dados atualizados com sucesso!');
+      setCurrentUser(result);
+      window.location.reload();
+    } catch (error) {
+      alert('Erro ao atualizar os dados. Tente novamente.');
+      console.error(error);
+    }
+  });
+
+  // Set up password validation
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirm-password');
+
+  passwordInput.addEventListener('input', validatePasswordFields);
+  confirmPasswordInput.addEventListener('input', validatePasswordFields);
+}
+
+function validatePasswordFields() {
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
+  const confirmPasswordInput = document.getElementById('confirm-password');
+
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    confirmPasswordInput.setCustomValidity(
+      'A password deve ter pelo menos 8 caracteres, incluindo números e letras.'
+    );
+  } else if (password !== confirmPassword) {
+    confirmPasswordInput.setCustomValidity('As passwords não coincidem.');
+  } else {
+    confirmPasswordInput.setCustomValidity('');
+  }
+}
+
+// Keep the existing validateFormPassword function
+export function validateFormPassword() {
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    alert(
+      'A password deve ter pelo menos 8 caracteres, incluindo números e letras.'
+    );
+    return false;
+  }
+
+  if (password !== confirmPassword) {
+    alert('As passwords não coincidem.');
+    return false;
+  }
+
+  return true;
 }
 
 export async function addNewUser() {
@@ -259,94 +356,6 @@ export async function addNewUser() {
       } else {
         alert('Erro ao registar utilizador. Tente novamente.');
         return;
-      }
-    });
-}
-
-export function validateFormPassword() {
-  const password = document.getElementById('password').value;
-  const confirmPassword = document.getElementById('confirm-password').value;
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-
-  if (!passwordRegex.test(password)) {
-    alert(
-      'A password deve ter pelo menos 8 caracteres, incluindo números e letras.'
-    );
-    return false;
-  }
-
-  if (password !== confirmPassword) {
-    alert('As passwords não coincidem.');
-    return false;
-  }
-
-  return true;
-}
-
-export async function updateExistentUser() {
-  let updatedUser = {};
-  const loggedInUser = getCurrentUser();
-  const passwordInput = document.getElementById('password');
-  const confirmPasswordInput = document.getElementById('confirm-password');
-
-  passwordInput.addEventListener('input', validatePasswords);
-  confirmPasswordInput.addEventListener('input', validatePasswords);
-
-  function validatePasswords() {
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-
-    if (!passwordRegex.test(password)) {
-      confirmPasswordInput.setCustomValidity(
-        'A password deve ter pelo menos 8 caracteres, incluindo números e letras.'
-      );
-    } else if (password !== confirmPassword) {
-      confirmPasswordInput.setCustomValidity('As passwords não coincidem.');
-    } else {
-      confirmPasswordInput.setCustomValidity('');
-      updatedUser = {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        username: loggedInUser.username, // Username não pode ser alterado
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        picture: document.getElementById('picture').value,
-        password: password,
-      };
-      console.log('As passwords foram validadas');
-      console.log(updatedUser);
-    }
-  }
-
-  const userData = sessionStorage.getItem('user');
-  const user = JSON.parse(userData);
-
-  const userId = user.id;
-
-  document
-    .getElementById('perfil-form')
-    .addEventListener('submit', async function (event) {
-      event.preventDefault();
-
-      if (validateFormPassword() == true) {
-        try {
-          const result = await userAPI.updateUser(userId, updatedUser);
-          if (result.produtos && result.produtos.length > 0) {
-            const userProducts = await productComponent.getProductsByIds(
-              result.produtos
-            );
-            result.produtos = userProducts;
-          } else {
-            result.produtos = [];
-          }
-          alert('Dados atualizados com sucesso!');
-          setCurrentUser(result);
-          window.location.reload();
-        } catch (error) {
-          alert('Erro ao atualizar os dados. Tente novamente.');
-          console.error(error);
-        }
       }
     });
 }

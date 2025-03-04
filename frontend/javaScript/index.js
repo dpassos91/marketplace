@@ -44,7 +44,6 @@ function init() {
 
     if (window.location.pathname.endsWith('perfil-utilizador.html')) {
       await userComponent.displayUserProfile();
-      await userComponent.toggleFormUserEdit();
     }
 
     if (window.location.pathname.endsWith('novo-registo.html')) {
