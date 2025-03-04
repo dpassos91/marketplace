@@ -72,7 +72,7 @@ export async function displayMostRecentProducts() {
   const mainContainer = document.querySelector('.recent-products');
   const products = await getAvailableProducts();
   const mostRecentProducts = products
-    .sort((a, b) => new Date(b.dataDePublicacao) - new Date(a.dataDePublicacao))
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 3);
   mainContainer.innerHTML = '';
   mostRecentProducts.forEach(p => {
