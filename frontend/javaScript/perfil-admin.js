@@ -1,6 +1,7 @@
 'use strict';
 
 import { loadCommonElements } from './loadCommons.js';
+import { getTotalUsers } from './api/userAPI.js';
 
 async function initPage() {
   try {
@@ -28,17 +29,26 @@ async function initPage() {
         // Mostra a section correspondente ao link clicado
         let targetId = this.getAttribute('id');
         if (targetId === 'gestao-utilizadores') {
-          targetId = 'utilizadores';
+          showSection('utilizadores'); // Garante que a secção de utilizadores está visível
+          showUserManagementButtons(); // Mostra os botões de gestão de utilizadores
         } else if (targetId === 'gestao-produtos') {
-          targetId = 'produtos';
+          showSection('produtos'); // Garante que a secção de produtos está visível
         } else if (targetId === 'ver-dashboard') {
-          targetId = 'dashboard';
-          displayUserCards(users); // Carrega os cartões de utilizadores ao carregar o dashboard
+          showSection('dashboard'); // Garante que a secção do dashboard está visível
+          loadDashboard(); // Carrega os cartões de utilizadores ao carregar o dashboard
         } else if (targetId === 'gestao-avaliacoes') {
-          targetId = 'avaliacoes';
+          showSection('avaliacoes'); // Garante que a secção de avaliações está visível
         }
-        document.getElementById(targetId).classList.remove('hidden');
       });
+    });
+
+    // Evento de clique para o botão "Consultar perfil de utilizador"
+    const viewUserProfileButton = document.getElementById('viewUserProfile');
+    viewUserProfileButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      console.log('Botão "Consultar perfil de utilizador" clicado');
+      showSection('utilizadores'); // Mostra a seção de utilizadores
+      loadUsers(); // Carrega os utilizadores quando o botão é clicado
     });
 
     // Evento de clique para o botão "Filtrar"
@@ -47,9 +57,7 @@ async function initPage() {
       event.preventDefault();
 
       hideAllSections(); // Esconde todas as sections
-
-      // Mostra a secção de filtros
-      document.getElementById('filtros').classList.remove('hidden');
+      showSection('filtros'); // Mostra a secção de filtros
     });
 
     // Evento de clique para o botão "Editar produtos de utilizadores"
@@ -58,9 +66,7 @@ async function initPage() {
       event.preventDefault();
 
       hideAllSections(); // Esconde todas as sections
-
-      // Mostra a secção de editarProdutos
-      document.getElementById('editarProdutos').classList.remove('hidden');
+      showSection('editarProdutos'); // Mostra a secção de editarProdutos
     });
 
     // Função genérica para mostrar uma secção
@@ -103,15 +109,70 @@ async function initPage() {
       });
     }
 
-    // Simular uma lista de utilizadores (você pode substituir isso com uma chamada à sua API)
-    const users = [
-      { id: 1, nome: 'Utilizador 1', email: 'user1@example.com', cargo: 'Administrador', dataDeCriacao: '2025-03-01' },
-      { id: 2, nome: 'Utilizador 2', email: 'user2@example.com', cargo: 'Editor', dataDeCriacao: '2025-02-15' },
-      // Adicione mais utilizadores conforme necessário
-    ];
+    // Função para carregar os utilizadores a partir do backend
+    async function loadUsers() {
+      try {
+        console.log('Função loadUsers chamada');
+        const users = await getTotalUsers(); // Usa a função getTotalUsers para obter os utilizadores
+        console.log('Utilizadores obtidos:', users);
+        if (!Array.isArray(users)) {
+          throw new Error('Formato de dados inesperado');
+        }
+        displayUsersTable(users); // Chama a função para exibir a tabela de utilizadores
+      } catch (error) {
+        console.error('Erro:', error);
+      }
+    }
 
-    // Chame a função para exibir os cartões de utilizadores quando a página for carregada
-    displayUserCards(users);
+    // Função para exibir os utilizadores numa tabela
+    function displayUsersTable(users) {
+      console.log('Função displayUsersTable chamada');
+      console.log('Dados dos utilizadores:', users);
+      const container = document.getElementById('tabelaUtilizadores'); // Alterado para o novo container
+      console.log('Contêiner da tabela de utilizadores:', container);
+      container.innerHTML = ''; // Limpa o container
+      
+      const table = document.createElement('table');
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Nome</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map(user => `
+            <tr>
+              <td>${user.username}</td>
+              <td>${user.email}</td>
+              <td>${user.firstName} ${user.lastName}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+      console.log('Tabela criada:', table);
+      container.appendChild(table);
+      console.log('Tabela adicionada ao contêiner');
+    }
+
+    // Função para mostrar os botões de gestão de utilizadores
+    function showUserManagementButtons() {
+      const userManagementButtons = document.querySelector('.user-management-buttons');
+      if (userManagementButtons) {
+        userManagementButtons.classList.remove('hidden');
+      }
+    }
+
+    // Função para carregar o dashboard
+    async function loadDashboard() {
+        try {
+            const users = await getTotalUsers();
+            displayUserCards(users);
+        } catch (error) {
+            console.error('Erro ao carregar o dashboard:', error);
+        }
+    }
 
   } catch (error) {
     console.error('Erro ao inicializar a página:', error);
@@ -119,3 +180,6 @@ async function initPage() {
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
+
+
+

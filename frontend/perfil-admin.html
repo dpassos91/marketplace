@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="./CSS/index.css" />
     <link rel="shortcut icon" href="favicon.png" type="image/png" />
     <script defer type="module" src="./javaScript/perfil-admin.js"></script>
@@ -37,7 +39,7 @@
                 <h1>Dashboard</h1>
                 <div id="userCardsContainer"></div>
             </section>
-            
+
             <section id="avaliacoes" class="hidden">
                 <h1>Gestão de Avaliações</h1>
                 <div class="review-management-buttons">
@@ -67,13 +69,15 @@
                 <h1>Editar produtos</h1>
                 <div class="user-management-buttons">
                     <button class="btn-card btn-danger" id="apagarProduto">Apagar produto</button>
-                    <button class="btn-card btn-info" id="alterarProduto">Alterar produto</button>  
-                  <button class="btn-card btn-warning" id="excluirProduto">Excluir produto</button>
+                    <button class="btn-card btn-info" id="alterarProduto">Alterar produto</button>
+                    <button class="btn-card btn-warning" id="excluirProduto">Excluir produto</button>
                 </div>
-              </section>
-              
-              <section id="utilizadores" class="hidden">
+            </section>
+
+            <section id="utilizadores" class="hidden">
                 <h1>Gestão de Utilizadores</h1>
+                <!-- Container para a tabela de utilizadores -->
+                <div id="tabelaUtilizadores"></div>
                 <div class="user-management-buttons">
                     <a href="#" id="deleteUser" class="btn-card btn-danger">Apagar utilizador</a>
                     <a href="#" id="viewUserProfile" class="btn-card btn-info">Consultar perfil de utilizador</a>
@@ -88,4 +92,5 @@
 </body>
 
 </html>
+
 
