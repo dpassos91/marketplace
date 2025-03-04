@@ -84,12 +84,11 @@ export async function displayProductsByCategory(products, categoryId) {
 
     // Filter products by the selected category
     const filteredProducts = products.filter(
-      product =>
-        product.categoryId === categoryId || product.category.id === categoryId
+      product => String(product.categoryId) === String(categoryId)
     );
 
     // Update page heading if possible
-    const pageHeading = document.querySelector('main h1');
+    const pageHeading = document.querySelector('#page-title');
     if (pageHeading && category) {
       pageHeading.textContent = `Produtos - ${category.name}`;
     }

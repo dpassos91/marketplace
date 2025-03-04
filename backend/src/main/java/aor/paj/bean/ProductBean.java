@@ -427,10 +427,6 @@ public class ProductBean {
                 entity.setEditDate(LocalDate.now());
             }
         }
-
-        // Note: category, seller, and buyer relationships are set in the calling
-        // methods
-
         return entity;
     }
 }

@@ -35,12 +35,13 @@ public class UserDao {
         UserEntity user = findById(id);
         if (user != null) {
             user.setActive(false);
+            entityManager.merge(user);
             return true;
         }
         return false;
     }
 
-    public UserEntity findById(Long id){
+    public UserEntity findById(Long id) {
         return entityManager.createNamedQuery("User.findById", UserEntity.class)
                 .setParameter("id", id)
                 .getResultStream()
@@ -77,6 +78,5 @@ public class UserDao {
                 .findFirst()
                 .orElse(null);
     }
-
 
 }
