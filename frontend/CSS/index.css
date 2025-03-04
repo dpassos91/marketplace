@@ -691,7 +691,8 @@ table th {
   padding: 10px 15px;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.3s ease; /* Adiciona a transição */
+  transition: transform 0.3s ease;
+  /* Adiciona a transição */
   box-shadow: var(--box-shadow);
   font-size: 0.9rem;
   font-weight: bold;
@@ -705,7 +706,8 @@ table th {
 }
 
 .tabela-btn:hover {
-  transform: scale(1.05); /* Aplica o efeito de "movimento para a frente" */
+  transform: scale(1.05);
+  /* Aplica o efeito de "movimento para a frente" */
 }
 
 /* Estilos específicos dos botões (correspondendo aos estilos da Gestão de Produtos) */
@@ -741,13 +743,17 @@ table th {
   background-color: var(--primary-300);
   height: 30px;
   border: none;
-  width: 30px; /* Ajuste o tamanho conforme necessário */
+  width: 30px;
+  /* Ajuste o tamanho conforme necessário */
   color: var(--white-100);
   font-weight: bold;
-  border-radius: 5px; /* Opcional: para dar um aspeto arredondado */
-  margin: 5px; /* Adicione margem para espaçamento */
+  border-radius: 5px;
+  /* Opcional: para dar um aspeto arredondado */
+  margin: 5px;
+  /* Adicione margem para espaçamento */
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Adicione transição suave */
+  transition: background-color 0.3s ease;
+  /* Adicione transição suave */
 }
 
 .pagination-button:hover {
@@ -756,8 +762,9 @@ table th {
 
 /* Estilo para o botão ativo */
 .pagination-button.active {
-    background-color: var(--primary-400); /* Cor mais escura para o botão ativo */
-    color: var(--white-100);
+  background-color: var(--primary-400);
+  /* Cor mais escura para o botão ativo */
+  color: var(--white-100);
 }
 
 .login {
@@ -1589,4 +1596,175 @@ aside {
   width: 100%;
   text-align: center;
   margin-bottom: 20px;
+}
+
+/* Custom modal styles for reviews */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.custom-modal {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-body {
+  padding: 16px;
+}
+
+.modal-footer {
+  padding: 16px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Stars rating */
+.rating-selector {
+  margin-top: 8px;
+}
+
+.stars {
+  display: inline-flex;
+  font-size: 24px;
+}
+
+.star {
+  cursor: pointer;
+  color: #ccc;
+}
+
+.star.hover {
+  color: #ffc107;
+}
+
+.stars .star:nth-child(-n+3) {
+  color: #ffc107;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover,
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+/* Evaluation card styles */
+.evaluation-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.evaluation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.evaluation-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.add-evaluation-btn {
+  margin-top: 16px;
 }

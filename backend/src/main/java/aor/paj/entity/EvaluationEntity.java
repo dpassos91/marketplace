@@ -63,7 +63,7 @@ public class EvaluationEntity implements Serializable {
       UserEntity evaluator, UserEntity evaluated, ProductEntity product) {
     this.title = title;
     this.comment = comment;
-    this.date = date;
+    this.date = LocalDate.now();
     this.rating = rating;
     this.evaluator = evaluator;
     this.evaluated = evaluated;
