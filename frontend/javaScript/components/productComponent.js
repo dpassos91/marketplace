@@ -230,15 +230,15 @@ export function setupDeleteProductButton() {
 }
 
 export function setupEditProductButton() {
-  const editarButton = document.getElementById('editar-produto');
+  const editBtn = document.getElementById('editar-produto');
   const formElements = document.querySelectorAll(
     '#detalhes-produto-form input, #detalhes-produto-form textarea'
   );
   const estadoReadonly = document.getElementById('estado-produto-readonly');
   const estadoSelect = document.getElementById('estado-produto');
 
-  if (editarButton) {
-    editarButton.addEventListener('click', () => {
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
       // Remove readonly from all form elements
       formElements.forEach(element => {
         if (element.id !== 'publicado-por') {
@@ -258,24 +258,23 @@ export function setupEditProductButton() {
         .classList.add('hidden');
 
       // Hide edit button and show save button
-      editarButton.classList.add('hidden');
+      editBtn.classList.add('hidden');
       const guardarButton = createSaveButton();
-      editarButton.parentNode.insertBefore(guardarButton, editarButton);
+      editBtn.parentNode.insertBefore(guardarButton, editBtn);
     });
   }
 }
 
 export function createSaveButton() {
-  const guardarButton = document.createElement('button');
-  guardarButton.id = 'guardar-produto';
-  guardarButton.type = 'button';
-  guardarButton.title = 'Guardar Alterações';
-  guardarButton.innerHTML =
-    'Guardar <i class="fa fa-save" aria-hidden="true"></i>';
+  const saveBtn = document.createElement('button');
+  saveBtn.id = 'guardar-produto';
+  saveBtn.type = 'button';
+  saveBtn.title = 'Guardar Alterações';
+  saveBtn.innerHTML = 'Guardar <i class="fa fa-save" aria-hidden="true"></i>';
 
-  guardarButton.addEventListener('click', saveProductChanges);
+  saveBtn.addEventListener('click', saveProductChanges);
 
-  return guardarButton;
+  return saveBtn;
 }
 
 export async function addNewProduct() {
@@ -291,7 +290,7 @@ export async function addNewProduct() {
 
   form.reset();
 
-  newForm.addEventListener('submit', async function (event) {
+  form.addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const title = document.getElementById('title').value;
@@ -322,7 +321,7 @@ export async function addNewProduct() {
       await productAPI.createProduct(newProduct);
       alert('Product created successfully!');
       modal.style.display = 'none';
-      newForm.reset();
+      form.reset();
       window.location.reload();
     } catch (error) {
       console.error('Error creating product:', error);
@@ -380,10 +379,10 @@ export async function saveProductChanges() {
   };
 
   try {
-    const saveButton = document.getElementById('guardar-produto');
-    if (saveButton) {
-      saveButton.disabled = true;
-      saveButton.innerHTML =
+    const saveBtn = document.getElementById('guardar-produto');
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML =
         'A guardar... <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>';
     }
 
@@ -394,10 +393,10 @@ export async function saveProductChanges() {
     alert('Erro ao atualizar o produto. Tente novamente.');
     console.error(error);
 
-    const saveButton = document.getElementById('guardar-produto');
-    if (saveButton) {
-      saveButton.disabled = false;
-      saveButton.innerHTML =
+    const saveBtn = document.getElementById('guardar-produto');
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML =
         'Guardar <i class="fa fa-save" aria-hidden="true"></i>';
     }
   }
@@ -405,7 +404,7 @@ export async function saveProductChanges() {
 
 export async function comprarProduto(produtoId) {
   try {
-    await productAPI.updateProduct(produtoId, { estado: 'COMPRADO' });
+    await productAPI.updateProduct(produtoId, { status: 'COMPRADO' });
     alert('Produto comprado com sucesso!');
     window.location.href = 'index.html';
   } catch (error) {
@@ -415,10 +414,10 @@ export async function comprarProduto(produtoId) {
 }
 
 export async function setupComprarButton() {
-  const comprarButton = document.getElementById('comprar-produto');
-  if (comprarButton) {
-    const produtoId = comprarButton.getAttribute('data-produto-id');
-    comprarButton.addEventListener('click', async () => {
+  const buyProdBtn = document.getElementById('comprar-produto');
+  if (buyProdBtn) {
+    const productId = buyProdBtn.getAttribute('data-produto-id');
+    buyProdBtn.addEventListener('click', async () => {
       const user = JSON.parse(sessionStorage.getItem('user'));
       if (!user) {
         alert('Por favor, faça login para comprar o produto.');
@@ -426,58 +425,71 @@ export async function setupComprarButton() {
         return;
       }
 
-      const produto = await productAPI.getProductById(produtoId);
-      if (produto.estado !== 'DISPONIVEL') {
+      const product = await productAPI.getProductById(productId);
+      const statusNormalized = product.status
+        ? product.status.toUpperCase()
+        : '';
+      if (
+        statusNormalized !== 'DISPONÍVEL' &&
+        statusNormalized !== 'DISPONIVEL'
+      ) {
         alert('Este produto não está disponível para compra.');
         return;
       }
 
-      comprarProduto(produtoId);
+      const confirmPurchase = confirm(
+        'Tem certeza que deseja comprar este produto?'
+      );
+
+      if (confirmPurchase) {
+        comprarProduto(productId);
+      }
     });
   }
 }
 
 export async function toggleProductButtons(product) {
   const user = JSON.parse(sessionStorage.getItem('user'));
-  const comprarButton = document.getElementById('comprar-produto');
-  const editarButton = document.querySelector('#editar-produto');
-  const eliminarButton = document.querySelector('#eliminar-produto');
-  const enviarMensagemButton = document.querySelector('#enviar-mensagem');
+  const buyProdBtn = document.getElementById('comprar-produto');
+  const editProdBtn = document.querySelector('#editar-produto');
+  const delProdBtn = document.querySelector('#eliminar-produto');
+  const sendMsgBtn = document.querySelector('#enviar-mensagem');
 
-  if (
-    !comprarButton ||
-    !editarButton ||
-    !eliminarButton ||
-    !enviarMensagemButton
-  ) {
+  if (!buyProdBtn || !editProdBtn || !delProdBtn || !sendMsgBtn) {
     console.warn('One or more product buttons not found in the DOM');
     return;
   }
 
   // Default state - for non-logged users or non-owner users
   const isUserLoggedIn = !!user;
-  const isUserProductOwner = isUserLoggedIn && user.id === product.sellerId;
+  const isUserProductOwner =
+    isUserLoggedIn && String(user.id) === String(product.sellerId);
 
   // Hide edit/delete buttons by default
-  editarButton.classList.add('hidden');
-  eliminarButton.classList.add('hidden');
+  editProdBtn.classList.add('hidden');
+  delProdBtn.classList.add('hidden');
 
   // Show buy/message buttons by default
-  comprarButton.classList.remove('hidden');
-  enviarMensagemButton.classList.remove('hidden');
+  buyProdBtn.classList.remove('hidden');
+  sendMsgBtn.classList.remove('hidden');
 
   // If user is the product owner, toggle the buttons accordingly
   if (isUserProductOwner) {
-    comprarButton.classList.add('hidden');
-    enviarMensagemButton.classList.add('hidden');
-    editarButton.classList.remove('hidden');
-    eliminarButton.classList.remove('hidden');
+    buyProdBtn.classList.add('hidden');
+    sendMsgBtn.classList.add('hidden');
+    editProdBtn.classList.remove('hidden');
+    delProdBtn.classList.remove('hidden');
   }
 
   // If product is not available, disable buy button
-  if (product.estado !== 'DISPONIVEL' && product.status !== 'DISPONIVEL') {
-    comprarButton.disabled = true;
-    comprarButton.title = 'Este produto não está disponível para compra';
+  const statusNormalized = product.status ? product.status.toUpperCase() : '';
+
+  if (statusNormalized !== 'DISPONÍVEL' && statusNormalized !== 'DISPONIVEL') {
+    buyProdBtn.disabled = true;
+    buyProdBtn.title = 'Este produto não está disponível para compra';
+  } else {
+    buyProdBtn.disabled = false;
+    buyProdBtn.title = 'Comprar este produto';
   }
 }
 
