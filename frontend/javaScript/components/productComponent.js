@@ -1,7 +1,7 @@
 'use strict';
 
+import * as categoryAPI from '../api/categoryAPI.js';
 import * as productAPI from '../api/productAPI.js';
-import * as userAPI from '../api/userAPI.js';
 
 export function createCard(product) {
   const card = document.createElement('div');
@@ -275,8 +275,7 @@ export async function addNewProduct() {
     return;
   }
 
-  const newForm = form.cloneNode(true);
-  form.parentNode.replaceChild(newForm, form);
+  form.reset();
 
   newForm.addEventListener('submit', async function (event) {
     event.preventDefault();
