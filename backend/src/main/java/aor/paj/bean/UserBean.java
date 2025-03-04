@@ -153,6 +153,10 @@ public class UserBean {
         if (authResponse != null) return authResponse;
 
         boolean success = userDao.suspendUser(id);
+        return processUserActionResult(success, id, "suspended");
+    }
+
+    private Response processUserActionResult(boolean success, Long id, String action) {
         if (!success) {
             logger.warn("User with id {} not found.", id);
             return Response.status(Response.Status.NOT_FOUND)
@@ -160,9 +164,10 @@ public class UserBean {
                     .build();
         }
 
-        logger.info("Successful suspension of user with id: {}", id);
-        return Response.ok("User suspended successfully").build();
+        logger.info("Successful {} of user with id: {}", action, id);
+        return Response.ok("User " + action + " successfully").build();
     }
+
 
     private Response authenticateAuthorize(Long id, String token, boolean requireAdmin, boolean requireSelf){
         if (!isTokenAvailable(token)) return Response.status(Response.Status.UNAUTHORIZED)
@@ -204,7 +209,7 @@ public class UserBean {
 
     private boolean isUserAdmin(UserEntity authenticatedUser) {
         if (!authenticatedUser.isAdmin()) {
-            logger.warn("User without admin rights attempted to suspend another user.");
+            logger.warn("User doesn't have admin rights.");
             return false;
         }
         return true;
@@ -212,6 +217,7 @@ public class UserBean {
 
     private boolean isUserSelf(UserEntity authenticatedUser, Long userId) {
         if (authenticatedUser.getId().equals(userId)) {
+            logger.warn("User is not the owner of the account.");
             return true;
         }
         return false;
