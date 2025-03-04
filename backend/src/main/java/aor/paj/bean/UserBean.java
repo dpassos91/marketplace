@@ -108,13 +108,8 @@ public class UserBean {
     }
 
     public Response updateUser(Long id, String token, UserDto userDto) {
-        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST)
-                .entity("Missing authentication token.").build();
-
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
-
-        if (!isUserAdmin(authenticatedUser) || !isUserSelf(authenticatedUser, id)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to update this user.").build();
+        Response authResponse = authenticateAuthorize(id, token, true, true);
+        if (authResponse != null) return authResponse;
 
         UserEntity userEntity = userDao.findById(id);
 
