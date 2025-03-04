@@ -218,14 +218,17 @@ export async function checkUsername(username) {
 // Get total number of users
 export async function getTotalUsers() {
   try {
-    const response = await fetch(API_ENDPOINTS.users.all); // Assumindo que você tem um endpoint para obter o total de utilizadores
+    const response = await fetch(API_ENDPOINTS.users.all); // Certifique-se de que o endpoint está correto
     if (!response.ok) {
-      throw new Error(`Erro ao obter o total de utilizadores: ${response.status}`);
+      throw new Error(`Erro ao obter os utilizadores: ${response.status}`);
     }
     const data = await response.json();
-    return data.total; // Assumindo que a resposta contém um campo 'total'
+    if (!Array.isArray(data)) {
+      throw new Error('Formato de dados inesperado'); // Garante que os dados são um array
+    }
+    return data;
   } catch (error) {
-    console.error('Erro ao obter o total de utilizadores:', error);
-    return 0;
+    console.error('Erro ao obter os utilizadores:', error);
+    throw error; // Rejeita a promessa com o erro para que o chamador possa lidar com isso
   }
 }

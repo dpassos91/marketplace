@@ -39,7 +39,7 @@ const API_ENDPOINTS = {
   // User endpoints
   users: {
     base: `${API_BASE_URL}/users`,
-    all: `${API_BASE_URL}/users/all`,
+    all: `${API_BASE_URL}/users/users/all`, //TODO Mudar este endpoint para /users apenas (como nos produtos)
     login: `${API_BASE_URL}/users/login`,
     register: `${API_BASE_URL}/users/register`,
     logout: `${API_BASE_URL}/users/logout`,
