@@ -79,7 +79,8 @@ function prepareEvaluationsData(evaluations, currentUser) {
     // User can edit if they're the author of the evaluation or if they have admin privileges
     evaluation.canEdit =
       currentUser &&
-      (evaluation.userId === currentUser.id || currentUser.isAdmin);
+      (String(evaluation.userId) === String(currentUser.id) ||
+        currentUser.isAdmin);
   });
 }
 

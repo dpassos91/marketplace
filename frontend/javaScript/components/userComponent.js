@@ -42,7 +42,10 @@ export async function displayUserProfile() {
   if (profileUserId) {
     // We're viewing a specific user's profile
     userToDisplay = await userAPI.getUserById(profileUserId);
-    isOwnProfile = currentUser && currentUser.id === profileUserId;
+
+    // Convert both IDs to strings before comparison
+    isOwnProfile =
+      currentUser && String(currentUser.id) === String(profileUserId);
   } else if (currentUser) {
     // No ID in URL, display the logged-in user's profile
     userToDisplay = await userAPI.getUserById(currentUser.id);
