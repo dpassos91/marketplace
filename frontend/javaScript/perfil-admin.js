@@ -162,7 +162,7 @@ async function initPage() {
                       <td style="text-align: center;">${user.email}</td>
                       <td style="text-align: center;">
                         <div style="display: flex; justify-content: space-around; align-items: center;">
-                          <button class="btn-card tabela-btn btn-danger" data-username="${user.username}">Consultar perfil</button>
+                          <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">Consultar perfil</button>
                           <button class="btn-card tabela-btn btn-info" data-username="${user.username}">Apagar</button>
                           <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
                         </div>
@@ -174,6 +174,17 @@ async function initPage() {
             console.log('Tabela criada:', table);
             container.appendChild(table);
             console.log('Tabela adicionada ao contêiner');
+
+            // Adiciona event listeners para os botões "Consultar perfil"
+            const redirectUserButtons = table.querySelectorAll('.redirect-user');
+            redirectUserButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.dataset.userId;
+                    console.log(`Redirecionar para o perfil do usuário com ID: ${userId}`);
+                    // Redirecionar para a página de perfil do usuário
+                    window.location.href = `http://localhost:8080/frontend/perfil-utilizador.html?id=${userId}`;
+                });
+            });
         }
 
         // Função para exibir os botões de paginação
@@ -181,21 +192,25 @@ async function initPage() {
             const totalPages = Math.ceil(allUsers.length / USERS_PER_PAGE);
             const container = document.getElementById('tabelaUtilizadores');
 
-            // Remover botões de paginação existentes
-            const existingButtons = container.querySelectorAll('.pagination-button');
-            existingButtons.forEach(button => button.remove());
+            // Verificar se os botões de paginação já existem
+            let paginationButtonsExist = false;
+            if (container.querySelector('.pagination-button')) {
+                paginationButtonsExist = true;
+            }
 
-            // Criar botões de paginação
-            for (let i = 1; i <= totalPages; i++) {
-                const button = document.createElement('button');
-                button.textContent = i;
-                button.className = 'btn-card pagination-button'; // Adicionar a classe 'btn-card'
-                button.addEventListener('click', () => {
-                    currentPage = i;
-                    displayUsersTable(getUsersForPage(currentPage));
-                    updateActiveButton(i); // Atualizar o botão ativo
-                });
-                container.appendChild(button);
+            if (!paginationButtonsExist) {
+                // Criar botões de paginação
+                for (let i = 1; i <= totalPages; i++) {
+                    const button = document.createElement('button');
+                    button.textContent = i;
+                    button.className = 'btn-card pagination-button'; // Adicionar a classe 'btn-card'
+                    button.addEventListener('click', () => {
+                        currentPage = i;
+                        displayUsersTable(getUsersForPage(currentPage));
+                        updateActiveButton(i); // Atualizar o botão ativo
+                    });
+                    container.appendChild(button);
+                }
             }
 
             // Marcar o botão da página atual como ativo
@@ -239,6 +254,8 @@ async function initPage() {
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
+
+
 
 
 
