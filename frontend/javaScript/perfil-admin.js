@@ -30,7 +30,7 @@ async function initPage() {
         let targetId = this.getAttribute('id');
         if (targetId === 'gestao-utilizadores') {
           showSection('utilizadores'); // Garante que a secção de utilizadores está visível
-          showUserManagementButtons(); // Mostra os botões de gestão de utilizadores
+          loadUsers(); // Carrega e exibe a tabela de utilizadores
         } else if (targetId === 'gestao-produtos') {
           showSection('produtos'); // Garante que a secção de produtos está visível
         } else if (targetId === 'ver-dashboard') {
@@ -128,33 +128,50 @@ async function initPage() {
     function displayUsersTable(users) {
       console.log('Função displayUsersTable chamada');
       console.log('Dados dos utilizadores:', users);
-      const container = document.getElementById('tabelaUtilizadores'); // Alterado para o novo container
+      const container = document.getElementById('tabelaUtilizadores');
       console.log('Contêiner da tabela de utilizadores:', container);
-      container.innerHTML = ''; // Limpa o container
-      
+      container.innerHTML = '';
+  
       const table = document.createElement('table');
       table.innerHTML = `
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Nome</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${users.map(user => `
+          <thead>
             <tr>
-              <td>${user.username}</td>
-              <td>${user.email}</td>
-              <td>${user.firstName} ${user.lastName}</td>
+              <th style="text-align: center;">Username</th>
+              <th style="text-align: center;">Email</th>
+              <th style="text-align: center;">Ações</th>
             </tr>
-          `).join('')}
-        </tbody>
-      `;
+          </thead>
+          <tbody>
+            ${users.map(user => `
+              <tr>
+                <td style="text-align: center;">${user.username}</td>
+                <td style="text-align: center;">${user.email}</td>
+                <td style="text-align: center;">
+                  <div style="display: flex; justify-content: space-around; align-items: center;">
+                    <button class="btn-card tabela-btn btn-danger" data-username="${user.username}">Consultar perfil</button>
+                    <button class="btn-card tabela-btn btn-info" data-username="${user.username}">Apagar</button>
+                    <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
       console.log('Tabela criada:', table);
       container.appendChild(table);
       console.log('Tabela adicionada ao contêiner');
-    }
+  
+      // Adiciona event listeners para os botões
+      const buttons = table.querySelectorAll('.custom-btn');
+      buttons.forEach(button => {
+          button.addEventListener('click', function() {
+              const username = this.dataset.username;
+              const action = this.textContent;
+              console.log(`Ação: ${action} para o usuário: ${username}`);
+              // Aqui você pode adicionar a lógica para cada ação
+          });
+      });
+  }
 
     // Função para mostrar os botões de gestão de utilizadores
     function showUserManagementButtons() {
@@ -180,6 +197,7 @@ async function initPage() {
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
+
 
 
 

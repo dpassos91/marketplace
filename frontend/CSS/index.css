@@ -661,7 +661,7 @@ table {
   border-collapse: collapse;
   margin: 20px 0;
   font-size: 18px;
-  text-align: left;
+  text-align: center;
 }
 
 table th,
@@ -681,6 +681,61 @@ table th {
   /* Adiciona algum espaço interno */
   /* Outros estilos conforme necessário */
 }
+
+/* Botões tabela */
+/* Estilos para os botões na tabela de gestão de utilizadores */
+/* Estilos base para os botões da tabela */
+.tabela-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease; /* Adiciona a transição */
+  box-shadow: var(--box-shadow);
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin: 2px;
+  /* Garante que os estilos base de btn-card sejam aplicados */
+  background-color: var(--white-100);
+  color: var(--primary-400);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabela-btn:hover {
+  transform: scale(1.05); /* Aplica o efeito de "movimento para a frente" */
+}
+
+/* Estilos específicos dos botões (correspondendo aos estilos da Gestão de Produtos) */
+.tabela-btn.btn-danger {
+  background-color: var(--secondary-color);
+  color: var(--white-100);
+}
+
+.tabela-btn.btn-danger:hover {
+  background-color: var(--secondary-300);
+}
+
+.tabela-btn.btn-info {
+  background-color: var(--primary-color);
+  color: var(--white-100);
+}
+
+.tabela-btn.btn-info:hover {
+  background-color: var(--primary-300);
+}
+
+.tabela-btn.btn-edit {
+  background-color: var(--secondary-400);
+  color: var(--white-100);
+}
+
+.tabela-btn.btn-edit:hover {
+  background-color: var(--secondary-300);
+}
+
 
 .login {
   display: flex;
