@@ -51,7 +51,9 @@ async function welcomeMessage() {
     loginButton.classList.add('hidden');
     profilePicture.classList.remove('hidden');
     profilePicture.src = user.picture;
-    welcomeMessage.innerHTML = `<a href="perfil-utilizador.html">Bem-vindo/a ${user.firstName} ${user.lastName}</a>!`;
+
+    // Update the welcome message link to include user ID
+    welcomeMessage.innerHTML = `<a href="perfil-utilizador.html?id=${user.id}">Bem-vindo/a ${user.firstName} ${user.lastName}</a>!`;
 
     logoutButton.addEventListener('click', async () => {
       await handleLogout();

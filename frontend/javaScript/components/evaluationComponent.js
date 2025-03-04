@@ -37,64 +37,102 @@ function createEvaluationElement(evaluation) {
 // Load and display evaluations for a seller
 export async function loadSellerEvaluations(sellerId, containerSelector) {
   try {
+    // Get container and validate it exists
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
+    // Show loading indicator
     container.innerHTML = '<div class="loading">A carregar avaliações...</div>';
 
+    // Fetch data
     const evaluations = await evaluationAPI.getEvaluationsForSeller(sellerId);
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
-    if (evaluations && evaluations.length > 0) {
-      // Calculate average rating
-      const totalRating = evaluations.reduce(
-        (sum, evaluation) => sum + evaluation.rating,
-        0
-      );
-      const averageRating = totalRating / evaluations.length;
-      const averageRatingStars =
-        '★'.repeat(Math.round(averageRating)) +
-        '☆'.repeat(5 - Math.round(averageRating));
-
-      let html = `
-        <div class="average-rating">
-          <h3>Rating médio: ${averageRatingStars} (${averageRating.toFixed(
-        1
-      )})</h3>
-          <p>${evaluations.length} evaluation${
-        evaluations.length !== 1 ? 's' : ''
-      }</p>
-        </div>
-        <div class="evaluations-list">
-      `;
-
-      evaluations.forEach(evaluation => {
-        html += createEvaluationElement(evaluation);
-      });
-
-      html += '</div>';
-      container.innerHTML = html;
-
-      // Add event listeners to edit and delete buttons
-      attachEvaluationEventHandlers(container, sellerId);
-    } else {
+    // Check if we have evaluations
+    if (!evaluations || evaluations.length === 0) {
       container.innerHTML = '<p>Este vendedor ainda não foi avaliado.</p>';
+
+      // Add evaluation button only if appropriate
+      appendAddEvaluationButtonIfNeeded(container, currentUser, sellerId);
+      return;
     }
 
-    // Add "Add Evaluation" button if user is logged in and not viewing their own profile
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    if (currentUser && currentUser.id !== sellerId) {
-      const addButton = document.createElement('button');
-      addButton.className = 'btn btn-primary mt-3';
-      addButton.textContent = 'Avaliar Vendedor';
-      addButton.addEventListener('click', () =>
-        showAddEvaluationModal(sellerId)
-      );
-      container.appendChild(addButton);
-    }
+    // Process evaluations
+    prepareEvaluationsData(evaluations, currentUser);
+
+    // Render evaluations
+    renderEvaluationsUI(container, evaluations, sellerId);
+
+    // Add evaluation button if appropriate
+    appendAddEvaluationButtonIfNeeded(container, currentUser, sellerId);
   } catch (error) {
     console.error('Erro ao carregar avaliações:', error);
     document.querySelector(containerSelector).innerHTML =
       '<p class="text-danger">Falha ao carregar avaliações. Por favor volte a tentar mais tarde.</p>';
+  }
+}
+
+// Helper functions to break down the main function logic
+function prepareEvaluationsData(evaluations, currentUser) {
+  // Add canEdit flag to each evaluation
+  evaluations.forEach(evaluation => {
+    // User can edit if they're the author of the evaluation or if they have admin privileges
+    evaluation.canEdit =
+      currentUser &&
+      (String(evaluation.userId) === String(currentUser.id) ||
+        currentUser.isAdmin);
+  });
+}
+
+function renderEvaluationsUI(container, evaluations, sellerId) {
+  // Calculate average rating
+  const { averageRating, averageRatingStars } =
+    calculateAverageRating(evaluations);
+
+  // Generate evaluation summary HTML
+  let html = `
+    <div class="average-rating">
+      <h3>Rating médio: ${averageRatingStars} (${averageRating.toFixed(1)})</h3>
+      <p>${evaluations.length} ${
+    evaluations.length !== 1 ? 'evaluations' : 'evaluation'
+  }</p>
+    </div>
+    <div class="evaluations-list">
+  `;
+
+  // Add individual evaluation cards
+  evaluations.forEach(evaluation => {
+    html += createEvaluationElement(evaluation);
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+
+  // Add event listeners to edit and delete buttons
+  attachEvaluationEventHandlers(container, sellerId);
+}
+
+function calculateAverageRating(evaluations) {
+  const totalRating = evaluations.reduce(
+    (sum, evaluation) => sum + evaluation.rating,
+    0
+  );
+  const averageRating = totalRating / evaluations.length;
+  const averageRatingStars =
+    '★'.repeat(Math.round(averageRating)) +
+    '☆'.repeat(5 - Math.round(averageRating));
+
+  return { averageRating, averageRatingStars };
+}
+
+function appendAddEvaluationButtonIfNeeded(container, currentUser, sellerId) {
+  // Add "Add Evaluation" button if user is logged in and not viewing their own profile
+  if (currentUser && currentUser.id !== sellerId) {
+    const addButton = document.createElement('button');
+    addButton.className = 'btn btn-primary mt-3';
+    addButton.textContent = 'Avaliar Vendedor';
+    addButton.addEventListener('click', () => showAddEvaluationModal(sellerId));
+    container.appendChild(addButton);
   }
 }
 

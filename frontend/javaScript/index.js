@@ -39,11 +39,11 @@ function init() {
     }
 
     if (window.location.pathname.endsWith('detalhes-produto.html')) {
-      await productComponent.gerarDetalhesDoProduto();
+      await productComponent.displayProductDetails();
     }
 
     if (window.location.pathname.endsWith('perfil-utilizador.html')) {
-      await userComponent.displayUser();
+      await userComponent.displayUserProfile();
       await userComponent.toggleFormUserEdit();
     }
 
