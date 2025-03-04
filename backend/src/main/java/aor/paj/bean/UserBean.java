@@ -160,13 +160,8 @@ public class UserBean {
     // TODO: método isSuccessful
 
     public Response suspendUser(Long id, String token) {
-        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST)
-                .entity("Missing authentication token.").build();
-
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
-
-        if (!isUserAdmin(authenticatedUser)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to suspend users.").build();
+        Response authResponse = authenticateAuthorize(id, token, true, false);
+        if (authResponse != null) return authResponse;
 
         boolean success = userDao.suspendUser(id);
         if (!success) {
@@ -178,6 +173,28 @@ public class UserBean {
 
         logger.info("Successful suspension of user with id: {}", id);
         return Response.ok("User suspended successfully").build();
+    }
+
+    private Response authenticateAuthorize(Long id, String token, boolean requireAdmin, boolean requireSelf){
+        if (!isTokenAvailable(token)) return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("Missing authentication token.").build();
+
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("Invalid authentication token.").build();
+
+        if (requireAdmin || requireSelf) {
+            boolean isAuthorized = false;
+
+            if (isUserAdmin(authenticatedUser)) isAuthorized = true;
+
+            if (isUserSelf(authenticatedUser, id)) isAuthorized = true;
+
+            if (!isAuthorized) return Response.status(Response.Status.FORBIDDEN)
+                    .entity("You are not authorized to proceed with this action.").build();
+        }
+
+        return null;
     }
 
     private boolean isTokenAvailable(String token) {
