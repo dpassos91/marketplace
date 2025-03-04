@@ -133,12 +133,8 @@ public class UserBean {
     }
 
     public Response deleteUser(Long id, String token) {
-        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST).entity("Missing authentication token.").build();
-
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
-
-        if (!isUserAdmin(authenticatedUser)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to suspend users.").build();
+        Response authResponse = authenticateAuthorize(id, token, true, false);
+        if (authResponse != null) return authResponse;
 
         boolean success = userDao.delete(id);
         if (!success) {
@@ -151,8 +147,6 @@ public class UserBean {
         logger.info("Successful deletion of user with id: {}", id);
         return Response.ok("User deleted successfully").build();
     }
-
-    // TODO: método isSuccessful
 
     public Response suspendUser(Long id, String token) {
         Response authResponse = authenticateAuthorize(id, token, true, false);
@@ -222,6 +216,8 @@ public class UserBean {
         }
         return false;
     }
+
+    // TODO: método isSuccessful
 
     private boolean isUserSuspended() {
         return false;
