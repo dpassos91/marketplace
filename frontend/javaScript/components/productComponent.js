@@ -2,7 +2,6 @@
 
 import * as productAPI from '../api/productAPI.js';
 import * as userAPI from '../api/userAPI.js';
-import * as helpers from '../utils/helpers.js';
 
 export function createCard(product) {
   const card = document.createElement('div');
@@ -340,32 +339,47 @@ export async function setupComprarButton() {
   }
 }
 
-export function toggleProductButtons(produto) {
+export async function toggleProductButtons(product) {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const comprarButton = document.getElementById('comprar-produto');
   const editarButton = document.querySelector('#editar-produto');
   const eliminarButton = document.querySelector('#eliminar-produto');
   const enviarMensagemButton = document.querySelector('#enviar-mensagem');
 
-  if (user && user.produtos) {
-    const isUserProduct = user.produtos.some(p => p.id === produto.id);
+  if (
+    !comprarButton ||
+    !editarButton ||
+    !eliminarButton ||
+    !enviarMensagemButton
+  ) {
+    console.warn('One or more product buttons not found in the DOM');
+    return;
+  }
 
-    if (isUserProduct) {
-      enviarMensagemButton.classList.add('hidden');
-      comprarButton.classList.add('hidden');
-      editarButton.classList.remove('hidden');
-      eliminarButton.classList.remove('hidden');
-    } else {
-      enviarMensagemButton.classList.remove('hidden');
-      comprarButton.classList.remove('hidden');
-      editarButton.classList.add('hidden');
-      eliminarButton.classList.add('hidden');
-    }
-  } else {
-    enviarMensagemButton.classList.remove('hidden');
-    comprarButton.classList.remove('hidden');
-    editarButton.classList.add('hidden');
-    eliminarButton.classList.add('hidden');
+  // Default state - for non-logged users or non-owner users
+  const isUserLoggedIn = !!user;
+  const isUserProductOwner = isUserLoggedIn && user.id === product.sellerId;
+
+  // Hide edit/delete buttons by default
+  editarButton.classList.add('hidden');
+  eliminarButton.classList.add('hidden');
+
+  // Show buy/message buttons by default
+  comprarButton.classList.remove('hidden');
+  enviarMensagemButton.classList.remove('hidden');
+
+  // If user is the product owner, toggle the buttons accordingly
+  if (isUserProductOwner) {
+    comprarButton.classList.add('hidden');
+    enviarMensagemButton.classList.add('hidden');
+    editarButton.classList.remove('hidden');
+    eliminarButton.classList.remove('hidden');
+  }
+
+  // If product is not available, disable buy button
+  if (product.estado !== 'DISPONIVEL' && product.status !== 'DISPONIVEL') {
+    comprarButton.disabled = true;
+    comprarButton.title = 'Este produto não está disponível para compra';
   }
 }
 

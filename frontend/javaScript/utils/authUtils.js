@@ -8,7 +8,6 @@ export function setAuthToken(token) {
 
 export function removeAuthToken() {
   sessionStorage.removeItem('authToken');
-  console.log('Token removed');
 }
 
 export function isAuthenticated() {
@@ -26,7 +25,6 @@ export function setCurrentUser(userData) {
 
 export function removeCurrentUser() {
   sessionStorage.removeItem('user');
-  console.log('User removed');
 }
 
 export function logout() {
