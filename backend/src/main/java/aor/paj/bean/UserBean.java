@@ -108,13 +108,8 @@ public class UserBean {
     }
 
     public Response updateUser(Long id, String token, UserDto userDto) {
-        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST)
-                .entity("Missing authentication token.").build();
-
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
-
-        if (!isUserAdmin(authenticatedUser) || !isUserSelf(authenticatedUser, id)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to update this user.").build();
+        Response authResponse = authenticateAuthorize(id, token, true, true);
+        if (authResponse != null) return authResponse;
 
         UserEntity userEntity = userDao.findById(id);
 
@@ -138,12 +133,8 @@ public class UserBean {
     }
 
     public Response deleteUser(Long id, String token) {
-        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST).entity("Missing authentication token.").build();
-
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
-
-        if (!isUserAdmin(authenticatedUser)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to suspend users.").build();
+        Response authResponse = authenticateAuthorize(id, token, true, false);
+        if (authResponse != null) return authResponse;
 
         boolean success = userDao.delete(id);
         if (!success) {
@@ -157,18 +148,15 @@ public class UserBean {
         return Response.ok("User deleted successfully").build();
     }
 
-    // TODO: método isSuccessful
-
     public Response suspendUser(Long id, String token) {
-        if (!isTokenAvailable(token)) return Response.status(Response.Status.BAD_REQUEST)
-                .entity("Missing authentication token.").build();
-
-        UserEntity authenticatedUser = userDao.findByToken(token);
-        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid authentication token.").build();
-
-        if (!isUserAdmin(authenticatedUser)) return Response.status(Response.Status.FORBIDDEN).entity("You do not have permission to suspend users.").build();
+        Response authResponse = authenticateAuthorize(id, token, true, false);
+        if (authResponse != null) return authResponse;
 
         boolean success = userDao.suspendUser(id);
+        return processUserActionResult(success, id, "suspended");
+    }
+
+    private Response processUserActionResult(boolean success, Long id, String action) {
         if (!success) {
             logger.warn("User with id {} not found.", id);
             return Response.status(Response.Status.NOT_FOUND)
@@ -176,8 +164,31 @@ public class UserBean {
                     .build();
         }
 
-        logger.info("Successful suspension of user with id: {}", id);
-        return Response.ok("User suspended successfully").build();
+        logger.info("Successful {} of user with id: {}", action, id);
+        return Response.ok("User " + action + " successfully").build();
+    }
+
+
+    private Response authenticateAuthorize(Long id, String token, boolean requireAdmin, boolean requireSelf){
+        if (!isTokenAvailable(token)) return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("Missing authentication token.").build();
+
+        UserEntity authenticatedUser = userDao.findByToken(token);
+        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("Invalid authentication token.").build();
+
+        if (requireAdmin || requireSelf) {
+            boolean isAuthorized = false;
+
+            if (isUserAdmin(authenticatedUser)) isAuthorized = true;
+
+            if (isUserSelf(authenticatedUser, id)) isAuthorized = true;
+
+            if (!isAuthorized) return Response.status(Response.Status.FORBIDDEN)
+                    .entity("You are not authorized to proceed with this action.").build();
+        }
+
+        return null;
     }
 
     private boolean isTokenAvailable(String token) {
@@ -198,7 +209,7 @@ public class UserBean {
 
     private boolean isUserAdmin(UserEntity authenticatedUser) {
         if (!authenticatedUser.isAdmin()) {
-            logger.warn("User without admin rights attempted to suspend another user.");
+            logger.warn("User doesn't have admin rights.");
             return false;
         }
         return true;
@@ -206,10 +217,13 @@ public class UserBean {
 
     private boolean isUserSelf(UserEntity authenticatedUser, Long userId) {
         if (authenticatedUser.getId().equals(userId)) {
+            logger.warn("User is not the owner of the account.");
             return true;
         }
         return false;
     }
+
+    // TODO: método isSuccessful
 
     private boolean isUserSuspended() {
         return false;
