@@ -1,10 +1,14 @@
 package aor.paj.util;
 
+// TODO Unificar formato do estado do produto ao longo de todo o sistema
+// TODO Unificar formato das avaliações conforme necessidade do sistema
+
 public enum ProductStateId {
   RASCUNHO(1, "Rascunho"),
   DISPONIVEL(2, "Disponível"),
   RESERVADO(3, "Reservado"),
-  COMPRADO(4, "Comprado");
+  COMPRADO(4, "Comprado"),
+  INATIVO(5, "Inativo");
 
   private final int stateId;
   private final String description;
@@ -46,5 +50,13 @@ public enum ProductStateId {
 
   public static boolean isValidStateDescription(String description) {
     return fromDescription(description) != null;
+  }
+
+  /**
+   * Checks if the state represents an active product state
+   * (any state except INATIVO)
+   */
+  public boolean isActive() {
+    return this != INATIVO;
   }
 }

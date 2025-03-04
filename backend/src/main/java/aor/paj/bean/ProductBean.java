@@ -333,6 +333,51 @@ public class ProductBean {
     }
 
     /**
+     * Soft deletes a product by setting its state to INATIVO
+     * 
+     * @param id The ID of the product to deactivate
+     * @return The updated product DTO or null if not found
+     */
+    public ProductDto deactivateProduct(Long id) {
+        ProductEntity product = productDao.deactivateProduct(id);
+        return convertEntityToDto(product);
+    }
+
+    /**
+     * Reactivates a product that was previously deactivated
+     * 
+     * @param id         The ID of the product to reactivate
+     * @param newStateId The state to set the product to after reactivation
+     * @return The updated product DTO or null if not found
+     */
+    public ProductDto reactivateProduct(Long id, int newStateId) {
+        ProductEntity product = productDao.reactivateProduct(id, newStateId);
+        return convertEntityToDto(product);
+    }
+
+    /**
+     * Gets all inactive products
+     * 
+     * @return List of inactive product DTOs
+     */
+    public List<ProductDto> getAllInactiveProducts() {
+        List<ProductEntity> entities = productDao.findAllInactive();
+        return entities.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Permanently deletes an inactive product
+     * 
+     * @param id The ID of the inactive product to delete
+     * @return true if successful, false otherwise
+     */
+    public boolean permanentlyDeleteProduct(Long id) {
+        return productDao.permanentlyDelete(id);
+    }
+
+    /**
      * Converts a product entity to a DTO
      * 
      * @param entity The product entity to convert
@@ -350,8 +395,11 @@ public class ProductBean {
         dto.setPrice(entity.getPrice());
         dto.setLocation(entity.getLocation());
         dto.setImageUrl(entity.getImageUrl());
-        dto.setStatus(entity.getStatus());
-        dto.setActive(entity.isActive());
+
+        // Set state consistently using ProductStateId enum
+        setProductStateFromEntity(dto, entity);
+
+        // No need to set active separately as it's derived from the state
 
         // Format dates to strings
         if (entity.getDate() != null) {
@@ -405,9 +453,16 @@ public class ProductBean {
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setLocation(dto.getLocation());
-        entity.setImageUrl(dto.getImageUrl()); // Add imageUrl field
-        entity.setStatus(dto.getStatus());
-        entity.setActive(dto.isActive());
+        entity.setImageUrl(dto.getImageUrl());
+
+        // Set state consistently from ProductStateId
+        ProductStateId state = dto.getProductState();
+        if (state != null) {
+            entity.setStateId(state.getStateId());
+            // Active is automatically set in the setStateId method
+        } else if (dto.getStatus() != null) {
+            entity.setStatus(dto.getStatus());
+        }
 
         // Parse dates if provided
         if (dto.getDate() != null && !dto.getDate().isEmpty()) {
@@ -427,6 +482,20 @@ public class ProductBean {
                 entity.setEditDate(LocalDate.now());
             }
         }
+
         return entity;
+    }
+
+    // Helper method:
+    private void setProductStateFromEntity(ProductDto dto, ProductEntity entity) {
+        if (entity.getStateId() != null) {
+            try {
+                ProductStateId state = ProductStateId.fromStateId(entity.getStateId());
+                dto.setProductState(state);
+            } catch (IllegalArgumentException e) {
+                dto.setStatus("Unknown");
+                dto.setActive(false);
+            }
+        }
     }
 }

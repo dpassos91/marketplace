@@ -6,6 +6,7 @@ import aor.paj.bean.ProductBean;
 import aor.paj.dto.ProductDto;
 import aor.paj.exception.BadRequestException;
 import aor.paj.exception.ResourceNotFoundException;
+import aor.paj.util.ProductStateId;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -277,17 +278,73 @@ public class ProductService {
     }
 
     /**
-     * Delete a product
+     * Get all inactive (soft-deleted) products
      * 
-     * @param id The ID of the product to delete
-     * @return Response with 204 No Content if successful or 404 if not found
+     * @return Response containing a list of inactive products
+     */
+    @GET
+    @Path("/inactive")
+    public Response getAllInactiveProducts() {
+        List<ProductDto> products = productBean.getAllInactiveProducts();
+        return Response.ok(products).build();
+    }
+
+    /**
+     * Soft delete a product by setting its state to INATIVO
+     * This is the standard method for "deleting" products and should be used
+     * instead of permanent deletion
+     * 
+     * @param id The ID of the product to deactivate
+     * @return Response containing the updated product or 404 if not found
+     */
+    @PUT
+    @Path("/{id}/deactivate")
+    public Response deactivateProduct(@PathParam("id") Long id) {
+        ProductDto updatedProduct = productBean.deactivateProduct(id);
+        if (updatedProduct == null) {
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
+        }
+
+        return Response.ok(updatedProduct).build();
+    }
+
+    /**
+     * Reactivate an inactive product
+     * 
+     * @param id      The ID of the product to reactivate
+     * @param stateId The new state ID to set
+     * @return Response containing the updated product or 404 if not found
+     */
+    @PUT
+    @Path("/{id}/reactivate/{stateId}")
+    public Response reactivateProduct(
+            @PathParam("id") Long id,
+            @PathParam("stateId") int stateId) {
+        // Validate that the stateId is not INATIVO
+        if (stateId == ProductStateId.INATIVO.getStateId()) {
+            throw new BadRequestException("Cannot reactivate to INATIVO state");
+        }
+
+        ProductDto updatedProduct = productBean.reactivateProduct(id, stateId);
+        if (updatedProduct == null) {
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
+        }
+
+        return Response.ok(updatedProduct).build();
+    }
+
+    /**
+     * Permanently delete an inactive product
+     * 
+     * @param id The ID of the product to permanently delete
+     * @return Response with 204 No Content if successful
      */
     @DELETE
-    @Path("/{id}")
-    public Response deleteProduct(@PathParam("id") Long id) {
-        boolean deleted = productBean.deleteProduct(id);
+    @Path("/{id}/permanent")
+    public Response permanentlyDeleteProduct(@PathParam("id") Long id) {
+        boolean deleted = productBean.permanentlyDeleteProduct(id);
         if (!deleted) {
-            throw new ResourceNotFoundException("Product with id " + id + " not found");
+            throw new BadRequestException("Product with id " + id + " not found or not in inactive state");
         }
         return Response.noContent().build();
     }

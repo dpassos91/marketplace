@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import aor.paj.entity.ProductEntity;
 import aor.paj.util.ProductStateId;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -158,16 +159,25 @@ public class ProductDto implements Serializable {
     }
 
     public ProductStateId getProductState() {
-        return productState;
+        if (this.productState != null) {
+            return this.productState;
+        } else if (this.status != null) {
+            return ProductStateId.fromDescription(this.status);
+        }
+        return null;
     }
 
     public void setProductState(ProductStateId productState) {
         this.productState = productState;
-        this.status = productState.getDescription();
+        if (productState != null) {
+            this.status = productState.getDescription();
+            this.active = productState.isActive(); // Auto-update active field based on state
+        }
     }
 
     public void setEstadoById(int stateId) {
-        setProductState(ProductStateId.fromStateId(stateId));
+        ProductStateId state = ProductStateId.fromStateId(stateId);
+        setProductState(state);
     }
 
     public boolean isActive() {
@@ -248,6 +258,18 @@ public class ProductDto implements Serializable {
 
     public void setEvaluations(List<EvaluationDto> evaluations) {
         this.evaluations = evaluations;
+    }
+
+    // Apply the state from an entity
+    public void updateStateFromEntity(ProductEntity entity) {
+        if (entity.getStateId() != null) {
+            try {
+                setEstadoById(entity.getStateId());
+            } catch (IllegalArgumentException e) {
+                this.status = "Unknown";
+                this.active = false;
+            }
+        }
     }
 
     @Override

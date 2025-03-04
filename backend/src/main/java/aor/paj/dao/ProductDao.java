@@ -166,9 +166,7 @@ public class ProductDao {
      */
     public List<ProductEntity> findAllPaginated(int offset, int limit) {
         TypedQuery<ProductEntity> query = em.createNamedQuery("Product.findAll", ProductEntity.class);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        return query.getResultList();
+        return createPaginatedQuery(query, offset, limit).getResultList();
     }
 
     /**
@@ -181,9 +179,7 @@ public class ProductDao {
     public List<ProductEntity> findAllActivePaginated(int offset, int limit) {
         TypedQuery<ProductEntity> query = em.createNamedQuery("Product.findByActive", ProductEntity.class)
                 .setParameter("active", true);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        return query.getResultList();
+        return createPaginatedQuery(query, offset, limit).getResultList();
     }
 
     /**
@@ -289,5 +285,71 @@ public class ProductDao {
         return em.createQuery("SELECT p FROM ProductEntity p WHERE p.stateId = :stateId", ProductEntity.class)
                 .setParameter("stateId", stateId)
                 .getResultList();
+    }
+
+    /**
+     * Makes a product inactive (soft delete)
+     * 
+     * @param id the ID of the product to deactivate
+     * @return the updated product or null if not found
+     */
+    public ProductEntity deactivateProduct(Long id) {
+        ProductEntity product = findById(id);
+        if (product != null) {
+            product.setStateId(ProductStateId.INATIVO.getStateId());
+            return update(product);
+        }
+        return null;
+    }
+
+    /**
+     * Reactivates a previously deactivated product
+     * 
+     * @param id         the ID of the product to reactivate
+     * @param newStateId the state to set the product to after reactivation
+     * @return the updated product or null if not found
+     */
+    public ProductEntity reactivateProduct(Long id, int newStateId) {
+        ProductEntity product = findById(id);
+        if (product != null) {
+            product.setStateId(newStateId);
+            return update(product);
+        }
+        return null;
+    }
+
+    /**
+     * Finds all inactive products
+     * 
+     * @return list of inactive products
+     */
+    public List<ProductEntity> findAllInactive() {
+        return em.createQuery(
+                "SELECT p FROM ProductEntity p WHERE p.stateId = :inactiveState",
+                ProductEntity.class)
+                .setParameter("inactiveState", ProductStateId.INATIVO.getStateId())
+                .getResultList();
+    }
+
+    /**
+     * Permanently deletes a product that is in INATIVO state
+     * 
+     * @param id the ID of the product to permanently delete
+     * @return true if deleted, false if not found or not in INATIVO state
+     */
+    public boolean permanentlyDelete(Long id) {
+        ProductEntity product = findById(id);
+        if (product != null && product.getStateId() == ProductStateId.INATIVO.getStateId()) {
+            em.remove(product);
+            return true;
+        }
+        return false;
+    }
+
+    // Helper method:
+    private <T> TypedQuery<T> createPaginatedQuery(TypedQuery<T> baseQuery, int offset, int limit) {
+        baseQuery.setFirstResult(offset);
+        baseQuery.setMaxResults(limit);
+        return baseQuery;
     }
 }

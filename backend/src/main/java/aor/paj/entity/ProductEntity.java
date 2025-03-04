@@ -171,6 +171,17 @@ public class ProductEntity implements Serializable {
 
   public void setStateId(Integer stateId) {
     this.stateId = stateId;
+
+    // Update active property based on state
+    if (stateId != null) {
+      try {
+        ProductStateId state = ProductStateId.fromStateId(stateId);
+        this.active = state.isActive();
+      } catch (IllegalArgumentException e) {
+        // Default to inactive for invalid states
+        this.active = false;
+      }
+    }
   }
 
   public String getStatus() {
@@ -181,13 +192,17 @@ public class ProductEntity implements Serializable {
     if (statusDescription != null) {
       ProductStateId state = ProductStateId.fromDescription(statusDescription);
       if (state != null) {
-        this.stateId = state.getStateId();
+        setStateId(state.getStateId());
       }
     }
   }
 
-  public void setStateId(ProductStateId state) {
-    this.stateId = state != null ? state.getStateId() : null;
+  public void setProductState(ProductStateId state) {
+    if (state != null) {
+      setStateId(state.getStateId());
+    } else {
+      this.stateId = null;
+    }
   }
 
   public boolean isActive() {
