@@ -204,12 +204,6 @@ export function setupDeleteProductButton() {
       if (confirmDelete) {
         try {
           await productAPI.deleteProduct(produtoId);
-
-          // Remove product from user's products array in sessionStorage
-          const user = JSON.parse(sessionStorage.getItem('user'));
-          user.produtos = user.produtos.filter(p => p.id !== produtoId);
-          sessionStorage.setItem('user', JSON.stringify(user));
-
           alert('Produto eliminado com sucesso!');
           window.location.href = 'perfil-utilizador.html';
         } catch (error) {
@@ -270,38 +264,129 @@ export function createSaveButton() {
   return guardarButton;
 }
 
+export async function addNewProduct() {
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  const form = document.getElementById('form-novo-produto');
+  const modal = document.getElementById('modal');
+
+  if (!user || !user.id) {
+    alert('You must be logged in to add a product');
+    modal.style.display = 'none';
+    return;
+  }
+
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
+
+  newForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const categorySelect = document.getElementById('category');
+    const categoryId = parseInt(categorySelect.value);
+    const price = document.getElementById('price').value;
+    const imageUrl = document.getElementById('imageURL').value;
+    const location = document.getElementById('location').value;
+
+    const newProduct = {
+      title: title,
+      description: description,
+      categoryId: categoryId,
+      price: parseFloat(price),
+      imageUrl: imageUrl,
+      location: location,
+      sellerId: user.id,
+      active: true,
+    };
+
+    try {
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+      }
+      await productAPI.createProduct(newProduct);
+      alert('Product created successfully!');
+      modal.style.display = 'none';
+      newForm.reset();
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating product:', error);
+      alert('Error creating product. Please try again.');
+
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+      }
+    }
+  });
+
+  try {
+    const categories = await categoryAPI.getAllCategories();
+    const categorySelect = document.getElementById('category');
+
+    while (categorySelect.options.length > 1) {
+      categorySelect.remove(1);
+    }
+
+    if (categories && categories.length > 0) {
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+      });
+    }
+  } catch (error) {
+    console.error('Error loading categories:', error);
+  }
+}
+
 export async function saveProductChanges() {
   const urlParams = new URLSearchParams(window.location.search);
-  const produtoId = urlParams.get('id');
+  const productId = urlParams.get('id');
+
+  const title = document.getElementById('nome-produto').value;
+  const description = document.getElementById('descricao').value;
+  const location = document.getElementById('localizacao').value;
+  const categoryId = parseInt(document.getElementById('categoria').value);
+  const price = parseFloat(
+    document.getElementById('preco').value.replace('€', '').trim()
+  );
+  const status = document.getElementById('estado-produto').value.toUpperCase();
 
   const updatedProduct = {
-    titulo: document.getElementById('nome-produto').value,
-    local: document.getElementById('localizacao').value,
-    categoria: document.getElementById('categoria').value,
-    preco: parseFloat(document.getElementById('preco').value.replace('€', '')),
-    descricao: document.getElementById('descricao').value,
-    estado: document.getElementById('estado-produto').value.toUpperCase(),
+    title: title,
+    description: description,
+    categoryId: categoryId,
+    price: price,
+    location: location,
+    status: status,
   };
 
   try {
-    await productAPI.updateProduct(produtoId, updatedProduct);
-
-    // Update product in user's products array in sessionStorage
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    const productIndex = user.produtos.findIndex(p => p.id === produtoId);
-    if (productIndex !== -1) {
-      user.produtos[productIndex] = {
-        ...user.produtos[productIndex],
-        ...updatedProduct,
-      };
-      sessionStorage.setItem('user', JSON.stringify(user));
+    const saveButton = document.getElementById('guardar-produto');
+    if (saveButton) {
+      saveButton.disabled = true;
+      saveButton.innerHTML =
+        'A guardar... <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>';
     }
 
+    await productAPI.updateProduct(productId, updatedProduct);
     alert('Produto atualizado com sucesso!');
     window.location.reload();
   } catch (error) {
     alert('Erro ao atualizar o produto. Tente novamente.');
     console.error(error);
+
+    const saveButton = document.getElementById('guardar-produto');
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.innerHTML =
+        'Guardar <i class="fa fa-save" aria-hidden="true"></i>';
+    }
   }
 }
 
