@@ -100,7 +100,7 @@ export async function displayMostRatedProducts() {
 }
   */
 
-export async function gerarDetalhesDoProduto() {
+export async function displayProductDetails() {
   const containerDetails = document.querySelector('.detalhes-container');
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('id');
@@ -140,9 +140,16 @@ export async function gerarDetalhesDoProduto() {
         ).toFixed(2)}€" readonly />
 
         <label for="publicado-por">Publicado por:</label>
-        <input type="text" id="publicado-por" value="${
-          product.sellerUsername
-        }" readonly />
+        <div class="seller-info">
+          <input type="text" id="publicado-por" value="${
+            product.sellerUsername
+          }" readonly />
+          <a href="perfil-utilizador.html?id=${
+            product.sellerId
+          }" class="seller-profile-link" title="Ver perfil do vendedor">
+            <i class="fa fa-user" aria-hidden="true"></i> Ver perfil
+          </a>
+        </div>
 
         <label for="descricao">Descrição:</label>
         <textarea id="descricao" readonly>${product.description}</textarea>
@@ -203,9 +210,16 @@ export function setupDeleteProductButton() {
       );
       if (confirmDelete) {
         try {
+          // Get product details to get seller ID
+          const product = await productAPI.getProductById(produtoId);
+          const sellerId = product.sellerId;
+
+          // Delete the product
           await productAPI.deleteProduct(produtoId);
           alert('Produto eliminado com sucesso!');
-          window.location.href = 'perfil-utilizador.html';
+
+          // Redirect to seller's profile
+          window.location.href = `perfil-utilizador.html?id=${sellerId}`;
         } catch (error) {
           alert('Erro ao eliminar o produto. Tente novamente.');
           console.error(error);

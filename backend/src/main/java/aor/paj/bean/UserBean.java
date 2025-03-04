@@ -114,9 +114,9 @@ public class UserBean {
         UserEntity userEntity = userDao.findById(id);
 
         if (userEntity == null) {
-            logger.warn("User with id {} not found.", id);
+            logger.warn("User with id {} not found for update.", id);
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with ID " + id + " not found!")
+                    .entity("404: User with ID " + id + " not found!")
                     .build();
         }
 
@@ -137,15 +137,7 @@ public class UserBean {
         if (authResponse != null) return authResponse;
 
         boolean success = userDao.delete(id);
-        if (!success) {
-            logger.warn("User with id {} not found.", id);
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with ID " + id + " not found!")
-                    .build();
-        }
-
-        logger.info("Successful deletion of user with id: {}", id);
-        return Response.ok("User deleted successfully").build();
+        return processActionResult(success, id, "deleted");
     }
 
     public Response suspendUser(Long id, String token) {
@@ -153,29 +145,28 @@ public class UserBean {
         if (authResponse != null) return authResponse;
 
         boolean success = userDao.suspendUser(id);
-        return processUserActionResult(success, id, "suspended");
+        return processActionResult(success, id, "suspended");
     }
 
-    private Response processUserActionResult(boolean success, Long id, String action) {
+    private Response processActionResult(boolean success, Long id, String action) {
         if (!success) {
             logger.warn("User with id {} not found.", id);
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with ID " + id + " not found!")
+                    .entity("404: User with ID " + id + " not found!")
                     .build();
         }
 
         logger.info("Successful {} of user with id: {}", action, id);
-        return Response.ok("User " + action + " successfully").build();
+        return Response.ok("200: User " + action + " successfully").build();
     }
-
 
     private Response authenticateAuthorize(Long id, String token, boolean requireAdmin, boolean requireSelf){
         if (!isTokenAvailable(token)) return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("Missing authentication token.").build();
+                .entity("401: Missing authentication token.").build();
 
         UserEntity authenticatedUser = userDao.findByToken(token);
         if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("Invalid authentication token.").build();
+                .entity("401: Invalid authentication token.").build();
 
         if (requireAdmin || requireSelf) {
             boolean isAuthorized = false;
@@ -185,7 +176,7 @@ public class UserBean {
             if (isUserSelf(authenticatedUser, id)) isAuthorized = true;
 
             if (!isAuthorized) return Response.status(Response.Status.FORBIDDEN)
-                    .entity("You are not authorized to proceed with this action.").build();
+                    .entity("403: You are not allowed to proceed with this action.").build();
         }
 
         return null;

@@ -664,7 +664,8 @@ table {
   text-align: center;
 }
 
-table th, table td {
+table th,
+table td {
   padding: 12px;
   border: 1px solid #ddd;
 }
@@ -674,8 +675,10 @@ table th {
 }
 
 #userCardsContainer {
-  width: 100%; /* Garante que ocupa a largura total */
-  padding: 20px; /* Adiciona algum espaço interno */
+  width: 100%;
+  /* Garante que ocupa a largura total */
+  padding: 20px;
+  /* Adiciona algum espaço interno */
   /* Outros estilos conforme necessário */
 }
 
@@ -1310,16 +1313,6 @@ aside {
   margin: 0;
 }
 
-#link-avaliacoes {
-  text-decoration: none;
-  color: var(--secondary-color);
-}
-
-#numero-avaliacoes {
-  font-size: 0.8rem;
-  font-style: italic;
-}
-
 #detalhes-produto-form {
   display: flex;
   flex-direction: column;
@@ -1329,6 +1322,32 @@ aside {
 
 #detalhes-produto-form section {
   margin-top: 15px;
+}
+
+.seller-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seller-info input {
+  flex: 1;
+}
+
+.seller-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.9em;
+}
+
+.seller-profile-link:hover {
+  background-color: #e0e0e0;
 }
 
 /* Evaluation styles */
