@@ -1,7 +1,7 @@
 'use strict';
 
 import { loadCommonElements } from './loadCommons.js';
-import { getTotalUsers } from './api/userAPI.js';
+import { getTotalUsers, suspendUser} from './api/userAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -163,7 +163,7 @@ async function initPage() {
                       <td style="text-align: center;">
                         <div style="display: flex; justify-content: space-around; align-items: center;">
                           <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">Consultar perfil</button>
-                          <button class="btn-card tabela-btn btn-info" data-username="${user.username}">Apagar</button>
+                          <button class="btn-card tabela-btn btn-info suspend-user" data-user-id="${user.id}">Apagar</button>
                           <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
                         </div>
                       </td>
@@ -185,6 +185,52 @@ async function initPage() {
                     window.location.href = `http://localhost:8080/frontend/perfil-utilizador.html?id=${userId}`;
                 });
             });
+
+            // Adiciona event listeners para os botões "Apagar"
+            const suspendUserButtons = table.querySelectorAll('.suspend-user');
+            suspendUserButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.dataset.userId;
+                    console.log(`Solicitar confirmação para suspender usuário com ID: ${userId}`);
+                    // Exibir modal de confirmação
+                    showConfirmationModal(userId);
+                });
+            });
+        }
+
+        // Função para exibir o modal de confirmação
+        function showConfirmationModal(userId) {
+            const modal = document.getElementById('confirmationModal');
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
+
+            // Exibir o modal
+            modal.style.display = 'block';
+
+            // Adicionar event listeners aos botões do modal
+            confirmButton.onclick = async function() {
+                console.log(`Confirmação recebida. Suspender usuário com ID: ${userId}`);
+                try {
+                    await suspendUser(userId);
+                    console.log(`Usuário com ID ${userId} suspenso com sucesso`);
+                    // Exibir alerta de sucesso
+                    alert('Usuário suspenso com sucesso!');
+                    // Recarregar a lista de usuários após a suspensão
+                    loadUsers();
+                } catch (error) {
+                    console.error('Erro ao suspender o usuário:', error);
+                    // Tratar o erro conforme necessário
+                } finally {
+                    // Fechar o modal
+                    modal.style.display = 'none';
+                }
+            };
+
+            cancelButton.onclick = function() {
+                console.log('Operação de suspensão cancelada');
+                // Fechar o modal
+                modal.style.display = 'none';
+            };
         }
 
         // Função para exibir os botões de paginação
@@ -253,7 +299,9 @@ async function initPage() {
     }
 }
 
+// Aguarda o carregamento completo do DOM antes de executar a função initPage
 document.addEventListener('DOMContentLoaded', initPage);
+
 
 
 
