@@ -291,7 +291,7 @@ export async function addNewProduct() {
 
   form.reset();
 
-  newForm.addEventListener('submit', async function (event) {
+  form.addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const title = document.getElementById('title').value;
@@ -322,7 +322,7 @@ export async function addNewProduct() {
       await productAPI.createProduct(newProduct);
       alert('Product created successfully!');
       modal.style.display = 'none';
-      newForm.reset();
+      form.reset();
       window.location.reload();
     } catch (error) {
       console.error('Error creating product:', error);
