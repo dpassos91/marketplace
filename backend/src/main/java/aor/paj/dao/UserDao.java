@@ -33,7 +33,7 @@ public class UserDao {
 
     public boolean suspendUser(Long id) {
         UserEntity user = findById(id);
-        if (user != null) {
+        if (user != null && user.isActive()) {
             user.setActive(false);
             entityManager.merge(user);
             return true;
@@ -43,7 +43,7 @@ public class UserDao {
 
     public boolean activateUser(Long id) {
         UserEntity user = findById(id);
-        if (user != null) {
+        if (user != null && !user.isActive()) {
             user.setActive(true);
             entityManager.merge(user);
             return true;

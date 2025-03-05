@@ -878,6 +878,12 @@ table th {
   /* Reduz a opacidade no hover */
 }
 
+/* Admin - utilizador suspenso */
+.suspended-user {
+  text-decoration: line-through;
+  color: gray; /* Opcional: Altera a cor do texto para cinza */
+}
+
 /* Admin - botão de acesso */
 
 .admin-button {

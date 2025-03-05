@@ -3,78 +3,78 @@
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser } from './api/userAPI.js';
 
-// Pagination variables
-const USERS_PER_PAGE = 10; // Number of users per page
-let currentPage = 1; // Current page
-let allUsers = []; // Array to store all users
+// Variáveis de paginação
+const USERS_PER_PAGE = 10; // Número de utilizadores por página
+let currentPage = 1; // Página atual
+let allUsers = []; // Array para armazenar todos os utilizadores
 
 async function initPage() {
   try {
     await loadCommonElements();
-    console.log('Common elements loaded successfully');
+    console.log('Elementos comuns carregados com sucesso');
 
     const links = document.querySelectorAll('.admin-sidebar a');
     const sections = document.querySelectorAll('.admin-content > section');
 
-    // Function to hide all sections
+    // Função para esconder todas as secções
     function hideAllSections() {
-      console.log('Hiding all sections');
+      console.log('Escondendo todas as secções');
       sections.forEach(section => {
         section.classList.add('hidden');
       });
     }
 
-    // Click event for sidebar links
+    // Evento de clique para os links da sidebar
     links.forEach(link => {
       link.addEventListener('click', function (event) {
         event.preventDefault();
 
-        hideAllSections(); // Hides all sections
+        hideAllSections(); // Esconde todas as secções
 
-        // Show the section corresponding to the clicked link
+        // Mostra a secção correspondente ao link clicado
         let targetId = this.getAttribute('id');
         if (targetId === 'gestao-utilizadores') {
-          showSection('utilizadores'); // Ensures the users section is visible
-          loadUsers(); // Loads and displays the user table
+          showSection('utilizadores'); // Garante que a secção de utilizadores está visível
+          loadUsers(); // Carrega e exibe a tabela de utilizadores
         } else if (targetId === 'gestao-produtos') {
-          showSection('produtos'); // Ensures the products section is visible
+          showSection('produtos'); // Garante que a secção de produtos está visível
         } else if (targetId === 'ver-dashboard') {
-          showSection('dashboard'); // Ensures the dashboard section is visible
-          loadDashboard(); // Loads user cards when the dashboard loads
+          showSection('dashboard'); // Garante que a secção do dashboard está visível
+          loadDashboard(); // Carrega os cartões de utilizadores ao carregar o dashboard
         } else if (targetId === 'gestao-avaliacoes') {
-          showSection('avaliacoes'); // Ensures the evaluations section is visible
+          showSection('avaliacoes'); // Garante que a secção de avaliações está visível
         }
       });
     });
 
-    // Click event for the "View User Profile" button
+    // Evento de clique para o botão "Consultar perfil de utilizador"
     const viewUserProfileButton = document.getElementById('viewUserProfile');
     viewUserProfileButton.addEventListener('click', function (event) {
       event.preventDefault();
-      console.log('"View User Profile" button clicked');
-      showSection('utilizadores'); // Shows the users section
-      loadUsers(); // Loads users when the button is clicked
+      console.log('Botão "Consultar perfil de utilizador" clicado');
+      showSection('utilizadores'); // Mostra a secção de utilizadores
+      loadUsers(); // Carrega os utilizadores quando o botão é clicado
     });
 
-    // Click event for the "Filter" button
+    // Evento de clique para o botão "Filtrar"
     const filtrarButton = document.getElementById('adminFiltrarProd');
     filtrarButton.addEventListener('click', function (event) {
       event.preventDefault();
 
-      hideAllSections(); // Hides all sections
-      showSection('filtros'); // Shows the filters section
+      hideAllSections(); // Esconde todas as secções
+      showSection('filtros'); // Mostra a secção de filtros
     });
 
-    // Click event for the "Edit User Products" button
+    // Evento de clique para o botão "Editar produtos de utilizadores"
     const editarButton = document.getElementById('adminEditarProd');
     editarButton.addEventListener('click', function (event) {
       event.preventDefault();
 
-      hideAllSections(); // Hides all sections
-      showSection('editarProdutos'); // Shows the editProducts section
+      hideAllSections(); // Esconde todas as secções
+      showSection('editarProdutos'); // Mostra a secção de editarProdutos
     });
 
-    // Generic function to show a section
+    // Função genérica para mostrar uma secção
     function showSection(targetId) {
       hideAllSections();
       const section = document.getElementById(targetId);
@@ -83,7 +83,7 @@ async function initPage() {
       }
     }
 
-    // Function to create a user card
+    // Função para criar um cartão de utilizador
     function createUserCard(user) {
       const card = document.createElement('div');
       card.className = 'user-card';
@@ -93,7 +93,7 @@ async function initPage() {
                 <h4>${user.email}</h4>
                 <h2>${user.cargo}</h2>
                 <span>${user.dataDeCriacao}</span>
-                <button type="button" title="perfil">View Profile</button>
+                <button type="button" title="perfil">Ver Perfil</button>
             </div>
         `;
       const button = card.querySelector('button');
@@ -103,10 +103,10 @@ async function initPage() {
       return card;
     }
 
-    // Function to add user cards to the container in the dashboard
+    // Função para adicionar cartões de utilizadores ao container no dashboard
     function displayUserCards(users) {
       const container = document.getElementById('userCardsContainer');
-      container.innerHTML = ''; // Clears the container
+      container.innerHTML = ''; // Limpa o container
 
       users.forEach(user => {
         const card = createUserCard(user);
@@ -114,196 +114,197 @@ async function initPage() {
       });
     }
 
-    // Function to load users from the backend
+    // Função para carregar os utilizadores a partir do backend
     async function loadUsers() {
       try {
-        console.log('loadUsers function called');
-        allUsers = await getTotalUsers(); // Uses the getTotalUsers function to get all users
-        console.log('Users obtained:', allUsers);
+        console.log('Função loadUsers chamada');
+        allUsers = await getTotalUsers(); // Usa a função getTotalUsers para obter todos os utilizadores
+        console.log('Utilizadores obtidos:', allUsers);
         if (!Array.isArray(allUsers)) {
-          throw new Error('Unexpected data format');
+          throw new Error('Formato de dados inesperado');
         }
-        currentPage = 1; // Reset to the first page when loading users
-        displayUsersTable(getUsersForPage(currentPage)); // Calls the function to display the user table
-        displayPaginationButtons(); // Displays the pagination buttons
+        currentPage = 1; // Resetar para a primeira página ao carregar os utilizadores
+        displayUsersTable(getUsersForPage(currentPage)); // Chama a função para exibir a tabela de utilizadores
+        displayPaginationButtons(); // Exibe os botões de paginação
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Erro:', error);
       }
     }
 
-    // Function to get users for the current page
+    // Função para obter os utilizadores para a página atual
     function getUsersForPage(page) {
       const startIndex = (page - 1) * USERS_PER_PAGE;
       const endIndex = startIndex + USERS_PER_PAGE;
       return allUsers.slice(startIndex, endIndex);
     }
 
-    // Function to display users in a table
-    function displayUsersTable(users) {
-      console.log('displayUsersTable function called');
-      console.log('User data:', users);
-      const container = document.getElementById('tabelaUtilizadores');
-      console.log('User table container:', container);
-      container.innerHTML = '';
-
-      const table = document.createElement('table');
-      table.innerHTML = `
-                <thead>
-                  <tr>
-                    <th style="text-align: center;">Username</th>
-                    <th style="text-align: center;">Email</th>
-                    <th style="text-align: center;">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${users
-                    .map(
-                      user => `
-                    <tr class="${user.suspended ? 'suspended-user' : ''}">
-                      <td style="text-align: center;">${user.username}</td>
-                      <td style="text-align: center;">${user.email}</td>
-                      <td style="text-align: center;">
-                        <div style="display: flex; justify-content: space-around; align-items: center;">
-                          <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">View Profile</button>
-                          <button class="btn-card tabela-btn ${
-                            user.suspended ? 'btn-success' : 'btn-info'
-                          } suspend-user" data-user-id="${user.id}">${
-                        user.suspended ? 'Reactivate' : 'Delete'
-                      }</button>
-                          <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Exclude</button>
-                        </div>
-                      </td>
-                    </tr>
-                  `
-                    )
-                    .join('')}
-                </tbody>
-              `;
-      console.log('Table created:', table);
-      container.appendChild(table);
-      console.log('Table added to container');
-
-      // Adds event listeners for the "View Profile" buttons
-      const redirectUserButtons = table.querySelectorAll('.redirect-user');
-      redirectUserButtons.forEach(button => {
-        button.addEventListener('click', function () {
-          const userId = this.dataset.userId;
-          console.log(
-            `Redirect to user profile with ID: ${userId}`
-          );
-          // Redirect to the user profile page
-          window.location.href = `http://localhost:8080/frontend/perfil-utilizador.html?id=${userId}`;
-        });
-      });
-
-      // Adds event listeners for the "Delete/Reactivate" buttons
-      const suspendUserButtons = table.querySelectorAll('.suspend-user');
-      suspendUserButtons.forEach(button => {
-        button.addEventListener('click', async function () {
-          const userId = this.dataset.userId;
-          const isSuspended = this.classList.contains('btn-success'); // Checks if the button has the class 'btn-success'
-
-          if (isSuspended) {
-            // Reactivate user
-            console.log(`Request to reactivate user with ID: ${userId}`);
-            try {
-              await reactivateUser(userId);
-              console.log(`User with ID ${userId} reactivated successfully`);
-              alert('User reactivated successfully!');
-              loadUsers(); // Reload the user list
-            } catch (error) {
-              console.error('Error reactivating user:', error);
-              alert('Error reactivating user. See console for details.');
-            }
-          } else {
-            // Suspend user
-            console.log(`Request confirmation to suspend user with ID: ${userId}`);
-            showConfirmationModal(userId); // Show confirmation modal
-          }
-        });
-      });
-    }
-
-    // Function to display the confirmation modal
+    // Função para exibir os utilizadores numa tabela
+        // Função para exibir os utilizadores numa tabela
+        function displayUsersTable(users) {
+          console.log('Função displayUsersTable chamada');
+          console.log('Dados dos utilizadores:', users);
+          const container = document.getElementById('tabelaUtilizadores');
+          console.log('Contêiner da tabela de utilizadores:', container);
+          container.innerHTML = '';
+    
+          const table = document.createElement('table');
+          table.innerHTML = `
+                    <thead>
+                      <tr>
+                        <th style="text-align: center;">Username</th>
+                        <th style="text-align: center;">Email</th>
+                        <th style="text-align: center;">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${users
+                        .map(
+                          user => `
+                        <tr class="${user.suspended ? 'suspended-user' : ''}">
+                          <td style="text-align: center;">${user.username}</td>
+                          <td style="text-align: center;">${user.email}</td>
+                          <td style="text-align: center;">
+                            <div style="display: flex; justify-content: space-around; align-items: center;">
+                              <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">Consultar perfil</button>
+                              <button class="btn-card tabela-btn ${
+                                user.suspended ? 'btn-success' : 'btn-info'
+                              } suspend-user" data-user-id="${user.id}">${
+                            user.suspended ? 'Reativar' : 'Apagar'
+                          }</button>
+                              <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
+                            </div>
+                          </td>
+                        </tr>
+                      `
+                        )
+                        .join('')}
+                    </tbody>
+                  `;
+          console.log('Tabela criada:', table);
+          container.appendChild(table);
+          console.log('Tabela adicionada ao contêiner');
+    
+          // Adiciona event listeners para os botões "Consultar Perfil"
+          const redirectUserButtons = table.querySelectorAll('.redirect-user');
+          redirectUserButtons.forEach(button => {
+            button.addEventListener('click', function () {
+              const userId = this.dataset.userId;
+              console.log(
+                `Redirecionar para o perfil do utilizador com ID: ${userId}`
+              );
+              // Redirecionar para a página de perfil do utilizador
+              window.location.href = `http://localhost:8080/frontend/perfil-utilizador.html?id=${userId}`;
+            });
+          });
+    
+          // Adiciona event listeners para os botões "Apagar/Reativar"
+          const suspendUserButtons = table.querySelectorAll('.suspend-user');
+          suspendUserButtons.forEach(button => {
+            button.addEventListener('click', async function () {
+              const userId = this.dataset.userId;
+              const isSuspended = this.classList.contains('btn-success'); // Verifica se o botão tem a classe 'btn-success'
+    
+              if (isSuspended) {
+                // Reativar utilizador
+                console.log(`Pedido para reativar utilizador com ID: ${userId}`);
+                try {
+                  await reactivateUser(userId);
+                  console.log(`Utilizador com ID ${userId} reativado com sucesso`);
+                  alert('Utilizador reativado com sucesso!');
+                  loadUsers(); // Recarrega a lista de utilizadores
+                } catch (error) {
+                  console.error('Erro ao reativar utilizador:', error);
+                  alert('Erro ao reativar utilizador. Ver a consola para detalhes.');
+                }
+              } else {
+                // Suspender utilizador
+                console.log(`Solicitar confirmação para suspender utilizador com ID: ${userId}`);
+                showConfirmationModal(userId); // Exibe o modal de confirmação
+              }
+            });
+          });
+        }
+    
+    // Função para exibir o modal de confirmação
     function showConfirmationModal(userId) {
       const modal = document.getElementById('confirmationModal');
       const confirmButton = document.getElementById('confirmButton');
       const cancelButton = document.getElementById('cancelButton');
 
-      // Show the modal
+      // Exibir o modal
       modal.style.display = 'block';
 
-      // Add event listeners to the modal buttons
+      // Adicionar event listeners aos botões do modal
       confirmButton.onclick = async function () {
         console.log(
-          `Confirmation received. Suspend user with ID: ${userId}`
+          `Confirmação recebida. Suspender utilizador com ID: ${userId}`
         );
         try {
           await suspendUser(userId);
-          console.log(`User with ID ${userId} suspended successfully`);
-          // Show success alert
-          alert('User suspended successfully!');
-          // Reload the user list after suspension
+          console.log(`Utilizador com ID ${userId} suspenso com sucesso`);
+          // Exibir alerta de sucesso
+          alert('Utilizador suspenso com sucesso!');
+          // Recarregar a lista de utilizadores após a suspensão
           loadUsers();
         } catch (error) {
-          console.error('Error suspending user:', error);
-          // Handle the error as needed
+          console.error('Erro ao suspender o utilizador:', error);
+          // Tratar o erro conforme necessário
         } finally {
-          // Close the modal
+          // Fechar o modal
           modal.style.display = 'none';
         }
       };
 
       cancelButton.onclick = function () {
-        console.log('Suspension operation cancelled');
-        // Close the modal
+        console.log('Operação de suspensão cancelada');
+        // Fechar o modal
         modal.style.display = 'none';
       };
     }
 
-    // Function to display the pagination buttons
+    // Função para exibir os botões de paginação
     function displayPaginationButtons() {
       const totalPages = Math.ceil(allUsers.length / USERS_PER_PAGE);
       const container = document.getElementById('tabelaUtilizadores');
 
-      // Check if pagination buttons already exist
+      // Verificar se os botões de paginação já existem
       let paginationButtonsExist = false;
       if (container.querySelector('.pagination-button')) {
         paginationButtonsExist = true;
       }
 
       if (!paginationButtonsExist) {
-        // Create pagination buttons
+        // Criar botões de paginação
         for (let i = 1; i <= totalPages; i++) {
           const button = document.createElement('button');
           button.textContent = i;
-          button.className = 'btn-card pagination-button'; // Add the 'btn-card' class
+          button.className = 'btn-card pagination-button'; // Adicionar a classe 'btn-card'
           button.addEventListener('click', () => {
             currentPage = i;
             displayUsersTable(getUsersForPage(currentPage));
-            updateActiveButton(i); // Update the active button
+            updateActiveButton(i); // Atualizar o botão ativo
           });
           container.appendChild(button);
         }
       }
 
-      // Mark the current page button as active
+      // Marcar o botão da página atual como ativo
       updateActiveButton(currentPage);
     }
 
-    // Function to update the active button
+    // Função para atualizar o botão ativo
     function updateActiveButton(activePage) {
       const container = document.getElementById('tabelaUtilizadores');
       const buttons = container.querySelectorAll('.pagination-button');
       buttons.forEach(button => {
-        button.classList.remove('active'); // Remove the 'active' class from all buttons
+        button.classList.remove('active'); // Remover a classe 'active' de todos os botões
         if (parseInt(button.textContent) === activePage) {
-          button.classList.add('active'); // Add the 'active' class to the current page button
+          button.classList.add('active'); // Adicionar a classe 'active' ao botão da página atual
         }
       });
     }
 
-    // Function to show user management buttons
+    // Função para mostrar os botões de gestão de utilizadores
     function showUserManagementButtons() {
       const userManagementButtons = document.querySelector(
         '.user-management-buttons'
@@ -313,22 +314,23 @@ async function initPage() {
       }
     }
 
-    // Function to load the dashboard
+    // Função para carregar o dashboard
     async function loadDashboard() {
       try {
         const users = await getTotalUsers();
         displayUserCards(users);
       } catch (error) {
-        console.error('Error loading the dashboard:', error);
+        console.error('Erro ao carregar o dashboard:', error);
       }
     }
   } catch (error) {
-    console.error('Error initializing the page:', error);
+    console.error('Erro ao inicializar a página:', error);
   }
 }
 
-// Wait for the DOM to load completely before running the initPage function
+// Aguarda o carregamento completo do DOM antes de executar a função initPage
 document.addEventListener('DOMContentLoaded', initPage);
+
 
 
 /* Button for administrators to permanently delete inactive products */
