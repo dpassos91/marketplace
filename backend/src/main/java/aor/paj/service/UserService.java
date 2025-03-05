@@ -113,6 +113,7 @@ public class UserService {
     @Path("users/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
+        logger.info("Received request to fetch all users.");
         return Response.ok(userBean.getAllUsers()).build();
     }
 
