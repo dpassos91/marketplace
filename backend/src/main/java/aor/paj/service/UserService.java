@@ -121,6 +121,7 @@ public class UserService {
     @Path("users/active")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllActiveUsers() {
+        logger.info("Received request to fetch all active users.");
         return Response.ok(userBean.getAllActiveUsers()).build();
     }
 }
