@@ -98,6 +98,7 @@ public class UserService {
     @Path("/{id}/activate")
     @Produces(MediaType.APPLICATION_JSON)
     public Response activateUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
+        logger.info("Received a request to activate user with id: {}", id);
         return userBean.activateUser(id, token);
     }
 
@@ -105,7 +106,7 @@ public class UserService {
     @Path("/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserByUsername(@PathParam("username") String username) {
-        logger.info("Received request to fetch a user by its username: {}", username);
+        logger.info("Received a request to fetch a user by its username: {}", username);
         return Response.ok(userBean.getUserByUsername(username)).build();
     }
 
@@ -113,7 +114,7 @@ public class UserService {
     @Path("users/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
-        logger.info("Received request to fetch all users.");
+        logger.info("Received a request to fetch all users.");
         return Response.ok(userBean.getAllUsers()).build();
     }
 
@@ -121,7 +122,7 @@ public class UserService {
     @Path("users/active")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllActiveUsers() {
-        logger.info("Received request to fetch all active users.");
+        logger.info("Received a request to fetch all active users.");
         return Response.ok(userBean.getAllActiveUsers()).build();
     }
 }
