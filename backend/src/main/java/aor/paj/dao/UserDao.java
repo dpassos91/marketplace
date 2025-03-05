@@ -41,6 +41,16 @@ public class UserDao {
         return false;
     }
 
+    public boolean activateUser(Long id) {
+        UserEntity user = findById(id);
+        if (user != null) {
+            user.setActive(true);
+            entityManager.merge(user);
+            return true;
+        }
+        return false;
+    }
+
     public UserEntity findById(Long id) {
         return entityManager.createNamedQuery("User.findById", UserEntity.class)
                 .setParameter("id", id)

@@ -96,6 +96,13 @@ public class UserService {
         return userBean.suspendUser(id, token);
     }
 
+    @PATCH
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response activateUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
+        return userBean.activateUser(id, token);
+    }
+
     @GET
     @Path("/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)

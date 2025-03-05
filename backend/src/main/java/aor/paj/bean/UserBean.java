@@ -148,6 +148,14 @@ public class UserBean {
         return processActionResult(success, id, "suspended");
     }
 
+    public Response activateUser(Long id, String token) {
+        Response authResponse = authenticateAuthorize(id, token, true, false);
+        if (authResponse != null) return authResponse;
+
+        boolean success = userDao.activateUser(id);
+        return processActionResult(success, id, "activated");
+    }
+
     private Response processActionResult(boolean success, Long id, String action) {
         if (!success) {
             logger.warn("User with id {} not found.", id);
