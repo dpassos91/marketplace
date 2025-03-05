@@ -91,6 +91,7 @@ public class UserService {
     @Path("/{id}/suspend")
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
+        logger.info("Received a request to suspend user with id: {}", id);
         return userBean.suspendUser(id, token);
     }
 
