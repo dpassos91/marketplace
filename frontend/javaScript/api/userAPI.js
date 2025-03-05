@@ -250,17 +250,3 @@ export async function getTotalUsers() {
     throw error; // Rejeita a promessa com o erro para que o chamador possa lidar com isso
   }
 }
-
-export async function getUserStatus(userId) {
-  try {
-    const response = await fetch(API_ENDPOINTS.users.status); 
-    if (!response.ok) {
-      throw new Error(`Erro ao obter o estado do utilizador: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.suspended; // Assumindo que a API retorna { suspended: true/false }
-  } catch (error) {
-    console.error('Erro ao obter o estado de suspensão do utilizador:', error);
-    throw error;
-  }
-}
