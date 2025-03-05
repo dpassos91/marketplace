@@ -67,9 +67,7 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") Long id) {
         logger.info("View attempt of user with id: {}", id);
-
         UserDto user = userBean.getUserById(id);
-
         logger.info("Successful view of user with id: {}", id);
         return Response.ok(user).build();
     }
@@ -107,10 +105,7 @@ public class UserService {
     @Path("/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserByUsername(@PathParam("username") String username) {
-        // TODO: falta colocar aqui os loggers
-
         UserDto user = userBean.getUserByUsername(username);
-
         return Response.ok(user).build();
     }
 
@@ -118,15 +113,13 @@ public class UserService {
     @Path("users/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
-        List<UserDto> allUsers = userBean.getAllUsers();
-        return Response.ok(allUsers).build();
+        return Response.ok(userBean.getAllUsers()).build();
     }
 
     @GET
     @Path("users/active")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllActiveUsers() {
-        List<UserDto> allActiveUsers = userBean.getAllActiveUsers();
-        return Response.ok(allActiveUsers).build();
+        return Response.ok(userBean.getAllActiveUsers()).build();
     }
 }

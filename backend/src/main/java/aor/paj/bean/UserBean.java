@@ -222,8 +222,6 @@ public class UserBean {
         return false;
     }
 
-    // TODO: método isSuccessful
-
     private boolean isUserSuspended() {
         return false;
     }
@@ -231,7 +229,6 @@ public class UserBean {
     public UserDto getUserByUsername(String username) {
         UserEntity userEntity = userDao.findByUsername(username);
 
-        // TODO: faltam os logs
         if (userEntity == null) {
             throw new EntityNotFoundException("User with username " + username + " not found!");
         }
