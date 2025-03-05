@@ -221,7 +221,7 @@ public class UserEntity implements Serializable {
         this.phone = phone;
     }
 
-    public void SetPicture(String picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 
