@@ -238,29 +238,65 @@ export function setupDeleteProductButton() {
 
 export function setupEditProductButton() {
   const editBtn = document.getElementById('editar-produto');
-  const formElements = document.querySelectorAll(
-    '#detalhes-produto-form input, #detalhes-produto-form textarea'
+  const textInputs = document.querySelectorAll(
+    '#detalhes-produto-form input[type="text"]:not(#publicado-por), #detalhes-produto-form textarea'
   );
   const prodStateReadonly = document.getElementById('estado-produto-readonly');
   const prodStateSelect = document.getElementById('estado-produto');
+  const catReadonly = document.getElementById('categoria-readonly');
+  const catSelect = document.getElementById('categoria');
 
   if (editBtn) {
-    editBtn.addEventListener('click', () => {
+    editBtn.addEventListener('click', async () => {
       // Make form elements editable
-      formElements.forEach(el => {
-        // Keep the seller information readonly
-        if (el.id === 'publicado-por') {
-          el.readOnly = true;
-        } else {
-          el.readOnly = false;
-        }
-      });
+      textInputs.forEach(el => (el.readOnly = false));
+
+      // Handle price field specially to remove € symbol when editing
+      const priceField = document.getElementById('preco');
+      if (priceField) {
+        priceField.value = priceField.value.replace('€', '').trim();
+      }
 
       // Hide readonly state and show dropdown
       prodStateReadonly.classList.add('hidden');
       prodStateSelect.classList.remove('hidden');
 
-      // Populate dropdown with valid states if it's not already populated
+      // Hide readonly category and show dropdown
+      catReadonly.classList.add('hidden');
+      catSelect.classList.remove('hidden');
+
+      // Fetch categories and populate the dropdown
+      try {
+        const categories = await categoryAPI.getAllCategories();
+
+        // Clear previous options except the default one
+        while (catSelect.options.length > 1) {
+          catSelect.remove(1);
+        }
+
+        // Add categories to dropdown
+        if (categories && categories.length > 0) {
+          categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            catSelect.appendChild(option);
+          });
+        }
+
+        // Select the current category
+        const currentCategoryId = document.getElementById('categoria-id').value;
+        for (let i = 0; i < catSelect.options.length; i++) {
+          if (catSelect.options[i].value === currentCategoryId) {
+            catSelect.selectedIndex = i;
+            break;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+
+      // Populate product state dropdown
       if (prodStateSelect.options.length === 0) {
         // Add all states except INATIVO
         for (const key in PRODUCT_STATES) {
@@ -276,7 +312,7 @@ export function setupEditProductButton() {
         }
       }
 
-      // Set the current value in the dropdown
+      // Set the current value in the state dropdown
       const currentState = prodStateReadonly.textContent.trim();
       for (let i = 0; i < prodStateSelect.options.length; i++) {
         if (prodStateSelect.options[i].value === currentState) {
