@@ -878,6 +878,21 @@ table th {
   /* Reduz a opacidade no hover */
 }
 
+/* Admin - botão de acesso */
+
+.admin-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px; /* Espaçamento entre a foto e o botão */
+}
+
+.admin-button:hover {
+  background-color: #367C39; /* Cor ao passar o mouse */
+}
 
 .login {
   display: flex;
