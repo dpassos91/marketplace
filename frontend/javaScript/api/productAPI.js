@@ -329,24 +329,91 @@ export async function purchaseProduct(productId, buyerId) {
   }
 }
 
-// Delete a product
-export async function deleteProduct(productId) {
+// Delete a product (soft delete by setting state to inactive)
+export async function softDeleteProduct(productId) {
   try {
     const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.products.delete(productId),
+      API_ENDPOINTS.products.deactivate(productId),
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error deactivating product: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error deactivating product:', error);
+    throw error;
+  }
+}
+
+// Permanent deletion (admin use only)
+export async function permanentlyDeleteProduct(productId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.products.permanentDelete(productId),
       {
         method: 'DELETE',
       }
     );
 
     if (!response.ok) {
-      throw new Error(`Error deleting product: ${response.statusText}`);
+      throw new Error(
+        `Error permanently deleting product: ${response.statusText}`
+      );
     }
 
     return true;
   } catch (error) {
-    console.error('Error deleting product:', error);
+    console.error('Error permanently deleting product:', error);
     throw error;
+  }
+}
+
+// Reactivate a deactivated product
+export async function reactivateProduct(productId, newStateId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.products.reactivate(productId, newStateId),
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error reactivating product: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error reactivating product:', error);
+    throw error;
+  }
+}
+
+// Get all inactive (deactivated) products
+export async function getInactiveProducts() {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.products.inactive,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Error fetching inactive products: ${response.statusText}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching inactive products:', error);
+    return [];
   }
 }
 

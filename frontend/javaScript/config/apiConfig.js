@@ -18,7 +18,11 @@ const API_ENDPOINTS = {
     byId: id => `${API_BASE_URL}/products/${id}`,
     create: `${API_BASE_URL}/products`,
     update: id => `${API_BASE_URL}/products/${id}`,
-    delete: id => `${API_BASE_URL}/products/${id}`,
+    deactivate: id => `${API_BASE_URL}/products/${id}/deactivate`,
+    permanentDelete: id => `${API_BASE_URL}/products/${id}/permanent`,
+    inactive: `${API_BASE_URL}/products/inactive`, // For listing inactive products
+    reactivate: (id, stateId) =>
+      `${API_BASE_URL}/products/${id}/reactivate/${stateId}`,
     paginated: (page = 0, size = 10) =>
       `${API_BASE_URL}/products/paginated?page=${page}&size=${size}`,
     count: `${API_BASE_URL}/products/count`, // Get total number of products

@@ -206,30 +206,40 @@ export async function displayProductDetails() {
 }
 
 export function setupDeleteProductButton() {
-  const eliminarButton = document.getElementById('eliminar-produto');
-  if (eliminarButton) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const produtoId = urlParams.get('id');
+  const deleteBtn = document.getElementById('eliminar-produto');
+  if (deleteBtn) {
+    const productId =
+      deleteBtn.getAttribute('data-produto-id') ||
+      new URLSearchParams(window.location.search).get('id');
 
-    eliminarButton.addEventListener('click', async () => {
+    deleteBtn.addEventListener('click', async () => {
       const confirmDelete = confirm(
-        'Tem certeza que deseja eliminar este produto?'
+        'Tem certeza que deseja desativar este produto? Esta ação pode ser revertida na área administrativa.'
       );
+
       if (confirmDelete) {
         try {
-          // Get product details to get seller ID
-          const product = await productAPI.getProductById(produtoId);
-          const sellerId = product.sellerId;
+          // Change button state to indicate processing
+          deleteBtn.disabled = true;
+          deleteBtn.innerHTML =
+            'A processar... <i class="fa fa-spinner fa-spin"></i>';
 
-          // Delete the product
-          await productAPI.deleteProduct(produtoId);
-          alert('Produto eliminado com sucesso!');
+          // Call the deleteProduct function which now uses deactivation
+          await productAPI.softDeleteProduct(productId);
 
-          // Redirect to seller's profile
-          window.location.href = `perfil-utilizador.html?id=${sellerId}`;
+          alert('Produto desativado com sucesso.');
+
+          // Redirect to landing page
+          window.location.href = 'index.html';
         } catch (error) {
-          alert('Erro ao eliminar o produto. Tente novamente.');
-          console.error(error);
+          console.error('Error deactivating product:', error);
+          alert(
+            'Ocorreu um erro ao desativar o produto. Por favor, tente novamente.'
+          );
+
+          // Reset button state
+          deleteBtn.disabled = false;
+          deleteBtn.innerHTML = 'Eliminar <i class="fa fa-times"></i>';
         }
       }
     });
@@ -364,6 +374,21 @@ export async function addNewProduct() {
     const imageUrl = document.getElementById('imageURL').value;
     const location = document.getElementById('location').value;
 
+    // Validate inputs
+    if (
+      !title ||
+      !description ||
+      !location ||
+      isNaN(categoryId) ||
+      categoryId <= 0 ||
+      !price ||
+      isNaN(parseFloat(price)) ||
+      parseFloat(price) <= 0
+    ) {
+      alert('Please fill in all required fields with valid values');
+      return;
+    }
+
     const newProduct = {
       title: title,
       description: description,
@@ -372,7 +397,7 @@ export async function addNewProduct() {
       imageUrl: imageUrl,
       location: location,
       sellerId: user.id,
-      active: true,
+      estadoById: PRODUCT_STATES.DISPONIVEL.id,
     };
 
     try {
