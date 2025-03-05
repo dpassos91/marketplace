@@ -179,16 +179,16 @@ async function initPage() {
           ${users
             .map(
               user => `
-                <tr class="${user.suspended ? 'suspended-user' : ''}">
+                <tr class="${user.active ? '' : 'suspended-user'}">
                   <td style="text-align: center;">${user.username}</td>
                   <td style="text-align: center;">${user.email}</td>
                   <td style="text-align: center;">
                     <div style="display: flex; justify-content: space-around; align-items: center;">
                       <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">Consultar perfil</button>
                       <button class="btn-card tabela-btn ${
-                        user.suspended ? 'btn-success' : 'btn-info'
+                        user.active ? 'btn-info' : 'btn-success'
                       } suspend-user" data-user-id="${user.id}">${
-                        user.suspended ? 'Reativar' : 'Suspender'
+                        user.active ? 'Suspender' : 'Reativar'
                       }</button>
                       <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
                     </div>
@@ -224,16 +224,16 @@ async function initPage() {
         // Adiciona novos event listeners
         button.handleClick = async function () {
           const userId = this.dataset.userId;
-          const isSuspended = this.classList.contains('btn-success'); // Verifica se o botão tem a classe 'btn-success'
+          const isActive = this.classList.contains('btn-info'); // Verifica se o botão tem a classe 'btn-info'
     
-          if (isSuspended) {
+          if (isActive) {
+            // Suspender utilizador
+            console.log(`Solicitar confirmação para suspender utilizador com ID: ${userId}`);
+            showConfirmationModal(userId, 'suspender'); // Exibe o modal de confirmação com a ação "suspender"
+          } else {
             // Reativar utilizador
             console.log(`Solicitar confirmação para reativar utilizador com ID: ${userId}`);
             showConfirmationModal(userId, 'reativar'); // Exibe o modal de confirmação com a ação "reativar"
-          } else {
-            // Suspender utilizador
-            console.log(`Solicitar confirmação para suspender utilizador com ID: ${userId}`);
-            showConfirmationModal(userId, 'suspender'); // Exibe o modal de confirmação
           }
         };
         button.addEventListener('click', button.handleClick);
@@ -248,7 +248,7 @@ async function initPage() {
           showConfirmationModal(username, 'excluir'); // Exibe o modal de confirmação com a ação "excluir"
         });
       });
-    }
+    }    
     
     // Função para exibir o modal de confirmação
     function showConfirmationModal(data, action) {
