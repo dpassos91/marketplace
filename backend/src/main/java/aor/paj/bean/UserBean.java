@@ -235,6 +235,7 @@ public class UserBean {
         List<UserEntity> userEntities = userDao.findAll();
         List<UserDto> userDtos = new ArrayList<>();
 
+        logger.info("Fetching all users from the database.");
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
@@ -246,6 +247,7 @@ public class UserBean {
         List<UserEntity> userEntities = userDao.findAllActive();
         List<UserDto> userDtos = new ArrayList<>();
 
+        logger.info("Fetching all active users from the database.");
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
