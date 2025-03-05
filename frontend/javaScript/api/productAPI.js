@@ -241,7 +241,23 @@ export async function updateProduct(productId, updatedProduct) {
     );
 
     if (!response.ok) {
-      throw new Error(`Error updating product: ${response.statusText}`);
+      let errorMessage = `HTTP error: ${response.status}`;
+      try {
+        // Try to parse error response as JSON
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        // If it's not JSON, try to get it as text
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage = errorText;
+          }
+        } catch (textError) {
+          // Ignore text parsing error
+        }
+      }
+      throw new Error(`Failed to update product: ${errorMessage}`);
     }
 
     return await response.json();

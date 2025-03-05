@@ -459,7 +459,7 @@ export async function saveProductChanges() {
   const statusSelect = document.getElementById('estado-produto');
   const statusText = statusSelect.value;
 
-  // Convert status text to the corresponding state ID
+  // Convert status text to get the proper description format
   const state = PRODUCT_STATES.fromDescription(statusText);
 
   if (!state) {
@@ -468,6 +468,7 @@ export async function saveProductChanges() {
     return;
   }
 
+  // Create the updated product using fields that match the ProductDto
   const updatedProduct = {
     title: title,
     description: description,
@@ -475,7 +476,7 @@ export async function saveProductChanges() {
     price: price,
     location: location,
     status: state.description,
-    stateId: state.id,
+    estadoById: state.id,
   };
 
   try {
@@ -485,6 +486,9 @@ export async function saveProductChanges() {
       saveBtn.innerHTML =
         'A guardar... <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>';
     }
+
+    // Log what we're sending for debugging
+    console.log('Updating product with data:', updatedProduct);
 
     await productAPI.updateProduct(productId, updatedProduct);
     alert('Produto atualizado com sucesso!');
