@@ -84,6 +84,7 @@ public class UserService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
+        logger.info("Received a request to delete user with id: {}", id);
         return userBean.deleteUser(id, token);
     }
 
