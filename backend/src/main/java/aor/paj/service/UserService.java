@@ -105,8 +105,8 @@ public class UserService {
     @Path("/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserByUsername(@PathParam("username") String username) {
-        UserDto user = userBean.getUserByUsername(username);
-        return Response.ok(user).build();
+        logger.info("Received request to fetch a user by its username: {}", username);
+        return Response.ok(userBean.getUserByUsername(username)).build();
     }
 
     @GET
