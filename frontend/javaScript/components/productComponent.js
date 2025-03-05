@@ -444,16 +444,42 @@ export async function comprarProduto(produtoId) {
       return;
     }
 
-    // Instead of updating the status directly, use the purchase endpoint
+    // Show loading state
+    const buyProdBtn = document.getElementById('comprar-produto');
+    if (buyProdBtn) {
+      buyProdBtn.disabled = true;
+      buyProdBtn.innerHTML =
+        'A processar... <i class="fa fa-spinner fa-spin"></i>';
+    }
+
+    // Use the purchase endpoint
     await productAPI.purchaseProduct(produtoId, user.id);
 
     alert('Produto comprado com sucesso!');
+
+    // Redirect to user's purchases or product details with updated status
     window.location.reload();
   } catch (error) {
     console.error('Erro ao comprar o produto:', error);
-    alert(
-      'Ocorreu um erro ao comprar o produto. Por favor, tente novamente mais tarde.'
-    );
+
+    // Handle specific error cases based on error message
+    if (error.message && error.message.includes('not available')) {
+      alert('Este produto já não está disponível para compra.');
+    } else if (error.message && error.message.includes('own product')) {
+      alert('Não pode comprar o seu próprio produto.');
+    } else {
+      alert(
+        'Ocorreu um erro ao comprar o produto. Por favor, tente novamente mais tarde.'
+      );
+    }
+
+    // Reset the button
+    const buyProdBtn = document.getElementById('comprar-produto');
+    if (buyProdBtn) {
+      buyProdBtn.disabled = false;
+      buyProdBtn.innerHTML =
+        'Comprar <i class="fa fa-shopping-cart" aria-hidden="true"></i>';
+    }
   }
 }
 
