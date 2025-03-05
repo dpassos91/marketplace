@@ -53,6 +53,7 @@ const API_ENDPOINTS = {
     byUsername: username => `${API_BASE_URL}/users/username/${username}`,
     suspend: id => `${API_BASE_URL}/users/${id}/suspend`,
     reactivate: id => `${API_BASE_URL}/users/${id}/activate`,
+    status: id => `${API_BASE_URL}/users/${id}/status`,
   },
 
   // Category endpoints
