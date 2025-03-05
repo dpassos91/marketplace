@@ -225,6 +225,7 @@ public class UserBean {
     public UserDto getUserByUsername(String username) {
         UserEntity userEntity = userDao.findByUsername(username);
 
+        logger.info("Fetching user by username.");
         if (userEntity == null) {
             throw new EntityNotFoundException("User with username " + username + " not found!");
         }
