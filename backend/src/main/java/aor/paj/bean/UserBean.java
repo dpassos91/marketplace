@@ -80,8 +80,8 @@ public class UserBean {
     }
 
     private String generateNewToken() {
-        SecureRandom secureRandom = new SecureRandom(); //threadsafe
-        Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //threadsafe
+        SecureRandom secureRandom = new SecureRandom();
+        Base64.Encoder base64Encoder = Base64.getUrlEncoder();
         byte[] randomBytes = new byte[24];
         secureRandom.nextBytes(randomBytes);
         return base64Encoder.encodeToString(randomBytes);
@@ -104,6 +104,11 @@ public class UserBean {
             logger.warn("User with id: {} not found during update attempt", id);
             throw new EntityNotFoundException("User with ID " + id + " not found!");
         }
+
+        if (!userEntity.isActive()) {
+            logger.warn("Attempted to access inactive user with id: {}", id);
+            throw new IllegalStateException("User with ID " + id + " is not active.");
+        }
         return toDto(userEntity);
     }
 
@@ -117,6 +122,13 @@ public class UserBean {
             logger.warn("User with id {} not found for update.", id);
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("404: User with ID " + id + " not found!")
+                    .build();
+        }
+
+        if (!userEntity.isActive()) {
+            logger.warn("Attempted to update inactive user with id: {}", id);
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("403: User account is inactive.")
                     .build();
         }
 
@@ -136,6 +148,22 @@ public class UserBean {
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
 
+        UserEntity userEntity = userDao.findById(id);
+
+        if (userEntity == null) {
+            logger.warn("User with id {} not found for deletion.", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("404: User with ID " + id + " not found!")
+                    .build();
+        }
+
+        if (!userEntity.isActive()) {
+            logger.warn("Attempted to delete inactive user with id: {}", id);
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("403: User account is inactive.")
+                    .build();
+        }
+
         boolean success = userDao.delete(id);
         return processActionResult(success, id, "deleted");
     }
@@ -144,6 +172,22 @@ public class UserBean {
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
 
+        UserEntity userEntity = userDao.findById(id);
+
+        if (userEntity == null) {
+            logger.warn("User with id {} not found for suspend.", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("404: User with ID " + id + " not found!")
+                    .build();
+        }
+
+        if (!userEntity.isActive()) {
+            logger.warn("Attempted to suspend inactive user with id: {}", id);
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("409: User account is already inactive.")
+                    .build();
+        }
+
         boolean success = userDao.suspendUser(id);
         return processActionResult(success, id, "suspended");
     }
@@ -151,6 +195,22 @@ public class UserBean {
     public Response activateUser(Long id, String token) {
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
+
+        UserEntity userEntity = userDao.findById(id);
+
+        if (userEntity == null) {
+            logger.warn("User with id {} not found for activate.", id);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("404: User with ID " + id + " not found!")
+                    .build();
+        }
+
+        if (userEntity.isActive()) {
+            logger.warn("Attempted to activate already active user with id: {}", id);
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("409: User account is already active.")
+                    .build();
+        }
 
         boolean success = userDao.activateUser(id);
         return processActionResult(success, id, "activated");
@@ -222,19 +282,19 @@ public class UserBean {
         return false;
     }
 
-    // TODO: método isSuccessful
-
-    private boolean isUserSuspended() {
-        return false;
-    }
-
     public UserDto getUserByUsername(String username) {
         UserEntity userEntity = userDao.findByUsername(username);
 
-        // TODO: faltam os logs
         if (userEntity == null) {
+            logger.warn("User with username {} not found.", username);
             throw new EntityNotFoundException("User with username " + username + " not found!");
         }
+
+        if (!userEntity.isActive()) {
+            logger.warn("Attempted to access inactive user with username: {}", username);
+            throw new IllegalStateException("User with username " + username + " is not active.");
+        }
+
         return toDto(userEntity);
     }
 
@@ -292,7 +352,8 @@ public class UserBean {
         dto.setPhone(userEntity.getPhone());
         dto.setPicture(userEntity.getPicture());
         dto.setAdmin(userEntity.isAdmin());
-
+        dto.setActive(userEntity.isActive());
         return dto;
     }
 }
+

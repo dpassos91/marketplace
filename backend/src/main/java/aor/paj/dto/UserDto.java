@@ -17,6 +17,7 @@ public class UserDto {
     private String phone;
     private String picture;
     private boolean isAdmin;
+    private boolean isActive;
 
     public UserDto() {
     }
@@ -32,6 +33,7 @@ public class UserDto {
         this.phone = phone;
         this.picture = picture;
         this.isAdmin = false;
+        this.isActive = false;
     }
 
     @XmlElement
@@ -113,5 +115,14 @@ public class UserDto {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    @XmlElement
+    public boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }
