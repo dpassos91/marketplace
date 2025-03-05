@@ -1,7 +1,7 @@
 'use strict';
 
 import { loadCommonElements } from './loadCommons.js';
-import { getTotalUsers, suspendUser } from './api/userAPI.js';
+import { getTotalUsers, suspendUser, reactivateUser } from './api/userAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -16,7 +16,7 @@ async function initPage() {
     const links = document.querySelectorAll('.admin-sidebar a');
     const sections = document.querySelectorAll('.admin-content > section');
 
-    // Função para esconder todas as sections
+    // Função para esconder todas as secções
     function hideAllSections() {
       console.log('Escondendo todas as secções');
       sections.forEach(section => {
@@ -24,14 +24,14 @@ async function initPage() {
       });
     }
 
-    // Evento de clique para os links do sidebar
+    // Evento de clique para os links da sidebar
     links.forEach(link => {
       link.addEventListener('click', function (event) {
         event.preventDefault();
 
-        hideAllSections(); // Esconde todas as sections
+        hideAllSections(); // Esconde todas as secções
 
-        // Mostra a section correspondente ao link clicado
+        // Mostra a secção correspondente ao link clicado
         let targetId = this.getAttribute('id');
         if (targetId === 'gestao-utilizadores') {
           showSection('utilizadores'); // Garante que a secção de utilizadores está visível
@@ -52,7 +52,7 @@ async function initPage() {
     viewUserProfileButton.addEventListener('click', function (event) {
       event.preventDefault();
       console.log('Botão "Consultar perfil de utilizador" clicado');
-      showSection('utilizadores'); // Mostra a seção de utilizadores
+      showSection('utilizadores'); // Mostra a secção de utilizadores
       loadUsers(); // Carrega os utilizadores quando o botão é clicado
     });
 
@@ -61,7 +61,7 @@ async function initPage() {
     filtrarButton.addEventListener('click', function (event) {
       event.preventDefault();
 
-      hideAllSections(); // Esconde todas as sections
+      hideAllSections(); // Esconde todas as secções
       showSection('filtros'); // Mostra a secção de filtros
     });
 
@@ -70,7 +70,7 @@ async function initPage() {
     editarButton.addEventListener('click', function (event) {
       event.preventDefault();
 
-      hideAllSections(); // Esconde todas as sections
+      hideAllSections(); // Esconde todas as secções
       showSection('editarProdutos'); // Mostra a secção de editarProdutos
     });
 
@@ -139,73 +139,92 @@ async function initPage() {
     }
 
     // Função para exibir os utilizadores numa tabela
-    function displayUsersTable(users) {
-      console.log('Função displayUsersTable chamada');
-      console.log('Dados dos utilizadores:', users);
-      const container = document.getElementById('tabelaUtilizadores');
-      console.log('Contêiner da tabela de utilizadores:', container);
-      container.innerHTML = '';
-
-      const table = document.createElement('table');
-      table.innerHTML = `
-                <thead>
-                  <tr>
-                    <th style="text-align: center;">Username</th>
-                    <th style="text-align: center;">Email</th>
-                    <th style="text-align: center;">Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${users
-                    .map(
-                      user => `
-                    <tr>
-                      <td style="text-align: center;">${user.username}</td>
-                      <td style="text-align: center;">${user.email}</td>
-                      <td style="text-align: center;">
-                        <div style="display: flex; justify-content: space-around; align-items: center;">
-                          <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">Consultar perfil</button>
-                          <button class="btn-card tabela-btn btn-info suspend-user" data-user-id="${user.id}">Apagar</button>
-                          <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
-                        </div>
-                      </td>
-                    </tr>
-                  `
-                    )
-                    .join('')}
-                </tbody>
-              `;
-      console.log('Tabela criada:', table);
-      container.appendChild(table);
-      console.log('Tabela adicionada ao contêiner');
-
-      // Adiciona event listeners para os botões "Consultar perfil"
-      const redirectUserButtons = table.querySelectorAll('.redirect-user');
-      redirectUserButtons.forEach(button => {
-        button.addEventListener('click', function () {
-          const userId = this.dataset.userId;
-          console.log(
-            `Redirecionar para o perfil do usuário com ID: ${userId}`
-          );
-          // Redirecionar para a página de perfil do usuário
-          window.location.href = `http://localhost:8080/frontend/perfil-utilizador.html?id=${userId}`;
-        });
-      });
-
-      // Adiciona event listeners para os botões "Apagar"
-      const suspendUserButtons = table.querySelectorAll('.suspend-user');
-      suspendUserButtons.forEach(button => {
-        button.addEventListener('click', function () {
-          const userId = this.dataset.userId;
-          console.log(
-            `Solicitar confirmação para suspender usuário com ID: ${userId}`
-          );
-          // Exibir modal de confirmação
-          showConfirmationModal(userId);
-        });
-      });
-    }
-
+        // Função para exibir os utilizadores numa tabela
+        function displayUsersTable(users) {
+          console.log('Função displayUsersTable chamada');
+          console.log('Dados dos utilizadores:', users);
+          const container = document.getElementById('tabelaUtilizadores');
+          console.log('Contêiner da tabela de utilizadores:', container);
+          container.innerHTML = '';
+    
+          const table = document.createElement('table');
+          table.innerHTML = `
+                    <thead>
+                      <tr>
+                        <th style="text-align: center;">Username</th>
+                        <th style="text-align: center;">Email</th>
+                        <th style="text-align: center;">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${users
+                        .map(
+                          user => `
+                        <tr class="${user.suspended ? 'suspended-user' : ''}">
+                          <td style="text-align: center;">${user.username}</td>
+                          <td style="text-align: center;">${user.email}</td>
+                          <td style="text-align: center;">
+                            <div style="display: flex; justify-content: space-around; align-items: center;">
+                              <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">Consultar perfil</button>
+                              <button class="btn-card tabela-btn ${
+                                user.suspended ? 'btn-success' : 'btn-info'
+                              } suspend-user" data-user-id="${user.id}">${
+                            user.suspended ? 'Reativar' : 'Suspender'
+                          }</button>
+                              <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
+                            </div>
+                          </td>
+                        </tr>
+                      `
+                        )
+                        .join('')}
+                    </tbody>
+                  `;
+          console.log('Tabela criada:', table);
+          container.appendChild(table);
+          console.log('Tabela adicionada ao contêiner');
+    
+          // Adiciona event listeners para os botões "Consultar Perfil"
+          const redirectUserButtons = table.querySelectorAll('.redirect-user');
+          redirectUserButtons.forEach(button => {
+            button.addEventListener('click', function () {
+              const userId = this.dataset.userId;
+              console.log(
+                `Redirecionar para o perfil do utilizador com ID: ${userId}`
+              );
+              // Redirecionar para a página de perfil do utilizador
+              window.location.href = `http://localhost:8080/frontend/perfil-utilizador.html?id=${userId}`;
+            });
+          });
+    
+          // Adiciona event listeners para os botões "Apagar/Reativar"
+          const suspendUserButtons = table.querySelectorAll('.suspend-user');
+          suspendUserButtons.forEach(button => {
+            button.addEventListener('click', async function () {
+              const userId = this.dataset.userId;
+              const isSuspended = this.classList.contains('btn-success'); // Verifica se o botão tem a classe 'btn-success'
+    
+              if (isSuspended) {
+                // Reativar utilizador
+                console.log(`Pedido para reativar utilizador com ID: ${userId}`);
+                try {
+                  await reactivateUser(userId);
+                  console.log(`Utilizador com ID ${userId} reativado com sucesso`);
+                  alert('Utilizador reativado com sucesso!');
+                  loadUsers(); // Recarrega a lista de utilizadores
+                } catch (error) {
+                  console.error('Erro ao reativar utilizador:', error);
+                  alert('Erro ao reativar utilizador. Ver a consola para detalhes.');
+                }
+              } else {
+                // Suspender utilizador
+                console.log(`Solicitar confirmação para suspender utilizador com ID: ${userId}`);
+                showConfirmationModal(userId); // Exibe o modal de confirmação
+              }
+            });
+          });
+        }
+    
     // Função para exibir o modal de confirmação
     function showConfirmationModal(userId) {
       const modal = document.getElementById('confirmationModal');
@@ -218,17 +237,17 @@ async function initPage() {
       // Adicionar event listeners aos botões do modal
       confirmButton.onclick = async function () {
         console.log(
-          `Confirmação recebida. Suspender usuário com ID: ${userId}`
+          `Confirmação recebida. Suspender utilizador com ID: ${userId}`
         );
         try {
           await suspendUser(userId);
-          console.log(`Usuário com ID ${userId} suspenso com sucesso`);
+          console.log(`Utilizador com ID ${userId} suspenso com sucesso`);
           // Exibir alerta de sucesso
-          alert('Usuário suspenso com sucesso!');
-          // Recarregar a lista de usuários após a suspensão
+          alert('Utilizador suspenso com sucesso!');
+          // Recarregar a lista de utilizadores após a suspensão
           loadUsers();
         } catch (error) {
-          console.error('Erro ao suspender o usuário:', error);
+          console.error('Erro ao suspender o utilizador:', error);
           // Tratar o erro conforme necessário
         } finally {
           // Fechar o modal
@@ -311,6 +330,8 @@ async function initPage() {
 
 // Aguarda o carregamento completo do DOM antes de executar a função initPage
 document.addEventListener('DOMContentLoaded', initPage);
+
+
 
 /* Button for administrators to permanently delete inactive products */
 /*

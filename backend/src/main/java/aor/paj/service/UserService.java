@@ -90,10 +90,17 @@ public class UserService {
     }
 
     @PATCH
-    @Path("/{id}")
+    @Path("/{id}/suspend")
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
         return userBean.suspendUser(id, token);
+    }
+
+    @PATCH
+    @Path("/{id}/activate")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response activateUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
+        return userBean.activateUser(id, token);
     }
 
     @GET
