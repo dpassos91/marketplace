@@ -426,13 +426,38 @@ export async function saveProductChanges() {
   const title = document.getElementById('nome-produto').value;
   const description = document.getElementById('descricao').value;
   const location = document.getElementById('localizacao').value;
-  const categoryId = parseInt(document.getElementById('categoria').value);
-  const price = parseFloat(
-    document.getElementById('preco').value.replace('€', '').trim()
-  );
 
-  // Get the status text from the dropdown
-  const statusText = document.getElementById('estado-produto').value;
+  // Get the selected category ID from the dropdown
+  const categorySelect = document.getElementById('categoria');
+  let categoryId;
+
+  if (categorySelect.classList.contains('hidden')) {
+    // If category dropdown is hidden, use the original category ID
+    categoryId = parseInt(document.getElementById('categoria-id').value);
+  } else {
+    // Otherwise use the selected category ID
+    categoryId = parseInt(categorySelect.value);
+  }
+
+  // Validate category selection
+  if (isNaN(categoryId) || categoryId <= 0) {
+    alert('Por favor, selecione uma categoria válida.');
+    return;
+  }
+
+  // Process the price (remove € symbol and parse as float)
+  const priceText = document.getElementById('preco').value;
+  const price = parseFloat(priceText.replace('€', '').trim());
+
+  // Validate price
+  if (isNaN(price) || price <= 0) {
+    alert('Por favor, insira um preço válido.');
+    return;
+  }
+
+  // Get the status from the dropdown
+  const statusSelect = document.getElementById('estado-produto');
+  const statusText = statusSelect.value;
 
   // Convert status text to the corresponding state ID
   const state = PRODUCT_STATES.fromDescription(statusText);
@@ -449,8 +474,8 @@ export async function saveProductChanges() {
     categoryId: categoryId,
     price: price,
     location: location,
-    status: state.description, // Send the canonical description
-    stateId: state.id, // Also send the numeric ID
+    status: state.description,
+    stateId: state.id,
   };
 
   try {
