@@ -42,7 +42,8 @@ export async function loadSellerEvaluations(sellerId, containerSelector) {
     if (!container) return;
 
     // Show loading indicator
-    container.innerHTML = '<div class="loading">A carregar avaliações...</div>';
+    container.innerHTML =
+      '<div class="loading-spinner">A carregar avaliações...</div>';
 
     // Fetch data
     const evaluations = await evaluationAPI.getEvaluationsForSeller(sellerId);
@@ -357,7 +358,13 @@ export async function showAddEvaluationModal(sellerId) {
         };
 
         try {
-          await evaluationAPI.addEvaluation(evaluationData);
+          const response = await evaluationAPI.addEvaluation(evaluationData);
+
+          // Check if response contains an error message from the server
+          if (response.error) {
+            throw new Error(response.error);
+          }
+
           alert('Review submetida com sucesso!');
 
           // Close modal and refresh evaluations
@@ -367,7 +374,11 @@ export async function showAddEvaluationModal(sellerId) {
           loadSellerEvaluations(sellerId, '#evaluationsContainer');
         } catch (error) {
           console.error('Erro ao submeter a avaliação:', error);
-          alert('Falha na submissão da avaliação.');
+          alert(
+            `Falha na submissão da avaliação: ${
+              error.message || 'Erro desconhecido'
+            }`
+          );
         }
       });
   } catch (error) {
