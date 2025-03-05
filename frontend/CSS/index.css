@@ -881,7 +881,7 @@ table th {
 /* Admin - utilizador suspenso */
 .suspended-user {
   text-decoration: line-through;
-  color: gray; /* Opcional: Altera a cor do texto para cinza */
+  color: gray; 
 }
 
 /* Admin - botão de acesso */
