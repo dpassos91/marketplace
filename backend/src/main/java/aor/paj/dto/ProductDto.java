@@ -2,8 +2,6 @@ package aor.paj.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import aor.paj.entity.ProductEntity;
 import aor.paj.util.ProductStateId;
@@ -71,15 +69,11 @@ public class ProductDto implements Serializable {
     @XmlElement(name = "buyer_username")
     private String buyerUsername;
 
-    @XmlElement(name = "evaluations")
-    private List<EvaluationDto> evaluations;
-
     @XmlTransient
     private ProductStateId productState;
 
     // Default constructor
     public ProductDto() {
-        this.evaluations = new ArrayList<>();
         this.active = true;
     }
 
@@ -97,6 +91,7 @@ public class ProductDto implements Serializable {
         this.sellerId = sellerId;
         this.sellerUsername = sellerUsername;
         this.status = ProductStateId.DISPONIVEL.getDescription();
+        this.active = true;
         this.date = LocalDate.now().toString();
     }
 
@@ -250,14 +245,6 @@ public class ProductDto implements Serializable {
 
     public void setBuyerUsername(String buyerUsername) {
         this.buyerUsername = buyerUsername;
-    }
-
-    public List<EvaluationDto> getEvaluations() {
-        return evaluations != null ? new ArrayList<>(evaluations) : new ArrayList<>();
-    }
-
-    public void setEvaluations(List<EvaluationDto> evaluations) {
-        this.evaluations = evaluations;
     }
 
     // Apply the state from an entity
