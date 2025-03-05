@@ -2,6 +2,7 @@
 
 import { API_ENDPOINTS } from '../config/apiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
+import { PRODUCT_STATES } from '../config/productStates.js';
 
 // Get all products
 export async function getAllProducts() {
@@ -251,8 +252,21 @@ export async function updateProduct(productId, updatedProduct) {
 }
 
 // Update product status
-export async function updateProductStatus(productId, stateId) {
+export async function updateProductStatus(productId, stateIdOrDescription) {
   try {
+    // Determine if we were passed an ID or a description
+    let stateId = stateIdOrDescription;
+
+    if (typeof stateIdOrDescription === 'string') {
+      const state = PRODUCT_STATES.fromDescription(stateIdOrDescription);
+      if (!state) {
+        throw new Error(`Invalid status description: ${stateIdOrDescription}`);
+      }
+      stateId = state.id;
+    } else if (!Number.isInteger(stateIdOrDescription)) {
+      throw new Error(`Invalid state ID: ${stateIdOrDescription}`);
+    }
+
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.products.updateStatus(productId, stateId),
       {
@@ -261,7 +275,7 @@ export async function updateProductStatus(productId, stateId) {
     );
 
     if (!response.ok) {
-      throw new Error(`Error updating product status: ${response.statusText}`);
+      throw new Error(`Failed to update product status: ${response.status}`);
     }
 
     return await response.json();

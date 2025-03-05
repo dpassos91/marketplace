@@ -2,6 +2,7 @@
 
 import * as categoryAPI from '../api/categoryAPI.js';
 import * as productAPI from '../api/productAPI.js';
+import { PRODUCT_STATES } from '../config/productStates.js';
 
 export function createCard(product) {
   const card = document.createElement('div');
@@ -234,33 +235,53 @@ export function setupEditProductButton() {
   const formElements = document.querySelectorAll(
     '#detalhes-produto-form input, #detalhes-produto-form textarea'
   );
-  const estadoReadonly = document.getElementById('estado-produto-readonly');
-  const estadoSelect = document.getElementById('estado-produto');
+  const prodStateReadonly = document.getElementById('estado-produto-readonly');
+  const prodStateSelect = document.getElementById('estado-produto');
 
   if (editBtn) {
     editBtn.addEventListener('click', () => {
-      // Remove readonly from all form elements
-      formElements.forEach(element => {
-        if (element.id !== 'publicado-por') {
-          // Keep author field readonly
-          element.removeAttribute('readonly');
+      // Make form elements editable
+      formElements.forEach(el => {
+        // Keep the seller information readonly
+        if (el.id === 'publicado-por') {
+          el.readOnly = true;
+        } else {
+          el.readOnly = false;
         }
       });
 
-      // Show select and hide readonly input for estado
-      estadoReadonly.classList.add('hidden');
-      estadoSelect.classList.remove('hidden');
-      document
-        .querySelector('label[for="estado-produto"]')
-        .classList.remove('hidden');
-      document
-        .querySelector('label[for="estado-produto-readonly"]')
-        .classList.add('hidden');
+      // Hide readonly state and show dropdown
+      prodStateReadonly.classList.add('hidden');
+      prodStateSelect.classList.remove('hidden');
 
-      // Hide edit button and show save button
-      editBtn.classList.add('hidden');
-      const guardarButton = createSaveButton();
-      editBtn.parentNode.insertBefore(guardarButton, editBtn);
+      // Populate dropdown with valid states if it's not already populated
+      if (prodStateSelect.options.length === 0) {
+        // Add all states except INATIVO
+        for (const key in PRODUCT_STATES) {
+          if (
+            typeof PRODUCT_STATES[key] === 'object' &&
+            PRODUCT_STATES[key].id !== PRODUCT_STATES.INATIVO.id
+          ) {
+            const option = document.createElement('option');
+            option.value = PRODUCT_STATES[key].description;
+            option.textContent = PRODUCT_STATES[key].description;
+            prodStateSelect.appendChild(option);
+          }
+        }
+      }
+
+      // Set the current value in the dropdown
+      const currentState = prodStateReadonly.textContent.trim();
+      for (let i = 0; i < prodStateSelect.options.length; i++) {
+        if (prodStateSelect.options[i].value === currentState) {
+          prodStateSelect.selectedIndex = i;
+          break;
+        }
+      }
+
+      // Replace edit button with save button
+      const saveBtn = createSaveButton();
+      editBtn.parentNode.replaceChild(saveBtn, editBtn);
     });
   }
 }
@@ -367,7 +388,18 @@ export async function saveProductChanges() {
   const price = parseFloat(
     document.getElementById('preco').value.replace('€', '').trim()
   );
-  const status = document.getElementById('estado-produto').value.toUpperCase();
+
+  // Get the status text from the dropdown
+  const statusText = document.getElementById('estado-produto').value;
+
+  // Convert status text to the corresponding state ID
+  const state = PRODUCT_STATES.fromDescription(statusText);
+
+  if (!state) {
+    console.error('Invalid product state:', statusText);
+    alert('Estado do produto inválido!');
+    return;
+  }
 
   const updatedProduct = {
     title: title,
@@ -375,7 +407,8 @@ export async function saveProductChanges() {
     categoryId: categoryId,
     price: price,
     location: location,
-    status: status,
+    status: state.description, // Send the canonical description
+    stateId: state.id, // Also send the numeric ID
   };
 
   try {
@@ -404,12 +437,23 @@ export async function saveProductChanges() {
 
 export async function comprarProduto(produtoId) {
   try {
-    await productAPI.updateProduct(produtoId, { status: 'COMPRADO' });
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    if (!user || !user.id) {
+      alert('Precisa de iniciar sessão para comprar produtos.');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    // Instead of updating the status directly, use the purchase endpoint
+    await productAPI.purchaseProduct(produtoId, user.id);
+
     alert('Produto comprado com sucesso!');
-    window.location.href = 'index.html';
+    window.location.reload();
   } catch (error) {
-    alert('Erro ao comprar o produto. Tente novamente.');
-    console.error(error);
+    console.error('Erro ao comprar o produto:', error);
+    alert(
+      'Ocorreu um erro ao comprar o produto. Por favor, tente novamente mais tarde.'
+    );
   }
 }
 
@@ -481,14 +525,17 @@ export async function toggleProductButtons(product) {
     delProdBtn.classList.remove('hidden');
   }
 
-  // If product is not available, disable buy button
-  const statusNormalized = product.status ? product.status.toUpperCase() : '';
+  // Check if product is available using our PRODUCT_STATES helper
+  const productState = PRODUCT_STATES.fromDescription(product.status);
 
-  if (statusNormalized !== 'DISPONÍVEL' && statusNormalized !== 'DISPONIVEL') {
+  if (!productState || productState.id !== PRODUCT_STATES.DISPONIVEL.id) {
+    // Product is not available
     buyProdBtn.disabled = true;
+    // buyProdBtn.classList.add('disabled');
     buyProdBtn.title = 'Este produto não está disponível para compra';
   } else {
     buyProdBtn.disabled = false;
+    // buyProdBtn.classList.remove('disabled');
     buyProdBtn.title = 'Comprar este produto';
   }
 }
