@@ -58,6 +58,8 @@ async function welcomeMessage() {
       adminButton.addEventListener('click', () => {
         window.location.href = 'perfil-admin.html';
       });
+    } else {
+      adminButton.classList.add('hidden');
     }
 
     // Update the welcome message link to include user ID
