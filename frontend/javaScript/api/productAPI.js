@@ -288,6 +288,10 @@ export async function updateProductStatus(productId, stateIdOrDescription) {
 // Purchase a product
 export async function purchaseProduct(productId, buyerId) {
   try {
+    if (!productId || !buyerId) {
+      throw new Error('Product ID and buyer ID are required');
+    }
+
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.products.purchase(productId, buyerId),
       {
@@ -296,12 +300,15 @@ export async function purchaseProduct(productId, buyerId) {
     );
 
     if (!response.ok) {
-      throw new Error(`Error purchasing product: ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage =
+        errorData.message || `HTTP error: ${response.status}`;
+      throw new Error(errorMessage);
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error purchasing product:', error);
+    console.error('Failed to purchase product:', error);
     throw error;
   }
 }

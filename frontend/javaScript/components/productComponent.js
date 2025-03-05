@@ -488,31 +488,42 @@ export async function setupComprarButton() {
   if (buyProdBtn) {
     const productId = buyProdBtn.getAttribute('data-produto-id');
     buyProdBtn.addEventListener('click', async () => {
-      const user = JSON.parse(sessionStorage.getItem('user'));
-      if (!user) {
-        alert('Por favor, faça login para comprar o produto.');
-        window.location.href = 'pagina-login.html';
-        return;
-      }
+      try {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+          alert('Por favor, faça login para comprar o produto.');
+          window.location.href = 'login.html';
+          return;
+        }
 
-      const product = await productAPI.getProductById(productId);
-      const statusNormalized = product.status
-        ? product.status.toUpperCase()
-        : '';
-      if (
-        statusNormalized !== 'DISPONÍVEL' &&
-        statusNormalized !== 'DISPONIVEL'
-      ) {
-        alert('Este produto não está disponível para compra.');
-        return;
-      }
+        const product = await productAPI.getProductById(productId);
 
-      const confirmPurchase = confirm(
-        'Tem certeza que deseja comprar este produto?'
-      );
+        // Check if user is trying to buy their own product
+        if (String(user.id) === String(product.sellerId)) {
+          alert('Não pode comprar o seu próprio produto.');
+          return;
+        }
 
-      if (confirmPurchase) {
-        comprarProduto(productId);
+        // Check product availability using our PRODUCT_STATES helper
+        const productState = PRODUCT_STATES.fromDescription(product.status);
+
+        if (!productState || productState.id !== PRODUCT_STATES.DISPONIVEL.id) {
+          alert('Este produto não está disponível para compra.');
+          return;
+        }
+
+        const confirmPurchase = confirm(
+          'Tem certeza que deseja comprar este produto?'
+        );
+
+        if (confirmPurchase) {
+          await comprarProduto(productId);
+        }
+      } catch (error) {
+        console.error('Error in purchase setup:', error);
+        alert(
+          'Ocorreu um erro ao processar a compra. Por favor, tente novamente.'
+        );
       }
     });
   }
