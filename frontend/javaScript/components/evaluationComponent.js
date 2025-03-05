@@ -183,159 +183,199 @@ function attachEvaluationEventHandlers(container, sellerId) {
 }
 
 // Show modal for adding a new evaluation
-export function showAddEvaluationModal(sellerId) {
-  // Create custom modal
-  const modalContainer = document.createElement('div');
-  modalContainer.className = 'custom-modal-overlay';
-  modalContainer.id = 'evaluationModal';
+export async function showAddEvaluationModal(sellerId) {
+  // Get current user from session storage
+  const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
-  modalContainer.innerHTML = `
-    <div class="custom-modal">
-      <div class="modal-header">
-        <h3>Adicionar Review</h3>
-        <button type="button" class="close-modal" aria-label="Close">×</button>
-      </div>
-      <div class="modal-body">
-        <form id="evaluationForm">
-          <div class="form-group">
-            <label for="evaluationTitle">Título</label>
-            <input type="text" id="evaluationTitle" required maxlength="100">
-          </div>
-          <div class="form-group">
-            <label for="evaluationRating">Rating</label>
-            <div class="rating-selector">
-              <div class="stars">
-                <span class="star" data-rating="1">☆</span>
-                <span class="star" data-rating="2">☆</span>
-                <span class="star" data-rating="3">☆</span>
-                <span class="star" data-rating="4">☆</span>
-                <span class="star" data-rating="5">☆</span>
-              </div>
-              <input type="hidden" id="evaluationRating" value="0" required>
+  if (!currentUser || !currentUser.id) {
+    alert('Precisa de estar autenticado para submeter uma avaliação.');
+    return;
+  }
+
+  try {
+    // Fetch eligible products before showing the modal
+    const eligibleProducts =
+      await evaluationAPI.getEligibleProductsForEvaluation(currentUser.id);
+
+    // Filter products for this specific seller
+    const sellerProducts = eligibleProducts.filter(
+      product => product.sellerId == sellerId
+    );
+
+    if (sellerProducts.length === 0) {
+      alert('Não existem produtos elegíveis para avaliar este vendedor.');
+      return;
+    }
+
+    // Create custom modal
+    const modalContainer = document.createElement('div');
+    modalContainer.className = 'custom-modal-overlay';
+    modalContainer.id = 'evaluationModal';
+
+    // Build product options HTML
+    const productOptions = sellerProducts
+      .map(product => `<option value="${product.id}">${product.title}</option>`)
+      .join('');
+
+    modalContainer.innerHTML = `
+      <div class="custom-modal">
+        <div class="modal-header">
+          <h3>Adicionar Review</h3>
+          <button type="button" class="close-modal" aria-label="Close">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="evaluationForm">
+            <div class="form-group">
+              <label for="productSelect">Escolha o produto comprado:</label>
+              <select id="productSelect" required>
+                <option value="">Selecione um produto</option>
+                ${productOptions}
+              </select>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="evaluationComment">Comentário</label>
-            <textarea id="evaluationComment" rows="3" required maxlength="500"></textarea>
-          </div>
-        </form>
+            <div class="form-group">
+              <label for="evaluationTitle">Título</label>
+              <input type="text" id="evaluationTitle" required maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="evaluationRating">Rating</label>
+              <div class="rating-selector">
+                <div class="stars">
+                  <span class="star" data-rating="1">☆</span>
+                  <span class="star" data-rating="2">☆</span>
+                  <span class="star" data-rating="3">☆</span>
+                  <span class="star" data-rating="4">☆</span>
+                  <span class="star" data-rating="5">☆</span>
+                </div>
+                <input type="hidden" id="evaluationRating" value="0" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="evaluationComment">Comentário</label>
+              <textarea id="evaluationComment" rows="3" required maxlength="500"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary cancel-btn">Cancelar</button>
+          <button type="button" class="btn-primary" id="submitEvaluation">Submit</button>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-secondary cancel-btn">Cancelar</button>
-        <button type="button" class="btn-primary" id="submitEvaluation">Submit</button>
-      </div>
-    </div>
-  `;
+    `;
 
-  // Add modal to document
-  document.body.appendChild(modalContainer);
+    // Add modal to document
+    document.body.appendChild(modalContainer);
 
-  // Get modal elements
-  const closeButton = modalContainer.querySelector('.close-modal');
-  const cancelButton = modalContainer.querySelector('.cancel-btn');
-  const stars = modalContainer.querySelectorAll('.stars .star');
+    // Get modal elements
+    const closeButton = modalContainer.querySelector('.close-modal');
+    const cancelButton = modalContainer.querySelector('.cancel-btn');
+    const stars = modalContainer.querySelectorAll('.stars .star');
 
-  // Handle modal close
-  const closeModal = () => {
-    document.body.removeChild(modalContainer);
-  };
+    // Handle modal close
+    const closeModal = () => {
+      document.body.removeChild(modalContainer);
+    };
 
-  closeButton.addEventListener('click', closeModal);
-  cancelButton.addEventListener('click', closeModal);
-  modalContainer.addEventListener('click', e => {
-    if (e.target === modalContainer) closeModal();
-  });
+    closeButton.addEventListener('click', closeModal);
+    cancelButton.addEventListener('click', closeModal);
+    modalContainer.addEventListener('click', e => {
+      if (e.target === modalContainer) closeModal();
+    });
 
-  // Set up star rating selector
-  stars.forEach(star => {
-    star.addEventListener('click', () => {
-      const rating = parseInt(star.dataset.rating);
-      document.getElementById('evaluationRating').value = rating;
+    // Set up star rating selector
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        const rating = parseInt(star.dataset.rating);
+        document.getElementById('evaluationRating').value = rating;
 
-      // Update star display
-      stars.forEach((s, index) => {
-        if (index < rating) {
-          s.textContent = '★'; // Filled star
-        } else {
-          s.textContent = '☆'; // Empty star
-        }
+        // Update star display
+        stars.forEach((s, index) => {
+          if (index < rating) {
+            s.textContent = '★'; // Filled star
+          } else {
+            s.textContent = '☆'; // Empty star
+          }
+        });
+      });
+
+      // Hover effects for better UX
+      star.addEventListener('mouseover', () => {
+        const rating = parseInt(star.dataset.rating);
+
+        stars.forEach((s, index) => {
+          if (index < rating) {
+            s.classList.add('hover');
+          }
+        });
+      });
+
+      star.addEventListener('mouseout', () => {
+        stars.forEach(s => s.classList.remove('hover'));
       });
     });
 
-    // Hover effects for better UX
-    star.addEventListener('mouseover', () => {
-      const rating = parseInt(star.dataset.rating);
+    // Set up form submission
+    document
+      .getElementById('submitEvaluation')
+      .addEventListener('click', async () => {
+        const form = document.getElementById('evaluationForm');
 
-      stars.forEach((s, index) => {
-        if (index < rating) {
-          s.classList.add('hover');
+        // Manual form validation
+        const productId = document.getElementById('productSelect').value;
+        const title = document.getElementById('evaluationTitle').value;
+        const rating = parseInt(
+          document.getElementById('evaluationRating').value
+        );
+        const comment = document.getElementById('evaluationComment').value;
+
+        if (!productId) {
+          alert('Por favor selecione um produto para avaliar.');
+          return;
+        }
+
+        if (!title || title.trim() === '') {
+          alert('Por favor preencha o título.');
+          return;
+        }
+
+        if (rating === 0) {
+          alert('Por favor selecione um rating para esta review.');
+          return;
+        }
+
+        if (!comment || comment.trim() === '') {
+          alert('Por favor preencha o comentário.');
+          return;
+        }
+
+        const evaluationData = {
+          title: title,
+          rating: rating,
+          comment: comment,
+          evaluatedId: sellerId,
+          evaluatorId: currentUser.id,
+          productId: parseInt(productId),
+        };
+
+        try {
+          await evaluationAPI.addEvaluation(evaluationData);
+          alert('Review submetida com sucesso!');
+
+          // Close modal and refresh evaluations
+          closeModal();
+
+          // Reload evaluations
+          loadSellerEvaluations(sellerId, '#evaluationsContainer');
+        } catch (error) {
+          console.error('Erro ao submeter a avaliação:', error);
+          alert('Falha na submissão da avaliação.');
         }
       });
-    });
-
-    star.addEventListener('mouseout', () => {
-      stars.forEach(s => s.classList.remove('hover'));
-    });
-  });
-
-  // Set up form submission
-  document
-    .getElementById('submitEvaluation')
-    .addEventListener('click', async () => {
-      const form = document.getElementById('evaluationForm');
-
-      // Manual form validation
-      const title = document.getElementById('evaluationTitle').value;
-      const rating = parseInt(
-        document.getElementById('evaluationRating').value
-      );
-      const comment = document.getElementById('evaluationComment').value;
-
-      // Get current user from session storage
-      const currentUser = JSON.parse(sessionStorage.getItem('user'));
-
-      if (!currentUser || !currentUser.id) {
-        alert('Precisa de estar autenticado para submeter uma avaliação.');
-        return;
-      }
-
-      if (!title || title.trim() === '') {
-        alert('Por favor preencha o título.');
-        return;
-      }
-
-      if (rating === 0) {
-        alert('Por favor selecione um rating para esta review.');
-        return;
-      }
-
-      if (!comment || comment.trim() === '') {
-        alert('Por favor preencha o comentário.');
-        return;
-      }
-
-      const evaluationData = {
-        title: title,
-        rating: rating,
-        comment: comment,
-        evaluatedId: sellerId,
-        evaluatorId: currentUser.id,
-      };
-
-      try {
-        await evaluationAPI.addEvaluation(evaluationData);
-        alert('Review submetida com sucesso!');
-
-        // Close modal and refresh evaluations
-        closeModal();
-
-        // Reload evaluations
-        loadSellerEvaluations(sellerId, '#evaluationsContainer');
-      } catch (error) {
-        console.error('Erro ao submeter a avaliação:', error);
-        alert('Falha na submissão da avaliação.');
-      }
-    });
+  } catch (error) {
+    console.error('Error fetching eligible products:', error);
+    alert(
+      'Não foi possível carregar os produtos para avaliação. Tente novamente mais tarde.'
+    );
+  }
 }
 
 // Show modal for editing an existing evaluation

@@ -85,6 +85,7 @@ const API_ENDPOINTS = {
     count: `${API_BASE_URL}/evaluations/count`,
     countByEvaluated: userId =>
       `${API_BASE_URL}/evaluations/evaluated/${userId}/count`,
+    eligible: userId => `${API_BASE_URL}/evaluations/eligible/${userId}`,
   },
 };
 
