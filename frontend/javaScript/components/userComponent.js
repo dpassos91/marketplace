@@ -24,40 +24,7 @@ export async function submitLoginForm() {
     console.error(error);
   }
 }
-/*
-function addAdminButtonToHeader() {
-  // Criar o botão
-  const adminButton = document.createElement('button');
-  adminButton.textContent = 'Painel de Administração';
-  adminButton.classList.add('admin-button');
-  console.log('Admin Button:', adminButton);
 
-  // Adicionar um evento de clique para redirecionar para o painel de administração
-  adminButton.addEventListener('click', function () {
-    window.location.href = 'pagina-admin.html'; // Substitua pelo URL correto
-  });
-  console.log('Admin Button2:', adminButton);
-
-  // Encontrar o elemento do cabeçalho (header)
-  const header = document.querySelector('#header'); // Ajuste o seletor para ID
-  console.log('Header:', header);
-
-  // Encontrar a div da foto do utilizador no cabeçalho
-  const userPhotoContainer = document.querySelector(
-    '#profile-picture-container'
-  ); // Ajuste o seletor para ID
-  console.log('User Photo Container:', userPhotoContainer);
-
-  // Adicionar o botão ao cabeçalho, após a div da foto do utilizador
-  if (header && userPhotoContainer) {
-    console.log('Estou dentro do if');
-    header.insertBefore(adminButton, userPhotoContainer.nextSibling); // Insert after the userPhotoContainer
-    console.log('Botão adicionado com sucesso!');
-  } else {
-    console.error('Header ou foto do utilizador não encontrados!');
-  }
-}
-*/
 export async function displayUserProfile() {
   // Check if we're viewing a specific user profile from URL params
   const urlParams = new URLSearchParams(window.location.search);
