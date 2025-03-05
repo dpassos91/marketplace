@@ -169,7 +169,7 @@ async function initPage() {
                               <button class="btn-card tabela-btn ${
                                 user.suspended ? 'btn-success' : 'btn-info'
                               } suspend-user" data-user-id="${user.id}">${
-                            user.suspended ? 'Reativar' : 'Apagar'
+                            user.suspended ? 'Reativar' : 'Suspender'
                           }</button>
                               <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
                             </div>
