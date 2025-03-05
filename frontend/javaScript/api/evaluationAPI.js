@@ -132,3 +132,26 @@ export async function hasUserEvaluatedSeller(sellerId) {
     return false;
   }
 }
+
+// Get products eligible for evaluation
+export async function getEligibleProductsForEvaluation(userId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.evaluations.eligible(userId),
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Error fetching eligible products: ${response.statusText}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching eligible products:', error);
+    throw error;
+  }
+}

@@ -124,7 +124,7 @@ public class UserBean {
         if (userDto.getLastName() != null) userEntity.setLastName(userDto.getLastName());
         if (userDto.getEmail() != null) userEntity.setEmail(userDto.getEmail());
         if (userDto.getPhone() != null) userEntity.setPhone(userDto.getPhone());
-        // TODO: falta permitir a atualização da foto
+        if (userDto.getPicture() != null) userEntity.setPicture(userDto.getPicture());
 
         userEntity = userDao.update(userEntity);
 
@@ -272,7 +272,7 @@ public class UserBean {
         entity.setLastName(userDto.getLastName());
         entity.setEmail(userDto.getEmail());
         entity.setPhone(userDto.getPhone());
-        entity.SetPicture(userDto.getPicture());
+        entity.setPicture(userDto.getPicture());
 
         return entity;
     }
