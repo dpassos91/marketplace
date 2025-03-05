@@ -168,6 +168,24 @@ export async function suspendUser(userId) {
   }
 }
 
+// Reactivate user
+export async function reactivateUser(userId) {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.users.reactivate(userId),
+      { method: 'PATCH' }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error reactivating user: ${response.statusText}`);
+    }
+
+  } catch (error) {
+    console.error('Error reactivating user:', error);
+    throw error;
+  }
+}
+
 // Get user by username
 export async function getUserByUsername(username) {
   try {

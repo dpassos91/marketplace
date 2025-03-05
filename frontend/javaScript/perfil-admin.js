@@ -1,80 +1,80 @@
 'use strict';
 
 import { loadCommonElements } from './loadCommons.js';
-import { getTotalUsers, suspendUser } from './api/userAPI.js';
+import { getTotalUsers, suspendUser, reactivateUser } from './api/userAPI.js';
 
-// Variáveis de paginação
-const USERS_PER_PAGE = 10; // Número de utilizadores por página
-let currentPage = 1; // Página atual
-let allUsers = []; // Array para armazenar todos os utilizadores
+// Pagination variables
+const USERS_PER_PAGE = 10; // Number of users per page
+let currentPage = 1; // Current page
+let allUsers = []; // Array to store all users
 
 async function initPage() {
   try {
     await loadCommonElements();
-    console.log('Elementos comuns carregados com sucesso');
+    console.log('Common elements loaded successfully');
 
     const links = document.querySelectorAll('.admin-sidebar a');
     const sections = document.querySelectorAll('.admin-content > section');
 
-    // Função para esconder todas as sections
+    // Function to hide all sections
     function hideAllSections() {
-      console.log('Escondendo todas as secções');
+      console.log('Hiding all sections');
       sections.forEach(section => {
         section.classList.add('hidden');
       });
     }
 
-    // Evento de clique para os links do sidebar
+    // Click event for sidebar links
     links.forEach(link => {
       link.addEventListener('click', function (event) {
         event.preventDefault();
 
-        hideAllSections(); // Esconde todas as sections
+        hideAllSections(); // Hides all sections
 
-        // Mostra a section correspondente ao link clicado
+        // Show the section corresponding to the clicked link
         let targetId = this.getAttribute('id');
         if (targetId === 'gestao-utilizadores') {
-          showSection('utilizadores'); // Garante que a secção de utilizadores está visível
-          loadUsers(); // Carrega e exibe a tabela de utilizadores
+          showSection('utilizadores'); // Ensures the users section is visible
+          loadUsers(); // Loads and displays the user table
         } else if (targetId === 'gestao-produtos') {
-          showSection('produtos'); // Garante que a secção de produtos está visível
+          showSection('produtos'); // Ensures the products section is visible
         } else if (targetId === 'ver-dashboard') {
-          showSection('dashboard'); // Garante que a secção do dashboard está visível
-          loadDashboard(); // Carrega os cartões de utilizadores ao carregar o dashboard
+          showSection('dashboard'); // Ensures the dashboard section is visible
+          loadDashboard(); // Loads user cards when the dashboard loads
         } else if (targetId === 'gestao-avaliacoes') {
-          showSection('avaliacoes'); // Garante que a secção de avaliações está visível
+          showSection('avaliacoes'); // Ensures the evaluations section is visible
         }
       });
     });
 
-    // Evento de clique para o botão "Consultar perfil de utilizador"
+    // Click event for the "View User Profile" button
     const viewUserProfileButton = document.getElementById('viewUserProfile');
     viewUserProfileButton.addEventListener('click', function (event) {
       event.preventDefault();
-      console.log('Botão "Consultar perfil de utilizador" clicado');
-      showSection('utilizadores'); // Mostra a seção de utilizadores
-      loadUsers(); // Carrega os utilizadores quando o botão é clicado
+      console.log('"View User Profile" button clicked');
+      showSection('utilizadores'); // Shows the users section
+      loadUsers(); // Loads users when the button is clicked
     });
 
-    // Evento de clique para o botão "Filtrar"
+    // Click event for the "Filter" button
     const filtrarButton = document.getElementById('adminFiltrarProd');
     filtrarButton.addEventListener('click', function (event) {
       event.preventDefault();
 
-      hideAllSections(); // Esconde todas as sections
-      showSection('filtros'); // Mostra a secção de filtros
+      hideAllSections(); // Hides all sections
+      showSection('filtros'); // Shows the filters section
     });
 
-    // Evento de clique para o botão "Editar produtos de utilizadores"
+    // Click event for the "Edit User Products" button
     const editarButton = document.getElementById('adminEditarProd');
     editarButton.addEventListener('click', function (event) {
       event.preventDefault();
 
-      hideAllSections(); // Esconde todas as sections
-      showSection('editarProdutos'); // Mostra a secção de editarProdutos
+      hideAllSections(); // Hides all sections
+      showSection('editarProdutos'); // Shows the editProducts section
     });
 
-    // Função genérica para mostrar uma secção
+    // Generic function to show a section
     function showSection(targetId) {
       hideAllSections();
       const section = document.getElementById(targetId);
@@ -83,7 +83,7 @@ async function initPage() {
       }
     }
 
-    // Função para criar um cartão de utilizador
+    // Function to create a user card
     function createUserCard(user) {
       const card = document.createElement('div');
       card.className = 'user-card';
@@ -93,7 +93,7 @@ async function initPage() {
                 <h4>${user.email}</h4>
                 <h2>${user.cargo}</h2>
                 <span>${user.dataDeCriacao}</span>
-                <button type="button" title="perfil">Ver Perfil</button>
+                <button type="button" title="perfil">View Profile</button>
             </div>
         `;
       const button = card.querySelector('button');
@@ -103,10 +103,10 @@ async function initPage() {
       return card;
     }
 
-    // Função para adicionar cartões de utilizadores ao container no dashboard
+    // Function to add user cards to the container in the dashboard
     function displayUserCards(users) {
       const container = document.getElementById('userCardsContainer');
-      container.innerHTML = ''; // Limpa o container
+      container.innerHTML = ''; // Clears the container
 
       users.forEach(user => {
         const card = createUserCard(user);
@@ -114,36 +114,36 @@ async function initPage() {
       });
     }
 
-    // Função para carregar os utilizadores a partir do backend
+    // Function to load users from the backend
     async function loadUsers() {
       try {
-        console.log('Função loadUsers chamada');
-        allUsers = await getTotalUsers(); // Usa a função getTotalUsers para obter todos os utilizadores
-        console.log('Utilizadores obtidos:', allUsers);
+        console.log('loadUsers function called');
+        allUsers = await getTotalUsers(); // Uses the getTotalUsers function to get all users
+        console.log('Users obtained:', allUsers);
         if (!Array.isArray(allUsers)) {
-          throw new Error('Formato de dados inesperado');
+          throw new Error('Unexpected data format');
         }
-        currentPage = 1; // Resetar para a primeira página ao carregar os utilizadores
-        displayUsersTable(getUsersForPage(currentPage)); // Chama a função para exibir a tabela de utilizadores
-        displayPaginationButtons(); // Exibe os botões de paginação
+        currentPage = 1; // Reset to the first page when loading users
+        displayUsersTable(getUsersForPage(currentPage)); // Calls the function to display the user table
+        displayPaginationButtons(); // Displays the pagination buttons
       } catch (error) {
-        console.error('Erro:', error);
+        console.error('Error:', error);
       }
     }
 
-    // Função para obter os utilizadores para a página atual
+    // Function to get users for the current page
     function getUsersForPage(page) {
       const startIndex = (page - 1) * USERS_PER_PAGE;
       const endIndex = startIndex + USERS_PER_PAGE;
       return allUsers.slice(startIndex, endIndex);
     }
 
-    // Função para exibir os utilizadores numa tabela
+    // Function to display users in a table
     function displayUsersTable(users) {
-      console.log('Função displayUsersTable chamada');
-      console.log('Dados dos utilizadores:', users);
+      console.log('displayUsersTable function called');
+      console.log('User data:', users);
       const container = document.getElementById('tabelaUtilizadores');
-      console.log('Contêiner da tabela de utilizadores:', container);
+      console.log('User table container:', container);
       container.innerHTML = '';
 
       const table = document.createElement('table');
@@ -152,21 +152,25 @@ async function initPage() {
                   <tr>
                     <th style="text-align: center;">Username</th>
                     <th style="text-align: center;">Email</th>
-                    <th style="text-align: center;">Ações</th>
+                    <th style="text-align: center;">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${users
                     .map(
                       user => `
-                    <tr>
+                    <tr class="${user.suspended ? 'suspended-user' : ''}">
                       <td style="text-align: center;">${user.username}</td>
                       <td style="text-align: center;">${user.email}</td>
                       <td style="text-align: center;">
                         <div style="display: flex; justify-content: space-around; align-items: center;">
-                          <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">Consultar perfil</button>
-                          <button class="btn-card tabela-btn btn-info suspend-user" data-user-id="${user.id}">Apagar</button>
-                          <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
+                          <button class="btn-card tabela-btn btn-danger redirect-user" data-user-id="${user.id}">View Profile</button>
+                          <button class="btn-card tabela-btn ${
+                            user.suspended ? 'btn-success' : 'btn-info'
+                          } suspend-user" data-user-id="${user.id}">${
+                        user.suspended ? 'Reactivate' : 'Delete'
+                      }</button>
+                          <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Exclude</button>
                         </div>
                       </td>
                     </tr>
@@ -175,117 +179,131 @@ async function initPage() {
                     .join('')}
                 </tbody>
               `;
-      console.log('Tabela criada:', table);
+      console.log('Table created:', table);
       container.appendChild(table);
-      console.log('Tabela adicionada ao contêiner');
+      console.log('Table added to container');
 
-      // Adiciona event listeners para os botões "Consultar perfil"
+      // Adds event listeners for the "View Profile" buttons
       const redirectUserButtons = table.querySelectorAll('.redirect-user');
       redirectUserButtons.forEach(button => {
         button.addEventListener('click', function () {
           const userId = this.dataset.userId;
           console.log(
-            `Redirecionar para o perfil do usuário com ID: ${userId}`
+            `Redirect to user profile with ID: ${userId}`
           );
-          // Redirecionar para a página de perfil do usuário
+          // Redirect to the user profile page
           window.location.href = `http://localhost:8080/frontend/perfil-utilizador.html?id=${userId}`;
         });
       });
 
-      // Adiciona event listeners para os botões "Apagar"
+      // Adds event listeners for the "Delete/Reactivate" buttons
       const suspendUserButtons = table.querySelectorAll('.suspend-user');
       suspendUserButtons.forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', async function () {
           const userId = this.dataset.userId;
-          console.log(
-            `Solicitar confirmação para suspender usuário com ID: ${userId}`
-          );
-          // Exibir modal de confirmação
-          showConfirmationModal(userId);
+          const isSuspended = this.classList.contains('btn-success'); // Checks if the button has the class 'btn-success'
+
+          if (isSuspended) {
+            // Reactivate user
+            console.log(`Request to reactivate user with ID: ${userId}`);
+            try {
+              await reactivateUser(userId);
+              console.log(`User with ID ${userId} reactivated successfully`);
+              alert('User reactivated successfully!');
+              loadUsers(); // Reload the user list
+            } catch (error) {
+              console.error('Error reactivating user:', error);
+              alert('Error reactivating user. See console for details.');
+            }
+          } else {
+            // Suspend user
+            console.log(`Request confirmation to suspend user with ID: ${userId}`);
+            showConfirmationModal(userId); // Show confirmation modal
+          }
         });
       });
     }
 
-    // Função para exibir o modal de confirmação
+    // Function to display the confirmation modal
     function showConfirmationModal(userId) {
       const modal = document.getElementById('confirmationModal');
       const confirmButton = document.getElementById('confirmButton');
       const cancelButton = document.getElementById('cancelButton');
 
-      // Exibir o modal
+      // Show the modal
       modal.style.display = 'block';
 
-      // Adicionar event listeners aos botões do modal
+      // Add event listeners to the modal buttons
       confirmButton.onclick = async function () {
         console.log(
-          `Confirmação recebida. Suspender usuário com ID: ${userId}`
+          `Confirmation received. Suspend user with ID: ${userId}`
         );
         try {
           await suspendUser(userId);
-          console.log(`Usuário com ID ${userId} suspenso com sucesso`);
-          // Exibir alerta de sucesso
-          alert('Usuário suspenso com sucesso!');
-          // Recarregar a lista de usuários após a suspensão
+          console.log(`User with ID ${userId} suspended successfully`);
+          // Show success alert
+          alert('User suspended successfully!');
+          // Reload the user list after suspension
           loadUsers();
         } catch (error) {
-          console.error('Erro ao suspender o usuário:', error);
-          // Tratar o erro conforme necessário
+          console.error('Error suspending user:', error);
+          // Handle the error as needed
         } finally {
-          // Fechar o modal
+          // Close the modal
           modal.style.display = 'none';
         }
       };
 
       cancelButton.onclick = function () {
-        console.log('Operação de suspensão cancelada');
-        // Fechar o modal
+        console.log('Suspension operation cancelled');
+        // Close the modal
         modal.style.display = 'none';
       };
     }
 
-    // Função para exibir os botões de paginação
+    // Function to display the pagination buttons
     function displayPaginationButtons() {
       const totalPages = Math.ceil(allUsers.length / USERS_PER_PAGE);
       const container = document.getElementById('tabelaUtilizadores');
 
-      // Verificar se os botões de paginação já existem
+      // Check if pagination buttons already exist
       let paginationButtonsExist = false;
       if (container.querySelector('.pagination-button')) {
         paginationButtonsExist = true;
       }
 
       if (!paginationButtonsExist) {
-        // Criar botões de paginação
+        // Create pagination buttons
         for (let i = 1; i <= totalPages; i++) {
           const button = document.createElement('button');
           button.textContent = i;
-          button.className = 'btn-card pagination-button'; // Adicionar a classe 'btn-card'
+          button.className = 'btn-card pagination-button'; // Add the 'btn-card' class
           button.addEventListener('click', () => {
             currentPage = i;
             displayUsersTable(getUsersForPage(currentPage));
-            updateActiveButton(i); // Atualizar o botão ativo
+            updateActiveButton(i); // Update the active button
           });
           container.appendChild(button);
         }
       }
 
-      // Marcar o botão da página atual como ativo
+      // Mark the current page button as active
       updateActiveButton(currentPage);
     }
 
-    // Função para atualizar o botão ativo
+    // Function to update the active button
     function updateActiveButton(activePage) {
       const container = document.getElementById('tabelaUtilizadores');
       const buttons = container.querySelectorAll('.pagination-button');
       buttons.forEach(button => {
-        button.classList.remove('active'); // Remover a classe 'active' de todos os botões
+        button.classList.remove('active'); // Remove the 'active' class from all buttons
         if (parseInt(button.textContent) === activePage) {
-          button.classList.add('active'); // Adicionar a classe 'active' ao botão da página atual
+          button.classList.add('active'); // Add the 'active' class to the current page button
         }
       });
     }
 
-    // Função para mostrar os botões de gestão de utilizadores
+    // Function to show user management buttons
     function showUserManagementButtons() {
       const userManagementButtons = document.querySelector(
         '.user-management-buttons'
@@ -295,22 +313,23 @@ async function initPage() {
       }
     }
 
-    // Função para carregar o dashboard
+    // Function to load the dashboard
     async function loadDashboard() {
       try {
         const users = await getTotalUsers();
         displayUserCards(users);
       } catch (error) {
-        console.error('Erro ao carregar o dashboard:', error);
+        console.error('Error loading the dashboard:', error);
       }
     }
   } catch (error) {
-    console.error('Erro ao inicializar a página:', error);
+    console.error('Error initializing the page:', error);
   }
 }
 
-// Aguarda o carregamento completo do DOM antes de executar a função initPage
+// Wait for the DOM to load completely before running the initPage function
 document.addEventListener('DOMContentLoaded', initPage);
+
 
 /* Button for administrators to permanently delete inactive products */
 /*

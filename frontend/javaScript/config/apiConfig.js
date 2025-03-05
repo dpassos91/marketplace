@@ -52,6 +52,7 @@ const API_ENDPOINTS = {
     delete: id => `${API_BASE_URL}/users/${id}`,
     byUsername: username => `${API_BASE_URL}/users/username/${username}`,
     suspend: id => `${API_BASE_URL}/users/${id}`,
+    reactivate: id => `${API_BASE_URL}/users/${id}`,
   },
 
   // Category endpoints
