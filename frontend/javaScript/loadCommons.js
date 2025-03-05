@@ -37,6 +37,7 @@ async function welcomeMessage() {
   const welcomeMessage = document.getElementById('welcome-message');
   const logoutButton = document.getElementById('botao-logout');
   const loginButton = document.getElementById('botao-login');
+  const adminButton = document.getElementById('adminBtn');
 
   try {
     user = JSON.parse(sessionStorage.getItem('user'));
@@ -52,6 +53,13 @@ async function welcomeMessage() {
     profilePicture.classList.remove('hidden');
     profilePicture.src = user.picture;
 
+    if (user.admin) {
+      adminButton.classList.remove('hidden');
+      adminButton.addEventListener('click', () => {
+        window.location.href = 'perfil-admin.html';
+      });
+    }
+
     // Update the welcome message link to include user ID
     welcomeMessage.innerHTML = `<a href="perfil-utilizador.html?id=${user.id}">Bem-vindo/a ${user.firstName} ${user.lastName}</a>!`;
 
@@ -65,5 +73,6 @@ async function welcomeMessage() {
     logoutButton.classList.add('hidden');
     welcomeMessage.classList.add('hidden');
     profilePicture.classList.add('hidden');
+    adminButton.classList.add('hidden');
   }
 }

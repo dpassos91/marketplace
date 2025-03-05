@@ -881,7 +881,8 @@ table th {
 /* Admin - utilizador suspenso */
 .suspended-user {
   text-decoration: line-through;
-  color: gray; /* Opcional: Altera a cor do texto para cinza */
+  color: gray;
+  /* Opcional: Altera a cor do texto para cinza */
 }
 
 /* Admin - botão de acesso */
@@ -893,11 +894,11 @@ table th {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 10px; /* Espaçamento entre a foto e o botão */
+  margin-left: 10px;
 }
 
 .admin-button:hover {
-  background-color: #367C39; /* Cor ao passar o mouse */
+  background-color: #367C39;
 }
 
 .login {
