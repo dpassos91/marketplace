@@ -108,7 +108,13 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserByUsername(@PathParam("username") String username) {
         logger.info("Received a request to fetch a user by its username: {}", username);
-        return Response.ok(userBean.getUserByUsername(username)).build();
+        try {
+            return Response.ok(userBean.getUserByUsername(username)).build();
+        } catch (EntityNotFoundException exception) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("User with username " + username + " not found!")
+                    .build();
+        }
     }
 
     @GET

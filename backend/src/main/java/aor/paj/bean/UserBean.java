@@ -222,10 +222,6 @@ public class UserBean {
         return false;
     }
 
-    private boolean isUserSuspended() {
-        return false;
-    }
-
     public UserDto getUserByUsername(String username) {
         UserEntity userEntity = userDao.findByUsername(username);
 
@@ -253,7 +249,6 @@ public class UserBean {
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
-
         return userDtos;
     }
 
