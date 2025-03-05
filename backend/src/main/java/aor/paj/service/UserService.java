@@ -66,10 +66,8 @@ public class UserService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") Long id) {
-        logger.info("View attempt of user with id: {}", id);
-        UserDto user = userBean.getUserById(id);
-        logger.info("Successful view of user with id: {}", id);
-        return Response.ok(user).build();
+        logger.info("Received a request to view user with id: {}", id);
+        return Response.ok(userBean.getUserById(id)).build();
     }
 
     @PUT
@@ -77,6 +75,7 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("id") Long id, @HeaderParam("token") String token, UserDto userDto) {
+        logger.info("Received a request to update user with id: {}", id);
         return userBean.updateUser(id, token, userDto);
     }
 
