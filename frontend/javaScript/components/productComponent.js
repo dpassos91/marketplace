@@ -536,7 +536,7 @@ export async function comprarProduto(produtoId) {
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (!user || !user.id) {
       alert('Precisa de iniciar sessão para comprar produtos.');
-      window.location.href = 'login.html';
+      window.location.href = 'pagina-login.html';
       return;
     }
 
@@ -588,7 +588,7 @@ export async function setupComprarButton() {
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user) {
           alert('Por favor, faça login para comprar o produto.');
-          window.location.href = 'login.html';
+          window.location.href = 'pagina-login.html';
           return;
         }
 
