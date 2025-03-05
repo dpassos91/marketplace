@@ -168,25 +168,43 @@ public class UserBean {
         return Response.ok("200: User " + action + " successfully").build();
     }
 
-    private Response authenticateAuthorize(Long id, String token, boolean requireAdmin, boolean requireSelf){
-        if (!isTokenAvailable(token)) return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("401: Missing authentication token.").build();
+    private Response authenticateAuthorize(Long id, String token, boolean requireAdmin, boolean requireSelf) {
+        logger.info("Authentication and authorization check started for user with ID: {} and token: {}", id, token);
+
+        if (!isTokenAvailable(token)) {
+            logger.warn("Authentication failed: Missing authentication token.");
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("401: Missing authentication token.").build();
+        }
 
         UserEntity authenticatedUser = userDao.findByToken(token);
-        if (!isUserAuthenticated(authenticatedUser)) return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("401: Invalid authentication token.").build();
+        if (!isUserAuthenticated(authenticatedUser)) {
+            logger.warn("Authentication failed: Invalid authentication token for user with ID: {}", id);
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("401: Invalid authentication token.").build();
+        }
 
         if (requireAdmin || requireSelf) {
             boolean isAuthorized = false;
 
-            if (isUserAdmin(authenticatedUser)) isAuthorized = true;
+            if (isUserAdmin(authenticatedUser)) {
+                isAuthorized = true;
+                logger.info("User with ID: {} is authorized as admin.", id);
+            }
 
-            if (isUserSelf(authenticatedUser, id)) isAuthorized = true;
+            if (isUserSelf(authenticatedUser, id)) {
+                isAuthorized = true;
+                logger.info("User with ID: {} is authorized as self.", id);
+            }
 
-            if (!isAuthorized) return Response.status(Response.Status.FORBIDDEN)
-                    .entity("403: You are not allowed to proceed with this action.").build();
+            if (!isAuthorized) {
+                logger.warn("User with ID: {} is not authorized to perform this action. Access denied.", id);
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity("403: You are not allowed to proceed with this action.").build();
+            }
         }
 
+        logger.info("Authentication and authorization check passed for user with ID: {}", id);
         return null;
     }
 
