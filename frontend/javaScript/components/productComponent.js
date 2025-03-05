@@ -130,10 +130,16 @@ export async function displayProductDetails() {
           product.location
         }" readonly />
 
-        <label for="categoria">Categoria:</label>
-        <input type="text" id="categoria" value="${
+        <label for="categoria-readonly">Categoria:</label>
+        <input type="text" id="categoria-readonly" value="${
           product.categoryName
         }" readonly />
+        
+        <!-- Hidden category dropdown that will be shown in edit mode -->
+        <label class="hidden" for="categoria">Categoria:</label>
+        <select class="hidden" id="categoria" title="Categoria do Produto">
+          <option value="">Selecione uma categoria</option>
+        </select>
 
         <label for="preco">Preço:</label>
         <input type="text" id="preco" value="${parseFloat(
@@ -162,10 +168,7 @@ export async function displayProductDetails() {
 
         <label class="hidden" for="estado-produto">Estado:</label>
         <select class="hidden" name="estado-produto" id="estado-produto" title="Estado do Produto">
-          <option value="rascunho">Rascunho</option>
-          <option value="disponivel" selected>Disponível</option>
-          <option value="reservado">Reservado</option>
-          <option value="comprado">Comprado</option>
+          <!-- Options will be populated in setupEditProductButton -->
         </select>
 
         <section class="detalhes-form-buttons">
@@ -186,6 +189,9 @@ export async function displayProductDetails() {
             Eliminar <i class="fa fa-times" aria-hidden="true"></i>
           </button>
         </section>
+
+        <!-- Hidden field to store the original categoryId -->
+        <input type="hidden" id="categoria-id" value="${product.categoryId}" />
       </form>
     `;
 
