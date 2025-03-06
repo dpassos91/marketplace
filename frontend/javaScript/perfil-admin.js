@@ -507,34 +507,44 @@ async function handleCategoryChange(event) {
 
 // Função para exibir os produtos dentro do modal
 function displayProducts(products) {
-    productDisplay.innerHTML = ''; // Limpa produtos anteriores
+  productDisplay.innerHTML = ''; // Limpa produtos anteriores
 
-    if (products.length === 0) {
-        productDisplay.innerHTML = '<p>Nenhum produto encontrado nesta categoria.</p>';
-        return;
-    }
+  if (products.length === 0) {
+      productDisplay.innerHTML = '<p style="text-align: center;">Nenhum produto encontrado nesta categoria.</p>';
+      return;
+  }
 
-    const table = document.createElement('table');
-    table.className = 'products-table';
+  const table = document.createElement('table');
+  table.className = 'products-table';
+  table.style.width = '100%';
+  table.style.borderCollapse = 'collapse';
 
-    const thead = table.createTHead();
-    const headerRow = thead.insertRow();
-    ['Título', 'Preço', 'Vendedor'].forEach(text => {
-        const th = document.createElement('th');
-        th.textContent = text;
-        headerRow.appendChild(th);
-    });
+  const thead = table.createTHead();
+  const headerRow = thead.insertRow();
+  ['Título', 'Preço'].forEach(text => {
+      const th = document.createElement('th');
+      th.textContent = text;
+      th.style.textAlign = 'center';
+      th.style.padding = '10px';
+      th.style.backgroundColor = '#f2f2f2';
+      headerRow.appendChild(th);
+  });
 
-    const tbody = table.createTBody();
-    products.forEach(product => {
-        const row = tbody.insertRow();
-        row.insertCell().textContent = product.title;
-        row.insertCell().textContent = `${product.price}€`;
-        row.insertCell().textContent = product.sellerId;
-    });
+  const tbody = table.createTBody();
+  products.forEach(product => {
+      const row = tbody.insertRow();
+      ['title', 'price'].forEach((prop, index) => {
+          const cell = row.insertCell();
+          cell.textContent = prop === 'price' ? `${product[prop]}€` : product[prop];
+          cell.style.textAlign = 'center';
+          cell.style.padding = '8px';
+          cell.style.borderBottom = '1px solid #ddd';
+      });
+  });
 
-    productDisplay.appendChild(table);
+  productDisplay.appendChild(table);
 }
+
 
 // Fechar o modal quando clicar no X
 const closeButtons = document.querySelectorAll('#productCategoryModal .close');
