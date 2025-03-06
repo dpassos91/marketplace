@@ -110,7 +110,7 @@ public class UserBean {
         UserEntity userEntity = userDao.findById(id);
 
         if (userEntity == null) {
-            logger.warn("User with id: {} not found during update attempt", id);
+            logger.warn("User with id: {} not found.", id);
             throw new EntityNotFoundException("User with ID " + id + " not found!");
         }
 
@@ -118,6 +118,7 @@ public class UserBean {
             logger.warn("Attempted to access inactive user with id: {}", id);
             throw new IllegalStateException("User with ID " + id + " is not active.");
         }
+        logger.info("User with id: {} found.", id);
         return toDto(userEntity);
     }
 
@@ -324,7 +325,7 @@ public class UserBean {
             logger.warn("Attempted to access inactive user with username: {}", username);
             throw new IllegalStateException("User with username " + username + " is not active.");
         }
-
+        logger.info("User with username {} found.", username);
         return toDto(userEntity);
     }
 
@@ -336,7 +337,7 @@ public class UserBean {
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
-
+        logger.info("All users returned successfully.");
         return userDtos;
     }
 
@@ -348,6 +349,7 @@ public class UserBean {
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
+        logger.info("All active users returned successfully.");
         return userDtos;
     }
 
