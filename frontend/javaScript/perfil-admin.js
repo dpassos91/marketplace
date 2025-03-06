@@ -13,6 +13,7 @@ import {
   getProductsBySeller,
   permanentlyDeleteProduct,
   getInactiveProducts,
+  getAllEditedProducts,
 } from './api/productAPI.js';
 
 // Variáveis de paginação
@@ -130,8 +131,6 @@ async function initPage() {
     });
 });
 
-  
-
     // Evento de clique para o botão "Filtrar"
     const filtrarButton = document.getElementById('adminFiltrarProd');
     filtrarButton.addEventListener('click', function (event) {
@@ -149,6 +148,16 @@ editarButton.addEventListener('click', function (event) {
     hideAllSections(); // Esconde todas as secções
     showSection('editarProdutos'); // Mostra a secção de editarProdutos
     loadProducts(); // Carrega a tabela de produtos
+});
+
+// Evento de clique para o botão "Produtos alterados"
+const alteradoButton = document.getElementById('produtoAlterado');
+alteradoButton.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    hideAllSections(); // Esconde todas as secções
+    showSection('alterarProdutos'); // Mostra a secção de editarProdutos
+    loadProductsAlterados(); // Carrega a tabela de produtos
 });
 
 
@@ -941,9 +950,135 @@ function updateActiveButton(activePage) {
   });
 }
 
+// Produtos alterados
+
+let allProductsAlterados = [];
+
+  // Function to load products from the backend
+  async function loadProductsAlterados() {
+    try {
+      console.log('loadProducts function called');
+      allProducts = await getAllEditedProducts(); // Usa a função getAllProducts para obter todos os produtos
+      console.log('Products obtained:', allProducts);
+      if (!Array.isArray(allProducts)) {
+        throw new Error('Unexpected data format');
+      }
+      currentPage = 1; // Reset to the first page when loading products
+      displayProductsAlteradosTable(getProductsAlteradosForPage(currentPage)); // Calls the function to display the product tables
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  // Function to get the products for the current page
+  function getProductsAlteradosForPage(page) {
+    const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+    const endIndex = startIndex + PRODUCTS_PER_PAGE;
+    return allProducts.slice(startIndex, endIndex);
+  }
+
+  // Function to display the products in a table
+  function displayProductsAlteradosTable(products) {
+    console.log('displayProductsAlteradosTable function called');
+    console.log('Products data:', products);
+
+    // Sort products by name in ascending alphabetical order
+    products.sort((a, b) => {
+      const nomeA = a.nome ? a.nome.toLowerCase() : ''; // Converter para minúsculas para ordenação insensível a maiúsculas e minúsculas
+      const nomeB = b.nome ? b.nome.toLowerCase() : '';
+
+      if (nomeA < nomeB) {
+        return -1;
+      }
+      if (nomeA > nomeB) {
+        return 1;
+      }
+      return 0; // Se os nomes forem iguais ou ambos estiverem ausentes
+    });
+
+    const containerAlterado = document.getElementById('alterarProductsContainer');
+    console.log('Products table container:', containerAlterado);
+    containerAlterado.innerHTML = '';
+
+    const tableAlterado = document.createElement('table');
+    tableAlterado.innerHTML = `
+    <thead>
+      <tr>
+        <th style="text-align: center;">Nome</th>
+        <th style="text-align: center;">Preço</th>
+        <th style="text-align: center;">ID Produto</th>
+        <th style="text-align: center;">Username</th>
+        <th style="text-align: center;">Data de Alteração</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${products
+        .map(
+          product => `
+            <tr>
+              <td style="text-align: center;">${product.title}</td>
+              <td style="text-align: center;">${product.price}</td>
+              <td style="text-align: center;">${product.id}</td>
+              <td style="text-align: center;">${product.sellerUsername}</td>
+              <td style="text-align: center;">${product.editDate}</td>
+            </tr>
+          `
+        )
+        .join('')}
+    </tbody>
+  `;
+    console.log('Table created:', tableAlterado);
+    containerAlterado.appendChild(tableAlterado);
+    console.log('Table added to container');
+  }
+
+  // Function to display the pagination buttons
+  function displayPaginationButtons() {
+    const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
+    const container = document.getElementById('productsTable');
+
+    // Check if the pagination buttons already exist
+    let paginationButtonsExist = false;
+    if (container.querySelector('.pagination-button')) {
+      paginationButtonsExist = true;
+    }
+
+    if (!paginationButtonsExist) {
+      // Create pagination buttons
+      for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.className = 'btn-card pagination-button'; // Add the 'btn-card' class
+        button.addEventListener('click', () => {
+          currentPage = i;
+          displayProductsTable(getProductsForPage(currentPage));
+          updateActiveButton(i); // Update the active button
+        });
+        container.appendChild(button);
+      }
+    }
+
+    // Mark the current page button as active
+    updateActiveButton(currentPage);
+  }
+
+// Function to update the active button
+function updateActiveButton(activePage) {
+  const container = document.getElementById('productsTable');
+  const buttons = container.querySelectorAll('.pagination-button');
+  buttons.forEach(button => {
+    button.classList.remove('active'); // Remove the 'active' class from all buttons
+    if (parseInt(button.textContent) === activePage) {
+      button.classList.add('active'); // Add the 'active' class to the current page button
+    }
+  });
+}
+
 }
 // Aguarda o carregamento completo do DOM antes de executar a função initPage
 document.addEventListener('DOMContentLoaded', initPage);
+
+
 /* Button for administrators to permanently delete inactive products */
 /*
 export function setupPermanentDeleteButton(productId) {
