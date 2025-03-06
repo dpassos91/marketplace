@@ -3,7 +3,7 @@
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
 import { addCategory, getAllCategories} from './api/categoryAPI.js';
-import { getProductsByCategory, getProductsBySeller } from './api/productAPI.js';
+import { getProductsByCategory, getProductsBySeller, getAllProducts } from './api/productAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -20,34 +20,34 @@ async function initPage() {
 
     // Função para esconder todas as secções
     function hideAllSections() {
-      console.log('Escondendo todas as secções');
-      sections.forEach(section => {
-        section.classList.add('hidden');
-      });
-    }
+      const sections = document.querySelectorAll('.admin-content > section');
+      sections.forEach(section => section.classList.add('hidden'));
+  }
+  
 
-    // Evento de clique para os links da sidebar
-    links.forEach(link => {
-      link.addEventListener('click', function (event) {
+  links.forEach(link => {
+    link.addEventListener('click', function (event) {
         event.preventDefault();
 
         hideAllSections(); // Esconde todas as secções
 
-        // Mostra a secção correspondente ao link clicado
         let targetId = this.getAttribute('id');
-        if (targetId === 'gestao-utilizadores') {
-          showSection('utilizadores'); // Garante que a secção de utilizadores está visível
-          loadUsers(); // Carrega e exibe a tabela de utilizadores
-        } else if (targetId === 'gestao-produtos') {
-          showSection('produtos'); // Garante que a secção de produtos está visível
-        } else if (targetId === 'ver-dashboard') {
-          showSection('dashboard'); // Garante que a secção do dashboard está visível
-          loadDashboard(); // Carrega os cartões de utilizadores ao carregar o dashboard
+        if (targetId === 'ver-dashboard') {
+            showSection('dashboard');
+            loadDashboard();
         } else if (targetId === 'gestao-avaliacoes') {
-          showSection('avaliacoes'); // Garante que a secção de avaliações está visível
+            showSection('avaliacoes');
+        } else if (targetId === 'gestao-produtos') {
+            showSection('produtos');
+        } else if (targetId === 'gestao-utilizadores') {
+            showSection('utilizadores');
+            loadUsers();
+            showUserManagementButtons(); // Mostra os botões de gestão de utilizadores
         }
-      });
     });
+});
+
+  
 
     // Evento de clique para o botão "Filtrar"
     const filtrarButton = document.getElementById('adminFiltrarProd');
@@ -59,13 +59,15 @@ async function initPage() {
     });
 
     // Evento de clique para o botão "Editar produtos de utilizadores"
-    const editarButton = document.getElementById('adminEditarProd');
-    editarButton.addEventListener('click', function (event) {
-      event.preventDefault();
+const editarButton = document.getElementById('adminEditarProd');
+editarButton.addEventListener('click', function (event) {
+    event.preventDefault();
 
-      hideAllSections(); // Esconde todas as secções
-      showSection('editarProdutos'); // Mostra a secção de editarProdutos
-    });
+    hideAllSections(); // Esconde todas as secções
+    showSection('editarProdutos'); // Mostra a secção de editarProdutos
+    loadProducts(); // Carrega a tabela de produtos
+});
+
 
     // Função genérica para mostrar uma secção
     function showSection(targetId) {
@@ -250,18 +252,24 @@ async function initPage() {
     
     
     // Função para exibir o modal de confirmação
-    function showConfirmationModal(data, action) {
+    function showConfirmationModal(data, action, type = 'user') {
       const modal = document.getElementById('confirmationModal');
       const confirmButton = document.getElementById('confirmButton');
       const cancelButton = document.getElementById('cancelButton');
       let message = '';
     
-      if (action === 'excluir') {
-        message = `Tem certeza de que deseja excluir o utilizador ${data}?`;
-      } else if (action === 'suspender') {
-        message = `Tem certeza de que deseja suspender este utilizador?`;
-      } else if (action === 'reativar') {
-        message = `Tem certeza de que deseja reativar este utilizador?`;
+      if (type === 'user') {
+        if (action === 'excluir') {
+          message = `Tem certeza de que deseja excluir o utilizador ${data}?`;
+        } else if (action === 'suspender') {
+          message = `Tem certeza de que deseja suspender este utilizador?`;
+        } else if (action === 'reativar') {
+          message = `Tem certeza de que deseja reativar este utilizador?`;
+        }
+      } else if (type === 'product') {
+        if (action === 'delete') {
+          message = `Tem certeza de que deseja excluir o produto ${data}?`;
+        }
       }
     
       // Altera o texto do modal
@@ -272,29 +280,36 @@ async function initPage() {
     
       // Adicionar event listeners aos botões do modal
       confirmButton.onclick = async function () {
-        console.log(`Confirmação recebida. Ação: ${action}, Data: ${data}`);
+        console.log(`Confirmação recebida. Ação: ${action}, Data: ${data}, Tipo: ${type}`);
         try {
-          if (action === 'suspender') {
-            await suspendUser(data);
-            console.log(`Utilizador com ID ${data} suspenso com sucesso`);
-            alert('Utilizador suspenso com sucesso!');
-            updateButtonState(data, true);
-          } else if (action === 'excluir') {
-            // Aqui está a modificação para chamar a função deleteUser
-            await deleteUser(data); // 'data' é o username, mas a função espera o userId
-            console.log(`Utilizador ${data} excluído com sucesso`);
-            alert('Utilizador excluído com sucesso!');
-            loadUsers(); // Recarrega a lista de utilizadores após a exclusão
-          } else if (action === 'reativar') {
-            await reactivateUser(data);
-            console.log(`Utilizador com ID ${data} reativado com sucesso`);
-            alert('Utilizador reativado com sucesso!');
-            updateButtonState(data, false);
+          if (type === 'user') {
+            if (action === 'suspender') {
+              await suspendUser(data);
+              console.log(`Utilizador com ID ${data} suspenso com sucesso`);
+              alert('Utilizador suspenso com sucesso!');
+              updateButtonState(data, true);
+            } else if (action === 'excluir') {
+              await deleteUser(data);
+              console.log(`Utilizador ${data} excluído com sucesso`);
+              alert('Utilizador excluído com sucesso!');
+              loadUsers(); // Recarrega a lista de utilizadores após a exclusão
+            } else if (action === 'reativar') {
+              await reactivateUser(data);
+              console.log(`Utilizador com ID ${data} reativado com sucesso`);
+              alert('Utilizador reativado com sucesso!');
+              updateButtonState(data, false);
+            }
+          } else if (type === 'product') {
+            if (action === 'delete') {
+              await deleteProduct(data); // Assume que 'data' é o ID do produto
+              console.log(`Produto com ID ${data} excluído com sucesso`);
+              alert('Produto excluído com sucesso!');
+              loadProducts(); // Recarrega a lista de produtos após a exclusão
+            }
           }
         } catch (error) {
-          console.error(`Erro ao ${action} o utilizador:`, error);
-          alert(`Erro ao ${action} o utilizador. Ver a consola para detalhes.`);
-          // Tratar o erro conforme necessário
+          console.error(`Erro ao ${action} o ${type}:`, error);
+          alert(`Erro ao ${action} o ${type}. Ver a consola para detalhes.`);
         } finally {
           // Fechar o modal
           modal.style.display = 'none';
@@ -307,8 +322,7 @@ async function initPage() {
         modal.style.display = 'none';
       };
     }
-    
-
+  
     // Função para exibir os botões de paginação
     function displayPaginationButtons() {
       const totalPages = Math.ceil(allUsers.length / USERS_PER_PAGE);
@@ -715,7 +729,187 @@ closeButtonsSellerModal.forEach(button => {
     });
 });
 
+// Gestão de produtos
 
+let allProducts = [];
+const PRODUCTS_PER_PAGE = 10; // Define quantos produtos queres mostrar por página
+
+
+// Function to load products from the backend
+async function loadProducts() {
+  try {
+    console.log('loadProducts function called');
+    allProducts = await getAllProducts(); // Usa a função getAllProducts para obter todos os produtos
+    console.log('Products obtained:', allProducts);
+    if (!Array.isArray(allProducts)) {
+      throw new Error('Unexpected data format');
+    }
+    currentPage = 1; // Reset to the first page when loading products
+    displayProductsTable(getProductsForPage(currentPage)); // Calls the function to display the product table
+    displayPaginationButtons(); // Displays the pagination buttons
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Function to get the products for the current page
+function getProductsForPage(page) {
+  const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  return allProducts.slice(startIndex, endIndex);
+}
+
+// Function to display the products in a table
+function displayProductsTable(products) {
+  console.log('displayProductsTable function called');
+  console.log('Products data:', products);
+
+  // Sort products by name in ascending alphabetical order
+  products.sort((a, b) => a.name.localeCompare(b.name));
+
+  const container = document.getElementById('editProductsContainer');
+  console.log('Products table container:', container);
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th style="text-align: center;">Nome</th>
+        <th style="text-align: center;">Preço</th>
+        <th style="text-align: center;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${products
+        .map(
+          product => `
+            <tr>
+              <td style="text-align: center;">${product.title}</td>
+              <td style="text-align: center;">${product.price}</td>
+              <td style="text-align: center;">
+                <div style="display: flex; justify-content: space-around; align-items: center;">
+                  <button class="btn-card tabela-btn btn-edit" data-product-id="${product.id}" data-product-name="${product.name}">Excluir</button>
+                </div>
+              </td>
+            </tr>
+          `
+        )
+        .join('')}
+    </tbody>
+  `;
+  console.log('Table created:', table);
+  container.appendChild(table);
+  console.log('Table added to container');
+
+  // Add event listeners for the "Edit" buttons
+  const editProductButtons = table.querySelectorAll('.edit-product');
+  editProductButtons.forEach(button => {
+    button.addEventListener('click', function () {
+      const productId = this.dataset.productId;
+      console.log(`Edit product with ID: ${productId}`);
+      // Redirect to the product edit page
+      window.location.href = `http://localhost:8080/frontend/editar-produto.html?id=${productId}`;
+    });
+  });
+
+  // Add event listeners for the "Delete" buttons
+  const deleteProductButtons = table.querySelectorAll('.delete-product');
+  deleteProductButtons.forEach(button => {
+    button.addEventListener('click', function () {
+      const productId = this.dataset.productId; // Get the productId from the data attribute
+      const productName = this.dataset.productName;
+      console.log(`Request confirmation to delete product: ${productName} with ID: ${productId}`);
+      showConfirmationModal(productId, 'delete', 'product'); // Displays the confirmation modal with the action "delete"
+    });
+  });
+}
+
+// Function to display the confirmation modal for products
+function productModal(data, action) {
+  const modal = document.getElementById('confirmationModal'); // Certifique-se de que o ID do modal é consistente
+  const confirmButton = document.getElementById('confirmButton');
+  const cancelButton = document.getElementById('cancelButton');
+  let message = '';
+
+  if (action === 'delete') {
+    message = `Are you sure you want to delete the product ${data}?`;
+  }
+
+  // Changes the modal text
+  modal.querySelector('p').textContent = message;
+
+  // Show the modal
+  modal.style.display = 'block';
+
+  // Add event listeners to the modal buttons
+  confirmButton.onclick = async function () {
+    console.log(`Confirmation received. Action: ${action}, Data: ${data}`);
+    try {
+      if (action === 'delete') {
+        await deleteProduct(data); // 'data' is the productId
+        console.log(`Product ${data} deleted successfully`);
+        alert('Product deleted successfully!');
+        loadProducts(); // Reload the list of products after deletion
+      }
+    } catch (error) {
+      console.error(`Error deleting the product:`, error);
+      alert(`Error deleting the product. See the console for details.`);
+      // Handle the error as needed
+    } finally {
+      // Close the modal
+      modal.style.display = 'none';
+    }
+  };
+
+  cancelButton.onclick = function () {
+    console.log(`${action} operation canceled`);
+    // Close the modal
+    modal.style.display = 'none';
+  };
+}
+
+// Function to display the pagination buttons
+function displayPaginationButtons() {
+  const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
+  const container = document.getElementById('productsTable');
+
+  // Check if the pagination buttons already exist
+  let paginationButtonsExist = false;
+  if (container.querySelector('.pagination-button')) {
+    paginationButtonsExist = true;
+  }
+
+  if (!paginationButtonsExist) {
+    // Create pagination buttons
+    for (let i = 1; i <= totalPages; i++) {
+      const button = document.createElement('button');
+      button.textContent = i;
+      button.className = 'btn-card pagination-button'; // Add the 'btn-card' class
+      button.addEventListener('click', () => {
+        currentPage = i;
+        displayProductsTable(getProductsForPage(currentPage));
+        updateActiveButton(i); // Update the active button
+      });
+      container.appendChild(button);
+    }
+  }
+
+  // Mark the current page button as active
+  updateActiveButton(currentPage);
+}
+
+// Function to update the active button
+function updateActiveButton(activePage) {
+  const container = document.getElementById('productsTable');
+  const buttons = container.querySelectorAll('.pagination-button');
+  buttons.forEach(button => {
+    button.classList.remove('active'); // Remove the 'active' class from all buttons
+    if (parseInt(button.textContent) === activePage) {
+      button.classList.add('active'); // Add the 'active' class to the current page button
+    }
+  });
+}
 
 /* Button for administrators to permanently delete inactive products */
 /*

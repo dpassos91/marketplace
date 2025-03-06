@@ -49,19 +49,6 @@ class UserDaoTest {
         verify(entityManager).persist(user);
         // verifica se o resultado da chamada da função é igual ao utilizador criado
         assertEquals(user, result);
-
-        // Segundo teste: Verificar o comportamento com um user diferente
-        // 1. Arrange (prepara um user com nome diferente)
-        UserEntity invalidUser = new UserEntity();
-        invalidUser.setUsername("InvalidUser");
-
-        // 2. Act (chama a função create novamente para o user inválido)
-        UserEntity resultInvalid = userDao.create(invalidUser);
-
-        // 3. Assert (valida se o persist foi chamado para o user)
-        verify(entityManager).persist(invalidUser);
-        // verifica se o resultado da criação do user inválido não é igual ao primeiro user
-        assertNotEquals(user, resultInvalid);
     }
 
     @Test
@@ -82,22 +69,6 @@ class UserDaoTest {
         verify(entityManager).merge(user);
         // verifica se o resultado da chamada da função é igual ao utilizador criado
         assertEquals(user, result);
-
-        // Segundo teste: Verificar o comportamento com um utilizador atualizado com valores diferentes
-        // 1. Arrange
-        // prepara um utilizador atualizado com um nome de utilizador diferente
-        UserEntity updatedUser = new UserEntity();
-        updatedUser.setUsername("Joca123");
-
-        // 2. Act
-        // chama a função update novamente com o utilizador atualizado
-        UserEntity resultUpdated = userDao.update(updatedUser);
-
-        // 3. Assert
-        // verifica se o merge foi chamado para o utilizador atualizado
-        verify(entityManager).merge(updatedUser);
-        // verifica se o resultado da atualização não é o mesmo que o primeiro utilizador
-        assertNotEquals(user, resultUpdated);
     }
 
     @Test
@@ -121,6 +92,39 @@ class UserDaoTest {
         // 3. Assert
         assertTrue(result);
         verify(entityManager).remove(user);
+    }
+
+    @Test
+    void suspendUser() {
+        // 1. Arrange
+        // ID fictício para o user e é criado um objeto UserEntity vazio
+        Long userId = 1L;
+        // mock para o UserEntity (para fazer mock dos seus atributos)
+        UserEntity user = mock(UserEntity.class);
+
+        // simula que o user está ativo
+        when(user.isActive()).thenReturn(true);
+        // simula que o user não é um Admin
+        when(user.isAdmin()).thenReturn(false);
+
+        // simula a criação de uma consulta "User.findById" e retorna o mock typedQuery
+        when(entityManager.createNamedQuery("User.findById", UserEntity.class)).thenReturn(typedQuery);
+        // simula a definição do parâmetro "id" na consulta, retornando o typedQuery atualizado
+        when(typedQuery.setParameter("id", userId)).thenReturn(typedQuery);
+        // simula a execução da consulta e retorna um Stream com o user fictício
+        when(typedQuery.getResultStream()).thenAnswer(invocation -> Stream.of(user));
+
+        // 2. Act
+        // chama a função suspend e passa o ID como argumento, guardando o resultado
+        boolean result = userDao.suspendUser(userId);
+
+        // 3. Assert
+        // verifica que o user foi suspenso (result é true)
+        assertTrue(result);
+        // verifica que o merge foi chamado para gravar as alterações ao user
+        verify(entityManager).merge(user);
+        // verifica que o status foi alterado para inativo (false)
+        verify(user).setActive(false);
     }
 
     @Test

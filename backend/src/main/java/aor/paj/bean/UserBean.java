@@ -49,21 +49,26 @@ public class UserBean {
     }
 
     private boolean isValidUsername(String username) {
+        logger.info("Checking if username {} is valid.", username);
         List<String> allUsername = userDao.findAllUsername();
 
         for (String existingUsername : allUsername) {
             if (existingUsername.equals(username)) {
+                logger.warn("Username {} is already in use.", username);
                 return false;
             }
         }
+        logger.info("Username {} is valid.", username);
         return true;
     }
 
     public String hashPassword(String password) {
+        logger.info("Hashing password.");
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     public String logIn(LoginRequestDto user) {
+        logger.info("Login attempt for user: {}", user.getUsername());
         UserEntity userEntity = userDao.findByUsername(user.getUsername());
         if (userEntity != null && userEntity.isActive()) {
             if (userEntity.checkPassword(user.getPassword())) {
@@ -76,6 +81,7 @@ public class UserBean {
                 return token;
             }
         }
+        logger.warn("Login failed for user: {}", user.getUsername());
         return null;
     }
 
@@ -88,12 +94,15 @@ public class UserBean {
     }
 
     public boolean logOut(String token) {
+        logger.info("Logging out user with token: {}", token);
         UserEntity userEntity = userDao.findByToken(token);
         if (userEntity != null) {
             userEntity.setToken(null);
             userDao.update(userEntity);
+            logger.info("User with token {} logged out successfully.", token);
             return true;
         }
+        logger.warn("Logout failed for token: {}", token);
         return false;
     }
 
@@ -101,7 +110,7 @@ public class UserBean {
         UserEntity userEntity = userDao.findById(id);
 
         if (userEntity == null) {
-            logger.warn("User with id: {} not found during update attempt", id);
+            logger.warn("User with id: {} not found.", id);
             throw new EntityNotFoundException("User with ID " + id + " not found!");
         }
 
@@ -109,6 +118,7 @@ public class UserBean {
             logger.warn("Attempted to access inactive user with id: {}", id);
             throw new IllegalStateException("User with ID " + id + " is not active.");
         }
+        logger.info("User with id: {} found.", id);
         return toDto(userEntity);
     }
 
@@ -169,6 +179,7 @@ public class UserBean {
     }
 
     public Response suspendUser(Long id, String token) {
+        logger.info("Suspending user with id: {} by token: {}", id, token);
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
 
@@ -193,6 +204,7 @@ public class UserBean {
     }
 
     public Response activateUser(Long id, String token) {
+        logger.info("Activating user with id: {} by token: {}", id, token);
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
 
@@ -313,7 +325,7 @@ public class UserBean {
             logger.warn("Attempted to access inactive user with username: {}", username);
             throw new IllegalStateException("User with username " + username + " is not active.");
         }
-
+        logger.info("User with username {} found.", username);
         return toDto(userEntity);
     }
 
@@ -325,7 +337,7 @@ public class UserBean {
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
-
+        logger.info("All users returned successfully.");
         return userDtos;
     }
 
@@ -337,6 +349,7 @@ public class UserBean {
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
+        logger.info("All active users returned successfully.");
         return userDtos;
     }
 
