@@ -3,7 +3,7 @@
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
 import { addCategory, getAllCategories} from './api/categoryAPI.js';
-import { getProductsByCategory } from './api/productAPI.js';
+import { getProductsByCategory, getProductsBySeller } from './api/productAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -545,7 +545,6 @@ function displayProducts(products) {
   productDisplay.appendChild(table);
 }
 
-
 // Fechar o modal quando clicar no X
 const closeButtons = document.querySelectorAll('#productCategoryModal .close');
 closeButtons.forEach(button => {
@@ -553,6 +552,106 @@ closeButtons.forEach(button => {
         document.getElementById('productCategoryModal').style.display = 'none';
     });
 });
+
+// Filtar por vendedor
+const filterBySellerButton = document.getElementById('filtrarPorPreco');
+const productSellerModal = document.getElementById('productSellerModal');
+const sellerProductDisplay = document.getElementById('sellerProductDisplay');
+
+// Event listener para abrir o modal de vendedores
+filterBySellerButton.addEventListener('click', function () {
+    console.log('Botão "Filtrar por Vendedor" clicado');
+    openSellerModal();
+});
+
+function openSellerModal() {
+    // Limpar conteúdo anterior
+    sellerProductDisplay.innerHTML = '';
+    
+    // Criar input para o ID do vendedor
+    const sellerIdInput = document.createElement('input');
+    sellerIdInput.type = 'text';
+    sellerIdInput.placeholder = 'Insira o ID do vendedor';
+    sellerIdInput.style.marginBottom = '10px';
+    
+    // Criar botão de busca
+    const searchButton = document.createElement('button');
+    searchButton.textContent = 'Buscar Produtos';
+    searchButton.onclick = () => searchSellerProducts(sellerIdInput.value);
+    
+    // Adicionar elementos ao modal
+    sellerProductDisplay.appendChild(sellerIdInput);
+    sellerProductDisplay.appendChild(searchButton);
+    
+    // Exibir o modal
+    productSellerModal.style.display = 'block';
+}
+
+async function searchSellerProducts(sellerId) {
+    if (!sellerId.trim()) {
+        alert('Por favor, insira um ID de vendedor válido.');
+        return;
+    }
+
+    try {
+        const products = await getProductsBySeller(sellerId);
+        displaySellerProducts(products);
+    } catch (error) {
+        console.error('Erro ao buscar produtos do vendedor:', error);
+        sellerProductDisplay.innerHTML += '<p>Erro ao buscar produtos. Por favor, tente novamente.</p>';
+    }
+}
+
+function displaySellerProducts(products) {
+    // Limpar resultados anteriores, mas manter o input e o botão
+    const inputAndButton = sellerProductDisplay.innerHTML;
+    sellerProductDisplay.innerHTML = inputAndButton;
+
+    if (products.length === 0) {
+        sellerProductDisplay.innerHTML += '<p style="text-align: center;">Nenhum produto encontrado para este vendedor.</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.className = 'products-table';
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.style.marginTop = '20px';
+
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    ['Título', 'Preço'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        th.style.textAlign = 'center';
+        th.style.padding = '10px';
+        th.style.backgroundColor = '#f2f2f2';
+        headerRow.appendChild(th);
+    });
+
+    const tbody = table.createTBody();
+    products.forEach(product => {
+        const row = tbody.insertRow();
+        ['title', 'price'].forEach((prop, index) => {
+            const cell = row.insertCell();
+            cell.textContent = prop === 'price' ? `${product[prop]}€` : product[prop];
+            cell.style.textAlign = 'center';
+            cell.style.padding = '8px';
+            cell.style.borderBottom = '1px solid #ddd';
+        });
+    });
+
+    sellerProductDisplay.appendChild(table);
+}
+
+// Fechar o modal
+const closeButtonsSellerModal = document.querySelectorAll('#productSellerModal .close');
+closeButtonsSellerModal.forEach(button => {
+    button.addEventListener('click', () => {
+        productSellerModal.style.display = 'none';
+    });
+});
+
 
 
 /* Button for administrators to permanently delete inactive products */
