@@ -3,6 +3,9 @@ package aor.paj.bean;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import aor.paj.dao.CategoryDao;
 import aor.paj.dto.CategoryDto;
 import aor.paj.entity.CategoryEntity;
@@ -11,6 +14,7 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class CategoryBean {
+    private static final Logger logger = LogManager.getLogger(CategoryBean.class);
 
     @Inject
     private CategoryDao categoryDao;
@@ -23,22 +27,31 @@ public class CategoryBean {
      */
     public CategoryDto addCategory(CategoryDto categoryDto) {
         if (categoryDto == null) {
+            logger.warn("Attempt to create category with null DTO");
+            return null;
+        }
+
+        if (categoryDto.getName() == null || categoryDto.getName().trim().isEmpty()) {
+            logger.warn("Attempt to create category with empty name");
             return null;
         }
 
         // Check if category already exists
         if (categoryDao.existsByName(categoryDto.getName())) {
-            return null; // Category with this name already exists
+            logger.warn("Category creation failed: name '{}' already exists", categoryDto.getName());
+            return null;
         }
 
-        // Convert DTO to Entity
-        CategoryEntity categoryEntity = convertDtoToEntity(categoryDto);
-
-        // Save category to database
-        CategoryEntity savedCategory = categoryDao.create(categoryEntity);
-
-        // Return saved category as DTO
-        return convertEntityToDto(savedCategory);
+        try {
+            CategoryEntity categoryEntity = convertDtoToEntity(categoryDto);
+            CategoryEntity savedCategory = categoryDao.create(categoryEntity);
+            logger.info("Category created successfully: id={}, name='{}'",
+                    savedCategory.getId(), savedCategory.getName());
+            return convertEntityToDto(savedCategory);
+        } catch (Exception e) {
+            logger.error("Error creating category: {}", categoryDto.getName(), e);
+            return null;
+        }
     }
 
     /**
@@ -83,11 +96,25 @@ public class CategoryBean {
      * @return List of category DTOs for the requested page
      */
     public List<CategoryDto> getCategoriesPaginated(int page, int pageSize) {
-        int offset = page * pageSize;
-        List<CategoryEntity> entities = categoryDao.findAllPaginated(offset, pageSize);
-        return entities.stream()
-                .map(this::convertEntityToDto)
-                .collect(Collectors.toList());
+        logger.debug("Querying paginated categories: page={}, size={}", page, pageSize);
+        long startTime = System.currentTimeMillis();
+
+        try {
+            int offset = page * pageSize;
+            List<CategoryEntity> entities = categoryDao.findAllPaginated(offset, pageSize);
+            List<CategoryDto> result = entities.stream()
+                    .map(this::convertEntityToDto)
+                    .collect(Collectors.toList());
+
+            long duration = System.currentTimeMillis() - startTime;
+            logger.debug("DB Query: Retrieved {} categories for page {}, time taken: {}ms",
+                    result.size(), page, duration);
+
+            return result;
+        } catch (Exception e) {
+            logger.error("DB Error: Failed to get paginated categories: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -96,7 +123,24 @@ public class CategoryBean {
      * @return Total number of categories
      */
     public Long getCategoryCount() {
-        return categoryDao.count();
+        logger.debug("Querying total count of categories");
+        long startTime = System.currentTimeMillis();
+
+        try {
+            Long count = categoryDao.count();
+            long duration = System.currentTimeMillis() - startTime;
+
+            if (duration > 500) { // Log slow queries with WARN
+                logger.warn("DB Query slow: Category count query took {}ms", duration);
+            } else {
+                logger.debug("DB Query: Category count={}, time taken: {}ms", count, duration);
+            }
+
+            return count;
+        } catch (Exception e) {
+            logger.error("DB Error: Failed to get category count: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -162,13 +206,20 @@ public class CategoryBean {
      */
     private CategoryDto convertEntityToDto(CategoryEntity entity) {
         if (entity == null) {
+            logger.trace("Attempting to convert null category entity to DTO");
             return null;
         }
 
-        CategoryDto dto = new CategoryDto();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        return dto;
+        try {
+            CategoryDto dto = new CategoryDto();
+            dto.setId(entity.getId());
+            dto.setName(entity.getName());
+            return dto;
+        } catch (Exception e) {
+            logger.error("Error converting category entity to DTO: id={}",
+                    entity.getId(), e);
+            throw e;
+        }
     }
 
     /**

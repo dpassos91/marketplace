@@ -2,15 +2,20 @@ package aor.paj.dao;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import aor.paj.entity.ProductEntity;
 import aor.paj.util.ProductStateId;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
 
 @Stateless
 public class ProductDao {
+    private static final Logger logger = LogManager.getLogger(ProductDao.class);
 
     @PersistenceContext(unitName = "jorge-nuno-diogo-proj3")
     private EntityManager em;
@@ -22,8 +27,16 @@ public class ProductDao {
      * @return the persisted product
      */
     public ProductEntity create(ProductEntity product) {
-        em.persist(product);
-        return product;
+        long startTime = System.currentTimeMillis();
+        try {
+            em.persist(product);
+            logger.debug("DB Transaction: Created product with title '{}', time taken: {}ms",
+                    product.getTitle(), (System.currentTimeMillis() - startTime));
+            return product;
+        } catch (PersistenceException e) {
+            logger.error("DB Error: Failed to persist product: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -33,7 +46,16 @@ public class ProductDao {
      * @return the updated product
      */
     public ProductEntity update(ProductEntity product) {
-        return em.merge(product);
+        long startTime = System.currentTimeMillis();
+        try {
+            ProductEntity updated = em.merge(product);
+            logger.debug("DB Transaction: Updated product id={}, time taken: {}ms",
+                    product.getId(), (System.currentTimeMillis() - startTime));
+            return updated;
+        } catch (PersistenceException e) {
+            logger.error("DB Error: Failed to update product id={}: {}", product.getId(), e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -58,11 +80,25 @@ public class ProductDao {
      * @return the product with the given id, null if not found
      */
     public ProductEntity findById(Long id) {
-        return em.createNamedQuery("Product.findById", ProductEntity.class)
-                .setParameter("id", id)
-                .getResultStream()
-                .findFirst()
-                .orElse(null);
+        long startTime = System.currentTimeMillis();
+        try {
+            ProductEntity result = em.createNamedQuery("Product.findById", ProductEntity.class)
+                    .setParameter("id", id)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            long timeTaken = System.currentTimeMillis() - startTime;
+            if (result == null) {
+                logger.debug("DB Query: Product id={} not found, time taken: {}ms", id, timeTaken);
+            } else {
+                logger.debug("DB Query: Found product id={}, time taken: {}ms", id, timeTaken);
+            }
+            return result;
+        } catch (Exception e) {
+            logger.error("DB Error: Failed to find product id={}: {}", id, e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -71,8 +107,16 @@ public class ProductDao {
      * @return a list of all products
      */
     public List<ProductEntity> findAll() {
-        return em.createNamedQuery("Product.findAll", ProductEntity.class)
-                .getResultList();
+        long startTime = System.currentTimeMillis();
+        try {
+            List<ProductEntity> results = em.createNamedQuery("Product.findAll", ProductEntity.class).getResultList();
+            logger.debug("DB Query: Found {} products, time taken: {}ms",
+                    results.size(), (System.currentTimeMillis() - startTime));
+            return results;
+        } catch (Exception e) {
+            logger.error("DB Error: Failed to retrieve all products: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -165,8 +209,18 @@ public class ProductDao {
      * @return a list of products with pagination
      */
     public List<ProductEntity> findAllPaginated(int offset, int limit) {
-        TypedQuery<ProductEntity> query = em.createNamedQuery("Product.findAll", ProductEntity.class);
-        return createPaginatedQuery(query, offset, limit).getResultList();
+        long startTime = System.currentTimeMillis();
+        try {
+            TypedQuery<ProductEntity> query = em.createNamedQuery("Product.findAll", ProductEntity.class);
+            List<ProductEntity> results = createPaginatedQuery(query, offset, limit).getResultList();
+            logger.debug("DB Query: Found {} products for page offset={} limit={}, time taken: {}ms",
+                    results.size(), offset, limit, (System.currentTimeMillis() - startTime));
+            return results;
+        } catch (Exception e) {
+            logger.error("DB Error: Failed to retrieve paginated products (offset={}, limit={}): {}",
+                    offset, limit, e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**

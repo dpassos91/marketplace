@@ -35,7 +35,10 @@ public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViol
       String propertyPath = violation.getPropertyPath().toString();
       String message = violation.getMessage();
       errors.put(propertyPath, message);
+      logger.warn("Validation failed for {}: {}", propertyPath, message);
     }
+
+    logger.error("Validation errors: {}", errors);
 
     ErrorResponseDto errorResponse = new ErrorResponseDto(
         Response.Status.BAD_REQUEST.getStatusCode(),
