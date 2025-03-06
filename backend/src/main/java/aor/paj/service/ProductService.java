@@ -2,6 +2,9 @@ package aor.paj.service;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import aor.paj.bean.ProductBean;
 import aor.paj.dto.ProductDto;
 import aor.paj.exception.BadRequestException;
@@ -26,6 +29,8 @@ import jakarta.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProductService {
 
+    private static final Logger logger = LogManager.getLogger(ProductService.class);
+
     @Inject
     private ProductBean productBean;
 
@@ -36,7 +41,9 @@ public class ProductService {
      */
     @GET
     public Response getAllProducts() {
+        logger.info("Request received: getAllProducts()");
         List<ProductDto> products = productBean.getAllProducts();
+        logger.info("Returning {} products", products.size());
         return Response.ok(products).build();
     }
 
@@ -64,7 +71,10 @@ public class ProductService {
     public Response getProductsPaginated(
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("10") int size) {
+        logger.info("Request received: getProductsPaginated(page={}, size={})", page, size);
+
         List<ProductDto> products = productBean.getProductsPaginated(page, size);
+        logger.info("Returning {} products for page {}", products.size(), page);
         return Response.ok(products).build();
     }
 
@@ -101,10 +111,15 @@ public class ProductService {
     @GET
     @Path("/{id}")
     public Response getProductById(@PathParam("id") Long id) {
+        logger.info("Request received: getProductById(id={})", id);
+
         ProductDto product = productBean.getProductById(id);
         if (product == null) {
+            // No need to log error here since the exception mapper will handle it
             throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
+
+        logger.info("Product found: id={}, title={}", id, product.getTitle());
         return Response.ok(product).build();
     }
 
@@ -117,7 +132,10 @@ public class ProductService {
     @GET
     @Path("/category/{categoryId}")
     public Response getProductsByCategory(@PathParam("categoryId") Long categoryId) {
+        logger.info("Request received: getProductsByCategory(categoryId={})", categoryId);
+
         List<ProductDto> products = productBean.getProductsByCategory(categoryId);
+        logger.info("Found {} products in category {}", products.size(), categoryId);
         return Response.ok(products).build();
     }
 
@@ -130,7 +148,10 @@ public class ProductService {
     @GET
     @Path("/seller/{sellerId}")
     public Response getProductsBySeller(@PathParam("sellerId") Long sellerId) {
+        logger.info("Request received: getProductsBySeller(sellerId={})", sellerId);
+
         List<ProductDto> products = productBean.getProductsBySeller(sellerId);
+        logger.info("Found {} products from seller {}", products.size(), sellerId);
         return Response.ok(products).build();
     }
 
@@ -143,11 +164,15 @@ public class ProductService {
     @GET
     @Path("/search")
     public Response getProductsByTitle(@QueryParam("title") String title) {
+        logger.info("Request received: getProductsByTitle(title={})", title);
+
         if (title == null || title.trim().isEmpty()) {
+            // Exception mapper will log the error
             throw new BadRequestException("Title parameter is required");
         }
 
         List<ProductDto> products = productBean.getProductsByTitle(title);
+        logger.info("Found {} products matching title '{}'", products.size(), title);
         return Response.ok(products).build();
     }
 
@@ -185,9 +210,15 @@ public class ProductService {
      */
     @POST
     public Response createProduct(ProductDto productDto) {
+        logger.info("Request received: createProduct()");
+
         if (productDto == null) {
             throw new BadRequestException("Product data is required");
         }
+
+        // Only log product details at debug level to avoid sensitive data in info logs
+        logger.debug("Creating product: title='{}', sellerId={}, categoryId={}",
+                productDto.getTitle(), productDto.getSellerId(), productDto.getCategoryId());
 
         // Validate required fields
         if (productDto.getTitle() == null || productDto.getTitle().trim().isEmpty() ||
@@ -204,6 +235,8 @@ public class ProductService {
             throw new BadRequestException("Could not create product. Verify that the seller and category exist.");
         }
 
+        logger.info("Product created successfully: id={}, title='{}'", createdProduct.getId(),
+                createdProduct.getTitle());
         return Response.status(Response.Status.CREATED).entity(createdProduct).build();
     }
 
@@ -217,22 +250,28 @@ public class ProductService {
     @PUT
     @Path("/{id}")
     public Response updateProduct(@PathParam("id") Long id, ProductDto productDto) {
+        logger.info("Request received: updateProduct(id={})", id);
+
         if (productDto == null) {
             throw new BadRequestException("Product data is required");
         }
 
         // Ensure ID in path matches the one in DTO
         if (productDto.getId() == null) {
+            logger.debug("Setting product ID from path parameter: {}", id);
             productDto.setId(id);
         } else if (!productDto.getId().equals(id)) {
             throw new BadRequestException("ID in path doesn't match ID in product");
         }
 
+        logger.debug("Updating product: id={}, title='{}'", id, productDto.getTitle());
         ProductDto updatedProduct = productBean.updateProduct(productDto);
+
         if (updatedProduct == null) {
             throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
 
+        logger.info("Product updated successfully: id={}", id);
         return Response.ok(updatedProduct).build();
     }
 
@@ -248,11 +287,18 @@ public class ProductService {
     public Response updateProductStatus(
             @PathParam("id") Long id,
             @PathParam("stateId") int stateId) {
+        logger.info("Request received: updateProductStatus(id={}, stateId={})", id, stateId);
+
+        // Get state name for better logging
+        String stateName = getStateNameForLogging(stateId);
+        logger.debug("Attempting to update product {} to state: {}", id, stateName);
+
         ProductDto updatedProduct = productBean.updateProductStatus(id, stateId);
         if (updatedProduct == null) {
             throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
 
+        logger.info("Product status updated: id={}, new state={}", id, stateName);
         return Response.ok(updatedProduct).build();
     }
 
@@ -268,12 +314,15 @@ public class ProductService {
     public Response purchaseProduct(
             @PathParam("id") Long id,
             @PathParam("buyerId") Long buyerId) {
+        logger.info("Request received: purchaseProduct(productId={}, buyerId={})", id, buyerId);
+
         ProductDto updatedProduct = productBean.markProductAsPurchased(id, buyerId);
         if (updatedProduct == null) {
             throw new BadRequestException(
                     "Cannot complete purchase. Verify that the product is available and the buyer is not the seller.");
         }
 
+        logger.info("Purchase transaction completed: Product id={} purchased by user id={}", id, buyerId);
         return Response.ok(updatedProduct).build();
     }
 
@@ -300,11 +349,14 @@ public class ProductService {
     @PUT
     @Path("/{id}/deactivate")
     public Response deactivateProduct(@PathParam("id") Long id) {
+        logger.info("Request received: deactivateProduct(id={})", id);
+
         ProductDto updatedProduct = productBean.deactivateProduct(id);
         if (updatedProduct == null) {
             throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
 
+        logger.info("Product deactivated: id={}", id);
         return Response.ok(updatedProduct).build();
     }
 
@@ -342,10 +394,30 @@ public class ProductService {
     @DELETE
     @Path("/{id}/permanent")
     public Response permanentlyDeleteProduct(@PathParam("id") Long id) {
+        logger.info("Request received: permanentlyDeleteProduct(id={})", id);
+
         boolean deleted = productBean.permanentlyDeleteProduct(id);
         if (!deleted) {
             throw new BadRequestException("Product with id " + id + " not found or not in inactive state");
         }
+
+        logger.info("Product permanently deleted: id={}", id);
         return Response.noContent().build();
+    }
+
+    /**
+     * Helper method to get state name for better logging
+     */
+    private String getStateNameForLogging(int stateId) {
+        try {
+            for (ProductStateId state : ProductStateId.values()) {
+                if (state.getStateId() == stateId) {
+                    return state.name();
+                }
+            }
+        } catch (Exception e) {
+            logger.debug("Error determining state name for id {}", stateId);
+        }
+        return "UNKNOWN_STATE(" + stateId + ")";
     }
 }

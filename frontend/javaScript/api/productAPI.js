@@ -4,7 +4,15 @@ import { API_ENDPOINTS } from '../config/apiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 import { PRODUCT_STATES } from '../config/productStates.js';
 
-// Get all products
+/**
+ * Fetches all products from the API.
+ *
+ * @async
+ * @function getAllProducts
+ * @returns {Promise<Array>} A promise that resolves to an array of product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getAllProducts() {
   try {
     const response = await fetch(API_ENDPOINTS.products.all, {
@@ -26,7 +34,15 @@ export async function getAllProducts() {
   }
 }
 
-// Get all active products
+/**
+ * Fetches all active products from the API.
+ *
+ * @async
+ * @function getAllActiveProducts
+ * @returns {Promise<Array>} A promise that resolves to an array of active product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getAllActiveProducts() {
   try {
     const response = await fetch(API_ENDPOINTS.products.active, {
@@ -48,7 +64,17 @@ export async function getAllActiveProducts() {
   }
 }
 
-// Get paginated products
+/**
+ * Fetches paginated products from the API.
+ *
+ * @async
+ * @function getProductsPaginated
+ * @param {number} [page=0] - The page number to retrieve.
+ * @param {number} [size=10] - The number of products per page.
+ * @returns {Promise<Object>} A promise that resolves to a paginated product response.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getProductsPaginated(page = 0, size = 10) {
   try {
     const response = await fetch(API_ENDPOINTS.products.paginated(page, size), {
@@ -70,7 +96,16 @@ export async function getProductsPaginated(page = 0, size = 10) {
   }
 }
 
-// Get product by ID
+/**
+ * Retrieves a specific product by its ID.
+ *
+ * @async
+ * @function getProductById
+ * @param {string|number} productId - The ID of the product to retrieve.
+ * @returns {Promise<Object|null>} A promise that resolves to the product object.
+ * Returns null if the product doesn't exist or if an error occurs.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getProductById(productId) {
   try {
     const response = await fetch(API_ENDPOINTS.products.byId(productId), {
@@ -92,7 +127,16 @@ export async function getProductById(productId) {
   }
 }
 
-// Get products by category
+/**
+ * Retrieves all products belonging to a specific category.
+ *
+ * @async
+ * @function getProductsByCategory
+ * @param {string|number} categoryId - The ID of the category to filter products by.
+ * @returns {Promise<Array>} A promise that resolves to an array of product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getProductsByCategory(categoryId) {
   try {
     const response = await fetch(
@@ -119,7 +163,16 @@ export async function getProductsByCategory(categoryId) {
   }
 }
 
-// Get products by seller
+/**
+ * Retrieves all products listed by a specific seller.
+ *
+ * @async
+ * @function getProductsBySeller
+ * @param {string|number} sellerId - The ID of the seller whose products are being retrieved.
+ * @returns {Promise<Array>} A promise that resolves to an array of product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getProductsBySeller(sellerId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -140,7 +193,16 @@ export async function getProductsBySeller(sellerId) {
   }
 }
 
-// Search products by title
+/**
+ * Searches for products by their title.
+ *
+ * @async
+ * @function searchProductsByTitle
+ * @param {string} title - The search term to match against product titles.
+ * @returns {Promise<Array>} A promise that resolves to an array of matching product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function searchProductsByTitle(title) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -161,7 +223,16 @@ export async function searchProductsByTitle(title) {
   }
 }
 
-// Get products by location
+/**
+ * Retrieves products by geographic location.
+ *
+ * @async
+ * @function getProductsByLocation
+ * @param {string} location - The location to filter products by.
+ * @returns {Promise<Array>} A promise that resolves to an array of product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getProductsByLocation(location) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -184,7 +255,16 @@ export async function getProductsByLocation(location) {
   }
 }
 
-// Get products by status
+/**
+ * Retrieves products by their current status.
+ *
+ * @async
+ * @function getProductsByStatus
+ * @param {string|number} status - The status ID or code to filter products by.
+ * @returns {Promise<Array>} A promise that resolves to an array of product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getProductsByStatus(status) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -207,7 +287,20 @@ export async function getProductsByStatus(status) {
   }
 }
 
-// Create a new product
+/**
+ * Creates a new product.
+ *
+ * @async
+ * @function createProduct
+ * @param {Object} product - The product data to be created.
+ * @param {string} product.title - The title of the product.
+ * @param {string} product.description - A detailed description of the product.
+ * @param {number} product.price - The price of the product.
+ * @param {string|number} [product.categoryId] - The ID of the category the product belongs to.
+ * @param {string} [product.location] - The geographic location of the product.
+ * @returns {Promise<Object>} A promise that resolves to the newly created product object.
+ * @throws {Error} Throws an error if the creation fails or if the HTTP response is not ok.
+ */
 export async function createProduct(product) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -229,7 +322,21 @@ export async function createProduct(product) {
   }
 }
 
-// Update a product
+/**
+ * Updates an existing product.
+ *
+ * @async
+ * @function updateProduct
+ * @param {string|number} productId - The ID of the product to update.
+ * @param {Object} updatedProduct - The updated product data.
+ * @param {string} [updatedProduct.title] - The updated title of the product.
+ * @param {string} [updatedProduct.description] - The updated description of the product.
+ * @param {number} [updatedProduct.price] - The updated price of the product.
+ * @param {string|number} [updatedProduct.categoryId] - The updated category ID.
+ * @param {string} [updatedProduct.location] - The updated location of the product.
+ * @returns {Promise<Object>} A promise that resolves to the updated product object.
+ * @throws {Error} Throws an error if the update fails or if the HTTP response is not ok.
+ */
 export async function updateProduct(productId, updatedProduct) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -267,7 +374,17 @@ export async function updateProduct(productId, updatedProduct) {
   }
 }
 
-// Update product status
+/**
+ * Updates the status of a product.
+ *
+ * @async
+ * @function updateProductStatus
+ * @param {string|number} productId - The ID of the product to update.
+ * @param {string|number} stateIdOrDescription - Either a state ID or description string.
+ * @returns {Promise<Object>} A promise that resolves to the updated product object.
+ * @throws {Error} Throws an error if the status update fails, if the state is invalid,
+ * or if the HTTP response is not ok.
+ */
 export async function updateProductStatus(productId, stateIdOrDescription) {
   try {
     // Determine if we were passed an ID or a description
@@ -301,7 +418,17 @@ export async function updateProductStatus(productId, stateIdOrDescription) {
   }
 }
 
-// Purchase a product
+/**
+ * Purchases a product by setting its status to sold and recording the buyer.
+ *
+ * @async
+ * @function purchaseProduct
+ * @param {string|number} productId - The ID of the product to purchase.
+ * @param {string|number} buyerId - The ID of the user purchasing the product.
+ * @returns {Promise<Object>} A promise that resolves to the updated product object.
+ * @throws {Error} Throws an error if the purchase fails, if required IDs are missing,
+ * or if the HTTP response is not ok.
+ */
 export async function purchaseProduct(productId, buyerId) {
   try {
     if (!productId || !buyerId) {
@@ -329,7 +456,15 @@ export async function purchaseProduct(productId, buyerId) {
   }
 }
 
-// Delete a product (soft delete by setting state to inactive)
+/**
+ * Soft deletes a product by setting its state to inactive.
+ *
+ * @async
+ * @function softDeleteProduct
+ * @param {string|number} productId - The ID of the product to deactivate.
+ * @returns {Promise<Object>} A promise that resolves to the deactivated product object.
+ * @throws {Error} Throws an error if the deactivation fails or if the HTTP response is not ok.
+ */
 export async function softDeleteProduct(productId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -350,7 +485,15 @@ export async function softDeleteProduct(productId) {
   }
 }
 
-// Permanent deletion (admin use only)
+/**
+ * Permanently deletes a product from the database (admin use only).
+ *
+ * @async
+ * @function permanentlyDeleteProduct
+ * @param {string|number} productId - The ID of the product to delete permanently.
+ * @returns {Promise<boolean>} A promise that resolves to true if deletion is successful.
+ * @throws {Error} Throws an error if the deletion fails or if the HTTP response is not ok.
+ */
 export async function permanentlyDeleteProduct(productId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -373,7 +516,16 @@ export async function permanentlyDeleteProduct(productId) {
   }
 }
 
-// Reactivate a deactivated product
+/**
+ * Reactivates a previously deactivated product.
+ *
+ * @async
+ * @function reactivateProduct
+ * @param {string|number} productId - The ID of the product to reactivate.
+ * @param {string|number} newStateId - The new state ID to set for the product.
+ * @returns {Promise<Object>} A promise that resolves to the reactivated product object.
+ * @throws {Error} Throws an error if the reactivation fails or if the HTTP response is not ok.
+ */
 export async function reactivateProduct(productId, newStateId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -394,7 +546,15 @@ export async function reactivateProduct(productId, newStateId) {
   }
 }
 
-// Get all inactive (deactivated) products
+/**
+ * Fetches all inactive (deactivated) products.
+ *
+ * @async
+ * @function getInactiveProducts
+ * @returns {Promise<Array>} A promise that resolves to an array of inactive product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getInactiveProducts() {
   try {
     const response = await makeAuthenticatedRequest(
@@ -417,7 +577,15 @@ export async function getInactiveProducts() {
   }
 }
 
-// Get product count
+/**
+ * Gets the total count of all products.
+ *
+ * @async
+ * @function getProductCount
+ * @returns {Promise<number>} A promise that resolves to the total product count.
+ * If an error occurs, returns 0.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getProductCount() {
   try {
     const response = await makeAuthenticatedRequest(
@@ -438,7 +606,15 @@ export async function getProductCount() {
   }
 }
 
-// Get active product count
+/**
+ * Gets the count of active products only.
+ *
+ * @async
+ * @function getActiveProductCount
+ * @returns {Promise<number>} A promise that resolves to the active product count.
+ * If an error occurs, returns 0.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getActiveProductCount() {
   try {
     const response = await makeAuthenticatedRequest(
