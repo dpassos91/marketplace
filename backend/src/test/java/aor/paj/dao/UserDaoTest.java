@@ -155,7 +155,7 @@ class UserDaoTest {
     @Test
     void findByUsername() {
         // 1. Arrange
-        // username fictício, inicialização de um objeto do tipo UserEntity e set do username fictício no objeto
+        // username fictício, inicialização de um objeto do tipo UserEntity e 'set' do username fictício no objeto
         String username = "Joca123";
         UserEntity expectedUser = new UserEntity();
         expectedUser.setUsername(username);
@@ -176,5 +176,23 @@ class UserDaoTest {
 
     @Test
     void findByToken() {
+        // 1. Arrange
+        // token fictícia e inicialização de um objeto UserEntity para fazer 'set' ao token
+        String token = "abc123";
+        UserEntity expectedUser = new UserEntity();
+        expectedUser.setToken(token);
+
+        // configuração do comportamento da consulta mock
+        when(entityManager.createNamedQuery("User.findByToken", UserEntity.class)).thenReturn(typedQuery);
+        when(typedQuery.setParameter("token", token)).thenReturn(typedQuery);
+        when(typedQuery.getResultStream()).thenAnswer(invocation -> Stream.of(expectedUser));
+
+        // 2. Act
+        // chamada da função findByToken sendo passado o token como argumento
+        UserEntity result = userDao.findByToken(token);
+
+        // 3. Assert
+        // verificação de se o resultado é igual ao objeto esperado
+        assertEquals(expectedUser, result);
     }
 }
