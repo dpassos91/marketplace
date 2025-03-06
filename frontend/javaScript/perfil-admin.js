@@ -86,7 +86,7 @@ function showConfirmationModal(data, action, type = 'user') {
       }
     } catch (error) {
       console.error(`Erro ao ${action} o ${type}:`, error);
-      alert(`Erro ao ${action} o ${type}. Ver a consola para detalhes.`);
+      alert(`Erro ao ${action} o ${type}.`);
     } finally {
       // Fechar o modal
       modal.style.display = 'none';
@@ -471,7 +471,7 @@ alteradoButton.addEventListener('click', function (event) {
         alert('Nova categoria adicionada com sucesso!');
       } catch (error) {
         console.error('Erro ao adicionar categoria:', error);
-        alert('Erro ao adicionar categoria. Ver a consola para detalhes.');
+        alert('Erro ao adicionar categoria.');
       } finally {
         // Fechar o modal
         modal.style.display = 'none';
