@@ -55,6 +55,22 @@ async function loadProducts() {
   }
 }
 
+  // Function to load products from the backend
+  async function loadAvaliacoes() {
+    try {
+      console.log('loadAvaliacoes function called');
+      allAvaliacoes = await getAllEvaluations(); // Usa a função getAllProducts para obter todos os produtos
+      console.log('Products obtained:', allAvaliacoes);
+      if (!Array.isArray(allAvaliacoes)) {
+        throw new Error('Unexpected data format');
+      }
+      currentPage = 1; // Reset to the first page when loading products
+      displayAvaliacoesTable(getAvaliacoesForPage(currentPage)); // Calls the function to display the product tables
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
 // Função para atualizar o estado do botão
 function updateButtonState(userId, isSuspended) {
   const button = document.querySelector(
@@ -1130,22 +1146,6 @@ function updateActiveButton(activePage) {
 
 let allAvaliacoes = [];
 const EVALUATIONS_PER_PAGE = 10; // Define quantos produtos queres mostrar por página
-
-  // Function to load products from the backend
-  async function loadAvaliacoes() {
-    try {
-      console.log('loadAvaliacoes function called');
-      allAvaliacoes = await getAllEvaluations(); // Usa a função getAllProducts para obter todos os produtos
-      console.log('Products obtained:', allAvaliacoes);
-      if (!Array.isArray(allAvaliacoes)) {
-        throw new Error('Unexpected data format');
-      }
-      currentPage = 1; // Reset to the first page when loading products
-      displayAvaliacoesTable(getAvaliacoesForPage(currentPage)); // Calls the function to display the product tables
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
 
   // Function to get the products for the current page
   function getAvaliacoesForPage(page) {
