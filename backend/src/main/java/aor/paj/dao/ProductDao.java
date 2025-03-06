@@ -386,6 +386,25 @@ public class ProductDao {
     }
 
     /**
+     * Gets all products that have been edited (non-null editDate)
+     * 
+     * @return List of products that have been edited
+     */
+    public List<ProductEntity> findAllEdited() {
+        long startTime = System.currentTimeMillis();
+        try {
+            List<ProductEntity> results = em.createNamedQuery("Product.findByEditDate", ProductEntity.class)
+                    .getResultList();
+            logger.debug("DB Query: Found {} edited products, time taken: {}ms",
+                    results.size(), (System.currentTimeMillis() - startTime));
+            return results;
+        } catch (Exception e) {
+            logger.error("DB Error: Failed to retrieve edited products: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    /**
      * Permanently deletes a product that is in INATIVO state
      * 
      * @param id the ID of the product to permanently delete

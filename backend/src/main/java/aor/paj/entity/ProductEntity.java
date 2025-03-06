@@ -26,7 +26,8 @@ import jakarta.persistence.Table;
     @NamedQuery(name = "Product.findByActive", query = "SELECT p FROM ProductEntity p WHERE p.active = :active"),
     @NamedQuery(name = "Product.findByCategory", query = "SELECT p FROM ProductEntity p WHERE p.category.id = :categoryId"),
     @NamedQuery(name = "Product.findByUser", query = "SELECT p FROM ProductEntity p WHERE p.seller.id = :userId"),
-    @NamedQuery(name = "Product.findByBuyer", query = "SELECT p FROM ProductEntity p WHERE p.buyer.id = :userId AND p.stateId = :stateId")
+    @NamedQuery(name = "Product.findByBuyer", query = "SELECT p FROM ProductEntity p WHERE p.buyer.id = :userId AND p.stateId = :stateId"),
+    @NamedQuery(name = "Product.findByEditDate", query = "SELECT p FROM ProductEntity p WHERE p.editDate IS NOT NULL")
 })
 public class ProductEntity implements Serializable {
 
