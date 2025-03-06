@@ -120,8 +120,6 @@ async function initPage() {
     });
 });
 
-  
-
     // Evento de clique para o botão "Filtrar"
     const filtrarButton = document.getElementById('adminFiltrarProd');
     filtrarButton.addEventListener('click', function (event) {
@@ -131,7 +129,7 @@ async function initPage() {
       showSection('filtros'); // Mostra a secção de filtros
     });
 
-    // Evento de clique para o botão "Editar produtos de utilizadores"
+    // Evento de clique para o botão "Excluir produtos"
 const editarButton = document.getElementById('adminEditarProd');
 editarButton.addEventListener('click', function (event) {
     event.preventDefault();
@@ -141,6 +139,15 @@ editarButton.addEventListener('click', function (event) {
     loadProducts(); // Carrega a tabela de produtos
 });
 
+  // Evento de clique para o botão "Produtos alterados"
+  const alteradoButton = document.getElementById('produtoAlterado');
+  alteradoButton.addEventListener('click', function (event) {
+      event.preventDefault();
+  
+      hideAllSections(); // Esconde todas as secções
+      showSection('editarProdutos'); // Mostra a secção de editarProdutos
+      loadProductsAlterados(); // Carrega a tabela de produtos
+  });
 
     // Função genérica para mostrar uma secção
     function showSection(targetId) {
@@ -728,11 +735,10 @@ closeButtonsSellerModal.forEach(button => {
     });
 });
 
-// Gestão de produtos
+// Excluir produtos
 
 let allProducts = [];
-const PRODUCTS_PER_PAGE = 10; // Define quantos produtos queres mostrar por página
-
+const PRODUCTS_PER_PAGE = 10;
 
 // Function to load products from the backend
 async function loadProducts() {
@@ -912,6 +918,191 @@ function updateActiveButton(activePage) {
     }
   });
 }
+
+// Produtos alterados
+
+let allProductsAlterados = [];
+PRODUCTS_PER_PAGE = 10;
+
+// Function to load products from the backend
+async function loadProductsAlterados() {
+  try {
+    console.log('loadProductsAlterados function called');
+    allProducts = await getEditedProducts(); // Usa a função getAllProducts para obter todos os produtos
+    console.log('Products obtained:', allProducts);
+    if (!Array.isArray(allProducts)) {
+      throw new Error('Unexpected data format');
+    }
+    currentPage = 1; // Reset to the first page when loading products
+    displayProductsAlteradosTable(getProductsAlteradosForPage(currentPage)); // Calls the function to display the product tables
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Function to get the products for the current page
+function getProductsAlteradosForPage(page) {
+  const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  return allProducts.slice(startIndex, endIndex);
+}
+
+// Function to display the products in a table
+function displayProductsTable(products) {
+  console.log('displayProductsTable function called');
+  console.log('Products data:', products);
+
+  // Sort products by name in ascending alphabetical order
+  products.sort((a, b) => {
+    const nomeA = a.nome ? a.nome.toLowerCase() : ''; // Converter para minúsculas para ordenação insensível a maiúsculas e minúsculas
+    const nomeB = b.nome ? b.nome.toLowerCase() : '';
+
+    if (nomeA < nomeB) {
+      return -1;
+    }
+    if (nomeA > nomeB) {
+      return 1;
+    }
+    return 0; // Se os nomes forem iguais ou ambos estiverem ausentes
+  });
+
+  const container = document.getElementById('editProductsContainer');
+  console.log('Products table container:', container);
+  container.innerHTML = '';
+
+  const table = document.createElement('table');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th style="text-align: center;">Nome</th>
+        <th style="text-align: center;">Preço</th>
+        <th style="text-align: center;">ID Produto</th>
+        <th style="text-align: center;">Username</th>
+        <th style="text-align: center;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${products
+        .map(
+          product => `
+            <tr>
+              <td style="text-align: center;">${product.title}</td>
+              <td style="text-align: center;">${product.price}</td>
+              <td style="text-align: center;">${product.id}</td>
+              <td style="text-align: center;">${product.sellerUsername}</td>
+              <td style="text-align: center;">
+                <div style="display: flex; justify-content: space-around; align-items: center;">
+                  <button class="btn-card tabela-btn btn-edit" data-product-id="${product.id}" data-product-name="${product.name}">Excluir</button>
+                </div>
+              </td>
+            </tr>
+          `
+        )
+        .join('')}
+    </tbody>
+  `;
+  console.log('Table created:', table);
+  container.appendChild(table);
+  console.log('Table added to container');
+
+  // Add event listeners for the "Delete" buttons
+  const deleteProductButtons = table.querySelectorAll('.btn-edit');
+  deleteProductButtons.forEach(button => {
+    button.addEventListener('click', function () {
+      const productId = this.dataset.productId; // Get the productId from the data attribute
+      const productName = this.dataset.productName;
+      console.log(`Request confirmation to delete product: ${productName} with ID: ${productId}`);
+      showConfirmationModal(productId, 'excluir', 'product'); // Displays the confirmation modal with the action "delete"
+    });
+  });
+}
+
+// Function to display the confirmation modal for products
+function productModal(data, action) {
+  const modal = document.getElementById('confirmationModal'); // Certifique-se de que o ID do modal é consistente
+  const confirmButton = document.getElementById('confirmButton');
+  const cancelButton = document.getElementById('cancelButton');
+  let message = '';
+
+  if (action === 'delete') {
+    message = `Are you sure you want to delete the product ${data}?`;
+  }
+
+  // Changes the modal text
+  modal.querySelector('p').textContent = message;
+
+  // Show the modal
+  modal.style.display = 'block';
+
+  // Add event listeners to the modal buttons
+  confirmButton.onclick = async function () {
+    console.log(`Confirmation received. Action: ${action}, Data: ${data}`);
+    try {
+      if (action === 'delete') {
+        await permanentlyDeleteProduct(data); // 'data' is the productId
+        console.log(`Product ${data} deleted successfully`);
+        alert('Product deleted successfully!');
+        loadProducts(); // Reload the list of products after deletion
+      }
+    } catch (error) {
+      console.error(`Error deleting the product:`, error);
+      alert(`Error deleting the product. See the console for details.`);
+      // Handle the error as needed
+    } finally {
+      // Close the modal
+      modal.style.display = 'none';
+    }
+  };
+
+  cancelButton.onclick = function () {
+    console.log(`${action} operation canceled`);
+    // Close the modal
+    modal.style.display = 'none';
+  };
+}
+
+// Function to display the pagination buttons
+function displayPaginationButtons() {
+  const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
+  const container = document.getElementById('productsTable');
+
+  // Check if the pagination buttons already exist
+  let paginationButtonsExist = false;
+  if (container.querySelector('.pagination-button')) {
+    paginationButtonsExist = true;
+  }
+
+  if (!paginationButtonsExist) {
+    // Create pagination buttons
+    for (let i = 1; i <= totalPages; i++) {
+      const button = document.createElement('button');
+      button.textContent = i;
+      button.className = 'btn-card pagination-button'; // Add the 'btn-card' class
+      button.addEventListener('click', () => {
+        currentPage = i;
+        displayProductsTable(getProductsForPage(currentPage));
+        updateActiveButton(i); // Update the active button
+      });
+      container.appendChild(button);
+    }
+  }
+
+  // Mark the current page button as active
+  updateActiveButton(currentPage);
+}
+
+// Function to update the active button
+function updateActiveButton(activePage) {
+  const container = document.getElementById('productsTable');
+  const buttons = container.querySelectorAll('.pagination-button');
+  buttons.forEach(button => {
+    button.classList.remove('active'); // Remove the 'active' class from all buttons
+    if (parseInt(button.textContent) === activePage) {
+      button.classList.add('active'); // Add the 'active' class to the current page button
+    }
+  });
+}
+
 
 }
 // Aguarda o carregamento completo do DOM antes de executar a função initPage
