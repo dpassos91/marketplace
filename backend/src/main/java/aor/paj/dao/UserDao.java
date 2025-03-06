@@ -55,6 +55,7 @@ public class UserDao {
             entityManager.merge(user);
             return true;
         }
+        logger.warn("Unable to activate user with id: {}", id);
         return false;
     }
 
