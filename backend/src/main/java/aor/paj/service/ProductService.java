@@ -339,6 +339,22 @@ public class ProductService {
     }
 
     /**
+     * Get all products that have been edited (non-null editDate)
+     * 
+     * @return Response containing a list of edited products
+     */
+    @GET
+    @Path("/edited")
+    public Response getAllEditedProducts() {
+        logger.info("Request received: getAllEditedProducts()");
+
+        List<ProductDto> products = productBean.getAllEditedProducts();
+
+        logger.info("Returning {} edited products", products.size());
+        return Response.ok(products).build();
+    }
+
+    /**
      * Soft delete a product by setting its state to INATIVO
      * This is the standard method for "deleting" products and should be used
      * instead of permanent deletion
