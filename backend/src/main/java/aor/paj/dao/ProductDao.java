@@ -386,6 +386,30 @@ public class ProductDao {
     }
 
     /**
+     * Gets products whose sellers have been deactivated
+     * 
+     * @return List of product entities from inactive users
+     */
+    public List<ProductEntity> findProductsFromInactiveUsers() {
+        long startTime = System.currentTimeMillis();
+        try {
+            List<ProductEntity> results = em.createQuery(
+                    "SELECT p FROM ProductEntity p WHERE p.seller.active = false",
+                    ProductEntity.class)
+                    .getResultList();
+
+            logger.debug("DB Query: Found {} products from inactive users, time taken: {}ms",
+                    results.size(), (System.currentTimeMillis() - startTime));
+
+            return results;
+        } catch (Exception e) {
+            logger.error("DB Error: Failed to retrieve products from inactive users: {}",
+                    e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    /**
      * Gets all products that have been edited (non-null editDate)
      * 
      * @return List of products that have been edited
