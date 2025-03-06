@@ -82,25 +82,6 @@ export async function displayMostRecentProducts() {
   });
 }
 
-/* avaliação de produtos não implementada
-export async function displayMostRatedProducts() {
-  const mainContainer = document.querySelector('.most-rated-products');
-  const products = await getAvailableProducts();
-  const mostRatedProducts = products
-    .map(product => ({
-      ...product,
-      mediaEstrelas: helpers.gerarRating(product.avaliacoes).mediaEstrelas,
-    }))
-    .sort((a, b) => b.mediaEstrelas - a.mediaEstrelas)
-    .slice(0, 3);
-  mainContainer.innerHTML = '';
-  mostRatedProducts.forEach(p => {
-    const card = createCard(p);
-    mainContainer.appendChild(card);
-  });
-}
-  */
-
 export async function displayProductDetails() {
   const containerDetails = document.querySelector('.detalhes-container');
   const urlParams = new URLSearchParams(window.location.search);
@@ -637,10 +618,14 @@ export async function toggleProductButtons(product) {
     return;
   }
 
-  // Default state - for non-logged users or non-owner users
+  // Default state - for non-logged users
   const isUserLoggedIn = !!user;
-  const isUserProductOwner =
+
+  // User can edit if they're the owner or an admin
+  const isOwner =
     isUserLoggedIn && String(user.id) === String(product.sellerId);
+  const isAdmin = isUserLoggedIn && user.admin;
+  const canEditProduct = isOwner || isAdmin;
 
   // Hide edit/delete buttons by default
   editProdBtn.classList.add('hidden');
@@ -650,12 +635,23 @@ export async function toggleProductButtons(product) {
   buyProdBtn.classList.remove('hidden');
   sendMsgBtn.classList.remove('hidden');
 
-  // If user is the product owner, toggle the buttons accordingly
-  if (isUserProductOwner) {
+  // If user is the product owner, hide buy button (can't buy own product)
+  if (isOwner) {
     buyProdBtn.classList.add('hidden');
     sendMsgBtn.classList.add('hidden');
+  }
+
+  // If user can edit (owner or admin), show edit/delete buttons
+  if (canEditProduct) {
     editProdBtn.classList.remove('hidden');
     delProdBtn.classList.remove('hidden');
+  }
+
+  // For admin who is not the owner, allow both edit/delete AND buying
+  if (isAdmin && !isOwner) {
+    // Admin who isn't the owner can still see buy button
+    buyProdBtn.classList.remove('hidden');
+    sendMsgBtn.classList.add('hidden');
   }
 
   // Check if product is available using our PRODUCT_STATES helper
@@ -664,11 +660,9 @@ export async function toggleProductButtons(product) {
   if (!productState || productState.id !== PRODUCT_STATES.DISPONIVEL.id) {
     // Product is not available
     buyProdBtn.disabled = true;
-    // buyProdBtn.classList.add('disabled');
     buyProdBtn.title = 'Este produto não está disponível para compra';
   } else {
     buyProdBtn.disabled = false;
-    // buyProdBtn.classList.remove('disabled');
     buyProdBtn.title = 'Comprar este produto';
   }
 }
