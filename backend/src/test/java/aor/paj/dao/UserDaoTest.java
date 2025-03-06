@@ -95,6 +95,39 @@ class UserDaoTest {
     }
 
     @Test
+    void suspendUser() {
+        // 1. Arrange
+        // ID fictício para o user e é criado um objeto UserEntity vazio
+        Long userId = 1L;
+        // mock para o UserEntity (para fazer mock dos seus atributos)
+        UserEntity user = mock(UserEntity.class);
+
+        // simula que o user está ativo
+        when(user.isActive()).thenReturn(true);
+        // simula que o user não é um Admin
+        when(user.isAdmin()).thenReturn(false);
+
+        // simula a criação de uma consulta "User.findById" e retorna o mock typedQuery
+        when(entityManager.createNamedQuery("User.findById", UserEntity.class)).thenReturn(typedQuery);
+        // simula a definição do parâmetro "id" na consulta, retornando o typedQuery atualizado
+        when(typedQuery.setParameter("id", userId)).thenReturn(typedQuery);
+        // simula a execução da consulta e retorna um Stream com o user fictício
+        when(typedQuery.getResultStream()).thenAnswer(invocation -> Stream.of(user));
+
+        // 2. Act
+        // chama a função suspend e passa o ID como argumento, guardando o resultado
+        boolean result = userDao.suspendUser(userId);
+
+        // 3. Assert
+        // verifica que o user foi suspenso (result é true)
+        assertTrue(result);
+        // verifica que o merge foi chamado para gravar as alterações ao user
+        verify(entityManager).merge(user);
+        // verifica que o status foi alterado para inativo (false)
+        verify(user).setActive(false);
+    }
+
+    @Test
     void testFindById() {
         // 1. Arrange
         Long userId = 1L; // ID fictício
