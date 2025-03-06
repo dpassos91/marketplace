@@ -565,83 +565,146 @@ filterBySellerButton.addEventListener('click', function () {
 });
 
 function openSellerModal() {
-    // Limpar conteúdo anterior
-    sellerProductDisplay.innerHTML = '';
-    
-    // Criar input para o ID do vendedor
-    const sellerIdInput = document.createElement('input');
-    sellerIdInput.type = 'text';
-    sellerIdInput.placeholder = 'Insira o ID do vendedor';
-    sellerIdInput.style.marginBottom = '10px';
-    
-    // Criar botão de busca
-    const searchButton = document.createElement('button');
-    searchButton.textContent = 'Buscar Produtos';
-    searchButton.onclick = () => searchSellerProducts(sellerIdInput.value);
-    
-    // Adicionar elementos ao modal
-    sellerProductDisplay.appendChild(sellerIdInput);
-    sellerProductDisplay.appendChild(searchButton);
-    
-    // Exibir o modal
-    productSellerModal.style.display = 'block';
+  sellerProductDisplay.innerHTML = '';
+  
+  const sellerIdInput = document.createElement('input');
+  sellerIdInput.type = 'text';
+  sellerIdInput.placeholder = 'Insira o ID do vendedor';
+  sellerIdInput.style.marginBottom = '10px';
+  
+  const searchButton = document.createElement('button');
+  searchButton.textContent = 'Pesquisar';
+  searchButton.onclick = () => searchSellerProducts(sellerIdInput.value);
+  
+  const inputContainer = document.createElement('div');
+  inputContainer.appendChild(sellerIdInput);
+  inputContainer.appendChild(searchButton);
+  
+  sellerProductDisplay.appendChild(inputContainer);
+  
+  productSellerModal.style.display = 'block';
 }
 
 async function searchSellerProducts(sellerId) {
-    if (!sellerId.trim()) {
-        alert('Por favor, insira um ID de vendedor válido.');
-        return;
-    }
+  if (!sellerId.trim()) {
+      alert('Por favor, insira um ID de vendedor válido.');
+      return;
+  }
 
-    try {
-        const products = await getProductsBySeller(sellerId);
-        displaySellerProducts(products);
-    } catch (error) {
-        console.error('Erro ao buscar produtos do vendedor:', error);
-        sellerProductDisplay.innerHTML += '<p>Erro ao buscar produtos. Por favor, tente novamente.</p>';
-    }
+  try {
+      const products = await getProductsBySeller(sellerId);
+      if (products === null || products.length === 0) {
+          if (products === null) {
+              displayNoUserFound(sellerId);
+          } else {
+              displayNoProducts(sellerId);
+          }
+      } else {
+          displaySellerProducts(products, sellerId);
+      }
+  } catch (error) {
+      console.error('Erro ao buscar produtos do vendedor:', error);
+      displayError('Erro ao buscar produtos. Por favor, tente novamente.');
+  }
 }
 
-function displaySellerProducts(products) {
-    // Limpar resultados anteriores, mas manter o input e o botão
-    const inputAndButton = sellerProductDisplay.innerHTML;
-    sellerProductDisplay.innerHTML = inputAndButton;
+function displayNoUserFound(sellerId) {
+  clearDisplayAndKeepSearch();
+  const message = document.createElement('p');
+  message.textContent = `O utilizador com ID ${sellerId} não existe.`;
+  message.style.textAlign = 'center';
+  message.style.color = 'red';
+  sellerProductDisplay.appendChild(message);
+}
 
-    if (products.length === 0) {
-        sellerProductDisplay.innerHTML += '<p style="text-align: center;">Nenhum produto encontrado para este vendedor.</p>';
-        return;
-    }
+function displayNoProducts(sellerId) {
+  clearDisplayAndKeepSearch();
+  const message = document.createElement('p');
+  message.textContent = `O vendedor com ID ${sellerId} não tem produtos disponíveis.`;
+  message.style.textAlign = 'center';
+  sellerProductDisplay.appendChild(message);
+}
 
-    const table = document.createElement('table');
-    table.className = 'products-table';
-    table.style.width = '100%';
-    table.style.borderCollapse = 'collapse';
-    table.style.marginTop = '20px';
+function clearDisplayAndKeepSearch() {
+  const searchContainer = document.getElementById('sellerSearchContainer') || createSearchContainer();
+  sellerProductDisplay.innerHTML = '';
+  sellerProductDisplay.appendChild(searchContainer);
+}
 
-    const thead = table.createTHead();
-    const headerRow = thead.insertRow();
-    ['Título', 'Preço'].forEach(text => {
-        const th = document.createElement('th');
-        th.textContent = text;
-        th.style.textAlign = 'center';
-        th.style.padding = '10px';
-        th.style.backgroundColor = '#f2f2f2';
-        headerRow.appendChild(th);
-    });
+function displaySellerProducts(products, sellerId) {
+  clearDisplayAndKeepSearch();
 
-    const tbody = table.createTBody();
-    products.forEach(product => {
-        const row = tbody.insertRow();
-        ['title', 'price'].forEach((prop, index) => {
-            const cell = row.insertCell();
-            cell.textContent = prop === 'price' ? `${product[prop]}€` : product[prop];
-            cell.style.textAlign = 'center';
-            cell.style.padding = '8px';
-            cell.style.borderBottom = '1px solid #ddd';
-        });
-    });
+  const firstProduct = products[0];
+  const sellerName = firstProduct.sellerUsername || `Vendedor ${sellerId}`;
+  const actualSellerId = firstProduct.sellerId;
 
-    sellerProductDisplay.appendChild(table);
+  const title = document.createElement('h2');
+  title.textContent = `Produtos do Vendedor ${sellerName} (ID: ${actualSellerId})`;
+  title.style.textAlign = 'center';
+  title.style.marginTop = '20px';
+  sellerProductDisplay.appendChild(title);
+
+  const table = createProductTable(products);
+  sellerProductDisplay.appendChild(table);
+}
+
+
+function createSearchContainer() {
+  const container = document.createElement('div');
+  container.id = 'sellerSearchContainer';
+  container.style.marginBottom = '20px';
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'sellerIdInput';
+  input.placeholder = 'Insira o ID do vendedor';
+  input.style.marginRight = '10px';
+
+  const button = document.createElement('button');
+  button.textContent = 'Buscar Produtos';
+  button.onclick = () => searchSellerProducts(input.value);
+
+  container.appendChild(input);
+  container.appendChild(button);
+
+  return container;
+}
+
+function createProductTable(products) {
+  const table = document.createElement('table');
+  table.className = 'products-table';
+  table.style.width = '100%';
+  table.style.borderCollapse = 'collapse';
+  table.style.marginTop = '10px';
+
+  const thead = table.createTHead();
+  const headerRow = thead.insertRow();
+  ['Título', 'Preço', 'Categoria'].forEach(text => {
+      const th = document.createElement('th');
+      th.textContent = text;
+      th.style.textAlign = 'center';
+      th.style.padding = '10px';
+      th.style.backgroundColor = '#f2f2f2';
+      headerRow.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+  products.forEach(product => {
+      const row = tbody.insertRow();
+      ['title', 'price', 'categoryName'].forEach((prop) => {
+          const cell = row.insertCell();
+          if (prop === 'price') {
+              cell.textContent = `${product[prop]}€`;
+          } else {
+              cell.textContent = product[prop];
+          }
+          cell.style.textAlign = 'center';
+          cell.style.padding = '8px';
+          cell.style.borderBottom = '1px solid #ddd';
+      });
+  });
+
+  return table;
 }
 
 // Fechar o modal
