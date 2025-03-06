@@ -48,15 +48,6 @@ async function initPage() {
       });
     });
 
-    // Evento de clique para o botão "Consultar perfil de utilizador"
-    const viewUserProfileButton = document.getElementById('viewUserProfile');
-    viewUserProfileButton.addEventListener('click', function (event) {
-      event.preventDefault();
-      console.log('Botão "Consultar perfil de utilizador" clicado');
-      showSection('utilizadores'); // Mostra a secção de utilizadores
-      loadUsers(); // Carrega os utilizadores quando o botão é clicado
-    });
-
     // Evento de clique para o botão "Filtrar"
     const filtrarButton = document.getElementById('adminFiltrarProd');
     filtrarButton.addEventListener('click', function (event) {
@@ -456,8 +447,6 @@ addCategoryButton.addEventListener('click', function () {
   console.log('Botão "Adicionar nova categoria" clicado');
   showAddCategoryModal(); // Chama a função que exibe o modal para adicionar uma categoria
 });
-
-
 
 
 /* Button for administrators to permanently delete inactive products */
