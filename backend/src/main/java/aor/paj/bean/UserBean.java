@@ -49,10 +49,12 @@ public class UserBean {
     }
 
     private boolean isValidUsername(String username) {
+        logger.info("Checking if username {} is valid.", username);
         List<String> allUsername = userDao.findAllUsername();
 
         for (String existingUsername : allUsername) {
             if (existingUsername.equals(username)) {
+                logger.warn("Username {} is already in use.", username);
                 return false;
             }
         }
