@@ -22,6 +22,61 @@ const USERS_PER_PAGE = 10; // Número de utilizadores por página
 let currentPage = 1; // Página atual
 let allUsers = []; // Array para armazenar todos os utilizadores
 
+// Função para carregar os utilizadores a partir do backend
+async function loadUsers() {
+  try {
+    console.log('Função loadUsers chamada');
+    allUsers = await getTotalUsers(); // Usa a função getTotalUsers para obter todos os utilizadores
+    console.log('Utilizadores obtidos:', allUsers);
+    if (!Array.isArray(allUsers)) {
+      throw new Error('Formato de dados inesperado');
+    }
+    currentPage = 1; // Resetar para a primeira página ao carregar os utilizadores
+    displayUsersTable(getUsersForPage(currentPage)); // Chama a função para exibir a tabela de utilizadores
+    displayPaginationButtons(); // Exibe os botões de paginação
+  } catch (error) {
+    console.error('Erro:', error);
+  }
+}
+
+// Function to load products from the backend
+async function loadProducts() {
+  try {
+    console.log('loadProducts function called');
+    allProducts = await getInactiveProducts(); // Usa a função getAllProducts para obter todos os produtos
+    console.log('Products obtained:', allProducts);
+    if (!Array.isArray(allProducts)) {
+      throw new Error('Unexpected data format');
+    }
+    currentPage = 1; // Reset to the first page when loading products
+    displayProductsTable(getProductsForPage(currentPage)); // Calls the function to display the product tables
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Função para atualizar o estado do botão
+function updateButtonState(userId, isSuspended) {
+  const button = document.querySelector(
+    `.suspend-user[data-user-id="${userId}"]`
+  );
+  if (button) {
+    button.classList.toggle('btn-success', isSuspended);
+    button.classList.toggle('btn-info', !isSuspended);
+    button.textContent = isSuspended ? 'Reativar' : 'Suspender';
+
+    // Encontrar a linha da tabela (tr) correspondente ao botão
+    const tableRow = button.closest('tr');
+
+    // Adicionar ou remover a classe 'suspended-user' na linha da tabela
+    if (isSuspended) {
+      tableRow.classList.add('suspended-user');
+    } else {
+      tableRow.classList.remove('suspended-user');
+    }
+  }
+}
+
 // Função para exibir o modal de confirmação
 function showConfirmationModal(data, action, type = 'user') {
   const modal = document.getElementById('confirmationModal');
@@ -183,36 +238,6 @@ alteradoButton.addEventListener('click', function (event) {
       }
     }
 
-    // Função para criar um cartão de utilizador
-    function createUserCard(user) {
-      const card = document.createElement('div');
-      card.className = 'user-card';
-      card.innerHTML = `
-            <div>
-                <h1>${user.nome}</h1>
-                <h4>${user.email}</h4>
-                <h2>${user.cargo}</h2>
-                <span>${user.dataDeCriacao}</span>
-                <button type="button" title="perfil">Ver Perfil</button>
-            </div>
-        `;
-      const button = card.querySelector('button');
-      button.addEventListener('click', () => {
-        window.location.href = `perfil-utilizador.html?id=${user.id}`;
-      });
-      return card;
-    }
-
-    // Função para adicionar cartões de utilizadores ao container no dashboard
-    function displayUserCards(users) {
-      const container = document.getElementById('userCardsContainer');
-      container.innerHTML = ''; // Limpa o container
-
-      users.forEach(user => {
-        const card = createUserCard(user);
-        container.appendChild(card);
-      });
-    }
 
     // Função para carregar os utilizadores a partir do backend
     async function loadUsers() {
