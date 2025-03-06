@@ -36,44 +36,70 @@ class UserDaoTest {
     void testCreate() {
         // Arrange, Act e Assert (AAA) é uma abordagem comum para estruturar testes unitários de forma clara e organizada em três fases
         // 1. Arrange (fase de preparação do teste)
+        // cria uma nova instância de UserEntity e faz 'set' de um username fictício
         UserEntity user = new UserEntity();
         user.setUsername("Joca123");
 
         // 2. Act (fase de execução da funcionalidade)
+        // chama a função create, passa user como argumento e guarda o resultado em result
         UserEntity result = userDao.create(user);
 
         // 3. Assert (fase de validação do resultado)
+        // verifica se o persist foi chamado durante a execução
         verify(entityManager).persist(user);
+        // verifica se o resultado da chamada da função é igual ao utilizador criado
         assertEquals(user, result);
+
+        // Segundo teste: Verificar o comportamento com um user diferente
+        // 1. Arrange (prepara um user com nome diferente)
+        UserEntity invalidUser = new UserEntity();
+        invalidUser.setUsername("InvalidUser");
+
+        // 2. Act (chama a função create novamente para o user inválido)
+        UserEntity resultInvalid = userDao.create(invalidUser);
+
+        // 3. Assert (valida se o persist foi chamado para o user)
+        verify(entityManager).persist(invalidUser);
+        // verifica se o resultado da criação do user inválido não é igual ao primeiro user
+        assertNotEquals(user, resultInvalid);
     }
 
     @Test
     void testUpdate() {
         // 1. Arrange
+        // cria uma nova instância de UserEntity e faz 'set' de um novo username fictício
         UserEntity user = new UserEntity();
         user.setUsername("Joca321");
-        //Quando merge(user) for chamado no entityManager, vai ser retornado um objeto "user" em vez de executar a função
+        // quando merge(user) for chamado no entityManager, vai ser retornado um objeto "user" em vez de executar a função
         when(entityManager.merge(user)).thenReturn(user);
 
         // 2. Act
+        // é chamada a função update, passado user como argumento e guardado o resultado
         UserEntity result = userDao.update(user);
 
         // 3. Assert
+        // verifica se o merge foi chamado durante a execução
         verify(entityManager).merge(user);
+        // verifica se o resultado da chamada da função é igual ao utilizador criado
         assertEquals(user, result);
     }
 
     @Test
     void testDelete() {
         // 1. Arrange
+        // ID fictício para o user e é criado um objeto UserEntity vazio
         Long userId = 1L; // ID fictício
         UserEntity user = new UserEntity();
 
+        // simula a criação de uma consulta "User.findById" e retorna o mock typedQuery
         when(entityManager.createNamedQuery("User.findById", UserEntity.class)).thenReturn(typedQuery);
+        // simula a definição do parâmetro "id" na consulta, retornando o typedQuery atualizado
         when(typedQuery.setParameter("id", userId)).thenReturn(typedQuery);
+        // simula a execução da consulta e retorna um Stream com o user fictício
         when(typedQuery.getResultStream()).thenAnswer(invocation -> Stream.of(user));
 
         // 2. Act
+        // chama a função delete e passa o ID como argumento, guardando o resultado
         boolean result = userDao.delete(userId);
 
         // 3. Assert
@@ -87,46 +113,61 @@ class UserDaoTest {
         Long userId = 1L; // ID fictício
         UserEntity expectedUser = new UserEntity(); // user fictício
         expectedUser.setId(userId); // é definido o ID para o user criado
-        // Em baixo vão ser simulados os comportamentos do entityManager e typedQuery
+        // simula a criação de uma consulta "User.findById" e retorna o mock typedQuery
         when(entityManager.createNamedQuery("User.findById", UserEntity.class)).thenReturn(typedQuery);
+        // simula a definição do parâmetro "id" na consulta, retornando a typedQuery atualizada
         when(typedQuery.setParameter("id", userId)).thenReturn(typedQuery);
+        // simula a execução da consulta e retorna um Stream com o utilizador fictício
         when(typedQuery.getResultStream()).thenAnswer(invocation -> Stream.of(expectedUser));
 
         // 2. Act
+        // chama a função findById passando o ID do utilizador e guarda o resultado
         UserEntity result = userDao.findById(userId);
 
         // 3. Assert
+        // verifica se o utilizador retornado é igual ao utilizador esperado
         assertEquals(expectedUser, result);
     }
 
     @Test
     void testFindAll() {
         // 1. Arrange
+        // cria uma lista de utilizadores fictícios para retorno
         List<UserEntity> expectedUsers = Arrays.asList( new UserEntity(), new UserEntity());
 
+        // simula a criação de uma consulta "User.findAll" e retorna o mock typedQuery
         when(entityManager.createNamedQuery("User.findAll", UserEntity.class)).thenReturn(typedQuery);
+        // simula a execução da consulta e retorna a lista de utilizadores fictícios
         when(typedQuery.getResultList()).thenReturn(expectedUsers);
 
         // 2. Act
+        // chama a função findAll, que retorna todos os utilizadores
         List<UserEntity> result = userDao.findAll();
 
         // 3. Assert
+        // verifica se o resultado é igual à lista de utilizadores fictícia
         assertEquals(expectedUsers, result);
     }
 
     @Test
     void testFindAllActive() {
         // 1. Arrange
+        // cria uma lista de utilizadores fictícios que estão ativos
         List<UserEntity> expectedUsers = Arrays.asList( new UserEntity(), new UserEntity());
 
+        // simula a criação de uma consulta "User.findByActive" com o parâmetro "isActive=true" e retorna o mock typedQuery
         when(entityManager.createNamedQuery("User.findByActive", UserEntity.class)).thenReturn(typedQuery);
+        // simula a definição do parâmetro "isActive" na consulta, retornando a typedQuery atualizada
         when(typedQuery.setParameter("isActive", true)).thenReturn(typedQuery);
+        // simula o resultado da consulta e o retorno dos expectedUsers
         when(typedQuery.getResultList()).thenReturn(expectedUsers);
 
         // 2. Act
+        // chama a função "findAllActive" e guarda o resultado
         List<UserEntity> result = userDao.findAllActive();
 
         // 3. Assert
+        // verifica se o resultado é igual aos expectedUsers
         assertEquals(expectedUsers, result);
     }
 
