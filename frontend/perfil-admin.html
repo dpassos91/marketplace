@@ -63,7 +63,17 @@
                     <button class="btn-card btn-danger" id="filtrarPorPreco">Filtrar por Utilizador</button>
                     <button class="btn-card btn-warning" id="filtrarPorCategoria">Filtrar por Categoria</button>
                 </div>
+            
+                <!-- Container para o filtro por categoria (inicialmente escondido) -->
+                <div id="categoryFilterContainer" class="hidden">
+                    <label for="categorySelect">Escolha uma categoria:</label>
+                    <select id="categorySelect">
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                    <button id="applyCategoryFilter" class="btn-card btn-info">Aplicar Filtro</button>
+                </div>
             </section>
+            
 
             <section id="editarProdutos" class="hidden">
                 <h1>Editar produtos</h1>
@@ -90,6 +100,36 @@
                     <button id="cancelButton">Cancelar</button>
                 </div>
             </div>
+
+            <!-- Modal de categoria -->
+            <div id="categoryModal"
+                style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+                <div
+                    style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:5px;">
+                    <p>Tem certeza de que deseja suspender este utilizador?</p>
+                    <button id="confirmButton">Confirmar</button>
+                    <button id="cancelButton">Cancelar</button>
+                </div>
+            </div>
+
+            <div id="productCategoryModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Selecione uma Categoria</h2>
+                    <select id="productCategorySelect"></select>
+                    <div id="productDisplay"></div>
+                </div>
+            </div>
+
+            <div id="productSellerModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Selecione um Vendedor</h2>
+                    <select id="productSellerSelect"></select>
+                    <div id="sellerProductDisplay"></div>
+                </div>
+            </div>
+            
         </div>
     </main>
 

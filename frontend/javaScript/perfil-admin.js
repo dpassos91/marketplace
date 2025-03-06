@@ -2,6 +2,8 @@
 
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
+import { addCategory, getAllCategories} from './api/categoryAPI.js';
+import { getProductsByCategory, getProductsBySeller } from './api/productAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -45,15 +47,6 @@ async function initPage() {
           showSection('avaliacoes'); // Garante que a secção de avaliações está visível
         }
       });
-    });
-
-    // Evento de clique para o botão "Consultar perfil de utilizador"
-    const viewUserProfileButton = document.getElementById('viewUserProfile');
-    viewUserProfileButton.addEventListener('click', function (event) {
-      event.preventDefault();
-      console.log('Botão "Consultar perfil de utilizador" clicado');
-      showSection('utilizadores'); // Mostra a secção de utilizadores
-      loadUsers(); // Carrega os utilizadores quando o botão é clicado
     });
 
     // Evento de clique para o botão "Filtrar"
@@ -377,6 +370,8 @@ async function initPage() {
         console.error('Erro ao carregar o dashboard:', error);
       }
     }
+
+    
   } catch (error) {
     console.error('Erro ao inicializar a página:', error);
   }
@@ -384,6 +379,343 @@ async function initPage() {
 
 // Aguarda o carregamento completo do DOM antes de executar a função initPage
 document.addEventListener('DOMContentLoaded', initPage);
+
+// Função para exibir o modal e adicionar uma nova categoria
+function showAddCategoryModal() {
+  const modal = document.getElementById('confirmationModal');
+  const confirmButton = document.getElementById('confirmButton');
+  const cancelButton = document.getElementById('cancelButton');
+
+  // Criar um label e um campo de entrada para o nome da categoria
+  const label = document.createElement('label');
+  label.style.display = 'block';
+  label.style.marginBottom = '5px';
+
+  const inputField = document.createElement('input');
+  inputField.type = 'text';
+  inputField.id = 'categoryNameInput';
+  inputField.placeholder = 'Ex: Tecnologia, Esportes, etc.';
+  inputField.style.width = '100%';
+  inputField.style.padding = '8px';
+  inputField.style.marginBottom = '10px';
+  inputField.style.border = '1px solid #ccc';
+  inputField.style.borderRadius = '5px';
+  inputField.style.fontSize = '16px';
+
+  // Altera o texto do modal
+  const message = 'Insira o nome da nova categoria:';
+  modal.querySelector('p').textContent = message;
+
+  // Adicionar o label e o campo de entrada
+  modal.querySelector('p').appendChild(label);
+  modal.querySelector('p').appendChild(inputField);
+
+  // Exibir o modal
+  modal.style.display = 'block';
+
+  // Adicionar event listeners aos botões do modal
+  confirmButton.onclick = async function () {
+    console.log('Confirmação recebida para adicionar categoria');
+    try {
+      const categoryName = document.getElementById('categoryNameInput').value;
+      if (!categoryName) {
+        alert('Por favor, insira um nome para a categoria');
+        return;
+      }
+      await addCategory(categoryName); // Implementar esta função conforme sua lógica
+      console.log(`Nova categoria "${categoryName}" adicionada com sucesso`);
+      alert('Nova categoria adicionada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao adicionar categoria:', error);
+      alert('Erro ao adicionar categoria. Ver a consola para detalhes.');
+    } finally {
+      // Fechar o modal
+      modal.style.display = 'none';
+    }
+  };
+
+  cancelButton.onclick = function () {
+    console.log('Operação de adicionar categoria cancelada');
+    // Fechar o modal
+    modal.style.display = 'none';
+  };
+}
+
+// Adicionar evento ao botão "Adicionar nova categoria"
+const addCategoryButton = document.querySelector('.btn-add'); // Seleciona o botão pelo seletor da classe
+
+addCategoryButton.addEventListener('click', function () {
+  console.log('Botão "Adicionar nova categoria" clicado');
+  showAddCategoryModal(); // Chama a função que exibe o modal para adicionar uma categoria
+});
+
+const filterByCategoryButton = document.getElementById('filtrarPorCategoria');
+const productCategoryModal = document.getElementById('productCategoryModal');
+const productCategorySelect = document.getElementById('productCategorySelect');
+const productDisplay = document.getElementById('productDisplay');
+
+// Event listener para o botão "Filtrar por Categoria"
+filterByCategoryButton.addEventListener('click', function () {
+    console.log('Botão "Filtrar por Categoria" clicado');
+    loadCategories();
+});
+
+// Função para carregar categorias no select dentro do modal
+async function loadCategories() {
+    try {
+        const categories = await getAllCategories();
+        console.log('Categorias recebidas:', categories);
+
+        if (!Array.isArray(categories) || categories.length === 0) {
+            console.warn('Nenhuma categoria encontrada.');
+            return;
+        }
+
+        productCategorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            productCategorySelect.appendChild(option);
+        });
+
+        // Exibir o modal
+        productCategoryModal.style.display = 'block';
+
+    } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+    }
+}
+
+// Event listener para o select dentro do modal
+productCategorySelect.addEventListener('change', handleCategoryChange);
+
+// Função para lidar com a mudança de categoria no select
+async function handleCategoryChange(event) {
+    const categoryId = event.target.value;
+    if (categoryId) {
+        try {
+            const products = await getProductsByCategory(categoryId);
+            displayProducts(products);
+        } catch (error) {
+            console.error('Erro ao buscar produtos:', error);
+        }
+    } else {
+        productDisplay.innerHTML = '';
+    }
+}
+
+// Função para exibir os produtos dentro do modal
+function displayProducts(products) {
+  productDisplay.innerHTML = ''; // Limpa produtos anteriores
+
+  if (products.length === 0) {
+      productDisplay.innerHTML = '<p style="text-align: center;">Nenhum produto encontrado nesta categoria.</p>';
+      return;
+  }
+
+  const table = document.createElement('table');
+  table.className = 'products-table';
+  table.style.width = '100%';
+  table.style.borderCollapse = 'collapse';
+
+  const thead = table.createTHead();
+  const headerRow = thead.insertRow();
+  ['Título', 'Preço'].forEach(text => {
+      const th = document.createElement('th');
+      th.textContent = text;
+      th.style.textAlign = 'center';
+      th.style.padding = '10px';
+      th.style.backgroundColor = '#f2f2f2';
+      headerRow.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+  products.forEach(product => {
+      const row = tbody.insertRow();
+      ['title', 'price'].forEach((prop, index) => {
+          const cell = row.insertCell();
+          cell.textContent = prop === 'price' ? `${product[prop]}€` : product[prop];
+          cell.style.textAlign = 'center';
+          cell.style.padding = '8px';
+          cell.style.borderBottom = '1px solid #ddd';
+      });
+  });
+
+  productDisplay.appendChild(table);
+}
+
+// Fechar o modal quando clicar no X
+const closeButtons = document.querySelectorAll('#productCategoryModal .close');
+closeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        document.getElementById('productCategoryModal').style.display = 'none';
+    });
+});
+
+// Filtar por vendedor
+const filterBySellerButton = document.getElementById('filtrarPorPreco');
+const productSellerModal = document.getElementById('productSellerModal');
+const sellerProductDisplay = document.getElementById('sellerProductDisplay');
+
+// Event listener para abrir o modal de vendedores
+filterBySellerButton.addEventListener('click', function () {
+    console.log('Botão "Filtrar por Vendedor" clicado');
+    openSellerModal();
+});
+
+function openSellerModal() {
+  sellerProductDisplay.innerHTML = '';
+  
+  const sellerIdInput = document.createElement('input');
+  sellerIdInput.type = 'text';
+  sellerIdInput.placeholder = 'Insira o ID do vendedor';
+  sellerIdInput.style.marginBottom = '10px';
+  
+  const searchButton = document.createElement('button');
+  searchButton.textContent = 'Pesquisar';
+  searchButton.onclick = () => searchSellerProducts(sellerIdInput.value);
+  
+  const inputContainer = document.createElement('div');
+  inputContainer.appendChild(sellerIdInput);
+  inputContainer.appendChild(searchButton);
+  
+  sellerProductDisplay.appendChild(inputContainer);
+  
+  productSellerModal.style.display = 'block';
+}
+
+async function searchSellerProducts(sellerId) {
+  if (!sellerId.trim()) {
+      alert('Por favor, insira um ID de vendedor válido.');
+      return;
+  }
+
+  try {
+      const products = await getProductsBySeller(sellerId);
+      if (products === null || products.length === 0) {
+          if (products === null) {
+              displayNoUserFound(sellerId);
+          } else {
+              displayNoProducts(sellerId);
+          }
+      } else {
+          displaySellerProducts(products, sellerId);
+      }
+  } catch (error) {
+      console.error('Erro ao buscar produtos do vendedor:', error);
+      displayError('Erro ao buscar produtos. Por favor, tente novamente.');
+  }
+}
+
+function displayNoUserFound(sellerId) {
+  clearDisplayAndKeepSearch();
+  const message = document.createElement('p');
+  message.textContent = `O utilizador com ID ${sellerId} não existe.`;
+  message.style.textAlign = 'center';
+  message.style.color = 'red';
+  sellerProductDisplay.appendChild(message);
+}
+
+function displayNoProducts(sellerId) {
+  clearDisplayAndKeepSearch();
+  const message = document.createElement('p');
+  message.textContent = `O vendedor com ID ${sellerId} não tem produtos disponíveis.`;
+  message.style.textAlign = 'center';
+  sellerProductDisplay.appendChild(message);
+}
+
+function clearDisplayAndKeepSearch() {
+  const searchContainer = document.getElementById('sellerSearchContainer') || createSearchContainer();
+  sellerProductDisplay.innerHTML = '';
+  sellerProductDisplay.appendChild(searchContainer);
+}
+
+function displaySellerProducts(products, sellerId) {
+  clearDisplayAndKeepSearch();
+
+  const firstProduct = products[0];
+  const sellerName = firstProduct.sellerUsername || `Vendedor ${sellerId}`;
+  const actualSellerId = firstProduct.sellerId;
+
+  const title = document.createElement('h2');
+  title.textContent = `Produtos do Vendedor ${sellerName} (ID: ${actualSellerId})`;
+  title.style.textAlign = 'center';
+  title.style.marginTop = '20px';
+  sellerProductDisplay.appendChild(title);
+
+  const table = createProductTable(products);
+  sellerProductDisplay.appendChild(table);
+}
+
+
+function createSearchContainer() {
+  const container = document.createElement('div');
+  container.id = 'sellerSearchContainer';
+  container.style.marginBottom = '20px';
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'sellerIdInput';
+  input.placeholder = 'Insira o ID do vendedor';
+  input.style.marginRight = '10px';
+
+  const button = document.createElement('button');
+  button.textContent = 'Buscar Produtos';
+  button.onclick = () => searchSellerProducts(input.value);
+
+  container.appendChild(input);
+  container.appendChild(button);
+
+  return container;
+}
+
+function createProductTable(products) {
+  const table = document.createElement('table');
+  table.className = 'products-table';
+  table.style.width = '100%';
+  table.style.borderCollapse = 'collapse';
+  table.style.marginTop = '10px';
+
+  const thead = table.createTHead();
+  const headerRow = thead.insertRow();
+  ['Título', 'Preço', 'Categoria'].forEach(text => {
+      const th = document.createElement('th');
+      th.textContent = text;
+      th.style.textAlign = 'center';
+      th.style.padding = '10px';
+      th.style.backgroundColor = '#f2f2f2';
+      headerRow.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+  products.forEach(product => {
+      const row = tbody.insertRow();
+      ['title', 'price', 'categoryName'].forEach((prop) => {
+          const cell = row.insertCell();
+          if (prop === 'price') {
+              cell.textContent = `${product[prop]}€`;
+          } else {
+              cell.textContent = product[prop];
+          }
+          cell.style.textAlign = 'center';
+          cell.style.padding = '8px';
+          cell.style.borderBottom = '1px solid #ddd';
+      });
+  });
+
+  return table;
+}
+
+// Fechar o modal
+const closeButtonsSellerModal = document.querySelectorAll('#productSellerModal .close');
+closeButtonsSellerModal.forEach(button => {
+    button.addEventListener('click', () => {
+        productSellerModal.style.display = 'none';
+    });
+});
+
+
 
 /* Button for administrators to permanently delete inactive products */
 /*
