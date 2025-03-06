@@ -2,6 +2,7 @@
 
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
+import { addCategory } from './api/categoryAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -377,6 +378,8 @@ async function initPage() {
         console.error('Erro ao carregar o dashboard:', error);
       }
     }
+
+    
   } catch (error) {
     console.error('Erro ao inicializar a página:', error);
   }
@@ -384,6 +387,78 @@ async function initPage() {
 
 // Aguarda o carregamento completo do DOM antes de executar a função initPage
 document.addEventListener('DOMContentLoaded', initPage);
+
+// Função para exibir o modal e adicionar uma nova categoria
+function showAddCategoryModal() {
+  const modal = document.getElementById('confirmationModal');
+  const confirmButton = document.getElementById('confirmButton');
+  const cancelButton = document.getElementById('cancelButton');
+
+  // Criar um label e um campo de entrada para o nome da categoria
+  const label = document.createElement('label');
+  label.style.display = 'block';
+  label.style.marginBottom = '5px';
+
+  const inputField = document.createElement('input');
+  inputField.type = 'text';
+  inputField.id = 'categoryNameInput';
+  inputField.placeholder = 'Ex: Tecnologia, Esportes, etc.';
+  inputField.style.width = '100%';
+  inputField.style.padding = '8px';
+  inputField.style.marginBottom = '10px';
+  inputField.style.border = '1px solid #ccc';
+  inputField.style.borderRadius = '5px';
+  inputField.style.fontSize = '16px';
+
+  // Altera o texto do modal
+  const message = 'Insira o nome da nova categoria:';
+  modal.querySelector('p').textContent = message;
+
+  // Adicionar o label e o campo de entrada
+  modal.querySelector('p').appendChild(label);
+  modal.querySelector('p').appendChild(inputField);
+
+  // Exibir o modal
+  modal.style.display = 'block';
+
+  // Adicionar event listeners aos botões do modal
+  confirmButton.onclick = async function () {
+    console.log('Confirmação recebida para adicionar categoria');
+    try {
+      const categoryName = document.getElementById('categoryNameInput').value;
+      if (!categoryName) {
+        alert('Por favor, insira um nome para a categoria');
+        return;
+      }
+      await addCategory(categoryName); // Implementar esta função conforme sua lógica
+      console.log(`Nova categoria "${categoryName}" adicionada com sucesso`);
+      alert('Nova categoria adicionada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao adicionar categoria:', error);
+      alert('Erro ao adicionar categoria. Ver a consola para detalhes.');
+    } finally {
+      // Fechar o modal
+      modal.style.display = 'none';
+    }
+  };
+
+  cancelButton.onclick = function () {
+    console.log('Operação de adicionar categoria cancelada');
+    // Fechar o modal
+    modal.style.display = 'none';
+  };
+}
+
+// Adicionar evento ao botão "Adicionar nova categoria"
+const addCategoryButton = document.querySelector('.btn-add'); // Seleciona o botão pelo seletor da classe
+
+addCategoryButton.addEventListener('click', function () {
+  console.log('Botão "Adicionar nova categoria" clicado');
+  showAddCategoryModal(); // Chama a função que exibe o modal para adicionar uma categoria
+});
+
+
+
 
 /* Button for administrators to permanently delete inactive products */
 /*
