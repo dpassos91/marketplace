@@ -49,12 +49,20 @@ export async function loadSellerEvaluations(sellerId, containerSelector) {
     const evaluations = await evaluationAPI.getEvaluationsForSeller(sellerId);
     const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
+    // Find the container for the evaluation button (.reviewBtnsContainer)
+    // This is separated from the evaluations display logic
+    const reviewBtnsContainer = document.querySelector('.reviewBtnsContainer');
+    if (reviewBtnsContainer) {
+      appendAddEvaluationButtonIfNeeded(
+        reviewBtnsContainer,
+        currentUser,
+        sellerId
+      );
+    }
+
     // Check if we have evaluations
     if (!evaluations || evaluations.length === 0) {
       container.innerHTML = '<p>Este vendedor ainda não foi avaliado.</p>';
-
-      // Add evaluation button only if appropriate
-      appendAddEvaluationButtonIfNeeded(container, currentUser, sellerId);
       return;
     }
 
@@ -63,9 +71,6 @@ export async function loadSellerEvaluations(sellerId, containerSelector) {
 
     // Render evaluations
     renderEvaluationsUI(container, evaluations, sellerId);
-
-    // Add evaluation button if appropriate
-    appendAddEvaluationButtonIfNeeded(container, currentUser, sellerId);
   } catch (error) {
     console.error('Erro ao carregar avaliações:', error);
     document.querySelector(containerSelector).innerHTML =
@@ -80,8 +85,8 @@ function prepareEvaluationsData(evaluations, currentUser) {
     // User can edit if they're the author of the evaluation or if they have admin privileges
     evaluation.canEdit =
       currentUser &&
-      (String(evaluation.userId) === String(currentUser.id) ||
-        currentUser.isAdmin);
+      (String(evaluation.evaluatorId) === String(currentUser.id) ||
+        currentUser.admin);
   });
 }
 
@@ -127,6 +132,12 @@ function calculateAverageRating(evaluations) {
 }
 
 function appendAddEvaluationButtonIfNeeded(container, currentUser, sellerId) {
+  // Check if container exists
+  if (!container) return;
+
+  // Clear any existing buttons to prevent duplicates
+  container.innerHTML = '';
+
   // Add "Add Evaluation" button if user is logged in and not viewing their own profile
   if (currentUser && currentUser.id !== sellerId) {
     const addButton = document.createElement('button');
@@ -170,10 +181,7 @@ function attachEvaluationEventHandlers(container, sellerId) {
           alert('Review eliminada com sucesso!');
 
           // Reload evaluations to update average rating
-          loadSellerEvaluations(
-            sellerId,
-            evaluationCard.parentElement.parentElement
-          );
+          loadSellerEvaluations(sellerId, '#evaluationsContainer');
         } catch (error) {
           console.error('Erro ao eliminar a avaliação:', error);
           alert('Falha ao apagar a avaliação.');
@@ -528,11 +536,16 @@ export function showEditEvaluationModal(evaluation, sellerId) {
         return;
       }
 
+      const evaluationId = parseInt(
+        document.getElementById('evaluationId').value
+      );
+
       const evaluationData = {
-        id: document.getElementById('evaluationId').value,
+        id: evaluationId,
         title: title,
         rating: rating,
         comment: comment,
+        evaluatorId: evaluation.evaluatorId,
       };
 
       try {

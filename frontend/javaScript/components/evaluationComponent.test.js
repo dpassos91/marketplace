@@ -65,7 +65,7 @@ describe('Evaluation Component', () => {
           rating: 5,
           comment: 'Excellent service!',
           evaluationDate: '2023-01-01',
-          userId: 10,
+          evaluatorId: 10,
         },
         {
           id: 2,
@@ -73,7 +73,7 @@ describe('Evaluation Component', () => {
           rating: 4,
           comment: 'As described',
           evaluationDate: '2023-01-02',
-          userId: 11,
+          evaluatorId: 11,
         },
       ];
       const mockUser = { id: 10, name: 'Test User' };
@@ -127,7 +127,7 @@ describe('Evaluation Component', () => {
           rating: 5,
           comment: 'Excellent service!',
           evaluationDate: '2023-01-01',
-          userId: 10,
+          evaluatorId: 10,
         },
       ];
       const mockUser = { id: 10, name: 'Test User' };
@@ -179,10 +179,13 @@ describe('Evaluation Component', () => {
           rating: 5,
           comment: 'Excellent service!',
           evaluationDate: '2023-01-01',
-          userId: 10,
+          evaluatorId: 10,
         },
       ];
       const mockUser = { id: 11, name: 'Different User' }; // Different user ID from seller
+
+      // Add the reviewBtnsContainer to the DOM for the test
+      document.body.innerHTML += '<div class="reviewBtnsContainer"></div>';
 
       evaluationAPI.getEvaluationsForSeller.mockResolvedValue(mockEvaluations);
       window.sessionStorage.getItem.mockReturnValue(JSON.stringify(mockUser));
@@ -502,7 +505,7 @@ describe('Evaluation Component', () => {
 
       // Assert
       expect(evaluationAPI.updateEvaluation).toHaveBeenCalledWith({
-        id: '1',
+        id: 1,
         title: 'Updated title',
         rating: 5,
         comment: 'Updated comment',
