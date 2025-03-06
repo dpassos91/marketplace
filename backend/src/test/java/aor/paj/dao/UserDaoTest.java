@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserDaoTest {
     @InjectMocks
@@ -133,6 +132,24 @@ class UserDaoTest {
 
     @Test
     void findAllUsername() {
+        // 1. Arrange
+        // mock da lista esperada no retorno com 3 usernames
+        List<String> expectedUsernames = Arrays.asList("user1", "user2", "user3");
+
+        // mock da consulta (a consulta deve retornar uma lista de String)
+        TypedQuery<String> typedQuery = mock(TypedQuery.class);
+
+        // configuração do comportamento da consulta mock
+        when(entityManager.createNamedQuery("User.findAllUsername", String.class)).thenReturn(typedQuery);
+        when(typedQuery.getResultList()).thenReturn(expectedUsernames);
+
+        // 2. Act
+        // chamada da função e captura do resultado
+        List<String> result = userDao.findAllUsername();
+
+        // 3. Assert
+        // verificação de se o resultado é igual à lista esperada
+        assertEquals(expectedUsernames, result);
     }
 
     @Test
