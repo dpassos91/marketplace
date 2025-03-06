@@ -504,6 +504,27 @@ public class ProductBean {
     }
 
     /**
+     * Gets products whose sellers have been deactivated
+     * 
+     * @return List of product DTOs from inactive users
+     */
+    public List<ProductDto> getProductsFromInactiveUsers() {
+        logger.debug("Getting products from inactive users");
+        long startTime = System.currentTimeMillis();
+
+        List<ProductEntity> entities = productDao.findProductsFromInactiveUsers();
+
+        List<ProductDto> results = entities.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+
+        logger.info("Retrieved {} products from inactive users, took {}ms",
+                results.size(), (System.currentTimeMillis() - startTime));
+
+        return results;
+    }
+
+    /**
      * Converts a product entity to a DTO
      * 
      * @param entity The product entity to convert
@@ -547,13 +568,23 @@ public class ProductBean {
             // Set seller information
             if (entity.getSeller() != null) {
                 dto.setSellerId(entity.getSeller().getId());
-                dto.setSellerUsername(entity.getSeller().getUsername());
+                // Check if seller is active before showing username
+                if (entity.getSeller().isActive()) {
+                    dto.setSellerUsername(entity.getSeller().getUsername());
+                } else {
+                    dto.setSellerUsername("Conta Cancelada");
+                }
             }
 
             // Set buyer information if available
             if (entity.getBuyer() != null) {
                 dto.setBuyerId(entity.getBuyer().getId());
-                dto.setBuyerUsername(entity.getBuyer().getUsername());
+                // Check if buyer is active before showing username
+                if (entity.getBuyer().isActive()) {
+                    dto.setBuyerUsername(entity.getBuyer().getUsername());
+                } else {
+                    dto.setBuyerUsername("Conta Cancelada");
+                }
             }
 
             logger.trace("Successfully converted entity to DTO: id={}", entity.getId());

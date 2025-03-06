@@ -355,6 +355,20 @@ public class ProductService {
     }
 
     /**
+     * Get products from inactive users
+     * 
+     * @return Response containing a list of products from inactive users
+     */
+    @GET
+    @Path("/inactive-users")
+    public Response getProductsFromInactiveUsers() {
+        logger.info("Request received: getProductsFromInactiveUsers()");
+        List<ProductDto> products = productBean.getProductsFromInactiveUsers();
+        logger.info("Found {} products from inactive users", products.size());
+        return Response.ok(products).build();
+    }
+
+    /**
      * Soft delete a product by setting its state to INATIVO
      * This is the standard method for "deleting" products and should be used
      * instead of permanent deletion
