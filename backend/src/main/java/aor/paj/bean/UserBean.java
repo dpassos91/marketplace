@@ -68,6 +68,7 @@ public class UserBean {
     }
 
     public String logIn(LoginRequestDto user) {
+        logger.info("Login attempt for user: {}", user.getUsername());
         UserEntity userEntity = userDao.findByUsername(user.getUsername());
         if (userEntity != null && userEntity.isActive()) {
             if (userEntity.checkPassword(user.getPassword())) {
