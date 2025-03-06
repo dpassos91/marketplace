@@ -8,6 +8,8 @@ import {
     registerUser,
     loginUser,
     updateUser,
+    deleteUser,
+    suspendUser,
   } from './userAPI.js';
   import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
   import { API_ENDPOINTS } from '../config/apiConfig';
@@ -228,6 +230,54 @@ describe('User API', () => {
             // 3. Assert
             // verifica se a exceção foi lançada
             await expect(result).rejects.toThrow('Error updating user: Bad Request');
+        });
+    });
+
+    describe('deleteUser', () => {
+        it('should delete the user successfully', async () => {
+            // 1. Arrange
+            // mock do ID do user a ser apagado
+            const userId = '123';
+            // mock da resposta da API ao fetch com sucesso (ok: true)
+            const mockResponse = {
+                ok: true,
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta mock
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+
+            // 2. Act
+            // chama a função a testar e passa o userId mock
+            await deleteUser(userId);
+
+            // 3. Assert
+            // verifica se a função foi chamada uma vez
+            expect(makeAuthenticatedRequest).toHaveBeenCalledTimes(1);
+            // verifica se a função foi chamada com os argumentos esperados
+            expect(makeAuthenticatedRequest).toHaveBeenCalledWith(
+                API_ENDPOINTS.users.delete(userId),
+                { method: 'DELETE' }
+            );
+        });
+
+        it('should throw an error when the API call fails', async () => {
+            // 1. Arrange
+            // mock do ID do user a apagar
+            const userId = '123';
+            // mock da resposta da API ao fetch sem sucesso (ok: false)
+            const mockResponse = {
+                ok: false,
+                statusText: 'Not Found',
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+
+            // 2. Act
+            // chama a função a testar e passa o userId mock
+            const result = deleteUser(userId);
+
+            // 3. Assert
+            // verifica se a exceção foi lançada
+            await expect(result).rejects.toThrow('Error deleting user: Not Found');
         });
     });
 
