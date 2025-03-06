@@ -3,7 +3,7 @@
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
 import { addCategory, getAllCategories} from './api/categoryAPI.js';
-import { getProductsByCategory, getProductsBySeller, getAllProducts, permanentlyDeleteProduct } from './api/productAPI.js';
+import { getProductsByCategory, getProductsBySeller, permanentlyDeleteProduct, getInactiveProducts } from './api/productAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -738,7 +738,7 @@ const PRODUCTS_PER_PAGE = 10; // Define quantos produtos queres mostrar por pág
 async function loadProducts() {
   try {
     console.log('loadProducts function called');
-    allProducts = await getAllProducts(); // Usa a função getAllProducts para obter todos os produtos
+    allProducts = await getInactiveProducts(); // Usa a função getAllProducts para obter todos os produtos
     console.log('Products obtained:', allProducts);
     if (!Array.isArray(allProducts)) {
       throw new Error('Unexpected data format');
@@ -763,7 +763,18 @@ function displayProductsTable(products) {
   console.log('Products data:', products);
 
   // Sort products by name in ascending alphabetical order
-  products.sort((a, b) => a.name.localeCompare(b.name));
+  products.sort((a, b) => {
+    const nomeA = a.nome ? a.nome.toLowerCase() : ''; // Converter para minúsculas para ordenação insensível a maiúsculas e minúsculas
+    const nomeB = b.nome ? b.nome.toLowerCase() : '';
+
+    if (nomeA < nomeB) {
+      return -1;
+    }
+    if (nomeA > nomeB) {
+      return 1;
+    }
+    return 0; // Se os nomes forem iguais ou ambos estiverem ausentes
+  });
 
   const container = document.getElementById('editProductsContainer');
   console.log('Products table container:', container);
