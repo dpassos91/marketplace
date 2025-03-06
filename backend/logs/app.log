@@ -1,0 +1,125 @@
+06/03/2025-17:45:25 [main] DEBUG aor.paj.bean.CategoryBean - L126 - Querying total count of categories
+06/03/2025-17:45:25 [main] DEBUG aor.paj.bean.CategoryBean - L136 - DB Query: Category count=42, time taken: 2ms
+06/03/2025-17:45:25 [main] WARN  aor.paj.bean.CategoryBean - L30 - Attempt to create category with null DTO
+06/03/2025-17:45:25 [main] WARN  aor.paj.bean.CategoryBean - L41 - Category creation failed: name 'Electronics' already exists
+06/03/2025-17:45:25 [main] DEBUG aor.paj.bean.CategoryBean - L99 - Querying paginated categories: page=0, size=10
+06/03/2025-17:45:25 [main] DEBUG aor.paj.bean.CategoryBean - L110 - DB Query: Retrieved 2 categories for page 0, time taken: 0ms
+06/03/2025-17:45:25 [main] INFO  aor.paj.bean.CategoryBean - L48 - Category created successfully: id=1, name='Electronics'
+06/03/2025-17:45:25 [main] DEBUG aor.paj.bean.CategoryBean - L99 - Querying paginated categories: page=10, size=10
+06/03/2025-17:45:25 [main] DEBUG aor.paj.bean.CategoryBean - L110 - DB Query: Retrieved 0 categories for page 10, time taken: 0ms
+06/03/2025-17:45:25 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=1
+06/03/2025-17:45:25 [main] WARN  aor.paj.bean.ProductBean - L342 - Purchase failed: buyer 1 is the seller of product 1
+06/03/2025-17:45:25 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=2
+06/03/2025-17:45:25 [main] INFO  aor.paj.bean.ProductBean - L352 - Purchase completed successfully: product=1, buyer=2, price=99.99
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L376 - Fetching paginated products: page=0, size=10
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L384 - Retrieved 1 products for page 0, took 0ms
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L449 - Attempting to permanently delete product id=1
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L457 - Delete failed: Product id=1 not found
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L285 - Updating product status: id=999, newStateId=3
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L289 - Product status update failed: product not found, id=999
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L140 - Getting products for seller id=1
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L153 - DB Query Success: Found 1 products for seller id=1, time taken: 1ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L493 - Attempting to convert null entity to DTO
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L449 - Attempting to permanently delete product id=999
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L457 - Delete failed: Product id=999 not found
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: ProductDto{id=1, title='Test Product', price=99.99, status='Disponível', active=true}
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L74 - Saving new product to database
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L79 - Product created successfully: id=1, title='Test Product', took 1ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: ProductDto{id=1, title='Test Product', price=99.99, status='Disponível', active=true}
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L61 - Product creation failed: category not found, id=1
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: null
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L48 - Product creation failed: null productDto
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=2
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L335 - Purchase failed: product 1 is in invalid state: COMPRADO
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L285 - Updating product status: id=1, newStateId=3
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L296 - Product state transition: id=1, DISPONIVEL -> RESERVADO
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L303 - Product status updated successfully: id=1, new state=RESERVADO
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=999, buyerId=2
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L323 - Purchase failed: product not found, id=999
+06/03/2025-17:45:26 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: ProductDto{id=1, title='Test Product', price=99.99, status='Disponível', active=true}
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L57 - Product creation failed: seller not found, id=1
+06/03/2025-17:45:26 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=999
+06/03/2025-17:45:26 [main] WARN  aor.paj.bean.ProductBean - L327 - Purchase failed: buyer not found, id=999
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L117 - DB Query: Category name='Non-existent Category' not found, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L117 - DB Query: Category name='Non-existent Category' not found, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L77 - DB Transaction: Category id=1 not found for deletion, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L119 - DB Query: Found category id=null, name='Test Category', time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L119 - DB Query: Found category id=null, name='Existing Category', time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L73 - DB Transaction: Deleted category id=1, time taken: 1ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L32 - DB Transaction: Created category 'Test Category', time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.CategoryDao - L51 - DB Transaction: Updated category id=1, name='Updated Category', time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.EvaluationDao - L229 - DB Query: Checked if evaluation exists (buyer=1, seller=2, product=3): false, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.EvaluationDao - L229 - DB Query: Checked if evaluation exists (buyer=1, seller=2, product=3): true, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.EvaluationDao - L177 - DB Query: Calculated average rating for user id=1: 4.5, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L113 - DB Query: Found 2 products, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L95 - DB Query: Found product id=1, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L93 - DB Query: Product id=999 not found, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L95 - DB Query: Found product id=1, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L93 - DB Query: Product id=1 not found, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L216 - DB Query: Found 2 products for page offset=0 limit=10, time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L33 - DB Transaction: Created product with title 'Test Product', time taken: 0ms
+06/03/2025-17:45:26 [main] DEBUG aor.paj.dao.ProductDao - L52 - DB Transaction: Updated product id=1, time taken: 0ms
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.CategoryBean - L126 - Querying total count of categories
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.CategoryBean - L136 - DB Query: Category count=42, time taken: 5ms
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.CategoryBean - L30 - Attempt to create category with null DTO
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.CategoryBean - L41 - Category creation failed: name 'Electronics' already exists
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.CategoryBean - L99 - Querying paginated categories: page=0, size=10
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.CategoryBean - L110 - DB Query: Retrieved 2 categories for page 0, time taken: 0ms
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.CategoryBean - L48 - Category created successfully: id=1, name='Electronics'
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.CategoryBean - L99 - Querying paginated categories: page=10, size=10
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.CategoryBean - L110 - DB Query: Retrieved 0 categories for page 10, time taken: 0ms
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=1
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L342 - Purchase failed: buyer 1 is the seller of product 1
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=2
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L352 - Purchase completed successfully: product=1, buyer=2, price=99.99
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L376 - Fetching paginated products: page=0, size=10
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L384 - Retrieved 1 products for page 0, took 0ms
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L449 - Attempting to permanently delete product id=1
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L471 - DB Transaction successful: Permanently deleted product id=1, time taken: 0ms
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L285 - Updating product status: id=999, newStateId=3
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L289 - Product status update failed: product not found, id=999
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L140 - Getting products for seller id=1
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L153 - DB Query Success: Found 1 products for seller id=1, time taken: 1ms
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L493 - Attempting to convert null entity to DTO
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L449 - Attempting to permanently delete product id=999
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L474 - DB Transaction failed: Could not delete product id=999, time taken: 0ms
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: ProductDto{id=1, title='Test Product', price=99.99, status='Disponível', active=true}
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L74 - Saving new product to database
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L79 - Product created successfully: id=1, title='Test Product', took 0ms
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L449 - Attempting to permanently delete product id=999
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L457 - Delete failed: Product id=999 not found
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: ProductDto{id=1, title='Test Product', price=99.99, status='Disponível', active=true}
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L61 - Product creation failed: category not found, id=1
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: null
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L48 - Product creation failed: null productDto
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=2
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L335 - Purchase failed: product 1 is in invalid state: COMPRADO
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L285 - Updating product status: id=1, newStateId=3
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L296 - Product state transition: id=1, DISPONIVEL -> RESERVADO
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L303 - Product status updated successfully: id=1, new state=RESERVADO
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=999, buyerId=2
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L323 - Purchase failed: product not found, id=999
+06/03/2025-18:11:41 [main] DEBUG aor.paj.bean.ProductBean - L45 - Attempting to create product: ProductDto{id=1, title='Test Product', price=99.99, status='Disponível', active=true}
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L57 - Product creation failed: seller not found, id=1
+06/03/2025-18:11:41 [main] INFO  aor.paj.bean.ProductBean - L317 - Processing purchase: productId=1, buyerId=999
+06/03/2025-18:11:41 [main] WARN  aor.paj.bean.ProductBean - L327 - Purchase failed: buyer not found, id=999
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L117 - DB Query: Category name='Non-existent Category' not found, time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L117 - DB Query: Category name='Non-existent Category' not found, time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L77 - DB Transaction: Category id=1 not found for deletion, time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L119 - DB Query: Found category id=null, name='Test Category', time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L119 - DB Query: Found category id=null, name='Existing Category', time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L73 - DB Transaction: Deleted category id=1, time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L32 - DB Transaction: Created category 'Test Category', time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.CategoryDao - L51 - DB Transaction: Updated category id=1, name='Updated Category', time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.EvaluationDao - L229 - DB Query: Checked if evaluation exists (buyer=1, seller=2, product=3): false, time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.EvaluationDao - L229 - DB Query: Checked if evaluation exists (buyer=1, seller=2, product=3): true, time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.EvaluationDao - L177 - DB Query: Calculated average rating for user id=1: 4.5, time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.EvaluationDao - L32 - DB Transaction: Created evaluation (evaluator=1, evaluated=2, product=3), time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L113 - DB Query: Found 2 products, time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L95 - DB Query: Found product id=1, time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L93 - DB Query: Product id=999 not found, time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L95 - DB Query: Found product id=1, time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L93 - DB Query: Product id=1 not found, time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L216 - DB Query: Found 2 products for page offset=0 limit=10, time taken: 0ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L33 - DB Transaction: Created product with title 'Test Product', time taken: 1ms
+06/03/2025-18:11:42 [main] DEBUG aor.paj.dao.ProductDao - L52 - DB Transaction: Updated product id=1, time taken: 0ms
