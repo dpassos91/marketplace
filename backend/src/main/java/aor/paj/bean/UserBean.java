@@ -58,10 +58,12 @@ public class UserBean {
                 return false;
             }
         }
+        logger.info("Username {} is valid.", username);
         return true;
     }
 
     public String hashPassword(String password) {
+        logger.info("Hashing password.");
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
