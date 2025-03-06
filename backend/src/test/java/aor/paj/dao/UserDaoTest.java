@@ -82,6 +82,22 @@ class UserDaoTest {
         verify(entityManager).merge(user);
         // verifica se o resultado da chamada da função é igual ao utilizador criado
         assertEquals(user, result);
+
+        // Segundo teste: Verificar o comportamento com um utilizador atualizado com valores diferentes
+        // 1. Arrange
+        // prepara um utilizador atualizado com um nome de utilizador diferente
+        UserEntity updatedUser = new UserEntity();
+        updatedUser.setUsername("Joca123");
+
+        // 2. Act
+        // chama a função update novamente com o utilizador atualizado
+        UserEntity resultUpdated = userDao.update(updatedUser);
+
+        // 3. Assert
+        // verifica se o merge foi chamado para o utilizador atualizado
+        verify(entityManager).merge(updatedUser);
+        // verifica se o resultado da atualização não é o mesmo que o primeiro utilizador
+        assertNotEquals(user, resultUpdated);
     }
 
     @Test
