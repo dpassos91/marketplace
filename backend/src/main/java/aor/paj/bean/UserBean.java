@@ -81,6 +81,7 @@ public class UserBean {
                 return token;
             }
         }
+        logger.warn("Login failed for user: {}", user.getUsername());
         return null;
     }
 
@@ -93,12 +94,15 @@ public class UserBean {
     }
 
     public boolean logOut(String token) {
+        logger.info("Logging out user with token: {}", token);
         UserEntity userEntity = userDao.findByToken(token);
         if (userEntity != null) {
             userEntity.setToken(null);
             userDao.update(userEntity);
+            logger.info("User with token {} logged out successfully.", token);
             return true;
         }
+        logger.warn("Logout failed for token: {}", token);
         return false;
     }
 
