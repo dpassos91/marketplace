@@ -40,6 +40,12 @@
                 <div id="userCardsContainer"></div>
             </section>
 
+            <section id="utilizadores" class="hidden">
+                <h1>Gestão de Utilizadores</h1>
+                <div id="tabelaUtilizadores"></div>
+                <div class="pagination-container"></div>
+            </section>
+
             <section id="avaliacoes" class="hidden">
                 <h1>Gestão de Avaliações</h1>
                 <div class="review-management-buttons">
@@ -50,10 +56,17 @@
             <section id="produtos" class="hidden">
                 <h1>Gestão de Produtos</h1>
                 <div class="product-management-buttons">
-                    <a href="#" id="adminEditarProd" class="btn-card btn-edit">Editar produtos de utilizadores</a>
+                    <a href="#" id="adminEditarProd" class="btn-card btn-edit">Excluir produtos</a>
                     <button class="btn-card btn-consult">Consultar produtos alterados</button>
                     <button class="btn-card btn-add">Adicionar nova categoria</button>
                     <a href="#" id="adminFiltrarProd" class="btn-card btn-filter">Filtrar</a>
+                </div>
+            </section>
+
+            <section id="editarProdutos" class="hidden">
+                <h1>Excluir produtos</h1>
+                <div id="editProductsContainer">
+                    <!-- Os produtos para edição serão inseridos aqui -->
                 </div>
             </section>
 
@@ -82,12 +95,6 @@
                     <button class="btn-card btn-info" id="alterarProduto">Alterar produto</button>
                     <button class="btn-card btn-warning" id="excluirProduto">Excluir produto</button>
                 </div>
-            </section>
-
-            <section id="utilizadores" class="hidden">
-                <h1>Gestão de Utilizadores</h1>
-                <div id="tabelaUtilizadores"></div>
-                <div class="pagination-container"></div>
             </section>
 
             <!-- Modal de confirmação -->
