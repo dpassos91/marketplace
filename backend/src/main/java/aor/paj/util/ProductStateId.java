@@ -1,8 +1,5 @@
 package aor.paj.util;
 
-// TODO Unificar formato do estado do produto ao longo de todo o sistema
-// TODO Unificar formato das avaliações conforme necessidade do sistema
-
 public enum ProductStateId {
   RASCUNHO(1, "Rascunho"),
   DISPONIVEL(2, "Disponível"),
