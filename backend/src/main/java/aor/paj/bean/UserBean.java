@@ -203,6 +203,7 @@ public class UserBean {
     }
 
     public Response activateUser(Long id, String token) {
+        logger.info("Activating user with id: {} by token: {}", id, token);
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
 
