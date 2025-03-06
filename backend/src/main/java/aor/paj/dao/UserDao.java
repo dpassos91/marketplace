@@ -44,6 +44,7 @@ public class UserDao {
             entityManager.merge(user);
             return true;
         }
+        logger.warn("Unable to suspend user with id: {}", id);
         return false;
     }
 
