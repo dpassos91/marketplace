@@ -3,7 +3,15 @@
 import { API_ENDPOINTS } from '../config/apiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 
-// Get all evaluations for a seller
+/**
+ * Fetches all evaluations for a specific seller.
+ *
+ * @async
+ * @function getEvaluationsForSeller
+ * @param {string|number} sellerId - The ID of the seller whose evaluations are being retrieved.
+ * @returns {Promise<Array>} A promise that resolves to an array of evaluation objects.
+ * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
+ */
 export async function getEvaluationsForSeller(sellerId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -24,7 +32,15 @@ export async function getEvaluationsForSeller(sellerId) {
   }
 }
 
-// Get evaluation by ID
+/**
+ * Retrieves a specific evaluation by its ID.
+ *
+ * @async
+ * @function getEvaluationById
+ * @param {string|number} evaluationId - The ID of the evaluation to retrieve.
+ * @returns {Promise<Object>} A promise that resolves to the evaluation object.
+ * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
+ */
 export async function getEvaluationById(evaluationId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -45,7 +61,18 @@ export async function getEvaluationById(evaluationId) {
   }
 }
 
-// Add a new evaluation
+/**
+ * Creates a new evaluation.
+ *
+ * @async
+ * @function addEvaluation
+ * @param {Object} evaluationData - The evaluation data to be submitted.
+ * @param {string|number} evaluationData.evaluatedId - The ID of the user being evaluated.
+ * @param {number} evaluationData.rating - The rating score (typically 1-5).
+ * @param {string} [evaluationData.comment] - Optional comment for the evaluation.
+ * @returns {Promise<Object>} A promise that resolves to the newly created evaluation object.
+ * @throws {Error} Throws an error if the creation fails or if the HTTP response is not ok.
+ */
 export async function addEvaluation(evaluationData) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -67,7 +94,18 @@ export async function addEvaluation(evaluationData) {
   }
 }
 
-// Update an evaluation
+/**
+ * Updates an existing evaluation.
+ *
+ * @async
+ * @function updateEvaluation
+ * @param {Object} evaluationData - The updated evaluation data.
+ * @param {string|number} evaluationData.id - The ID of the evaluation to update.
+ * @param {number} [evaluationData.rating] - The updated rating score.
+ * @param {string} [evaluationData.comment] - The updated comment.
+ * @returns {Promise<Object>} A promise that resolves to the updated evaluation object.
+ * @throws {Error} Throws an error if the update fails or if the HTTP response is not ok.
+ */
 export async function updateEvaluation(evaluationData) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -89,7 +127,15 @@ export async function updateEvaluation(evaluationData) {
   }
 }
 
-// Delete an evaluation
+/**
+ * Deletes an evaluation by its ID.
+ *
+ * @async
+ * @function deleteEvaluation
+ * @param {string|number} evaluationId - The ID of the evaluation to delete.
+ * @returns {Promise<string>} A promise that resolves to the response text from the server.
+ * @throws {Error} Throws an error if the deletion fails or if the HTTP response is not ok.
+ */
 export async function deleteEvaluation(evaluationId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -110,7 +156,16 @@ export async function deleteEvaluation(evaluationId) {
   }
 }
 
-// Check if a user has already evaluated a seller
+/**
+ * Checks if the current authenticated user has already evaluated a specific seller.
+ *
+ * @async
+ * @function hasUserEvaluatedSeller
+ * @param {string|number} sellerId - The ID of the seller to check.
+ * @returns {Promise<boolean|Object>} A promise that resolves to the evaluation status information.
+ * Returns false if an error occurs.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function hasUserEvaluatedSeller(sellerId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -133,7 +188,15 @@ export async function hasUserEvaluatedSeller(sellerId) {
   }
 }
 
-// Get products eligible for evaluation
+/**
+ * Retrieves products that the specified user is eligible to evaluate.
+ *
+ * @async
+ * @function getEligibleProductsForEvaluation
+ * @param {string|number} userId - The ID of the user to check for eligible products.
+ * @returns {Promise<Array>} A promise that resolves to an array of products eligible for evaluation.
+ * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
+ */
 export async function getEligibleProductsForEvaluation(userId) {
   try {
     const response = await makeAuthenticatedRequest(

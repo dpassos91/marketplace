@@ -3,7 +3,15 @@
 import { API_ENDPOINTS } from '../config/apiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 
-// Get all categories
+/**
+ * Fetches all categories from the API.
+ *
+ * @async
+ * @function getAllCategories
+ * @returns {Promise<Array>} A promise that resolves to an array of category objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getAllCategories() {
   try {
     const response = await makeAuthenticatedRequest(
@@ -24,7 +32,16 @@ export async function getAllCategories() {
   }
 }
 
-// Get category by ID
+/**
+ * Retrieves a specific category by its ID.
+ *
+ * @async
+ * @function getCategoryById
+ * @param {string|number} categoryId - The ID of the category to retrieve.
+ * @returns {Promise<Object|null>} A promise that resolves to the category object.
+ * Returns null if the category doesn't exist or if an error occurs.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
 export async function getCategoryById(categoryId) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -45,7 +62,17 @@ export async function getCategoryById(categoryId) {
   }
 }
 
-// Add a new category
+/**
+ * Creates a new category.
+ *
+ * @async
+ * @function addCategory
+ * @param {Object} category - The category object to be created.
+ * @param {string} category.name - The name of the category.
+ * @param {string} [category.description] - Optional description for the category.
+ * @returns {Promise<Object>} A promise that resolves to the newly created category object.
+ * @throws {Error} Throws an error if the creation fails or if the HTTP response is not ok.
+ */
 export async function addCategory(category) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -67,7 +94,18 @@ export async function addCategory(category) {
   }
 }
 
-// Update a category
+/**
+ * Updates an existing category.
+ *
+ * @async
+ * @function updateCategory
+ * @param {string|number} categoryId - The ID of the category to update.
+ * @param {Object} updatedCategory - The updated category data.
+ * @param {string} [updatedCategory.name] - The updated name of the category.
+ * @param {string} [updatedCategory.description] - The updated description of the category.
+ * @returns {Promise<Object>} A promise that resolves to the updated category object.
+ * @throws {Error} Throws an error if the update fails or if the HTTP response is not ok.
+ */
 export async function updateCategory(categoryId, updatedCategory) {
   try {
     const response = await makeAuthenticatedRequest(
@@ -89,7 +127,15 @@ export async function updateCategory(categoryId, updatedCategory) {
   }
 }
 
-// Delete a category
+/**
+ * Deletes a category by its ID.
+ *
+ * @async
+ * @function deleteCategory
+ * @param {string|number} categoryId - The ID of the category to delete.
+ * @returns {Promise<boolean>} A promise that resolves to true if deletion is successful.
+ * @throws {Error} Throws an error if the deletion fails or if the HTTP response is not ok.
+ */
 export async function deleteCategory(categoryId) {
   try {
     const response = await makeAuthenticatedRequest(
