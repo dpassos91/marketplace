@@ -1,7 +1,7 @@
 'use strict';
 
 import { loadCommonElements } from './loadCommons.js';
-import { getTotalUsers, suspendUser, reactivateUser } from './api/userAPI.js';
+import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -190,7 +190,7 @@ async function initPage() {
                       } suspend-user" data-user-id="${user.id}">${
                         user.active ? 'Suspender' : 'Reativar'
                       }</button>
-                      <button class="btn-card tabela-btn btn-edit" data-username="${user.username}">Excluir</button>
+                      <button class="btn-card tabela-btn btn-edit" data-user-id="${user.id}" data-username="${user.username}">Excluir</button>
                     </div>
                   </td>
                 </tr>
@@ -240,14 +240,15 @@ async function initPage() {
       });
     
       // Adiciona event listeners para os botões "Excluir"
-      const deleteUserButtons = table.querySelectorAll('.btn-edit');
-      deleteUserButtons.forEach(button => {
-        button.addEventListener('click', function () {
-          const username = this.dataset.username;
-          console.log(`Solicitar confirmação para excluir utilizador: ${username}`);
-          showConfirmationModal(username, 'excluir'); // Exibe o modal de confirmação com a ação "excluir"
-        });
-      });
+    const deleteUserButtons = table.querySelectorAll('.btn-edit');
+    deleteUserButtons.forEach(button => {
+    button.addEventListener('click', function () {
+    const userId = this.dataset.userId; // Obtenha o userId do atributo data
+    const username = this.dataset.username;
+    console.log(`Solicitar confirmação para excluir utilizador: ${username} com ID: ${userId}`);
+    showConfirmationModal(userId, 'excluir'); // Exibe o modal de confirmação com a ação "excluir"
+  });
+});
     }    
     
     // Função para exibir o modal de confirmação
@@ -256,7 +257,7 @@ async function initPage() {
       const confirmButton = document.getElementById('confirmButton');
       const cancelButton = document.getElementById('cancelButton');
       let message = '';
-
+    
       if (action === 'excluir') {
         message = `Tem certeza de que deseja excluir o utilizador ${data}?`;
       } else if (action === 'suspender') {
@@ -264,13 +265,13 @@ async function initPage() {
       } else if (action === 'reativar') {
         message = `Tem certeza de que deseja reativar este utilizador?`;
       }
-
+    
       // Altera o texto do modal
       modal.querySelector('p').textContent = message;
-
+    
       // Exibir o modal
       modal.style.display = 'block';
-
+    
       // Adicionar event listeners aos botões do modal
       confirmButton.onclick = async function () {
         console.log(`Confirmação recebida. Ação: ${action}, Data: ${data}`);
@@ -281,8 +282,8 @@ async function initPage() {
             alert('Utilizador suspenso com sucesso!');
             updateButtonState(data, true);
           } else if (action === 'excluir') {
-            // Adicione aqui o código para excluir o utilizador
-            // Por exemplo: await deleteUser(data);
+            // Aqui está a modificação para chamar a função deleteUser
+            await deleteUser(data); // 'data' é o username, mas a função espera o userId
             console.log(`Utilizador ${data} excluído com sucesso`);
             alert('Utilizador excluído com sucesso!');
             loadUsers(); // Recarrega a lista de utilizadores após a exclusão
@@ -301,13 +302,14 @@ async function initPage() {
           modal.style.display = 'none';
         }
       };
-
+    
       cancelButton.onclick = function () {
         console.log(`Operação de ${action} cancelada`);
         // Fechar o modal
         modal.style.display = 'none';
       };
     }
+    
 
     // Função para exibir os botões de paginação
     function displayPaginationButtons() {
