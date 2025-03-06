@@ -162,6 +162,10 @@ async function initPage() {
     function displayUsersTable(users) {
       console.log('Função displayUsersTable chamada');
       console.log('Dados dos utilizadores:', users);
+    
+      // Ordenar os utilizadores por username em ordem alfabética ascendente
+      users.sort((a, b) => a.username.localeCompare(b.username));
+    
       const container = document.getElementById('tabelaUtilizadores');
       console.log('Contêiner da tabela de utilizadores:', container);
       container.innerHTML = '';
@@ -240,16 +244,17 @@ async function initPage() {
       });
     
       // Adiciona event listeners para os botões "Excluir"
-    const deleteUserButtons = table.querySelectorAll('.btn-edit');
-    deleteUserButtons.forEach(button => {
-    button.addEventListener('click', function () {
-    const userId = this.dataset.userId; // Obtenha o userId do atributo data
-    const username = this.dataset.username;
-    console.log(`Solicitar confirmação para excluir utilizador: ${username} com ID: ${userId}`);
-    showConfirmationModal(userId, 'excluir'); // Exibe o modal de confirmação com a ação "excluir"
-  });
-});
-    }    
+      const deleteUserButtons = table.querySelectorAll('.btn-edit');
+      deleteUserButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          const userId = this.dataset.userId; // Obtenha o userId do atributo data
+          const username = this.dataset.username;
+          console.log(`Solicitar confirmação para excluir utilizador: ${username} com ID: ${userId}`);
+          showConfirmationModal(userId, 'excluir'); // Exibe o modal de confirmação com a ação "excluir"
+        });
+      });
+    }
+    
     
     // Função para exibir o modal de confirmação
     function showConfirmationModal(data, action) {
