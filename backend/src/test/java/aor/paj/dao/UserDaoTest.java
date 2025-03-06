@@ -154,6 +154,24 @@ class UserDaoTest {
 
     @Test
     void findByUsername() {
+        // 1. Arrange
+        // username fictício, inicialização de um objeto do tipo UserEntity e set do username fictício no objeto
+        String username = "Joca123";
+        UserEntity expectedUser = new UserEntity();
+        expectedUser.setUsername(username);
+
+        // configuração do comportamento da consulta mock
+        when(entityManager.createNamedQuery("User.findByUsername", UserEntity.class)).thenReturn(typedQuery);
+        when(typedQuery.setParameter("username", username)).thenReturn(typedQuery);
+        when(typedQuery.getResultStream()).thenAnswer(invocation -> Stream.of(expectedUser));
+
+        // 2. Act
+        // chamada da função findByUsername e captura do resultado
+        UserEntity result = userDao.findByUsername(username);
+
+        // 3. Assert
+        // verificação de se o resultado é igual ao objeto esperado
+        assertEquals(expectedUser, result);
     }
 
     @Test
