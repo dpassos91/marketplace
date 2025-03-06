@@ -15,6 +15,7 @@ const API_ENDPOINTS = {
     base: `${API_BASE_URL}/products`,
     all: `${API_BASE_URL}/products`, // Get all products endpoint
     active: `${API_BASE_URL}/products/active`, // Get all active products
+    edited: `${API_BASE_URL}/products/edited`, // Get all edited products
     byId: id => `${API_BASE_URL}/products/${id}`,
     create: `${API_BASE_URL}/products`,
     update: id => `${API_BASE_URL}/products/${id}`,

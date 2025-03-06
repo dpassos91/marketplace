@@ -483,6 +483,27 @@ public class ProductBean {
     }
 
     /**
+     * Gets all products that have been edited (have a non-null editDate)
+     * 
+     * @return List of product DTOs that have been edited
+     */
+    public List<ProductDto> getAllEditedProducts() {
+        logger.debug("Getting all products that have been edited");
+        long startTime = System.currentTimeMillis();
+
+        List<ProductEntity> entities = productDao.findAllEdited();
+
+        List<ProductDto> results = entities.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+
+        logger.info("Retrieved {} edited products, took {}ms",
+                results.size(), (System.currentTimeMillis() - startTime));
+
+        return results;
+    }
+
+    /**
      * Converts a product entity to a DTO
      * 
      * @param entity The product entity to convert
