@@ -7,8 +7,10 @@ global.console = {
 import {
     registerUser,
     loginUser,
+    updateUser,
   } from './userAPI.js';
   import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
+  import { API_ENDPOINTS } from '../config/apiConfig';
 
 // mock do módulo 'apiUtils.js' (as funções dentro desse módulo serão substituídas por mocks)
 jest.mock('../utils/apiUtils.js');
@@ -168,6 +170,64 @@ describe('User API', () => {
             // 3. Assert
             // verifica se a exceção foi lançada
             await expect(result).rejects.toThrow('Login failed: Unauthorized');
+        });
+    });
+
+    describe('updateUser', () => {
+        it('should update the user successfully and return the updated data', async () => {
+            // 1. Arrange
+            // mock dos dados do user a serem atualizados
+            const userId = '123';
+            const userData = { name: 'Joca456', email: 'jurojoca@gmail.com' };
+            // mock dos dados retornados pela API após a atualização
+            const mockUpdatedUser = { id: userId, ...userData };
+            // mock da resposta da API ao fetch com sucesso (ok: true)
+            const mockResponse = {
+                ok: true,
+                json: jest.fn().mockResolvedValue(mockUpdatedUser),
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act
+            // chamada à função a testar, passando o userId e os dados mock
+            const result = await updateUser(userId, userData);
+    
+            // 3. Assert
+            // verifica se a função foi chamada uma vez
+            expect(makeAuthenticatedRequest).toHaveBeenCalledTimes(1);
+            // verifica se a função foi chamada com os argumentos esperados
+            expect(makeAuthenticatedRequest).toHaveBeenCalledWith(
+                API_ENDPOINTS.users.update(userId),
+                {
+                    method: 'PUT',
+                    body: JSON.stringify(userData),
+                }
+            );
+            // verifica que o retorno é o user atualizado
+            expect(result).toEqual(mockUpdatedUser);
+        });
+    
+        it('should throw an error when the API call fails', async () => {
+            // 1. Arrange
+            // mock dos dados do user a serem atualizados
+            const userId = '123';
+            const userData = { name: 'Joca456' };
+            // mock da resposta da API ao fetch sem sucesso (ok: false)
+            const mockResponse = {
+                ok: false,
+                statusText: 'Bad Request',
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act
+            // chamada à função a testar, passando o userId e os dados mock
+            const result = updateUser(userId, userData);
+    
+            // 3. Assert
+            // verifica se a exceção foi lançada
+            await expect(result).rejects.toThrow('Error updating user: Bad Request');
         });
     });
 
