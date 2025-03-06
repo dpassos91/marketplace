@@ -15,7 +15,7 @@ import {
   getInactiveProducts,
   getAllEditedProducts,
 } from './api/productAPI.js';
-import { getAllEvaluations } from './api/evaluationAPI.js';
+import { getAllEvaluations, deleteEvaluation } from './api/evaluationAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -83,6 +83,13 @@ function showConfirmationModal(data, action, type = 'user') {
           alert('Produto excluído com sucesso!');
           loadProducts(); // Recarrega a lista de produtos após a exclusão
         }
+      } else if (type === 'evaluation') {
+        if (action === 'excluir') {
+          await deleteEvaluation(data); // Assume que 'data' é o ID da avaliação
+          console.log(`Avaliação com ID ${data} excluída com sucesso`);
+          alert('Avaliação excluída com sucesso!');
+          loadAvaliacoes(); // Recarrega a lista de avaliações após a exclusão
+        }
       }
     } catch (error) {
       console.error(`Erro ao ${action} o ${type}:`, error);
@@ -126,6 +133,7 @@ async function initPage() {
           loadDashboard();
         } else if (targetId === 'gestao-avaliacoes') {
           showSection('avaliacoes');
+          loadAvaliacoes();
         } else if (targetId === 'gestao-produtos') {
           showSection('produtos');
         } else if (targetId === 'gestao-utilizadores') {
@@ -1095,15 +1103,16 @@ function updateActiveButton(activePage) {
 
 // Avaliações
 
-let allProductsAvaliacoes = [];
+let allAvaliacoes = [];
+const EVALUATIONS_PER_PAGE = 10; // Define quantos produtos queres mostrar por página
 
   // Function to load products from the backend
   async function loadAvaliacoes() {
     try {
       console.log('loadAvaliacoes function called');
-      allProducts = await getAllEvaluations(); // Usa a função getAllProducts para obter todos os produtos
-      console.log('Products obtained:', allProductsAvaliacoes);
-      if (!Array.isArray(allProductsAvaliacoes)) {
+      allAvaliacoes = await getAllEvaluations(); // Usa a função getAllProducts para obter todos os produtos
+      console.log('Products obtained:', allAvaliacoes);
+      if (!Array.isArray(allAvaliacoes)) {
         throw new Error('Unexpected data format');
       }
       currentPage = 1; // Reset to the first page when loading products
@@ -1115,18 +1124,18 @@ let allProductsAvaliacoes = [];
 
   // Function to get the products for the current page
   function getAvaliacoesForPage(page) {
-    const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
-    const endIndex = startIndex + PRODUCTS_PER_PAGE;
-    return allProducts.slice(startIndex, endIndex);
+    const startIndex = (page - 1) * EVALUATIONS_PER_PAGE;
+    const endIndex = startIndex + EVALUATIONS_PER_PAGE;
+    return allAvaliacoes.slice(startIndex, endIndex);
   }
 
-  // Function to display the products in a table
+  // Function to display the evaluations in a table
   function displayAvaliacoesTable(evaluations) {
     console.log('displayAvaliacoesTable function called');
     console.log('Evaluations data:', evaluations);
 
-    // Sort products by name in ascending alphabetical order
-    products.sort((a, b) => {
+    // Sort evaluations by name in ascending alphabetical order
+    evaluations.sort((a, b) => {
       const nomeA = a.nome ? a.nome.toLowerCase() : ''; // Converter para minúsculas para ordenação insensível a maiúsculas e minúsculas
       const nomeB = b.nome ? b.nome.toLowerCase() : '';
 
@@ -1141,14 +1150,14 @@ let allProductsAvaliacoes = [];
 
     const containerAvaliacoes = document.getElementById('avaliacoesContainer');
     console.log('Avaliacoes container:', containerAvaliacoes);
-    containerAlterado.innerHTML = '';
+    containerAvaliacoes.innerHTML = '';
 
-    const tableAlterado = document.createElement('table');
-    tableAlterado.innerHTML = `
+    const tableAvaliacoes = document.createElement('table');
+    tableAvaliacoes.innerHTML = `
     <thead>
       <tr>
-        <th style="text-align: center;">ID avaliado</th>
-        <th style="text-align: center;">ID avaliador</th>
+        <th style="text-align: center;">Avaliado</th>
+        <th style="text-align: center;">Avaliador</th>
         <th style="text-align: center;">ID Produto</th>
         <th style="text-align: center;">Classificação</th>
         <th style="text-align: center;">Título</th>
@@ -1161,9 +1170,9 @@ let allProductsAvaliacoes = [];
         .map(
           evaluation => `
             <tr>
-              <td style="text-align: center;">${evaluation.evaluatorId}</td>
-              <td style="text-align: center;">${evaluation.evaluatedId}</td>
-              <td style="text-align: center;">${evaluation.evaluationId}</td>
+              <td style="text-align: center;">${evaluation.evaluatorUsername}</td>
+              <td style="text-align: center;">${evaluation.evaluatedUsername}</td>
+              <td style="text-align: center;">${evaluation.productId}</td>
               <td style="text-align: center;">${evaluation.rating}</td>
               <td style="text-align: center;">${evaluation.comment}</td>
               <td style="text-align: center;">${evaluation.title}</td>
@@ -1177,18 +1186,18 @@ let allProductsAvaliacoes = [];
         .join('')}
     </tbody>
   `;
-    console.log('Table created:', tableAvaliacoes);
+    console.log('TableAvaliacoes created:', tableAvaliacoes);
     containerAvaliacoes.appendChild(tableAvaliacoes);
-    console.log('Table added to container');
+    console.log('TableAvaliacoes added to container');
 
      // Add event listeners for the "Delete" buttons
-     const deleteProductButtons = table.querySelectorAll('.btn-edit');
+     const deleteProductButtons = tableAvaliacoes.querySelectorAll('.btn-edit');
      deleteProductButtons.forEach(button => {
        button.addEventListener('click', function () {
          const evaluationId = this.dataset.evaluationId; // Get the productId from the data attribute
          const evaluationName = this.dataset.evaluationName;
          console.log(
-           `Request confirmation to delete evaluation: ${evaluationId} with ID: ${evaluationName}`
+           `Request confirmation to delete evaluation: ${evaluationId} with ID: ${evaluationId}`
          );
          showConfirmationModal(evaluationId, 'excluir', 'evaluation'); // Displays the confirmation modal with the action "delete"
        });
