@@ -15,6 +15,7 @@ import {
   getInactiveProducts,
   getAllEditedProducts,
 } from './api/productAPI.js';
+import { getAllEvaluations } from './api/evaluationAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -39,6 +40,10 @@ function showConfirmationModal(data, action, type = 'user') {
   } else if (type === 'product') {
     if (action === 'excluir') {
       message = `Tem certeza de que deseja excluir o produto ${data}?`;
+    }
+  } else if (type === 'evaluation') {
+    if (action === 'excluir') {
+      message = `Tem certeza de que deseja excluir a avaliação ${data}?`;
     }
   }
 
@@ -1030,6 +1035,20 @@ let allProductsAlterados = [];
     console.log('Table created:', tableAlterado);
     containerAlterado.appendChild(tableAlterado);
     console.log('Table added to container');
+
+     // Add event listeners for the "Delete" buttons
+     const deleteProductButtons = table.querySelectorAll('.btn-edit');
+     deleteProductButtons.forEach(button => {
+       button.addEventListener('click', function () {
+         const productId = this.dataset.productId; // Get the productId from the data attribute
+         const productName = this.dataset.productName;
+         console.log(
+           `Request confirmation to delete product: ${productName} with ID: ${productId}`
+         );
+         showConfirmationModal(productId, 'excluir', 'product'); // Displays the confirmation modal with the action "delete"
+       });
+     });
+   }
   }
 
   // Function to display the pagination buttons
@@ -1074,7 +1093,109 @@ function updateActiveButton(activePage) {
   });
 }
 
-}
+// Avaliações
+
+let allProductsAvaliacoes = [];
+
+  // Function to load products from the backend
+  async function loadAvaliacoes() {
+    try {
+      console.log('loadAvaliacoes function called');
+      allProducts = await getAllEvaluations(); // Usa a função getAllProducts para obter todos os produtos
+      console.log('Products obtained:', allProductsAvaliacoes);
+      if (!Array.isArray(allProductsAvaliacoes)) {
+        throw new Error('Unexpected data format');
+      }
+      currentPage = 1; // Reset to the first page when loading products
+      displayAvaliacoesTable(getAvaliacoesForPage(currentPage)); // Calls the function to display the product tables
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  // Function to get the products for the current page
+  function getAvaliacoesForPage(page) {
+    const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+    const endIndex = startIndex + PRODUCTS_PER_PAGE;
+    return allProducts.slice(startIndex, endIndex);
+  }
+
+  // Function to display the products in a table
+  function displayAvaliacoesTable(evaluations) {
+    console.log('displayAvaliacoesTable function called');
+    console.log('Evaluations data:', evaluations);
+
+    // Sort products by name in ascending alphabetical order
+    products.sort((a, b) => {
+      const nomeA = a.nome ? a.nome.toLowerCase() : ''; // Converter para minúsculas para ordenação insensível a maiúsculas e minúsculas
+      const nomeB = b.nome ? b.nome.toLowerCase() : '';
+
+      if (nomeA < nomeB) {
+        return -1;
+      }
+      if (nomeA > nomeB) {
+        return 1;
+      }
+      return 0; // Se os nomes forem iguais ou ambos estiverem ausentes
+    });
+
+    const containerAvaliacoes = document.getElementById('avaliacoesContainer');
+    console.log('Avaliacoes container:', containerAvaliacoes);
+    containerAlterado.innerHTML = '';
+
+    const tableAlterado = document.createElement('table');
+    tableAlterado.innerHTML = `
+    <thead>
+      <tr>
+        <th style="text-align: center;">ID avaliado</th>
+        <th style="text-align: center;">ID avaliador</th>
+        <th style="text-align: center;">ID Produto</th>
+        <th style="text-align: center;">Classificação</th>
+        <th style="text-align: center;">Título</th>
+        <th style="text-align: center;">Comentário</th>
+        <th style="text-align: center;">Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${evaluations
+        .map(
+          evaluation => `
+            <tr>
+              <td style="text-align: center;">${evaluation.evaluatorId}</td>
+              <td style="text-align: center;">${evaluation.evaluatedId}</td>
+              <td style="text-align: center;">${evaluation.evaluationId}</td>
+              <td style="text-align: center;">${evaluation.rating}</td>
+              <td style="text-align: center;">${evaluation.comment}</td>
+              <td style="text-align: center;">${evaluation.title}</td>
+              <td style="text-align: center;">
+                <div style="display: flex; justify-content: space-around; align-items: center;">
+                  <button class="btn-card tabela-btn btn-edit" data-evaluation-id="${evaluation.id}" data-evaluation-name="${evaluation.name}">Excluir</button>
+                </div>
+            </tr>
+          `
+        )
+        .join('')}
+    </tbody>
+  `;
+    console.log('Table created:', tableAvaliacoes);
+    containerAvaliacoes.appendChild(tableAvaliacoes);
+    console.log('Table added to container');
+
+     // Add event listeners for the "Delete" buttons
+     const deleteProductButtons = table.querySelectorAll('.btn-edit');
+     deleteProductButtons.forEach(button => {
+       button.addEventListener('click', function () {
+         const evaluationId = this.dataset.evaluationId; // Get the productId from the data attribute
+         const evaluationName = this.dataset.evaluationName;
+         console.log(
+           `Request confirmation to delete evaluation: ${evaluationId} with ID: ${evaluationName}`
+         );
+         showConfirmationModal(evaluationId, 'excluir', 'evaluation'); // Displays the confirmation modal with the action "delete"
+       });
+     });
+   }
+
+
 // Aguarda o carregamento completo do DOM antes de executar a função initPage
 document.addEventListener('DOMContentLoaded', initPage);
 
