@@ -61,6 +61,37 @@ export async function getEvaluationById(evaluationId) {
   }
 }
 
+
+/**
+ * Fetches all evaluations from the API.
+ *
+ * This function makes an authenticated GET request to the evaluations endpoint
+ * and returns the response data as a JSON object. If the request fails or the
+ * response is not OK, an error is thrown.
+ *
+ * @returns {Promise<Object>} A promise that resolves to the JSON response containing all evaluations.
+ * @throws {Error} If there is an error fetching the evaluations or the response is not OK.
+ */
+export async function getAllEvaluations() {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.evaluations.all,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error fetching evaluations: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching evaluations:', error);
+    throw error;
+  }
+}
+
 /**
  * Creates a new evaluation.
  *
