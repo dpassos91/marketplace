@@ -3,12 +3,85 @@
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
 import { addCategory, getAllCategories} from './api/categoryAPI.js';
-import { getProductsByCategory, getProductsBySeller, getAllProducts } from './api/productAPI.js';
+import { getProductsByCategory, getProductsBySeller, getAllProducts, permanentlyDeleteProduct } from './api/productAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
 let currentPage = 1; // Página atual
 let allUsers = []; // Array para armazenar todos os utilizadores
+
+// Função para exibir o modal de confirmação
+function showConfirmationModal(data, action, type = 'user') {
+  const modal = document.getElementById('confirmationModal');
+  const confirmButton = document.getElementById('confirmButton');
+  const cancelButton = document.getElementById('cancelButton');
+  let message = '';
+
+  if (type === 'user') {
+    if (action === 'excluir') {
+      message = `Tem certeza de que deseja excluir o utilizador ${data}?`;
+    } else if (action === 'suspender') {
+      message = `Tem certeza de que deseja suspender este utilizador?`;
+    } else if (action === 'reativar') {
+      message = `Tem certeza de que deseja reativar este utilizador?`;
+    }
+  } else if (type === 'product') {
+    if (action === 'excluir') {
+      message = `Tem certeza de que deseja excluir o produto ${data}?`;
+    }
+  }
+
+  // Altera o texto do modal
+  modal.querySelector('p').textContent = message;
+
+  // Exibir o modal
+  modal.style.display = 'block';
+
+  // Adicionar event listeners aos botões do modal
+  confirmButton.onclick = async function () {
+    console.log(`Confirmação recebida. Ação: ${action}, Data: ${data}, Tipo: ${type}`);
+    try {
+      if (type === 'user') {
+        if (action === 'suspender') {
+          await suspendUser(data);
+          console.log(`Utilizador com ID ${data} suspenso com sucesso`);
+          alert('Utilizador suspenso com sucesso!');
+          updateButtonState(data, true);
+        } else if (action === 'excluir') {
+          await deleteUser(data);
+          console.log(`Utilizador ${data} excluído com sucesso`);
+          alert('Utilizador excluído com sucesso!');
+          loadUsers(); // Recarrega a lista de utilizadores após a exclusão
+        } else if (action === 'reativar') {
+          await reactivateUser(data);
+          console.log(`Utilizador com ID ${data} reativado com sucesso`);
+          alert('Utilizador reativado com sucesso!');
+          updateButtonState(data, false);
+        }
+      } else if (type === 'product') {
+        if (action === 'excluir') {
+          await permanentlyDeleteProduct(data); // Assume que 'data' é o ID do produto
+          console.log(`Produto com ID ${data} excluído com sucesso`);
+          alert('Produto excluído com sucesso!');
+          loadProducts(); // Recarrega a lista de produtos após a exclusão
+        }
+      }
+    } catch (error) {
+      console.error(`Erro ao ${action} o ${type}:`, error);
+      alert(`Erro ao ${action} o ${type}. Ver a consola para detalhes.`);
+    } finally {
+      // Fechar o modal
+      modal.style.display = 'none';
+    }
+  };
+
+  cancelButton.onclick = function () {
+    console.log(`Operação de ${action} cancelada`);
+    // Fechar o modal
+    modal.style.display = 'none';
+  };
+}
+
 
 async function initPage() {
   try {
@@ -228,11 +301,11 @@ editarButton.addEventListener('click', function (event) {
           if (isActive) {
             // Suspender utilizador
             console.log(`Solicitar confirmação para suspender utilizador com ID: ${userId}`);
-            showConfirmationModal(userId, 'suspender'); // Exibe o modal de confirmação com a ação "suspender"
+            showConfirmationModal(userId, 'suspender', 'user'); // Exibe o modal de confirmação com a ação "suspender"
           } else {
             // Reativar utilizador
             console.log(`Solicitar confirmação para reativar utilizador com ID: ${userId}`);
-            showConfirmationModal(userId, 'reativar'); // Exibe o modal de confirmação com a ação "reativar"
+            showConfirmationModal(userId, 'reativar', 'user'); // Exibe o modal de confirmação com a ação "reativar"
           }
         };
         button.addEventListener('click', button.handleClick);
@@ -245,84 +318,13 @@ editarButton.addEventListener('click', function (event) {
           const userId = this.dataset.userId; // Obtenha o userId do atributo data
           const username = this.dataset.username;
           console.log(`Solicitar confirmação para excluir utilizador: ${username} com ID: ${userId}`);
-          showConfirmationModal(userId, 'excluir'); // Exibe o modal de confirmação com a ação "excluir"
+          showConfirmationModal(userId, 'excluir', 'user'); // Exibe o modal de confirmação com a ação "excluir"
         });
       });
     }
     
     
-    // Função para exibir o modal de confirmação
-    function showConfirmationModal(data, action, type = 'user') {
-      const modal = document.getElementById('confirmationModal');
-      const confirmButton = document.getElementById('confirmButton');
-      const cancelButton = document.getElementById('cancelButton');
-      let message = '';
     
-      if (type === 'user') {
-        if (action === 'excluir') {
-          message = `Tem certeza de que deseja excluir o utilizador ${data}?`;
-        } else if (action === 'suspender') {
-          message = `Tem certeza de que deseja suspender este utilizador?`;
-        } else if (action === 'reativar') {
-          message = `Tem certeza de que deseja reativar este utilizador?`;
-        }
-      } else if (type === 'product') {
-        if (action === 'delete') {
-          message = `Tem certeza de que deseja excluir o produto ${data}?`;
-        }
-      }
-    
-      // Altera o texto do modal
-      modal.querySelector('p').textContent = message;
-    
-      // Exibir o modal
-      modal.style.display = 'block';
-    
-      // Adicionar event listeners aos botões do modal
-      confirmButton.onclick = async function () {
-        console.log(`Confirmação recebida. Ação: ${action}, Data: ${data}, Tipo: ${type}`);
-        try {
-          if (type === 'user') {
-            if (action === 'suspender') {
-              await suspendUser(data);
-              console.log(`Utilizador com ID ${data} suspenso com sucesso`);
-              alert('Utilizador suspenso com sucesso!');
-              updateButtonState(data, true);
-            } else if (action === 'excluir') {
-              await deleteUser(data);
-              console.log(`Utilizador ${data} excluído com sucesso`);
-              alert('Utilizador excluído com sucesso!');
-              loadUsers(); // Recarrega a lista de utilizadores após a exclusão
-            } else if (action === 'reativar') {
-              await reactivateUser(data);
-              console.log(`Utilizador com ID ${data} reativado com sucesso`);
-              alert('Utilizador reativado com sucesso!');
-              updateButtonState(data, false);
-            }
-          } else if (type === 'product') {
-            if (action === 'delete') {
-              await deleteProduct(data); // Assume que 'data' é o ID do produto
-              console.log(`Produto com ID ${data} excluído com sucesso`);
-              alert('Produto excluído com sucesso!');
-              loadProducts(); // Recarrega a lista de produtos após a exclusão
-            }
-          }
-        } catch (error) {
-          console.error(`Erro ao ${action} o ${type}:`, error);
-          alert(`Erro ao ${action} o ${type}. Ver a consola para detalhes.`);
-        } finally {
-          // Fechar o modal
-          modal.style.display = 'none';
-        }
-      };
-    
-      cancelButton.onclick = function () {
-        console.log(`Operação de ${action} cancelada`);
-        // Fechar o modal
-        modal.style.display = 'none';
-      };
-    }
-  
     // Função para exibir os botões de paginação
     function displayPaginationButtons() {
       const totalPages = Math.ceil(allUsers.length / USERS_PER_PAGE);
@@ -389,10 +391,7 @@ editarButton.addEventListener('click', function (event) {
   } catch (error) {
     console.error('Erro ao inicializar a página:', error);
   }
-}
 
-// Aguarda o carregamento completo do DOM antes de executar a função initPage
-document.addEventListener('DOMContentLoaded', initPage);
 
 // Função para exibir o modal e adicionar uma nova categoria
 function showAddCategoryModal() {
@@ -745,8 +744,7 @@ async function loadProducts() {
       throw new Error('Unexpected data format');
     }
     currentPage = 1; // Reset to the first page when loading products
-    displayProductsTable(getProductsForPage(currentPage)); // Calls the function to display the product table
-    displayPaginationButtons(); // Displays the pagination buttons
+    displayProductsTable(getProductsForPage(currentPage)); // Calls the function to display the product tables
   } catch (error) {
     console.error('Error:', error);
   }
@@ -777,6 +775,8 @@ function displayProductsTable(products) {
       <tr>
         <th style="text-align: center;">Nome</th>
         <th style="text-align: center;">Preço</th>
+        <th style="text-align: center;">ID Produto</th>
+        <th style="text-align: center;">Username</th>
         <th style="text-align: center;">Ações</th>
       </tr>
     </thead>
@@ -787,6 +787,8 @@ function displayProductsTable(products) {
             <tr>
               <td style="text-align: center;">${product.title}</td>
               <td style="text-align: center;">${product.price}</td>
+              <td style="text-align: center;">${product.id}</td>
+              <td style="text-align: center;">${product.sellerUsername}</td>
               <td style="text-align: center;">
                 <div style="display: flex; justify-content: space-around; align-items: center;">
                   <button class="btn-card tabela-btn btn-edit" data-product-id="${product.id}" data-product-name="${product.name}">Excluir</button>
@@ -802,25 +804,14 @@ function displayProductsTable(products) {
   container.appendChild(table);
   console.log('Table added to container');
 
-  // Add event listeners for the "Edit" buttons
-  const editProductButtons = table.querySelectorAll('.edit-product');
-  editProductButtons.forEach(button => {
-    button.addEventListener('click', function () {
-      const productId = this.dataset.productId;
-      console.log(`Edit product with ID: ${productId}`);
-      // Redirect to the product edit page
-      window.location.href = `http://localhost:8080/frontend/editar-produto.html?id=${productId}`;
-    });
-  });
-
   // Add event listeners for the "Delete" buttons
-  const deleteProductButtons = table.querySelectorAll('.delete-product');
+  const deleteProductButtons = table.querySelectorAll('.btn-edit');
   deleteProductButtons.forEach(button => {
     button.addEventListener('click', function () {
       const productId = this.dataset.productId; // Get the productId from the data attribute
       const productName = this.dataset.productName;
       console.log(`Request confirmation to delete product: ${productName} with ID: ${productId}`);
-      showConfirmationModal(productId, 'delete', 'product'); // Displays the confirmation modal with the action "delete"
+      showConfirmationModal(productId, 'excluir', 'product'); // Displays the confirmation modal with the action "delete"
     });
   });
 }
@@ -847,7 +838,7 @@ function productModal(data, action) {
     console.log(`Confirmation received. Action: ${action}, Data: ${data}`);
     try {
       if (action === 'delete') {
-        await deleteProduct(data); // 'data' is the productId
+        await permanentlyDeleteProduct(data); // 'data' is the productId
         console.log(`Product ${data} deleted successfully`);
         alert('Product deleted successfully!');
         loadProducts(); // Reload the list of products after deletion
@@ -911,6 +902,9 @@ function updateActiveButton(activePage) {
   });
 }
 
+}
+// Aguarda o carregamento completo do DOM antes de executar a função initPage
+document.addEventListener('DOMContentLoaded', initPage);
 /* Button for administrators to permanently delete inactive products */
 /*
 export function setupPermanentDeleteButton(productId) {
