@@ -640,6 +640,11 @@ public class ProductBeanTest {
     @Test
     public void testPermanentlyDeleteProduct_Success() {
         // Arrange
+        ProductEntity inactiveProduct = new ProductEntity();
+        inactiveProduct.setId(1L);
+        inactiveProduct.setActive(false); // Product must be inactive for permanent deletion
+
+        when(productDao.findById(anyLong())).thenReturn(inactiveProduct);
         when(productDao.permanentlyDelete(anyLong())).thenReturn(true);
 
         // Act
@@ -653,6 +658,11 @@ public class ProductBeanTest {
     @Test
     public void testPermanentlyDeleteProduct_Failure() {
         // Arrange
+        ProductEntity inactiveProduct = new ProductEntity();
+        inactiveProduct.setId(999L);
+        inactiveProduct.setActive(false); // Product must be inactive for permanent deletion
+
+        when(productDao.findById(anyLong())).thenReturn(inactiveProduct);
         when(productDao.permanentlyDelete(anyLong())).thenReturn(false);
 
         // Act
@@ -660,6 +670,21 @@ public class ProductBeanTest {
 
         // Assert
         assertFalse(result);
+        verify(productDao).findById(999L);
         verify(productDao).permanentlyDelete(999L);
+    }
+
+    @Test
+    public void testPermanentlyDeleteProduct_ProductNotFound() {
+        // Arrange
+        when(productDao.findById(anyLong())).thenReturn(null);
+
+        // Act
+        boolean result = productBean.permanentlyDeleteProduct(999L);
+
+        // Assert
+        assertFalse(result);
+        verify(productDao).findById(999L);
+        verify(productDao, never()).permanentlyDelete(anyLong());
     }
 }

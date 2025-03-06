@@ -50,6 +50,18 @@ public class EvaluationDaoTest {
     EvaluationEntity evaluation = new EvaluationEntity();
     evaluation.setTitle("Test Evaluation");
 
+    aor.paj.entity.UserEntity evaluator = new aor.paj.entity.UserEntity();
+    evaluator.setId(1L);
+    evaluation.setEvaluator(evaluator);
+
+    aor.paj.entity.UserEntity evaluated = new aor.paj.entity.UserEntity();
+    evaluated.setId(2L);
+    evaluation.setEvaluated(evaluated);
+
+    aor.paj.entity.ProductEntity product = new aor.paj.entity.ProductEntity();
+    product.setId(3L);
+    evaluation.setProduct(product);
+
     // Act
     EvaluationEntity result = evaluationDao.create(evaluation);
 
