@@ -281,4 +281,52 @@ describe('User API', () => {
         });
     });
 
+    describe('suspendUser', () => {
+        it('should suspend the user successfully', async () => {
+            // 1. Arrange
+            // mock do ID do user a ser suspenso
+            const userId = '123';
+            // mock da resposta da API ao fetch com sucesso (ok: true)
+            const mockResponse = {
+                ok: true,
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act
+            // chama a função a testar e passa o userId mock
+            await suspendUser(userId);
+    
+            // 3. Assert
+            // verifica se a função foi chamada uma vez
+            expect(makeAuthenticatedRequest).toHaveBeenCalledTimes(1);
+            // verifica se a função foi chamada com os argumentos esperados
+            expect(makeAuthenticatedRequest).toHaveBeenCalledWith(
+                API_ENDPOINTS.users.suspend(userId),
+                { method: 'PATCH' }
+            );
+        });
+    
+        it('should throw an error when the API call fails', async () => {
+            // 1. Arrange
+            // mock do ID do user a suspender
+            const userId = '123';
+            // mock da resposta da API ao fetch sem sucesso (ok: false)
+            const mockResponse = {
+                ok: false,
+                statusText: 'Forbidden',
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act
+            // chama a função a testar e passa o userId mock
+            const result = suspendUser(userId);
+    
+            // 3. Assert
+            // verifica se a exceção foi lançada
+            await expect(result).rejects.toThrow('Error suspending user: Forbidden');
+        });
+    });
+
 });
