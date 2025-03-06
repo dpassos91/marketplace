@@ -2,7 +2,8 @@
 
 import { loadCommonElements } from './loadCommons.js';
 import { getTotalUsers, suspendUser, reactivateUser, deleteUser } from './api/userAPI.js';
-import { addCategory } from './api/categoryAPI.js';
+import { addCategory, getAllCategories} from './api/categoryAPI.js';
+import { getProductsByCategory } from './api/productAPI.js';
 
 // Variáveis de paginação
 const USERS_PER_PAGE = 10; // Número de utilizadores por página
@@ -446,6 +447,101 @@ const addCategoryButton = document.querySelector('.btn-add'); // Seleciona o bot
 addCategoryButton.addEventListener('click', function () {
   console.log('Botão "Adicionar nova categoria" clicado');
   showAddCategoryModal(); // Chama a função que exibe o modal para adicionar uma categoria
+});
+
+const filterByCategoryButton = document.getElementById('filtrarPorCategoria');
+const productCategoryModal = document.getElementById('productCategoryModal');
+const productCategorySelect = document.getElementById('productCategorySelect');
+const productDisplay = document.getElementById('productDisplay');
+
+// Event listener para o botão "Filtrar por Categoria"
+filterByCategoryButton.addEventListener('click', function () {
+    console.log('Botão "Filtrar por Categoria" clicado');
+    loadCategories();
+});
+
+// Função para carregar categorias no select dentro do modal
+async function loadCategories() {
+    try {
+        const categories = await getAllCategories();
+        console.log('Categorias recebidas:', categories);
+
+        if (!Array.isArray(categories) || categories.length === 0) {
+            console.warn('Nenhuma categoria encontrada.');
+            return;
+        }
+
+        productCategorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            productCategorySelect.appendChild(option);
+        });
+
+        // Exibir o modal
+        productCategoryModal.style.display = 'block';
+
+    } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+    }
+}
+
+// Event listener para o select dentro do modal
+productCategorySelect.addEventListener('change', handleCategoryChange);
+
+// Função para lidar com a mudança de categoria no select
+async function handleCategoryChange(event) {
+    const categoryId = event.target.value;
+    if (categoryId) {
+        try {
+            const products = await getProductsByCategory(categoryId);
+            displayProducts(products);
+        } catch (error) {
+            console.error('Erro ao buscar produtos:', error);
+        }
+    } else {
+        productDisplay.innerHTML = '';
+    }
+}
+
+// Função para exibir os produtos dentro do modal
+function displayProducts(products) {
+    productDisplay.innerHTML = ''; // Limpa produtos anteriores
+
+    if (products.length === 0) {
+        productDisplay.innerHTML = '<p>Nenhum produto encontrado nesta categoria.</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.className = 'products-table';
+
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    ['Título', 'Preço', 'Vendedor'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+
+    const tbody = table.createTBody();
+    products.forEach(product => {
+        const row = tbody.insertRow();
+        row.insertCell().textContent = product.title;
+        row.insertCell().textContent = `${product.price}€`;
+        row.insertCell().textContent = product.sellerId;
+    });
+
+    productDisplay.appendChild(table);
+}
+
+// Fechar o modal quando clicar no X
+const closeButtons = document.querySelectorAll('#productCategoryModal .close');
+closeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        document.getElementById('productCategoryModal').style.display = 'none';
+    });
 });
 
 

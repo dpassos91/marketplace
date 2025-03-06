@@ -63,7 +63,17 @@
                     <button class="btn-card btn-danger" id="filtrarPorPreco">Filtrar por Utilizador</button>
                     <button class="btn-card btn-warning" id="filtrarPorCategoria">Filtrar por Categoria</button>
                 </div>
+            
+                <!-- Container para o filtro por categoria (inicialmente escondido) -->
+                <div id="categoryFilterContainer" class="hidden">
+                    <label for="categorySelect">Escolha uma categoria:</label>
+                    <select id="categorySelect">
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                    <button id="applyCategoryFilter" class="btn-card btn-info">Aplicar Filtro</button>
+                </div>
             </section>
+            
 
             <section id="editarProdutos" class="hidden">
                 <h1>Editar produtos</h1>
@@ -101,6 +111,16 @@
                     <button id="cancelButton">Cancelar</button>
                 </div>
             </div>
+
+            <div id="productCategoryModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Selecione uma Categoria</h2>
+                    <select id="productCategorySelect"></select>
+                    <div id="productDisplay"></div>
+                </div>
+            </div>
+            
         </div>
     </main>
 
