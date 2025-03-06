@@ -636,3 +636,32 @@ export async function getActiveProductCount() {
     return 0;
   }
 }
+
+/**
+ * Fetches all edited products from the API.
+ *
+ * @async
+ * @function getAllEditedProducts
+ * @returns {Promise<Array>} A promise that resolves to an array of edited product objects.
+ * If an error occurs, returns an empty array.
+ * @throws {Error} Throws an error if the HTTP response is not ok.
+ */
+export async function getAllEditedProducts() {
+  try {
+    const response = await makeAuthenticatedRequest(
+      API_ENDPOINTS.products.edited,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error fetching edited products: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch edited products:', error);
+    return [];
+  }
+}
