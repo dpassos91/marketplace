@@ -26,17 +26,19 @@ public class UserBean {
     private UserDao userDao;
 
     public UserDto registerUser(UserDto userDto) {
+        // verifica se o username já existe na base de dados
         if (!isValidUsername(userDto.getUsername())) {
             logger.warn("Username already in use: {}", userDto.getUsername());
+            // caso exista interrompe o fluxo
             throw new IllegalArgumentException("Username already in use");
         }
-
+        // converte o Dto em Entity
         UserEntity userEntity = toEntity(userDto);
-
+        // faz 'set' da password em Hash, do estado e da condição de Admin
         userEntity.setPassword(hashPassword(userDto.getPassword()));
         userEntity.setActive(true);
         userEntity.setAdmin(false);
-
+        // tenta registar o novo utilizador
         try {
             userEntity = userDao.create(userEntity);
             logger.info("User successfully registered: {}", userDto.getUsername());
@@ -44,14 +46,15 @@ public class UserBean {
             logger.error("Error during registration for user: {}", userDto.getUsername(), exception);
             throw exception;
         }
-
+        // retorna os dados para depuração
         return toDto(userEntity);
     }
 
     private boolean isValidUsername(String username) {
         logger.info("Checking if username {} is valid.", username);
+        // vai buscar a lista de usernames à base de dados
         List<String> allUsername = userDao.findAllUsername();
-
+        // compara os usernames da lista com o novo
         for (String existingUsername : allUsername) {
             if (existingUsername.equals(username)) {
                 logger.warn("Username {} is already in use.", username);
@@ -69,15 +72,20 @@ public class UserBean {
 
     public String logIn(LoginRequestDto user) {
         logger.info("Login attempt for user: {}", user.getUsername());
+        // procura a Entity através do username providenciado
         UserEntity userEntity = userDao.findByUsername(user.getUsername());
+        // se encontrar verifica se é um user ativo
         if (userEntity != null && userEntity.isActive()) {
+            // se estiver ativo compara a password providenciada
             if (userEntity.checkPassword(user.getPassword())) {
+                // se as credênciais forem válidas gera a token e insere-a na base de dados
                 String token = generateNewToken();
                 userEntity.setToken(token);
 
                 userDao.update(userEntity);
 
                 logger.info("Successful login for user: {}", user.getUsername());
+                // devolve a token
                 return token;
             }
         }
@@ -95,8 +103,10 @@ public class UserBean {
 
     public boolean logOut(String token) {
         logger.info("Logging out user with token: {}", token);
+        // encontra a Entity através da token
         UserEntity userEntity = userDao.findByToken(token);
         if (userEntity != null) {
+            // coloca o atributo token como null na base de dados
             userEntity.setToken(null);
             userDao.update(userEntity);
             logger.info("User with token {} logged out successfully.", token);
@@ -107,10 +117,11 @@ public class UserBean {
     }
 
     public UserDto getUserById(Long id) {
+        // vai procurar o user através do ID à base de dados
         UserEntity userEntity = userDao.findById(id);
 
         if (userEntity == null) {
-            logger.warn("User with id: {} not found during update attempt", id);
+            logger.warn("User with id: {} not found.", id);
             throw new EntityNotFoundException("User with ID " + id + " not found!");
         }
 
@@ -118,29 +129,31 @@ public class UserBean {
             logger.warn("Attempted to access inactive user with id: {}", id);
             throw new IllegalStateException("User with ID " + id + " is not active.");
         }
+        logger.info("User with id: {} found.", id);
         return toDto(userEntity);
     }
 
     public Response updateUser(Long id, String token, UserDto userDto) {
+        // verifica se o user está autenticado e autorizado a proceder com esta funcionalidade
         Response authResponse = authenticateAuthorize(id, token, true, true);
         if (authResponse != null) return authResponse;
-
+        // vai buscar a Entity à base de dados para fazer o update
         UserEntity userEntity = userDao.findById(id);
-
+        // se não for encontrada retorna
         if (userEntity == null) {
             logger.warn("User with id {} not found for update.", id);
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("404: User with ID " + id + " not found!")
                     .build();
         }
-
+        // verifica se está ativo
         if (!userEntity.isActive()) {
             logger.warn("Attempted to update inactive user with id: {}", id);
             return Response.status(Response.Status.FORBIDDEN)
                     .entity("403: User account is inactive.")
                     .build();
         }
-
+        // procede às alterações nos campos que têm alterações a aplicar
         if (userDto.getFirstName() != null) userEntity.setFirstName(userDto.getFirstName());
         if (userDto.getLastName() != null) userEntity.setLastName(userDto.getLastName());
         if (userDto.getEmail() != null) userEntity.setEmail(userDto.getEmail());
@@ -154,18 +167,20 @@ public class UserBean {
     }
 
     public Response deleteUser(Long id, String token) {
+        logger.info("Deleting user with id: {} by token: {}", id, token);
+        // verifica se o user está autenticado e autorizado a proceder com esta funcionalidade
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
-
+        // vai buscar a Entity à base de dados para fazer o update
         UserEntity userEntity = userDao.findById(id);
-
+        // se não for encontrada retorna
         if (userEntity == null) {
             logger.warn("User with id {} not found for deletion.", id);
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("404: User with ID " + id + " not found!")
                     .build();
         }
-
+        // verifica se está ativo
         if (!userEntity.isActive()) {
             logger.warn("Attempted to delete inactive user with id: {}", id);
             return Response.status(Response.Status.FORBIDDEN)
@@ -179,18 +194,19 @@ public class UserBean {
 
     public Response suspendUser(Long id, String token) {
         logger.info("Suspending user with id: {} by token: {}", id, token);
+        // verifica se o user está autenticado e autorizado a proceder com esta funcionalidade
         Response authResponse = authenticateAuthorize(id, token, true, false);
         if (authResponse != null) return authResponse;
-
+        // vai buscar a Entity à base de dados para fazer o update
         UserEntity userEntity = userDao.findById(id);
-
+        // se não for encontrada retorna
         if (userEntity == null) {
             logger.warn("User with id {} not found for suspend.", id);
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("404: User with ID " + id + " not found!")
                     .build();
         }
-
+        // verifica se está ativo
         if (!userEntity.isActive()) {
             logger.warn("Attempted to suspend inactive user with id: {}", id);
             return Response.status(Response.Status.CONFLICT)
@@ -228,33 +244,36 @@ public class UserBean {
     }
 
     private Response processActionResult(boolean success, Long id, String action) {
+        // verifica se determinada ação foi realizada com sucesso
         if (!success) {
             logger.warn("User with id {} not found.", id);
+            // se não foi devolve resposta adequada
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("404: User with ID " + id + " not found!")
                     .build();
         }
 
         logger.info("Successful {} of user with id: {}", action, id);
+        // se foi devolve mensagem de sucesso
         return Response.ok("200: User " + action + " successfully").build();
     }
 
     private Response authenticateAuthorize(Long id, String token, boolean requireAdmin, boolean requireSelf) {
         logger.info("Authentication and authorization check started for user with ID: {} and token: {}", id, token);
-
+        // verifica que existe token
         if (!isTokenAvailable(token)) {
             logger.warn("Authentication failed: Missing authentication token.");
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("401: Missing authentication token.").build();
         }
-
+        // verifica se a token é válida (se existe na base de dados)
         UserEntity authenticatedUser = userDao.findByToken(token);
         if (!isUserAuthenticated(authenticatedUser)) {
             logger.warn("Authentication failed: Invalid authentication token for user with ID: {}", id);
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("401: Invalid authentication token.").build();
         }
-
+        // verifica se o user tem permissão para executar a ação pretendida
         if (requireAdmin || requireSelf) {
             boolean isAuthorized = false;
 
@@ -274,7 +293,7 @@ public class UserBean {
                         .entity("403: You are not allowed to proceed with this action.").build();
             }
         }
-
+        // caso passe todas as validações retorna null
         logger.info("Authentication and authorization check passed for user with ID: {}", id);
         return null;
     }
@@ -312,9 +331,10 @@ public class UserBean {
     }
 
     public UserDto getUserByUsername(String username) {
+        logger.info("Fetching user by username.");
+        // procura o user através do username indicado
         UserEntity userEntity = userDao.findByUsername(username);
 
-        logger.info("Fetching user by username.");
         if (userEntity == null) {
             logger.warn("User with username {} not found.", username);
             throw new EntityNotFoundException("User with username " + username + " not found!");
@@ -324,30 +344,33 @@ public class UserBean {
             logger.warn("Attempted to access inactive user with username: {}", username);
             throw new IllegalStateException("User with username " + username + " is not active.");
         }
-
+        logger.info("User with username {} found.", username);
         return toDto(userEntity);
     }
 
     public List<UserDto> getAllUsers() {
+        logger.info("Fetching all users from the database.");
+
         List<UserEntity> userEntities = userDao.findAll();
         List<UserDto> userDtos = new ArrayList<>();
 
-        logger.info("Fetching all users from the database.");
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
-
+        logger.info("All users returned successfully.");
         return userDtos;
     }
 
     public List<UserDto> getAllActiveUsers() {
+        logger.info("Fetching all active users from the database.");
+
         List<UserEntity> userEntities = userDao.findAllActive();
         List<UserDto> userDtos = new ArrayList<>();
 
-        logger.info("Fetching all active users from the database.");
         for (UserEntity userEntity : userEntities) {
             userDtos.add(toDto(userEntity));
         }
+        logger.info("All active users returned successfully.");
         return userDtos;
     }
 

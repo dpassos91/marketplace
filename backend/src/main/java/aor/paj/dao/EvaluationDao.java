@@ -2,14 +2,19 @@ package aor.paj.dao;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import aor.paj.entity.EvaluationEntity;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
 
 @Stateless
 public class EvaluationDao {
+  private static final Logger logger = LogManager.getLogger(EvaluationDao.class);
 
   @PersistenceContext(unitName = "jorge-nuno-diogo-proj3")
   private EntityManager em;
@@ -21,8 +26,19 @@ public class EvaluationDao {
    * @return the persisted evaluation
    */
   public EvaluationEntity create(EvaluationEntity evaluation) {
-    em.persist(evaluation);
-    return evaluation;
+    long startTime = System.currentTimeMillis();
+    try {
+      em.persist(evaluation);
+      logger.debug("DB Transaction: Created evaluation (evaluator={}, evaluated={}, product={}), time taken: {}ms",
+          evaluation.getEvaluator().getId(),
+          evaluation.getEvaluated().getId(),
+          evaluation.getProduct().getId(),
+          (System.currentTimeMillis() - startTime));
+      return evaluation;
+    } catch (PersistenceException e) {
+      logger.error("DB Error: Failed to create evaluation: {}", e.getMessage(), e);
+      throw e;
+    }
   }
 
   /**
@@ -151,14 +167,19 @@ public class EvaluationDao {
    * @return the average rating for the user, or 0.0 if no ratings exist
    */
   public Double calculateAverageRating(Long userId) {
+    long startTime = System.currentTimeMillis();
     try {
       Double result = em.createQuery(
           "SELECT AVG(e.rating) FROM EvaluationEntity e WHERE e.evaluated.id = :userId", Double.class)
           .setParameter("userId", userId)
           .getSingleResult();
-      return result != null ? result : 0.0; // Return 0.0 instead of null
+
+      logger.debug("DB Query: Calculated average rating for user id={}: {}, time taken: {}ms",
+          userId, result, (System.currentTimeMillis() - startTime));
+      return result != null ? result : 0.0;
     } catch (Exception e) {
-      // Handle any exceptions that might occur
+      logger.error("DB Error: Failed to calculate average rating for user id={}: {}",
+          userId, e.getMessage(), e);
       return 0.0;
     }
   }
@@ -189,15 +210,30 @@ public class EvaluationDao {
    * Check if a buyer already evaluated a seller for a specific product
    */
   public boolean existsByBuyerSellerAndProduct(Long buyerId, Long sellerId, Long productId) {
-    TypedQuery<Long> query = em.createQuery(
-        "SELECT COUNT(e) FROM EvaluationEntity e " +
-            "WHERE e.evaluator.id = :buyerId " +
-            "AND e.evaluated.id = :sellerId " +
-            "AND e.product.id = :productId",
-        Long.class);
-    query.setParameter("buyerId", buyerId);
-    query.setParameter("sellerId", sellerId);
-    query.setParameter("productId", productId);
-    return query.getSingleResult() > 0;
+    long startTime = System.currentTimeMillis();
+    try {
+      TypedQuery<Long> query = em.createQuery(
+          "SELECT COUNT(e) FROM EvaluationEntity e " +
+              "WHERE e.evaluator.id = :buyerId " +
+              "AND e.evaluated.id = :sellerId " +
+              "AND e.product.id = :productId",
+          Long.class);
+
+      query.setParameter("buyerId", buyerId);
+      query.setParameter("sellerId", sellerId);
+      query.setParameter("productId", productId);
+
+      Long count = query.getSingleResult();
+      boolean exists = count > 0;
+
+      logger.debug("DB Query: Checked if evaluation exists (buyer={}, seller={}, product={}): {}, time taken: {}ms",
+          buyerId, sellerId, productId, exists, (System.currentTimeMillis() - startTime));
+
+      return exists;
+    } catch (Exception e) {
+      logger.error("DB Error: Failed to check if evaluation exists (buyer={}, seller={}, product={}): {}",
+          buyerId, sellerId, productId, e.getMessage(), e);
+      throw e;
+    }
   }
 }

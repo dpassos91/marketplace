@@ -5,6 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import aor.paj.dao.CategoryDao;
 import aor.paj.dao.ProductDao;
 import aor.paj.dao.UserDao;
@@ -15,9 +18,11 @@ import aor.paj.entity.UserEntity;
 import aor.paj.util.ProductStateId;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 @ApplicationScoped
 public class ProductBean {
+    private static final Logger logger = LogManager.getLogger(ProductBean.class);
 
     @Inject
     private ProductDao productDao;
@@ -37,7 +42,10 @@ public class ProductBean {
      * @return The added product with ID
      */
     public ProductDto addProduct(ProductDto productDto) {
+        logger.debug("Attempting to create product: {}", productDto);
+
         if (productDto == null) {
+            logger.warn("Product creation failed: null productDto");
             return null;
         }
 
@@ -45,7 +53,12 @@ public class ProductBean {
         UserEntity seller = userDao.findById(productDto.getSellerId());
         CategoryEntity category = categoryDao.findById(productDto.getCategoryId());
 
-        if (seller == null || category == null) {
+        if (seller == null) {
+            logger.warn("Product creation failed: seller not found, id={}", productDto.getSellerId());
+            return null;
+        }
+        if (category == null) {
+            logger.warn("Product creation failed: category not found, id={}", productDto.getCategoryId());
             return null;
         }
 
@@ -58,9 +71,14 @@ public class ProductBean {
         productEntity.setStateId(ProductStateId.DISPONIVEL.getStateId());
 
         // Save product to database
+        logger.debug("Saving new product to database");
+        long startTime = System.currentTimeMillis();
         ProductEntity savedProduct = productDao.create(productEntity);
+        long endTime = System.currentTimeMillis();
 
-        // Return saved product as DTO
+        logger.info("Product created successfully: id={}, title='{}', took {}ms",
+                savedProduct.getId(), savedProduct.getTitle(), (endTime - startTime));
+
         return convertEntityToDto(savedProduct);
     }
 
@@ -113,16 +131,40 @@ public class ProductBean {
     }
 
     /**
-     * Gets products by seller
+     * Gets products by seller with robust error handling
      * 
      * @param sellerId The ID of the seller
      * @return List of product DTOs sold by the specified user
      */
     public List<ProductDto> getProductsBySeller(Long sellerId) {
-        List<ProductEntity> entities = productDao.findBySeller(sellerId);
-        return entities.stream()
-                .map(this::convertEntityToDto)
-                .collect(Collectors.toList());
+        logger.debug("Getting products for seller id={}", sellerId);
+        long startTime = System.currentTimeMillis();
+
+        try {
+            // Attempt database operation
+            List<ProductEntity> entities = productDao.findBySeller(sellerId);
+
+            // Process results
+            List<ProductDto> results = entities.stream()
+                    .map(this::convertEntityToDto)
+                    .collect(Collectors.toList());
+
+            // Log success and timing
+            logger.debug("DB Query Success: Found {} products for seller id={}, time taken: {}ms",
+                    results.size(), sellerId, (System.currentTimeMillis() - startTime));
+
+            return results;
+        } catch (PersistenceException e) {
+            // Log specific database errors with details
+            logger.error("DB Transaction Error: Failed to retrieve products for seller id={}: {}",
+                    sellerId, e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            // Log unexpected errors
+            logger.error("Unexpected error retrieving products for seller id={}: {}",
+                    sellerId, e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -240,16 +282,27 @@ public class ProductBean {
      * @return The updated product DTO or null if not found
      */
     public ProductDto updateProductStatus(Long productId, int stateId) {
+        logger.info("Updating product status: id={}, newStateId={}", productId, stateId);
+
         ProductEntity product = productDao.findById(productId);
         if (product == null) {
+            logger.warn("Product status update failed: product not found, id={}", productId);
             return null;
         }
 
-        ProductStateId state = ProductStateId.fromStateId(stateId);
-        product.setStateId(state.getStateId());
+        int oldStateId = product.getStateId();
+        ProductStateId newState = ProductStateId.fromStateId(stateId);
+
+        logger.debug("Product state transition: id={}, {} -> {}",
+                productId, ProductStateId.fromStateId(oldStateId).name(), newState.name());
+
+        product.setStateId(newState.getStateId());
         product.setEditDate(LocalDate.now());
 
         ProductEntity updatedProduct = productDao.update(product);
+        logger.info("Product status updated successfully: id={}, new state={}",
+                productId, newState.name());
+
         return convertEntityToDto(updatedProduct);
     }
 
@@ -261,10 +314,17 @@ public class ProductBean {
      * @return The updated product DTO or null if not found/invalid
      */
     public ProductDto markProductAsPurchased(Long productId, Long buyerId) {
+        logger.info("Processing purchase: productId={}, buyerId={}", productId, buyerId);
+
         ProductEntity product = productDao.findById(productId);
         UserEntity buyer = userDao.findById(buyerId);
 
-        if (product == null || buyer == null) {
+        if (product == null) {
+            logger.warn("Purchase failed: product not found, id={}", productId);
+            return null;
+        }
+        if (buyer == null) {
+            logger.warn("Purchase failed: buyer not found, id={}", buyerId);
             return null;
         }
 
@@ -272,11 +332,14 @@ public class ProductBean {
         int currentStateId = product.getStateId();
         if (currentStateId != ProductStateId.DISPONIVEL.getStateId() &&
                 currentStateId != ProductStateId.RESERVADO.getStateId()) {
+            logger.warn("Purchase failed: product {} is in invalid state: {}",
+                    productId, ProductStateId.fromStateId(currentStateId).name());
             return null;
         }
 
         // Verify buyer is not the seller
         if (product.getSeller().getId().equals(buyerId)) {
+            logger.warn("Purchase failed: buyer {} is the seller of product {}", buyerId, productId);
             return null;
         }
 
@@ -286,6 +349,9 @@ public class ProductBean {
         product.setEditDate(LocalDate.now());
 
         ProductEntity updatedProduct = productDao.update(product);
+        logger.info("Purchase completed successfully: product={}, buyer={}, price={}",
+                productId, buyerId, product.getPrice());
+
         return convertEntityToDto(updatedProduct);
     }
 
@@ -307,8 +373,17 @@ public class ProductBean {
      * @return List of product DTOs for the requested page
      */
     public List<ProductDto> getProductsPaginated(int page, int pageSize) {
+        logger.debug("Fetching paginated products: page={}, size={}", page, pageSize);
+
         int offset = page * pageSize;
+        long startTime = System.currentTimeMillis();
+
         List<ProductEntity> entities = productDao.findAllPaginated(offset, pageSize);
+
+        long endTime = System.currentTimeMillis();
+        logger.info("Retrieved {} products for page {}, took {}ms",
+                entities.size(), page, (endTime - startTime));
+
         return entities.stream()
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
@@ -368,13 +443,43 @@ public class ProductBean {
     }
 
     /**
-     * Permanently deletes an inactive product
-     * 
-     * @param id The ID of the inactive product to delete
-     * @return true if successful, false otherwise
+     * Permanently deletes a product with detailed transaction outcome logging
      */
     public boolean permanentlyDeleteProduct(Long id) {
-        return productDao.permanentlyDelete(id);
+        logger.info("Attempting to permanently delete product id={}", id);
+        long startTime = System.currentTimeMillis();
+
+        try {
+            // Check if product exists and is inactive
+            ProductEntity product = productDao.findById(id);
+
+            if (product == null) {
+                logger.warn("Delete failed: Product id={} not found", id);
+                return false;
+            }
+
+            if (product.isActive()) {
+                logger.warn("Delete failed: Cannot permanently delete active product id={}", id);
+                return false;
+            }
+
+            // Perform delete
+            boolean result = productDao.permanentlyDelete(id);
+
+            // Log outcome
+            if (result) {
+                logger.info("DB Transaction successful: Permanently deleted product id={}, time taken: {}ms",
+                        id, (System.currentTimeMillis() - startTime));
+            } else {
+                logger.warn("DB Transaction failed: Could not delete product id={}, time taken: {}ms",
+                        id, (System.currentTimeMillis() - startTime));
+            }
+
+            return result;
+        } catch (PersistenceException e) {
+            logger.error("DB Transaction Error: Failed to delete product id={}: {}", id, e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -385,50 +490,58 @@ public class ProductBean {
      */
     private ProductDto convertEntityToDto(ProductEntity entity) {
         if (entity == null) {
+            logger.debug("Attempting to convert null entity to DTO");
             return null;
         }
 
-        ProductDto dto = new ProductDto();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        dto.setDescription(entity.getDescription());
-        dto.setPrice(entity.getPrice());
-        dto.setLocation(entity.getLocation());
-        dto.setImageUrl(entity.getImageUrl());
+        try {
+            ProductDto dto = new ProductDto();
+            dto.setId(entity.getId());
+            dto.setTitle(entity.getTitle());
+            dto.setDescription(entity.getDescription());
+            dto.setPrice(entity.getPrice());
+            dto.setLocation(entity.getLocation());
+            dto.setImageUrl(entity.getImageUrl());
 
-        // Set state consistently using ProductStateId enum
-        setProductStateFromEntity(dto, entity);
+            // Set state consistently using ProductStateId enum
+            setProductStateFromEntity(dto, entity);
 
-        // No need to set active separately as it's derived from the state
+            // No need to set active separately as it's derived from the state
 
-        // Format dates to strings
-        if (entity.getDate() != null) {
-            dto.setDate(entity.getDate().format(DATE_FORMATTER));
+            // Format dates to strings
+            if (entity.getDate() != null) {
+                dto.setDate(entity.getDate().format(DATE_FORMATTER));
+            }
+
+            if (entity.getEditDate() != null) {
+                dto.setEditDate(entity.getEditDate().format(DATE_FORMATTER));
+            }
+
+            // Set category information
+            if (entity.getCategory() != null) {
+                dto.setCategoryId(entity.getCategory().getId());
+                dto.setCategoryName(entity.getCategory().getName());
+            }
+
+            // Set seller information
+            if (entity.getSeller() != null) {
+                dto.setSellerId(entity.getSeller().getId());
+                dto.setSellerUsername(entity.getSeller().getUsername());
+            }
+
+            // Set buyer information if available
+            if (entity.getBuyer() != null) {
+                dto.setBuyerId(entity.getBuyer().getId());
+                dto.setBuyerUsername(entity.getBuyer().getUsername());
+            }
+
+            logger.trace("Successfully converted entity to DTO: id={}", entity.getId());
+            return dto;
+        } catch (Exception e) {
+            logger.error("Error converting entity to DTO: id={}, error={}",
+                    entity.getId(), e.getMessage());
+            throw e;
         }
-
-        if (entity.getEditDate() != null) {
-            dto.setEditDate(entity.getEditDate().format(DATE_FORMATTER));
-        }
-
-        // Set category information
-        if (entity.getCategory() != null) {
-            dto.setCategoryId(entity.getCategory().getId());
-            dto.setCategoryName(entity.getCategory().getName());
-        }
-
-        // Set seller information
-        if (entity.getSeller() != null) {
-            dto.setSellerId(entity.getSeller().getId());
-            dto.setSellerUsername(entity.getSeller().getUsername());
-        }
-
-        // Set buyer information if available
-        if (entity.getBuyer() != null) {
-            dto.setBuyerId(entity.getBuyer().getId());
-            dto.setBuyerUsername(entity.getBuyer().getUsername());
-        }
-
-        return dto;
     }
 
     /**

@@ -2,13 +2,18 @@ package aor.paj.dao;
 
 import java.util.List;
 
+import aor.paj.bean.UserBean;
 import aor.paj.entity.UserEntity;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Stateless
 public class UserDao {
+
+    private static final Logger logger = LogManager.getLogger(UserDao.class);
 
     @PersistenceContext(unitName = "jorge-nuno-diogo-proj3")
     private EntityManager entityManager;
@@ -28,6 +33,7 @@ public class UserDao {
             entityManager.remove(user);
             return true;
         }
+        logger.warn("Unable to delete user with id: {}", id);
         return false;
     }
 
@@ -38,6 +44,7 @@ public class UserDao {
             entityManager.merge(user);
             return true;
         }
+        logger.warn("Unable to suspend user with id: {}", id);
         return false;
     }
 
@@ -48,6 +55,7 @@ public class UserDao {
             entityManager.merge(user);
             return true;
         }
+        logger.warn("Unable to activate user with id: {}", id);
         return false;
     }
 
