@@ -7,8 +7,12 @@ global.console = {
 import {
     registerUser,
     loginUser,
+    updateUser,
+    deleteUser,
+    suspendUser,
   } from './userAPI.js';
   import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
+  import { API_ENDPOINTS } from '../config/apiConfig';
 
 // mock do módulo 'apiUtils.js' (as funções dentro desse módulo serão substituídas por mocks)
 jest.mock('../utils/apiUtils.js');
@@ -36,7 +40,7 @@ describe('User API', () => {
     // teste para a resposta da API ao registar um utilizador
     describe('registerUser', () => {
         it('should return the registered user when the API call is successful', async () => {
-            // 1. Arrange
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
             // mock de uma tentativa de registo com os seguintes dados
             const newUser = {
                 username: 'joca123',
@@ -56,11 +60,11 @@ describe('User API', () => {
             // mock do fetch para retornar a resposta simulada
             fetch.mockResolvedValue(mockResponse);
 
-            // 2. Act
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
             // chamada à função que estamos a testar, passando os dados do novo utilizador
             const result = await registerUser(newUser);
 
-        // 3. Assert
+        // 3. Assert (verifica o funcionamento da função é o esperado)
         // verifica se a função fetch foi chamada exatamente uma vez
         expect(fetch).toHaveBeenCalledTimes(1);
         // verifica se a chamada ao fetch foi feita com os argumentos esperados
@@ -77,7 +81,7 @@ describe('User API', () => {
     });
 
     it('should throw an error when the API call fails', async () => {
-        // 1. Arrange
+        // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
         // mock de uma tentativa de registo com uma password inválida
         const newUser = {
             username: 'joca123',
@@ -93,11 +97,11 @@ describe('User API', () => {
         // mock do fetch para retornar a resposta simulada
         fetch.mockResolvedValue(mockResponse);
 
-    // 2. Act
+    // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
     // chama a função para registrar o utilizador
     const result = registerUser(newUser);
 
-    // 3. Assert
+    // 3. Assert (verifica o funcionamento da função é o esperado)
     // verifica que a exceção foi lançada
     await expect(result).rejects.toThrow('Registration failed: Bad Request');
     });
@@ -105,7 +109,7 @@ describe('User API', () => {
 
     describe('loginUser', () => {
         it('should return a token when the API call is successful', async () => {
-            // 1. Arrange
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
             // mock de uma tentativa de login com os seguintes dados
             const credentials = {
                 username: 'joca123',
@@ -124,11 +128,11 @@ describe('User API', () => {
             const mockSetAuthToken = jest.fn();
             global.setAuthToken = mockSetAuthToken;
     
-            // 2. Act
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
             // chamada à função a testar, passando as credênciais mock
             const result = await loginUser(credentials);
     
-            // 3. Assert
+            // 3. Assert (verifica o funcionamento da função é o esperado)
             // verifica se a função foi chamada uma vez
             expect(fetch).toHaveBeenCalledTimes(1);
             // verifica se a função foi chamada com os argumentos esperados
@@ -147,7 +151,7 @@ describe('User API', () => {
         });
     
         it('should throw an error when the API call fails', async () => {
-            // 1. Arrange
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
             // mock de uma tentativa de login com uma password inválida
             const credentials = {
                 username: 'joca123',
@@ -161,13 +165,167 @@ describe('User API', () => {
             // mock do fetch para retornar a resposta simulada
             fetch.mockResolvedValue(mockResponse);
     
-            // 2. Act
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
             // chamada à função a testar, passando as credênciais mock
             const result = loginUser(credentials);
     
-            // 3. Assert
+            // 3. Assert (verifica o funcionamento da função é o esperado)
             // verifica se a exceção foi lançada
             await expect(result).rejects.toThrow('Login failed: Unauthorized');
+        });
+    });
+
+    describe('updateUser', () => {
+        it('should update the user successfully and return the updated data', async () => {
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
+            // mock dos dados do user a serem atualizados
+            const userId = '123';
+            const userData = { name: 'Joca456', email: 'jurojoca@gmail.com' };
+            // mock dos dados retornados pela API após a atualização
+            const mockUpdatedUser = { id: userId, ...userData };
+            // mock da resposta da API ao fetch com sucesso (ok: true)
+            const mockResponse = {
+                ok: true,
+                json: jest.fn().mockResolvedValue(mockUpdatedUser),
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
+            // chamada à função a testar, passando o userId e os dados mock
+            const result = await updateUser(userId, userData);
+    
+            // 3. Assert (verifica o funcionamento da função é o esperado)
+            // verifica se a função foi chamada uma vez
+            expect(makeAuthenticatedRequest).toHaveBeenCalledTimes(1);
+            // verifica se a função foi chamada com os argumentos esperados
+            expect(makeAuthenticatedRequest).toHaveBeenCalledWith(
+                API_ENDPOINTS.users.update(userId),
+                {
+                    method: 'PUT',
+                    body: JSON.stringify(userData),
+                }
+            );
+            // verifica que o retorno é o user atualizado
+            expect(result).toEqual(mockUpdatedUser);
+        });
+    
+        it('should throw an error when the API call fails', async () => {
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
+            // mock dos dados do user a serem atualizados
+            const userId = '123';
+            const userData = { name: 'Joca456' };
+            // mock da resposta da API ao fetch sem sucesso (ok: false)
+            const mockResponse = {
+                ok: false,
+                statusText: 'Bad Request',
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
+            // chamada à função a testar, passando o userId e os dados mock
+            const result = updateUser(userId, userData);
+    
+            // 3. Assert (verifica o funcionamento da função é o esperado)
+            // verifica se a exceção foi lançada
+            await expect(result).rejects.toThrow('Error updating user: Bad Request');
+        });
+    });
+
+    describe('deleteUser', () => {
+        it('should delete the user successfully', async () => {
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
+            // mock do ID do user a ser apagado
+            const userId = '123';
+            // mock da resposta da API ao fetch com sucesso (ok: true)
+            const mockResponse = {
+                ok: true,
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta mock
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
+            // chama a função a testar e passa o userId mock
+            await deleteUser(userId);
+
+            // 3. Assert (verifica o funcionamento da função é o esperado)
+            // verifica se a função foi chamada uma vez
+            expect(makeAuthenticatedRequest).toHaveBeenCalledTimes(1);
+            // verifica se a função foi chamada com os argumentos esperados
+            expect(makeAuthenticatedRequest).toHaveBeenCalledWith(
+                API_ENDPOINTS.users.delete(userId),
+                { method: 'DELETE' }
+            );
+        });
+
+        it('should throw an error when the API call fails', async () => {
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
+            // mock do ID do user a apagar
+            const userId = '123';
+            // mock da resposta da API ao fetch sem sucesso (ok: false)
+            const mockResponse = {
+                ok: false,
+                statusText: 'Not Found',
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
+            // chama a função a testar e passa o userId mock
+            const result = deleteUser(userId);
+
+            // 3. Assert (verifica o funcionamento da função é o esperado)
+            // verifica se a exceção foi lançada
+            await expect(result).rejects.toThrow('Error deleting user: Not Found');
+        });
+    });
+
+    describe('suspendUser', () => {
+        it('should suspend the user successfully', async () => {
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
+            // mock do ID do user a ser suspenso
+            const userId = '123';
+            // mock da resposta da API ao fetch com sucesso (ok: true)
+            const mockResponse = {
+                ok: true,
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
+            // chama a função a testar e passa o userId mock
+            await suspendUser(userId);
+    
+            // 3. Assert (verifica o funcionamento da função é o esperado)
+            // verifica se a função foi chamada uma vez
+            expect(makeAuthenticatedRequest).toHaveBeenCalledTimes(1);
+            // verifica se a função foi chamada com os argumentos esperados
+            expect(makeAuthenticatedRequest).toHaveBeenCalledWith(
+                API_ENDPOINTS.users.suspend(userId),
+                { method: 'PATCH' }
+            );
+        });
+    
+        it('should throw an error when the API call fails', async () => {
+            // 1. Arrange (define os dados fictícios e configura os mocks para poder correr a função chamada no Act)
+            // mock do ID do user a suspender
+            const userId = '123';
+            // mock da resposta da API ao fetch sem sucesso (ok: false)
+            const mockResponse = {
+                ok: false,
+                statusText: 'Forbidden',
+            };
+            // mock da função makeAuthenticatedRequest para retornar a resposta simulada
+            makeAuthenticatedRequest.mockResolvedValue(mockResponse);
+    
+            // 2. Act (chama a função e corre-a utilizando os dados definidos no "Arrange")
+            // chama a função a testar e passa o userId mock
+            const result = suspendUser(userId);
+    
+            // 3. Assert (verifica o funcionamento da função é o esperado)
+            // verifica se a exceção foi lançada
+            await expect(result).rejects.toThrow('Error suspending user: Forbidden');
         });
     });
 
