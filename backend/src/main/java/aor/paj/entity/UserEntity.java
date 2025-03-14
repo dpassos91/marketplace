@@ -21,12 +21,12 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table(name = "app_user")
 @NamedQueries({
-        @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user"),
-        @NamedQuery(name = "User.findById", query = "SELECT user FROM UserEntity user WHERE user.id = :id"),
-        @NamedQuery(name = "User.findByActive", query = "SELECT user FROM UserEntity user WHERE user.isActive = :isActive"),
-        @NamedQuery(name = "User.findAllUsername", query = "SELECT user.username FROM UserEntity user"),
-        @NamedQuery(name = "User.findByUsername", query = "SELECT user FROM UserEntity user WHERE user.username = :username"),
-        @NamedQuery(name = "User.findByToken", query = "SELECT user FROM UserEntity user WHERE user.token = :token")
+        @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user WHERE user.isDeleted = false"),
+        @NamedQuery(name = "User.findById", query = "SELECT user FROM UserEntity user WHERE user.id = :id AND user.isDeleted = false"),
+        @NamedQuery(name = "User.findByActive", query = "SELECT user FROM UserEntity user WHERE user.isActive = :isActive AND user.isDeleted = false"),
+        @NamedQuery(name = "User.findAllUsername", query = "SELECT user.username FROM UserEntity user WHERE user.isDeleted = false"),
+        @NamedQuery(name = "User.findByUsername", query = "SELECT user FROM UserEntity user WHERE user.username = :username AND user.isDeleted = false"),
+        @NamedQuery(name = "User.findByToken", query = "SELECT user FROM UserEntity user WHERE user.token = :token AND user.isDeleted = false")
 })
 public class UserEntity implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -68,6 +68,9 @@ public class UserEntity implements Serializable {
 
     @Column(name = "is_admin", nullable = false, unique = false, updatable = true)
     private boolean isAdmin;
+
+    @Column(name = "is_deleted", nullable = false, unique = false, updatable = true)
+    private boolean isDeleted = false; // Valor padrão é false
 
     // TODO: Dúvidas sobre "cascade" e "orphanRemoval"
     // "cascade" permite que operações no UserEntity sejam propagadas para os
@@ -124,6 +127,10 @@ public class UserEntity implements Serializable {
         return lastName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public String getToken() {
         return token;
     }
@@ -148,6 +155,10 @@ public class UserEntity implements Serializable {
         return isAdmin;
     }
 
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -169,7 +180,7 @@ public class UserEntity implements Serializable {
      * Sets the password for the user. If the password is not already hashed, it
      * will
      * hash it using BCrypt.
-     * 
+     *
      * @param password the password to set
      * @see org.mindrot.jbcrypt.BCrypt
      */
@@ -184,7 +195,7 @@ public class UserEntity implements Serializable {
 
     /**
      * Checks if the given password matches the user's password.
-     * 
+     *
      * @param plainPassword the password to check
      * @return true if the password matches, false otherwise
      * @see org.mindrot.jbcrypt.BCrypt
@@ -195,7 +206,7 @@ public class UserEntity implements Serializable {
 
     /**
      * Updates the user's password if the current password is correct.
-     * 
+     *
      * @param currentPassword the current password
      * @param newPassword     the new password
      * @return true if the password was updated, false otherwise
@@ -233,6 +244,10 @@ public class UserEntity implements Serializable {
         isAdmin = admin;
     }
 
+     public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
     public Set<ProductEntity> getSoldProducts() {
         return soldProducts;
     }
@@ -263,6 +278,16 @@ public class UserEntity implements Serializable {
 
     public void setReceivedEvaluations(Set<EvaluationEntity> receivedEvaluations) {
         this.receivedEvaluations = receivedEvaluations;
+    }
+
+    public void markAsDeleted() {
+        this.username = "Criador Excluído";
+        this.firstName = "Criador";
+        this.lastName = "Excluído";
+        this.email = null; // Opcional: limpar o email para proteger dados
+        this.phone = null; // Opcional: limpar o telefone
+        this.isActive = false;
+        this.isDeleted = true;
     }
 
     @Override
@@ -307,6 +332,8 @@ public class UserEntity implements Serializable {
                 ", phone='" + phone + '\'' +
                 ", isActive=" + isActive +
                 ", isAdmin=" + isAdmin +
+                ", isDeleted=" + isDeleted +
                 '}';
     }
 }
+

@@ -6,7 +6,7 @@
  */
 
 // Base URL
-const API_BASE_URL = 'http://localhost:8080/jorge-nuno-diogo-proj3/rest';
+const API_BASE_URL = 'http://localhost:8080/diogo-proj4/rest';
 
 // API Endpoints
 const API_ENDPOINTS = {

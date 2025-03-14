@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>aor.paj</groupId>
-  <artifactId>jorge-nuno-diogo-proj3</artifactId>
+  <artifactId>diogo-proj4</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>jorge-nuno-diogo-proj3</name>
+  <name>diogo-proj4</name>
   <packaging>war</packaging>
 
   <properties>

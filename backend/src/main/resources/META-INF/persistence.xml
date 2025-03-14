@@ -3,7 +3,7 @@
     xmlns="https://jakarta.ee/xml/ns/persistence"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-    <persistence-unit name="jorge-nuno-diogo-proj3" transaction-type="JTA">
+    <persistence-unit name="diogo-proj4" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:/postgresDS</jta-data-source>
         <properties>

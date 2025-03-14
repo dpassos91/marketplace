@@ -15,7 +15,7 @@ public class UserDao {
 
     private static final Logger logger = LogManager.getLogger(UserDao.class);
 
-    @PersistenceContext(unitName = "jorge-nuno-diogo-proj3")
+    @PersistenceContext(unitName = "diogo-proj4")
     private EntityManager entityManager;
 
     public UserEntity create(UserEntity user) {
