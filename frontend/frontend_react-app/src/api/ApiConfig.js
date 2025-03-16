@@ -97,4 +97,39 @@ const DEFAULT_OPTIONS = {
   },
 };
 
-export { API_BASE_URL, API_ENDPOINTS, DEFAULT_OPTIONS };
+// Interceptor para adicionar token de autenticação
+const authInterceptor = (options) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    return {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`
+      }
+    };
+  }
+  return options;
+};
+
+// Função para lidar com erros de API de forma consistente
+const handleApiError = (error) => {
+  console.error('API Error:', error);
+  alert('Ocorreu um erro ao processar a sua requisição. Por favor, tente novamente mais tarde.');
+};
+
+// Função genérica para fazer chamadas de API
+const apiCall = async (url, options = {}) => {
+  try {
+    const response = await fetch(url, authInterceptor({ ...DEFAULT_OPTIONS, ...options }));
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    handleApiError(error);
+    throw error;
+  }
+};
+
+export { API_BASE_URL, API_ENDPOINTS, DEFAULT_OPTIONS, authInterceptor, apiCall, handleApiError  };

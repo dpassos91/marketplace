@@ -1,6 +1,7 @@
 
 // src/api/productAPI.js
-import { API_ENDPOINTS, apiCall } from './apiConfig';
+import { API_ENDPOINTS, apiCall } from './ApiConfig';
+import { PRODUCT_STATES } from './productStates';
 
 /**
  * Fetches all products from the API.
