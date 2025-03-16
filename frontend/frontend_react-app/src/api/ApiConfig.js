@@ -115,7 +115,7 @@ const authInterceptor = (options) => {
 // Função para lidar com erros de API de forma consistente
 const handleApiError = (error) => {
   console.error('API Error:', error);
-  alert('Ocorreu um erro ao processar a sua requisição. Por favor, tente novamente mais tarde.');
+  //alert('Ocorreu um erro ao processar a sua requisição. Por favor, tente novamente mais tarde.');
 };
 
 // Função genérica para fazer chamadas de API
