@@ -2,7 +2,7 @@
 
 import { API_ENDPOINTS } from '../config/apiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
-import { PRODUCT_STATES } from '../config/productStates.js';
+import { PRODUCT_STATES } from '../../../javaScript/config/productStates.js';
 
 /**
  * Fetches all products from the API.

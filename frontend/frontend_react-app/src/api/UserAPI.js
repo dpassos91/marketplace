@@ -1,6 +1,6 @@
 'use strict';
 
-import { API_ENDPOINTS } from '../config/apiConfig.js';
+import { API_ENDPOINTS } from './ApiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 import { setAuthToken, removeAuthToken } from '../utils/authUtils.js';
 
