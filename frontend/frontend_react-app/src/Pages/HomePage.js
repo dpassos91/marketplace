@@ -7,8 +7,6 @@ import CategoryCard from '../components/CategoryCard';
 import * as productAPI from '../api/productAPI'; //
 import { categoryAPI } from '../api/categoryAPI';
 
-//  Importe productApi e categoryApi
-// Importe outros componentes necessários (Header, Aside, Footer)
 
 function HomePage() {
   const [recentProducts, setRecentProducts] = useState([]);

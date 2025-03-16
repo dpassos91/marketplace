@@ -3,6 +3,8 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import ProductPage from './pages/ProductPage';
 import UserProfilePage from './pages/UserProfilePage';
+import './App.css';
+
 
 function App() {
   return (
