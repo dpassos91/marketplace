@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Aside from '../components/Aside';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import * as productAPI from '../api/productAPI'; //
@@ -31,7 +29,6 @@ function HomePage() {
 
   return (
     <>
-      <Header />
       <main className="main-container">
         <Aside />
         <div className="main-card-container">
@@ -50,7 +47,6 @@ function HomePage() {
           </section>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

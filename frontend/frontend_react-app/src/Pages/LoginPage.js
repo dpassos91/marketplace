@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/UseAuth';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import '../App.css';
 
 function LoginPage() {
@@ -17,7 +15,6 @@ function LoginPage() {
 
   return (
     <>
-      <Header />
       <main className="login">
         <div className="login-container">
           <h2>Login</h2>
@@ -47,7 +44,6 @@ function LoginPage() {
           </form>
         </div>
       </main>
-      <Footer />
     </>
   );
 }
