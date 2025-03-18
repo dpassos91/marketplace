@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as userAPI from '../api/UserAPI';
 
-// Função para obter dados do usuário do localStorage
+// Funções utilitárias para manipular localStorage
 const getStoredUser = () => {
     try {
         const storedUser = localStorage.getItem('userData');
@@ -13,7 +13,6 @@ const getStoredUser = () => {
     }
 };
 
-// Função para definir dados do usuário no localStorage
 const setStoredUser = (user) => {
     try {
         localStorage.setItem('userData', JSON.stringify(user));
@@ -22,7 +21,6 @@ const setStoredUser = (user) => {
     }
 };
 
-// Função para remover dados do usuário do localStorage
 const clearStoredUser = () => {
     try {
         localStorage.removeItem('userData');
@@ -35,8 +33,16 @@ export function useAuth() {
     const [user, setUser] = useState(getStoredUser());
     const navigate = useNavigate();
 
+    // Sincronizar estado com mudanças no localStorage
     useEffect(() => {
-        setUser(getStoredUser());
+        const handleStorageChange = () => {
+            setUser(getStoredUser());
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
     }, []);
 
     const login = async (credentials) => {
@@ -44,40 +50,35 @@ export function useAuth() {
             const userData = await userAPI.loginUser(credentials);
             setStoredUser(userData);
             setUser(userData);
-            alert(
-                `Login bem sucedido! Bem-vindo/a ${userData.firstName} ${userData.lastName}!`
-            );
+            alert(`Login bem sucedido! Bem-vindo/a ${userData.firstName} ${userData.lastName}!`);
             navigate('/');
             return true;
         } catch (error) {
+            console.error('Login falhou:', error);
             alert('Login falhou! Por favor verifique as suas credenciais.');
-            console.error(error);
             return false;
         }
     };
 
     const register = async (newUser) => {
         try {
-            await userAPI.registerUser(newUser);
-            alert('Utilizador registado! Bem-vindo/a, ' + newUser.firstName);
-            navigate('/login');
+            const userData = await userAPI.registerUser(newUser);
+            setStoredUser(userData); // Autentica automaticamente após registro
+            setUser(userData);
+            alert(`Utilizador registado! Bem-vindo/a ${newUser.firstName}`);
+            navigate('/');
             return true;
         } catch (error) {
+            console.error('Erro ao registar utilizador:', error);
             alert('Erro ao registar utilizador. Tente novamente.');
-            console.error(error);
             return false;
         }
     };
 
-    const logout = async () => {
-        try {
-            await userAPI.logoutUser();
-            clearStoredUser();
-            setUser(null);
-            navigate('/');
-        } catch (error) {
-            console.error('Error during logout:', error);
-        }
+    const logout = () => {
+        clearStoredUser();
+        setUser(null);
+        navigate('/');
     };
 
     return { user, login, register, logout };

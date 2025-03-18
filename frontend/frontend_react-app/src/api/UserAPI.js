@@ -36,6 +36,8 @@ export async function loginUser(credentials) {
       },
       body: JSON.stringify(credentials),
     });
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
 
     if (!response.ok) {
       throw new Error(`Login failed: ${response.statusText}`);
@@ -65,6 +67,7 @@ export async function loginUser(credentials) {
     }
   } catch (error) {
     console.error('Error during login:', error);
+    console.error('Error details:', error.message);
     throw error;
   }
 }

@@ -120,16 +120,23 @@ const handleApiError = (error) => {
 
 // Função genérica para fazer chamadas de API
 const apiCall = async (url, options = {}) => {
+  console.log('Chamando API:', url);
   try {
-    const response = await fetch(url, authInterceptor({ ...DEFAULT_OPTIONS, ...options }));
+    const response = await fetch(url, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    });
+    console.log('Resposta da API:', response.status, response.statusText);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Erro na API: ${response.statusText}`);
     }
-    return await response.json();
+    const data = await response.json();
+    console.log('Dados recebidos:', data);
+    return data;
   } catch (error) {
-    handleApiError(error);
+    console.error('Erro na chamada da API:', error);
     throw error;
   }
 };
 
-export { API_BASE_URL, API_ENDPOINTS, DEFAULT_OPTIONS, authInterceptor, apiCall, handleApiError  };
+export { API_BASE_URL, API_ENDPOINTS, DEFAULT_OPTIONS, authInterceptor, apiCall, handleApiError };

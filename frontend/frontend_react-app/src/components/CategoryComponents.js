@@ -123,5 +123,21 @@ export function ProductList({ products, categoryId }) {
 
 // Nota: Você precisará criar um componente ProductCard separadamente
 function ProductCard({ product }) {
-  // Implemente o card do produto aqui
+  const imageUrl = product.imageUrl || 'https://via.placeholder.com/150';
+  
+  return (
+    <div className="card product-card">
+      <img src={imageUrl} alt={product.name} />
+      <div>
+        <h2>{product.name}</h2>
+        <p>{product.description || 'Descrição não disponível'}</p>
+        <p>Preço: {product.price ? `${product.price}€` : 'N/A'}</p>
+        <button type="button" title="Ver detalhes">
+          Ver detalhes
+        </button>
+      </div>
+    </div>
+  );
 }
+
+export default ProductCard;

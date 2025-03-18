@@ -5,6 +5,7 @@ import CategoryCard from '../components/CategoryCard';
 import * as productAPI from '../api/productAPI'; //
 import { categoryAPI } from '../api/categoryAPI';
 
+console.log('Objeto categoryAPI:', categoryAPI);
 
 function HomePage() {
   const [recentProducts, setRecentProducts] = useState([]);
@@ -18,8 +19,9 @@ function HomePage() {
         setRecentProducts(productsData);
 
         // Buscar as categorias disponíveis
-        const categoriesData = await categoryAPI.fetchAll();
+        const categoriesData = await categoryAPI.getAllCategories();
         setCategories(categoriesData);
+        console.log('Categorias carregadas:', categories);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }

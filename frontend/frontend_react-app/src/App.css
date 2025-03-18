@@ -1963,3 +1963,29 @@ button:disabled {
 .add-evaluation-btn {
   margin-top: 16px;
 }
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px;
+}
+
+.category-card img,
+.product-card img {
+  width: 100%;
+  height: auto;
+}
+
+.categories-carousel-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.categories-carousel {
+  overflow-x: auto;
+}
+
+.categories-carousel-inner {
+  display: flex;
+}

@@ -1,10 +1,9 @@
-// src/api/categoryAPI.js
-
 import { API_ENDPOINTS, apiCall } from '../api/ApiConfig';
 
 export const categoryAPI = {
   getAllCategories: async () => {
     return await apiCall(API_ENDPOINTS.categories.all);
+    console.log('URL das categorias:', API_ENDPOINTS.categories.all);
   },
 
   getCategoryById: async (categoryId) => {
