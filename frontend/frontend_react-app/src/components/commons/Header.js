@@ -1,17 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/UseAuth';
 import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../../stores/authStore';
+import { useAuth } from '../../hooks/UseAuth';
 
 function Header() {
-  const { user, logout } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleOpenModal = () => {
-    // Defina a lógica para abrir o modal aqui
-    // ou importe a função de outro componente/hook
-    console.log('Abrir modal'); // Apenas para teste
-    navigate('/sell-product'); // Use navigate para redirecionar
+    navigate('/sell-product');
   };
 
   return (
@@ -23,45 +22,49 @@ function Header() {
       </div>
 
       <div className="bem-vindo" id="welcome-message">
-        {/* Mensagem de boas-vindas com nome do user logado */}
-      </div>
-      <div className="img-perfil" id="profile-picture-container">
-        <img src="" alt="Foto Perfil" id="profile-picture" />
+        {user ? `Bem-vindo, ${user.firstName}!` : 'Bem-vindo ao The Loop Market!'}
       </div>
 
-      <div className="admin-button" id="adminBtn">
-        <Link to="/admin" title="Admin Dashboard">
-          <i className="fa fa-lock" aria-hidden="true"></i> Painel de Administração
-        </Link>
+      <div className="img-perfil" id="profile-picture-container">
+        {user ? (
+          <img
+            src={user.profilePicture || '/path/to/default/image.jpg'}
+            alt={user.firstName ? `Foto de perfil de ${user.firstName}` : 'Foto de perfil'}
+            id="profile-picture"
+          />
+        ) : (
+          <img src="/path/to/default/image.jpg" alt="Foto de perfil padrão" id="profile-picture" />
+        )}
       </div>
 
       <nav className="navbar">
-        {user ? (
-          <>
-            <div className="button" id="botao-logout">
-              <button onClick={logout} title="Logout">
-                <i className="fa fa-sign-out" aria-hidden="true"></i>
-              </button>
-            </div>
-            <div className="button" id="openModalBtn">
-              <button onClick={handleOpenModal} title="Vender um produto">
-                <i className="fa fa-plus" aria-hidden="true"></i>
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="button" id="botao-login">
-            <Link to="/login" title="Login">
-              <i className="fa fa-user-o" aria-hidden="true"></i>
-            </Link>
-          </div>
-        )}
-      </nav>
+  {user !== null ? (
+    <>
+      <div className="button" id="botao-logout">
+        <button onClick={logout} title="Logout">
+          Logout
+        </button>
+      </div>
+      <div className="button" id="openModalBtn">
+        <button onClick={handleOpenModal} title="Vender um produto">
+          Vender
+        </button>
+      </div>
+    </>
+  ) : (
+    <div className="button" id="botao-login">
+      <Link to="/login" title="Login">
+        Login
+      </Link>
+    </div>
+  )}
+</nav>
     </header>
   );
 }
 
 export default Header;
+
 
 
 
