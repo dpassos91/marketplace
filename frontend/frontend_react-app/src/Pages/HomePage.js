@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Aside from '../components/Aside';
 import ProductCard from '../components/ProductCard';
-import CategoryCard from '../components/CategoryCard';
+import { CategoryCard } from '../components/CategoryComponents';
 import * as productAPI from '../api/productAPI'; //
-import { categoryAPI } from '../api/categoryAPI';
+import { categoryAPI } from '../api/categoryAPI'; // Certifique-se de que está importando corretamente
 
 console.log('Objeto categoryAPI:', categoryAPI);
 
@@ -19,15 +19,16 @@ function HomePage() {
         setRecentProducts(productsData);
 
         // Buscar as categorias disponíveis
-        const categoriesData = await categoryAPI.getAllCategories();
+        const categoriesData = await categoryAPI.getAllCategories(); // Usando categoryAPI corretamente
         setCategories(categoriesData);
-        console.log('Categorias carregadas:', categories);
+        console.log('Categorias carregadas:', categoriesData); // Corrigido para mostrar o resultado correto
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }
     };
+
     loadData();
-  }, []);
+  }, []); // Certifique-se de que o array de dependências está vazio para evitar loops infinitos
 
   return (
     <>
@@ -54,4 +55,3 @@ function HomePage() {
 }
 
 export default HomePage;
-

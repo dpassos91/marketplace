@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import * as categoryAPI from '../api/categoryAPI';
+import { categoryAPI } from '../api/categoryAPI'; 
 
 // Componente de Card de Categoria
-function CategoryCard({ category }) {
+export function CategoryCard({ category }) {
   const navigate = useNavigate();
   const imageUrl = category.imageUrl || 'https://ps.w.org/gazchaps-woocommerce-auto-category-product-thumbnails/assets/icon-256x256.png?rev=1848416';
 
