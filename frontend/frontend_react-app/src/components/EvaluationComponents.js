@@ -62,7 +62,7 @@ export function SellerEvaluations({ sellerId }) {
   }, [sellerId]);
 
   function calculateAverageRating(evaluations) {
-    const totalRating = evaluations.reduce((sum, eval) => sum + eval.rating, 0);
+    const totalRating = evaluations.reduce((sum, evaluation) => sum + evaluation.rating, 0);
     const averageRating = totalRating / evaluations.length;
     const averageRatingStars = '★'.repeat(Math.round(averageRating)) + '☆'.repeat(5 - Math.round(averageRating));
     return { averageRating, averageRatingStars };

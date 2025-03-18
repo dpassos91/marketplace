@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import * as userAPI from '../api/userAPI';
+import * as userAPI from '../api/UserAPI';
 import * as productAPI from '../api/productAPI';
 import * as productComponent from './productComponent';
-import { useAuth } from '../hooks/useAuth';
+import * as useAuth from '../hooks/UseAuth';
 import { loadSellerEvaluations } from './evaluationComponent';
 
 export function LoginForm() {
@@ -154,7 +154,7 @@ export function ProfileUI({ user, isOwnProfile }) {
         result.produtos = [];
       }
       alert('Dados atualizados com sucesso!');
-      setCurrentUser(result);
+      setUser(result);
       window.location.reload();
     } catch (error) {
       alert('Erro ao atualizar os dados. Tente novamente.');
