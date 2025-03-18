@@ -6,8 +6,8 @@ import { useAuth } from '../../hooks/UseAuth';
 
 function Header() {
   const user = useAuthStore((state) => state.user);
-  const { logout } = useAuth();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleOpenModal = () => {
     navigate('/sell-product');
@@ -22,48 +22,47 @@ function Header() {
       </div>
 
       <div className="bem-vindo" id="welcome-message">
-        {user ? `Bem-vindo, ${user.firstName}!` : 'Bem-vindo ao The Loop Market!'}
+        {user && `Bem-vindo, ${user.firstName}!` /* Exibe a mensagem apenas se o usuário estiver logado */}
       </div>
 
-      <div className="img-perfil" id="profile-picture-container">
-        {user ? (
+      {user ? (
+        <div className="img-perfil" id="profile-picture-container">
           <img
             src={user.profilePicture || '/path/to/default/image.jpg'}
             alt={user.firstName ? `Foto de perfil de ${user.firstName}` : 'Foto de perfil'}
             id="profile-picture"
           />
-        ) : (
-          <img src="/path/to/default/image.jpg" alt="Foto de perfil padrão" id="profile-picture" />
-        )}
-      </div>
+        </div>
+      ) : null}
 
       <nav className="navbar">
-  {user !== null ? (
-    <>
-      <div className="button" id="botao-logout">
-        <button onClick={logout} title="Logout">
-          Logout
-        </button>
-      </div>
-      <div className="button" id="openModalBtn">
-        <button onClick={handleOpenModal} title="Vender um produto">
-          Vender
-        </button>
-      </div>
-    </>
-  ) : (
-    <div className="button" id="botao-login">
-      <Link to="/login" title="Login">
-        Login
-      </Link>
-    </div>
-  )}
-</nav>
+        {user !== null ? (
+          <>
+            <div className="button" id="botao-logout">
+              <button onClick={() => logout()} title="Logout">
+                Logout
+              </button>
+            </div>
+            <div className="button" id="openModalBtn">
+              <button onClick={handleOpenModal} title="Vender um produto">
+                Vender
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="button" id="botao-login">
+            <Link to="/login" title="Login">
+              Login
+            </Link>
+          </div>
+        )}
+      </nav>
     </header>
   );
 }
 
 export default Header;
+
 
 
 
