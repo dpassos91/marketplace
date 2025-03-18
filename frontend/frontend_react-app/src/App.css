@@ -1964,6 +1964,8 @@ button:disabled {
   margin-top: 16px;
 }
 
+/* CSS REACT */
+
 .card {
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -1989,3 +1991,16 @@ button:disabled {
 .categories-carousel-inner {
   display: flex;
 }
+
+.category-card .category-content {
+  text-align: center;
+}
+
+.category-card .category-name {
+  margin-bottom: 10px;
+}
+
+.category-card .category-description {
+  margin-bottom: 15px;
+}
+
