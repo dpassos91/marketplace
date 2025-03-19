@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
@@ -8,6 +8,10 @@ function Header() {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const { logout } = useAuth();
+
+  useEffect(() => {
+    console.log('URL da imagem do usuário:', user?.picture);
+  }, [user]);
 
   const handleOpenModal = () => {
     navigate('/sell-product');
@@ -22,15 +26,19 @@ function Header() {
       </div>
 
       <div className="bem-vindo" id="welcome-message">
-        {user && `Bem-vindo, ${user.firstName}!` /* Exibe a mensagem apenas se o usuário estiver logado */}
+        {user && `Bem-vindo, ${user.firstName}!`}
       </div>
 
       {user ? (
         <div className="img-perfil" id="profile-picture-container">
           <img
-            src={user.profilePicture || '/path/to/default/image.jpg'}
-            alt={user.firstName ? `Foto de perfil de ${user.firstName}` : 'Foto de perfil'}
+            src={user.picture || '/path/to/default/image.jpg'}
+            alt={user.firstName ? `Foto de perfil de ${user.firstName}` : 'Erro ao carregar a imagem'}
             id="profile-picture"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/path/to/default/image.jpg';
+            }}
           />
         </div>
       ) : null}
