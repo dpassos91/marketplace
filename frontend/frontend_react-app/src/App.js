@@ -8,6 +8,7 @@ import UserProfilePage from './pages/UserProfilePage';
 import Layout from './components/commons/Layout';
 import './App.css';
 import useAuthStore from './stores/authStore';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
 

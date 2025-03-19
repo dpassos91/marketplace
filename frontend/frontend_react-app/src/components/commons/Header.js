@@ -36,23 +36,23 @@ function Header() {
       ) : null}
 
       <nav className="navbar">
-        {user !== null ? (
+        {user ? (
           <>
             <div className="button" id="botao-logout">
-              <button onClick={() => logout()} title="Logout">
-                Logout
+              <button onClick={() => logout()} title="Logout" className="btn btn-outline-danger">
+                <i className="fa fa-sign-out" aria-hidden="true"></i>
               </button>
             </div>
             <div className="button" id="openModalBtn">
-              <button onClick={handleOpenModal} title="Vender um produto">
-                Vender
+              <button onClick={handleOpenModal} title="Vender um produto" className="btn btn-outline-success">
+                <i className="fa fa-plus" aria-hidden="true"></i>
               </button>
             </div>
           </>
         ) : (
           <div className="button" id="botao-login">
-            <Link to="/login" title="Login">
-              Login
+            <Link to="/login" title="Login" className="btn btn-outline-primary">
+              <i className="fa fa-user" aria-hidden="true"></i>
             </Link>
           </div>
         )}
@@ -62,8 +62,3 @@ function Header() {
 }
 
 export default Header;
-
-
-
-
-

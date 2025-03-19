@@ -2004,3 +2004,42 @@ button:disabled {
   margin-bottom: 15px;
 }
 
+/* Estilo geral dos botões */
+.navbar .button {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+.navbar .button a,
+.navbar .button button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2d572c; /* Cor verde escuro */
+  color: white; /* Cor do texto */
+  border: none;
+  border-radius: 8px; /* Bordas arredondadas */
+  padding: 10px; /* Espaçamento interno menor */
+  font-size: 16px; /* Tamanho da fonte */
+  text-decoration: none; /* Remover sublinhado */
+  cursor: pointer; /* Cursor de mão */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  transition: all 0.3s ease-in-out; /* Transição suave */
+  width: 40px; /* Largura fixa para manter todos os botões iguais */
+  height: 40px; /* Altura fixa para manter todos os botões iguais */
+}
+
+/* Hover nos botões */
+.navbar .button a:hover,
+.navbar .button button:hover {
+  background-color: #3b6e3a; /* Cor mais clara ao passar o mouse */
+  transform: scale(1.05); /* Leve aumento no tamanho */
+}
+
+/* Ícones dentro dos botões */
+.navbar .button i {
+  margin: 0; /* Centralizar o ícone */
+}
+
+
+
