@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import Aside from '../components/Aside';
 import ProductCard from '../components/ProductCard'; // Certifique-se de ter este componente

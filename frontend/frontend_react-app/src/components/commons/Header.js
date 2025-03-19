@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import { useAuth } from '../../hooks/UseAuth';
 
@@ -17,6 +16,10 @@ function Header() {
     navigate('/sell-product');
   };
 
+  const handleProfileClick = () => {
+    navigate(`/profile/${user.id}`); // Certifique-se de que esta rota está definida no seu router
+  };
+
   return (
     <header id="header">
       <div className="logo">
@@ -30,7 +33,7 @@ function Header() {
       </div>
 
       {user ? (
-        <div className="img-perfil" id="profile-picture-container">
+        <div className="img-perfil" id="profile-picture-container" onClick={handleProfileClick}>
           <img
             src={user.picture || '/path/to/default/image.jpg'}
             alt={user.firstName ? `Foto de perfil de ${user.firstName}` : 'Erro ao carregar a imagem'}
@@ -39,6 +42,7 @@ function Header() {
               e.target.onerror = null;
               e.target.src = '/path/to/default/image.jpg';
             }}
+            style={{cursor: 'pointer'}} // Adiciona um cursor de ponteiro para indicar que é clicável
           />
         </div>
       ) : null}
