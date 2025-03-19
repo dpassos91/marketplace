@@ -1,5 +1,3 @@
-'use strict';
-
 import { ApiConfig } from '../api/ApiConfig.js';
 import { getAuthToken } from '../utils/authUtils.js';
 
