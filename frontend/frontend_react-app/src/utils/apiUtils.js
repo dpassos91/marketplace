@@ -1,7 +1,9 @@
 'use strict';
 
-import { DEFAULT_OPTIONS } from '../api/ApiConfig.js';
+import { ApiConfig } from '../api/ApiConfig.js';
 import { getAuthToken } from '../utils/authUtils.js';
+
+const { DEFAULT_OPTIONS } = ApiConfig;
 
 // Make an authenticated request to the API
 export async function makeAuthenticatedRequest(url, options = {}) {

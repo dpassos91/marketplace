@@ -1,8 +1,10 @@
 'use strict';
 
-import { API_ENDPOINTS, apiCall} from './ApiConfig.js';
+import { ApiConfig } from './ApiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 import { setAuthToken, removeAuthToken } from '../utils/authUtils.js';
+
+const { apiCall, API_ENDPOINTS } = ApiConfig;
 
 // Register a new user
 export async function registerUser(userData) {

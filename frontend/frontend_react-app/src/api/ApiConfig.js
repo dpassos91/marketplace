@@ -92,51 +92,60 @@ const API_ENDPOINTS = {
 // HTTP request default options
 const DEFAULT_OPTIONS = {
   headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
+  'Content-Type': 'application/json',
+  Accept: 'application/json',
   },
-};
-
-// Interceptor para adicionar token de autenticação
-const authInterceptor = (options) => {
+  };
+  
+  // Interceptor para adicionar token de autenticação
+  const authInterceptor = (options) => {
   const token = localStorage.getItem('token');
   if (token) {
-    return {
-      ...options,
-      headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${token}`
-      }
-    };
+  return {
+  ...options,
+  headers: {
+  ...options.headers,
+  'Authorization': `Bearer ${token}`
+  }
+  };
   }
   return options;
-};
-
-// Função para lidar com erros de API de forma consistente
-const handleApiError = (error) => {
+  };
+  
+  // Função para lidar com erros de API de forma consistente
+  const handleApiError = (error) => {
   console.error('API Error:', error);
-  //alert('Ocorreu um erro ao processar a sua requisição. Por favor, tente novamente mais tarde.');
-};
-
-// Função genérica para fazer chamadas de API
-const apiCall = async (url, options = {}) => {
+  // Comentado para evitar alerts desnecessários
+  // alert('Ocorreu um erro ao processar a sua requisição. Por favor, tente novamente mais tarde.');
+  };
+  
+  // Função genérica para fazer chamadas de API
+  const apiCall = async (url, options = {}) => {
   console.log('Chamando API:', url);
   try {
-    const response = await fetch(url, {
-      headers: { 'Content-Type': 'application/json' },
-      ...options,
-    });
-    console.log('Resposta da API:', response.status, response.statusText);
-    if (!response.ok) {
-      throw new Error(`Erro na API: ${response.statusText}`);
-    }
-    const data = await response.json();
-    console.log('Dados recebidos:', data);
-    return data;
-  } catch (error) {
-    console.error('Erro na chamada da API:', error);
-    throw error;
+  const response = await fetch(url, authInterceptor({
+  headers: { 'Content-Type': 'application/json' },
+  ...options,
+  }));
+  console.log('Resposta da API:', response.status, response.statusText);
+  if (!response.ok) {
+  throw new Error(`Erro na API: ${response.statusText}`);
   }
-};
-
-export { API_BASE_URL, API_ENDPOINTS, DEFAULT_OPTIONS, authInterceptor, apiCall, handleApiError };
+  const data = await response.json();
+  console.log('Dados recebidos:', data);
+  return data;
+  } catch (error) {
+  handleApiError(error);
+  throw error;
+  }
+  };
+  
+  // Exportar como um objeto único
+  export const ApiConfig = {
+  API_BASE_URL,
+  API_ENDPOINTS,
+  DEFAULT_OPTIONS,
+  authInterceptor,
+  apiCall,
+  handleApiError
+  };
