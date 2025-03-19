@@ -6,6 +6,7 @@ import { setAuthToken, removeAuthToken } from '../utils/authUtils.js';
 
 // Register a new user
 export async function registerUser(userData) {
+  console.log('A função registerUser está sendo chamada com:', userData);
   try {
     const response = await fetch(API_ENDPOINTS.users.register, {
       method: 'POST',
@@ -15,8 +16,12 @@ export async function registerUser(userData) {
       body: JSON.stringify(userData),
     });
 
+    console.log('Resposta do servidor:', response);
+
     if (!response.ok) {
-      throw new Error(`Registration failed: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Corpo da resposta de erro:', errorText);
+      throw new Error(`Registration failed: ${response.status} - ${errorText}`);
     }
 
     return await response.json();

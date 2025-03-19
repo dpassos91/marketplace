@@ -5,6 +5,20 @@ import useAuthStore from '../stores/authStore';
 export function useAuth() {
   const navigate = useNavigate();
 
+  const handleAuthSuccess = (userData, successMessage) => {
+    useAuthStore.getState().login(userData); // Atualiza o estado do usuário no store
+    localStorage.setItem('userData', JSON.stringify(userData)); // Persiste no localStorage
+    alert(successMessage);
+    navigate('/');
+    return true;
+  };
+
+  const handleAuthError = (error, errorMessage) => {
+    console.error(errorMessage, error);
+    alert(errorMessage + ' Tente novamente.');
+    return false;
+  };
+
   const login = async (credentials) => {
     try {
       const userData = await userAPI.loginUser(credentials);
@@ -21,17 +35,12 @@ export function useAuth() {
   };
 
   const register = async (newUser) => {
+    console.log('A função de registro está sendo chamada com:', newUser); // Adicione este log
     try {
       const userData = await userAPI.registerUser(newUser);
-      useAuthStore.getState().login(userData); // Atualiza o estado do usuário no store
-      localStorage.setItem('userData', JSON.stringify(userData)); // Persiste no localStorage
-      alert(`Utilizador registado! Bem-vindo/a ${newUser.firstName}`);
-      navigate('/');
-      return true;
+      return handleAuthSuccess(userData, `Utilizador registado! Bem-vindo/a ${newUser.firstName}`);
     } catch (error) {
-      console.error('Erro ao registar utilizador:', error);
-      alert('Erro ao registar utilizador. Tente novamente.');
-      return false;
+      return handleAuthError(error, 'Erro ao registar utilizador:');
     }
   };
 
