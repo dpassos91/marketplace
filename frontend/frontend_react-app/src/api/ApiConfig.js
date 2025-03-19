@@ -140,7 +140,6 @@ const DEFAULT_OPTIONS = {
   }
   };
   
-  // Exportar como um objeto único
   export const ApiConfig = {
   API_BASE_URL,
   API_ENDPOINTS,
