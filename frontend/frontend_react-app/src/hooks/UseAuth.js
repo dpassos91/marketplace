@@ -35,14 +35,16 @@ export function useAuth() {
   };
 
   const register = async (newUser) => {
-    console.log('A função de registro está sendo chamada com:', newUser); // Adicione este log
+    console.log('A função de registro está sendo chamada com:', newUser);
     try {
       const userData = await userAPI.registerUser(newUser);
-      return handleAuthSuccess(userData, `Utilizador registado! Bem-vindo/a ${newUser.firstName}`);
+      alert('Utilizador registado! Por favor, faça login.');
+      navigate('/login'); // Redireciona para a página de login
+      return true;
     } catch (error) {
       return handleAuthError(error, 'Erro ao registar utilizador:');
     }
-  };
+  };  
 
   const logout = () => {
     console.log('Função de logout chamada'); // Adicione este log

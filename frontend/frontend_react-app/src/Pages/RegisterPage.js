@@ -35,8 +35,7 @@ function RegisterPage() {
     try {
       const success = await register(dataToSend);
       if (success) {
-        alert('Utilizador registado! Bem-vindo/a, ' + formData.firstName);
-        navigate('/'); // Redireciona para a página inicial após o registro bem-sucedido
+        navigate('/login');
       } else {
         alert('Erro ao registar utilizador. Tente novamente.');
       }
