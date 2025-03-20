@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import * as userAPI from '../api/UserAPI';
-import * as productAPI from '../api/productAPI';
-import * as productComponent from './productComponent';
-import * as useAuth from '../hooks/UseAuth';
-import { loadSellerEvaluations } from './evaluationComponent';
+import { useAuth } from '../context/AuthContext';
+import { userAPI } from '../api/userAPI';
+import { productAPI } from '../api/productAPI';
+import { ProductCard } from './ProductCard'; // Certifique-se de que este caminho está correto
+import * as productComponent from '../components/ProductComponent'; // Ajuste conforme necessário
 
-export function LoginForm() {
+function LoginForm() {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export function LoginForm() {
   );
 }
 
-export function UserProfile() {
+function UserProfile() {
   const [userToDisplay, setUserToDisplay] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const { id: profileUserId } = useParams();
@@ -129,7 +129,7 @@ function UserProducts({ userId, isOwnProfile }) {
   );
 }
 
-export function ProfileUI({ user, isOwnProfile }) {
+function ProfileUI({ user, isOwnProfile }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState(user);
 
@@ -218,7 +218,7 @@ function validatePassword(password) {
   return passwordRegex.test(password);
 }
 
-export function RegistrationForm() {
+function RegistrationForm() {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -280,7 +280,7 @@ export function RegistrationForm() {
   );
 }
 
-export function LogoutButton() {
+function LogoutButton() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -297,7 +297,7 @@ export function LogoutButton() {
   return <button onClick={handleLogout}>Logout</button>;
 }
 
-export function DeleteUserButton({ userId }) {
+function DeleteUserButton({ userId }) {
   const navigate = useNavigate();
 
   const handleDeleteUser = async () => {
@@ -319,7 +319,7 @@ export function DeleteUserButton({ userId }) {
   return <button onClick={handleDeleteUser}>Apagar Utilizador</button>;
 }
 
-export function SuspendUserButton({ userId }) {
+function SuspendUserButton({ userId }) {
   const navigate = useNavigate();
 
   const handleSuspendUser = async () => {
@@ -341,7 +341,7 @@ export function SuspendUserButton({ userId }) {
   return <button onClick={handleSuspendUser}>Suspender Utilizador</button>;
 }
 
-export function useLogout() {
+function useLogout() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -358,7 +358,7 @@ export function useLogout() {
   return handleLogout;
 }
 
-export function useHardDeleteUser() {
+function useHardDeleteUser() {
   const navigate = useNavigate();
   const { id: userId } = useParams();
 
@@ -381,7 +381,7 @@ export function useHardDeleteUser() {
   return hardDeleteUser;
 }
 
-export function useSoftDeleteUser() {
+function useSoftDeleteUser() {
   const navigate = useNavigate();
   const { id: userId } = useParams();
 
@@ -403,5 +403,20 @@ export function useSoftDeleteUser() {
 
   return softDeleteUser;
 }
+
+export const userComponents = {
+  LoginForm,
+  UserProfile,
+  ProfileUI,
+  RegistrationForm,
+  LogoutButton,
+  DeleteUserButton,
+  SuspendUserButton,
+  useLogout,
+  useHardDeleteUser,
+  useSoftDeleteUser
+};
+
+
 
 

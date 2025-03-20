@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Aside from '../components/Aside';
 import ProductCard from '../components/ProductCard'; // Certifique-se de ter este componente
+import 
 
 function ProfilePage() {
   // Estado para os dados do utilizador
@@ -23,19 +24,7 @@ function ProfilePage() {
   const [evaluations, setEvaluations] = useState([]);
 
   // Função para buscar os dados do utilizador (substitua pela sua lógica real)
-  const fetchUserData = async () => {
-    // Substitua esta lógica com a sua chamada à API real
-    const mockUserData = {
-      firstName: 'Diogo',
-      lastName: 'Alves',
-      username: 'diogoalves',
-      phone: '912345678',
-      email: 'diogo@example.com',
-      picture: 'https://via.placeholder.com/150', // Substitua com o link real
-    };
 
-    setUser(mockUserData);
-  };
 
   // Função para buscar os produtos do utilizador (substitua pela sua lógica real)
   const fetchUserProducts = async () => {
