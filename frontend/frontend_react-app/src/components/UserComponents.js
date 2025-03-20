@@ -1,3 +1,4 @@
+// userComponents.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/UseAuth';
@@ -9,418 +10,422 @@ import { evaluationComponents } from './evaluationComponents';
 
 const { ProductCard } = categoryComponents;
 const { SellerEvaluations } = evaluationComponents;
-
+const { getProductById } = productAPI;
 
 function LoginForm() {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const { login } = useAuth();
-  const navigate = useNavigate();
+    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  };
+    const handleChange = (e) => {
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const userData = await userAPI.loginUser(credentials);
-      login(userData);
-      alert(`Login bem sucedido! Bem-vindo/a ${userData.firstName} ${userData.lastName}!`);
-      navigate('/');
-    } catch (error) {
-      alert('Login falhou! Por favor verifique as suas credenciais.');
-      console.error(error);
-    }
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const userData = await userAPI.loginUser(credentials);
+            login(userData);
+            alert(`Login bem sucedido! Bem-vindo/a ${userData.firstName} ${userData.lastName}!`);
+            navigate('/');
+        } catch (error) {
+            alert('Login falhou! Por favor verifique as suas credenciais.');
+            console.error(error);
+        }
+    };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="username"
-        value={credentials.username}
-        onChange={handleChange}
-        placeholder="Username"
-      />
-      <input
-        type="password"
-        name="password"
-        value={credentials.password}
-        onChange={handleChange}
-        placeholder="Password"
-      />
-      <button type="submit">Login</button>
-    </form>
-  );
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                name="username"
+                value={credentials.username}
+                onChange={handleChange}
+                placeholder="Username"
+            />
+            <input
+                type="password"
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                placeholder="Password"
+            />
+            <button type="submit">Login</button>
+        </form>
+    );
+}
+
+function ProfileEditForm({ user }) {
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [formData, setFormData] = useState({ ...user });
+    const { setCurrentUser } = useAuth(); // Assumindo que você tem um contexto de autenticação
+
+    useEffect(() => {
+        setFormData({ ...user }); // Atualiza o formulário quando o usuário muda
+    }, [user]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const toggleEditMode = () => {
+        setIsEditMode(!isEditMode);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const result = await userAPI.updateUser(user.id, formData);
+
+            if (result.produtos && result.produtos.length > 0) {
+                const userProducts = await productAPI.getProductById(result.produtos);
+                result.produtos = userProducts;
+            } else {
+                result.produtos = [];
+            }
+
+            alert('Dados atualizados com sucesso!');
+            setCurrentUser(result); // Atualiza o contexto de autenticação
+            window.location.reload();
+        } catch (error) {
+            alert('Erro ao atualizar os dados. Tente novamente.');
+            console.error(error);
+        }
+    };
+
+    return (
+        <form id="perfil-form" onSubmit={handleSubmit}>
+            <div>
+                <label htmlFor="firstName">Nome:</label>
+                <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            <div>
+                <label htmlFor="lastName">Apelido:</label>
+                <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            {/* Adicione outros campos aqui */}
+            {!isEditMode ? (
+                <button type="button" onClick={toggleEditMode}>
+                    Editar Perfil
+                </button>
+            ) : (
+                <>
+                    <button type="submit">Salvar Alterações</button>
+                    <button type="button" onClick={toggleEditMode}>
+                        Cancelar
+                    </button>
+                </>
+            )}
+        </form>
+    );
 }
 
 function UserProfile() {
-  const [userToDisplay, setUserToDisplay] = useState(null);
-  const [isOwnProfile, setIsOwnProfile] = useState(false);
-  const { id: profileUserId } = useParams();
-  const { user: currentUser } = useAuth();
-  const navigate = useNavigate();
+    const [userToDisplay, setUserToDisplay] = useState(null);
+    const [isOwnProfile, setIsOwnProfile] = useState(false);
+    const { id: profileUserId } = useParams();
+    const { user: currentUser } = useAuth();
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      let fetchedUser;
-      if (profileUserId) {
-        fetchedUser = await userAPI.getUserById(profileUserId);
-        setIsOwnProfile(currentUser && String(currentUser.id) === String(profileUserId));
-      } else if (currentUser) {
-        fetchedUser = await userAPI.getUserById(currentUser.id);
-        setIsOwnProfile(true);
-      } else {
-        navigate('/login');
-        return;
-      }
+    useEffect(() => {
+        const fetchUserData = async () => {
+            let fetchedUser;
+            if (profileUserId) {
+                fetchedUser = await userAPI.getUserById(profileUserId);
+                setIsOwnProfile(currentUser && String(currentUser.id) === String(profileUserId));
+            } else if (currentUser) {
+                fetchedUser = await userAPI.getUserById(currentUser.id);
+                setIsOwnProfile(true);
+            } else {
+                navigate('/login');
+                return;
+            }
 
-      if (!fetchedUser) {
-        setUserToDisplay(null);
-      } else {
-        setUserToDisplay(fetchedUser);
-      }
-    };
+            if (!fetchedUser) {
+                setUserToDisplay(null);
+            } else {
+                setUserToDisplay(fetchedUser);
+            }
+        };
 
-    fetchUserData();
-  }, [profileUserId, currentUser, navigate]);
+        fetchUserData();
+    }, [profileUserId, currentUser, navigate]);
 
-  if (!userToDisplay) {
-    return <p>Utilizador não encontrado</p>;
-  }
+    if (!userToDisplay) {
+        return <p>Utilizador não encontrado</p>;
+    }
 
-  return (
-    <div>
-      <ProfileUI user={userToDisplay} isOwnProfile={isOwnProfile} />
-      <UserProducts userId={userToDisplay.id} isOwnProfile={isOwnProfile} />
-      <SellerEvaluations userId={userToDisplay.id} />
-      {isOwnProfile && <ProfileEditForm userId={userToDisplay.id} />}
-    </div>
-  );
+    return (
+        <div>
+            {/*<ProfileUI user={userToDisplay} isOwnProfile={isOwnProfile} />*/}
+            <UserProducts userId={userToDisplay.id} isOwnProfile={isOwnProfile} />
+            {/* <SellerEvaluations userId={userToDisplay.id} /> // Não sei se tens este componente */}
+            {/*{isOwnProfile && <ProfileEditForm user={userToDisplay} />}*/}
+        </div>
+    );
 }
 
 function UserProducts({ userId, isOwnProfile }) {
-  const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const fetchedProducts = await productAPI.getProductsBySeller(userId);
-        setProducts(fetchedProducts);
-      } catch (error) {
-        console.error('Error loading user products:', error);
-      }
-    };
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const fetchedProducts = await productAPI.getProductsBySeller(userId);
+                setProducts(fetchedProducts);
+            } catch (error) {
+                console.error('Error loading user products:', error);
+            }
+        };
 
-    fetchProducts();
-  }, [userId]);
+        fetchProducts();
+    }, [userId]);
 
-  if (products.length === 0) {
-    return (
-      <p className="no-products-message">
-        {isOwnProfile
-          ? 'Não tem produtos para venda.'
-          : 'Este utilizador não tem produtos para venda.'}
-      </p>
-    );
-  }
-
-  return (
-    <div className="card-container">
-      {products.map(product => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
-  );
-}
-
-function ProfileUI({ user, isOwnProfile }) {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [formData, setFormData] = useState(user);
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateFormPassword()) return;
-
-    try {
-      const result = await userAPI.updateUser(user.id, formData);
-      if (result.produtos && result.produtos.length > 0) {
-        const userProducts = await productAPI.getProductById(result.produtos);
-        result.produtos = userProducts;
-      } else {
-        result.produtos = [];
-      }
-      alert('Dados atualizados com sucesso!');
-      setUser(result);
-      window.location.reload();
-    } catch (error) {
-      alert('Erro ao atualizar os dados. Tente novamente.');
-      console.error(error);
+    if (products.length === 0) {
+        return (
+            <p className="no-products-message">
+                {isOwnProfile
+                    ? 'Não tem produtos para venda.'
+                    : 'Este utilizador não tem produtos para venda.'}
+            </p>
+        );
     }
-  };
 
-  return (
-    <div>
-      <h2 id="productsHeader">
-        {isOwnProfile ? 'Os meus Produtos' : 'Produtos deste vendedor'}
-      </h2>
-      <form id="perfil-form" onSubmit={handleSubmit}>
-        <input
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleInputChange}
-          readOnly={!isEditMode}
-        />
-        {/* Adicione inputs similares para outros campos */}
-        <img className="imagem-perfil" src={user.picture} alt="Profile" />
-        {isOwnProfile && (
-          <>
-            <button type="button" onClick={toggleEditMode}>
-              {isEditMode ? 'Cancelar' : 'Editar Informação do Utilizador'}
-            </button>
-            {isEditMode && (
-              <>
-                <div className="password-wrapper">
-                  <input
-                    type="password"
-                    name="password"
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="confirm-password-wrapper">
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <button type="submit">Salvar Alterações</button>
-              </>
-            )}
-          </>
-        )}
-      </form>
-    </div>
-  );
+    return (
+        <div className="card-container">
+            {products.map(product => (
+                <ProductCard key={product.id} product={product} />
+            ))}
+        </div>
+    );
 }
 
-// Função auxiliar para validação de senha
 function validateFormPassword() {
-  // Implemente a lógica de validação de senha aqui
-  return true; // Retorno simplificado para este exemplo
+    // Implemente a lógica de validação de senha aqui
+    return true; // Retorno simplificado para este exemplo
 }
 
 function validatePassword(password) {
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-  return passwordRegex.test(password);
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return passwordRegex.test(password);
 }
 
 function RegistrationForm() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    picture: '',
-  });
-  const [usernameError, setUsernameError] = useState('');
-  const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phone: '',
+        picture: '',
+    });
+    const [usernameError, setUsernameError] = useState('');
+    const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-  const validatePasswords = () => {
-    const { password, confirmPassword } = formData;
-    if (!validatePassword(password)) {
-      return 'A password deve ter pelo menos 8 caracteres, incluindo números e letras.';
-    }
-    if (password !== confirmPassword) {
-      return 'As passwords não coincidem.';
-    }
-    return '';
-  };
+    const validatePasswords = () => {
+        const { password, confirmPassword } = formData;
+        if (!validatePassword(password)) {
+            return 'A password deve ter pelo menos 8 caracteres, incluindo números e letras.';
+        }
+        if (password !== confirmPassword) {
+            return 'As passwords não coincidem.';
+        }
+        return '';
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const passwordError = validatePasswords();
-    if (passwordError) {
-      alert(passwordError);
-      return;
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const passwordError = validatePasswords();
+        if (passwordError) {
+            alert(passwordError);
+            return;
+        }
 
-    try {
-      const usernameExists = await userAPI.checkUsername(formData.username);
-      if (usernameExists) {
-        setUsernameError('O username já existe. Por favor escolha outro.');
-        return;
-      }
+        try {
+            const usernameExists = await userAPI.checkUsername(formData.username);
+            if (usernameExists) {
+                setUsernameError('O username já existe. Por favor escolha outro.');
+                return;
+            }
 
-      const newUser = { ...formData };
-      await userAPI.registerUser(newUser);
-      alert('Utilizador registado! Bem-vindo/a, ' + newUser.firstName);
-      navigate('/login');
-    } catch (error) {
-      alert('Erro ao registar utilizador. Tente novamente.');
-      console.error(error);
-    }
-  };
+            const newUser = { ...formData };
+            await userAPI.registerUser(newUser);
+            alert('Utilizador registado! Bem-vindo/a, ' + newUser.firstName);
+            navigate('/login');
+        } catch (error) {
+            alert('Erro ao registar utilizador. Tente novamente.');
+            console.error(error);
+        }
+    };
 
-  return (
-    <form id="formulario_novo_registo" onSubmit={handleSubmit}>
-      {/* Input fields aqui */}
-      <button type="submit">Registar</button>
-    </form>
-  );
+    return (
+        <form id="formulario_novo_registo" onSubmit={handleSubmit}>
+            {/* Input fields aqui */}
+            <button type="submit">Registar</button>
+        </form>
+    );
 }
 
 function LogoutButton() {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await userAPI.logoutUser();
-      logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
-  };
-
-  return <button onClick={handleLogout}>Logout</button>;
+    const handleLogout = async () => {
+        try {
+            await userAPI.logoutUser();
+            logout();
+            navigate('/');
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    }; return <button onClick={handleLogout}>Logout</button>;
 }
 
 function DeleteUserButton({ userId }) {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const handleDeleteUser = async () => {
-    if (!userId) {
-      alert('Invalid user ID!');
-      return;
-    }
+    const handleDeleteUser = async () => {
+        if (!userId) {
+            alert('Invalid user ID!');
+            return;
+        }
 
-    try {
-      await userAPI.deleteUser(userId);
-      alert('User deleted with success!');
-      navigate('/admin');
-    } catch (error) {
-      alert('Error trying to delete user. Please try again!');
-      console.error(error);
-    }
-  };
+        try {
+            await userAPI.deleteUser(userId);
+            alert('User deleted with success!');
+            navigate('/admin');
+        } catch (error) {
+            alert('Error trying to delete user. Please try again!');
+            console.error(error);
+        }
+    };
 
-  return <button onClick={handleDeleteUser}>Apagar Utilizador</button>;
+    return <button onClick={handleDeleteUser}>Apagar Utilizador</button>;
 }
 
 function SuspendUserButton({ userId }) {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const handleSuspendUser = async () => {
-    if (!userId) {
-      alert('Invalid user ID!');
-      return;
-    }
+    const handleSuspendUser = async () => {
+        if (!userId) {
+            alert('Invalid user ID!');
+            return;
+        }
 
-    try {
-      await userAPI.suspendUser(userId);
-      alert('User suspended with success!');
-      navigate('/admin');
-    } catch (error) {
-      alert('Error trying to suspend user. Please try again!');
-      console.error(error);
-    }
-  };
+        try {
+            await userAPI.suspendUser(userId);
+            alert('User suspended with success!');
+            navigate('/admin');
+        } catch (error) {
+            alert('Error trying to suspend user. Please try again!');
+            console.error(error);
+        }
+    };
 
-  return <button onClick={handleSuspendUser}>Suspender Utilizador</button>;
+    return <button onClick={handleSuspendUser}>Suspender Utilizador</button>;
 }
 
 function useLogout() {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await userAPI.logoutUser();
-      logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
-  };
+    const handleLogout = async () => {
+        try {
+            await userAPI.logoutUser();
+            logout();
+            navigate('/');
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    };
 
-  return handleLogout;
+    return handleLogout;
 }
 
 function useHardDeleteUser() {
-  const navigate = useNavigate();
-  const { id: userId } = useParams();
+    const navigate = useNavigate();
+    const { id: userId } = useParams();
 
-  const hardDeleteUser = async () => {
-    if (!userId) {
-      alert('Invalid user ID!');
-      return;
-    }
+    const hardDeleteUser = async () => {
+        if (!userId) {
+            alert('Invalid user ID!');
+            return;
+        }
 
-    try {
-      await userAPI.deleteUser(userId);
-      alert('User deleted with success!');
-      navigate('/admin');
-    } catch (error) {
-      alert('Error trying to delete user. Please try again!');
-      console.error(error);
-    }
-  };
+        try {
+            await userAPI.deleteUser(userId);
+            alert('User deleted with success!');
+            navigate('/admin');
+        } catch (error) {
+            alert('Error trying to delete user. Please try again!');
+            console.error(error);
+        }
+    };
 
-  return hardDeleteUser;
+    return hardDeleteUser;
 }
 
 function useSoftDeleteUser() {
-  const navigate = useNavigate();
-  const { id: userId } = useParams();
+    const navigate = useNavigate();
+    const { id: userId } = useParams();
 
-  const softDeleteUser = async () => {
-    if (!userId) {
-      alert('Invalid user ID!');
-      return;
-    }
+    const softDeleteUser = async () => {
+        if (!userId) {
+            alert('Invalid user ID!');
+            return;
+        }
 
-    try {
-      await userAPI.suspendUser(userId);
-      alert('User suspended with success!');
-      navigate('/admin');
-    } catch (error) {
-      alert('Error trying to suspend user. Please try again!');
-      console.error(error);
-    }
-  };
+        try {
+            await userAPI.suspendUser(userId);
+            alert('User suspended with success!');
+            navigate('/admin');
+        } catch (error) {
+            alert('Error trying to delete user. Please try again!');
+            console.error(error);
+        }
+    };
 
-  return softDeleteUser;
+    return softDeleteUser;
 }
 
 export const userComponents = {
-  LoginForm,
-  UserProfile,
-  ProfileUI,
-  RegistrationForm,
-  LogoutButton,
-  DeleteUserButton,
-  SuspendUserButton,
-  useLogout,
-  useHardDeleteUser,
-  useSoftDeleteUser
+    LoginForm,
+    ProfileEditForm,
+    UserProfile,
+    RegistrationForm,
+    LogoutButton,
+    DeleteUserButton,
+    SuspendUserButton,
+    useLogout,
+    useHardDeleteUser,
+    useSoftDeleteUser
 };
+
+
+
+
 
 
 

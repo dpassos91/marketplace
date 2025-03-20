@@ -56,6 +56,8 @@ export function useAuth() {
     navigate('/');
   };
 
-  return { login, register, logout };
+  const currentUser = useAuthStore(state => state.user);
+
+  return { login, register, logout, currentUser };
 }
 
