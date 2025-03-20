@@ -5,9 +5,11 @@ import { userAPI } from '../api/userAPI';
 import { productAPI } from '../api/productAPI';
 import { productComponents } from './productComponents';
 import { categoryComponents } from './categoryComponents';
+import { evaluationComponents } from './EvaluationComponents';
 
 const { ProductCard } = categoryComponents;
 const { getProductsByIds } = productComponents;
+const { SellerEvaluations } = evaluationComponents;
 
 
 function LoginForm() {
@@ -152,7 +154,7 @@ function ProfileUI({ user, isOwnProfile }) {
     try {
       const result = await userAPI.updateUser(user.id, formData);
       if (result.produtos && result.produtos.length > 0) {
-        const userProducts = await productComponents.getProductsByIds(result.produtos);
+        const userProducts = await productAPI.getProductById(result.produtos);
         result.produtos = userProducts;
       } else {
         result.produtos = [];

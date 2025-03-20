@@ -25,20 +25,19 @@ function EvaluationCard({ evaluation }) {
   );
 }
 
-export function SellerEvaluations({ sellerId }) {
-  const [evaluations, setEvaluations] = useState([]);
+function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [allEvaluations, setAllEvaluations] = useState(evaluations || []);
 
   useEffect(() => {
     async function loadEvaluations() {
       try {
         setLoading(true);
         const fetchedEvaluations = await evaluationAPI.getEvaluationsForSeller(sellerId);
-        const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
         if (!fetchedEvaluations || fetchedEvaluations.length === 0) {
-          setEvaluations([]);
+          setAllEvaluations([]);
           return;
         }
 
@@ -49,7 +48,7 @@ export function SellerEvaluations({ sellerId }) {
           )
         }));
 
-        setEvaluations(preparedEvaluations);
+        setAllEvaluations(preparedEvaluations);
       } catch (error) {
         console.error('Erro ao carregar avaliações:', error);
         setError('Falha ao carregar avaliações. Por favor volte a tentar mais tarde.');
@@ -59,7 +58,28 @@ export function SellerEvaluations({ sellerId }) {
     }
 
     loadEvaluations();
-  }, [sellerId]);
+  }, [sellerId, currentUser]);
+
+  const handleEditEvaluation = (evaluation, sellerId) => {
+    // Lógica para exibir o modal de edição da avaliação
+    console.log('Editar avaliação:', evaluation, 'para o vendedor:', sellerId);
+  };
+
+  const handleDeleteEvaluation = async (evaluationId, sellerId) => {
+    if (window.confirm('Tem a certeza que pretende eliminar esta review?')) {
+      try {
+        // Chamar a API para deletar a avaliação
+        await evaluationAPI.deleteEvaluation(evaluationId);
+
+        // Atualizar a lista de avaliações após a exclusão
+        setAllEvaluations(prevEvaluations => prevEvaluations.filter(evaluation => evaluation.id !== evaluationId));
+        alert('Review eliminada com sucesso!');
+      } catch (error) {
+        console.error('Erro ao eliminar a avaliação:', error);
+        alert('Falha ao apagar a avaliação.');
+      }
+    }
+  };
 
   function calculateAverageRating(evaluations) {
     const totalRating = evaluations.reduce((sum, evaluation) => sum + evaluation.rating, 0);
@@ -70,18 +90,23 @@ export function SellerEvaluations({ sellerId }) {
 
   if (loading) return <div className="loading-spinner">A carregar avaliações...</div>;
   if (error) return <p className="text-danger">{error}</p>;
-  if (evaluations.length === 0) return <p>Este vendedor ainda não foi avaliado.</p>;
+  if (allEvaluations.length === 0) return <p>Este vendedor ainda não foi avaliado.</p>;
 
-  const { averageRating, averageRatingStars } = calculateAverageRating(evaluations);
+  const { averageRating, averageRatingStars } = calculateAverageRating(allEvaluations);
 
   return (
     <div>
+      <AddEvaluationButton
+        currentUser={currentUser}
+        sellerId={sellerId}
+        onAddEvaluation={onAddEvaluation}
+      />
       <div className="average-rating">
         <h3>Rating médio: {averageRatingStars} ({averageRating.toFixed(1)})</h3>
-        <p>{evaluations.length} {evaluations.length !== 1 ? 'evaluations' : 'evaluation'}</p>
+        <p>{allEvaluations.length} {allEvaluations.length !== 1 ? 'evaluations' : 'evaluation'}</p>
       </div>
       <div className="evaluations-list">
-        {evaluations.map(evaluation => (
+        {allEvaluations.map(evaluation => (
           <EvaluationCard key={evaluation.id} evaluation={evaluation} />
         ))}
       </div>
@@ -89,22 +114,7 @@ export function SellerEvaluations({ sellerId }) {
   );
 }
 
-// Função para calcular a média das avaliações
-export function calculateAverageRating(evaluations) {
-  const totalRating = evaluations.reduce(
-    (sum, evaluation) => sum + evaluation.rating,
-    0
-  );
-  const averageRating = totalRating / evaluations.length;
-  const averageRatingStars =
-    '★'.repeat(Math.round(averageRating)) +
-    '☆'.repeat(5 - Math.round(averageRating));
-
-  return { averageRating, averageRatingStars };
-}
-
-// Componente para adicionar o botão "Avaliar Vendedor"
-export function AddEvaluationButton({ currentUser, sellerId, onAddEvaluation }) {
+function AddEvaluationButton({ currentUser, sellerId, onAddEvaluation }) {
   if (!currentUser || currentUser.id === sellerId) return null;
 
   return (
@@ -117,8 +127,7 @@ export function AddEvaluationButton({ currentUser, sellerId, onAddEvaluation }) 
   );
 }
 
-// Componente para gerenciar os botões de ação (Editar e Apagar)
-export function EvaluationActions({ evaluation, sellerId, onEdit, onDelete }) {
+function EvaluationActions({ evaluation, sellerId, onEdit, onDelete }) {
   return (
     <div className="evaluation-actions">
       <button
@@ -137,72 +146,7 @@ export function EvaluationActions({ evaluation, sellerId, onEdit, onDelete }) {
   );
 }
 
-// Exemplo de uso no componente principal (SellerEvaluations)
-export function SellerEvaluations({ evaluations, currentUser, sellerId }) {
-  const handleAddEvaluation = (sellerId) => {
-    // Lógica para exibir o modal de adicionar avaliação
-    console.log('Adicionar avaliação para o vendedor:', sellerId);
-  };
-
-  const handleEditEvaluation = (evaluation, sellerId) => {
-    // Lógica para exibir o modal de edição da avaliação
-    console.log('Editar avaliação:', evaluation, 'para o vendedor:', sellerId);
-  };
-
-  const handleDeleteEvaluation = async (evaluationId, sellerId) => {
-    if (window.confirm('Tem a certeza que pretende eliminar esta review?')) {
-      try {
-        // Chamar a API para deletar a avaliação
-        await evaluationAPI.deleteEvaluation(evaluationId);
-
-        // Atualizar a lista de avaliações após a exclusão
-        alert('Review eliminada com sucesso!');
-      } catch (error) {
-        console.error('Erro ao eliminar a avaliação:', error);
-        alert('Falha ao apagar a avaliação.');
-      }
-    }
-  };
-
-  return (
-    <div>
-      <AddEvaluationButton
-        currentUser={currentUser}
-        sellerId={sellerId}
-        onAddEvaluation={handleAddEvaluation}
-      />
-      <div className="evaluations-list">
-        {evaluations.map((evaluation) => (
-          <div key={evaluation.id} className="evaluation-card">
-            <div className="evaluation-header">
-              <h4>{evaluation.title}</h4>
-              <div className="evaluation-rating">
-                {'★'.repeat(evaluation.rating) +
-                  '☆'.repeat(5 - evaluation.rating)}
-              </div>
-              <div className="evaluation-date">
-                {formatDate(evaluation.evaluationDate)}
-              </div>
-            </div>
-            <div className="evaluation-body">
-              <p>{evaluation.comment}</p>
-            </div>
-            {evaluation.canEdit && (
-              <EvaluationActions
-                evaluation={evaluation}
-                sellerId={sellerId}
-                onEdit={handleEditEvaluation}
-                onDelete={handleDeleteEvaluation}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function AddEvaluationModal({ sellerId, onClose, onSubmit }) {
+function AddEvaluationModal({ sellerId, onClose, onSubmit }) {
   const [eligibleProducts, setEligibleProducts] = useState([]);
   const [formData, setFormData] = useState({
     productId: '',
@@ -321,9 +265,9 @@ export function AddEvaluationModal({ sellerId, onClose, onSubmit }) {
               <label>Rating</label>
               <div className="rating-selector">
                 {[1, 2, 3, 4, 5].map(star => (
-                  <span 
-                    key={star} 
-                    className={`star ${formData.rating >= star ? 'filled' : ''}`} 
+                  <span
+                    key={star}
+                    className={`star ${formData.rating >= star ? 'filled' : ''}`}
                     onClick={() => handleRatingClick(star)}
                   >
                     {formData.rating >= star ? '★' : '☆'}
@@ -346,7 +290,7 @@ export function AddEvaluationModal({ sellerId, onClose, onSubmit }) {
   );
 }
 
-export function EditEvaluationModal({ evaluation, sellerId, onClose, onUpdate }) {
+function EditEvaluationModal({ evaluation, sellerId, onClose, onUpdate }) {
   const [formData, setFormData] = useState({
     id: evaluation.id,
     title: evaluation.title,
@@ -404,22 +348,22 @@ export function EditEvaluationModal({ evaluation, sellerId, onClose, onUpdate })
           <form id="editEvaluationForm" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="title">Título</label>
-              <input 
-                type="text" 
-                id="title" 
-                value={formData.title} 
-                onChange={handleInputChange} 
-                required 
-                maxLength="100" 
+              <input
+                type="text"
+                id="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+                maxLength="100"
               />
             </div>
             <div className="form-group">
               <label>Rating</label>
               <div className="rating-selector">
                 {[1, 2, 3, 4, 5].map(star => (
-                  <span 
-                    key={star} 
-                    className={`star ${formData.rating >= star ? 'filled' : ''}`} 
+                  <span
+                    key={star}
+                    className={`star ${formData.rating >= star ? 'filled' : ''}`}
                     onClick={() => handleRatingClick(star)}
                   >
                     {formData.rating >= star ? '★' : '☆'}
@@ -429,13 +373,13 @@ export function EditEvaluationModal({ evaluation, sellerId, onClose, onUpdate })
             </div>
             <div className="form-group">
               <label htmlFor="comment">Comentário</label>
-              <textarea 
-                id="comment" 
-                value={formData.comment} 
-                onChange={handleInputChange} 
-                rows="3" 
-                required 
-                maxLength="500" 
+              <textarea
+                id="comment"
+                value={formData.comment}
+                onChange={handleInputChange}
+                rows="3"
+                required
+                maxLength="500"
               />
             </div>
           </form>
@@ -449,4 +393,26 @@ export function EditEvaluationModal({ evaluation, sellerId, onClose, onUpdate })
   );
 }
 
+// Função para calcular a média das avaliações
+function calculateAverageRating(evaluations) {
+  const totalRating = evaluations.reduce(
+    (sum, evaluation) => sum + evaluation.rating,
+    0
+  );
+  const averageRating = totalRating / evaluations.length;
+  const averageRatingStars =
+    '★'.repeat(Math.round(averageRating)) +
+    '☆'.repeat(5 - Math.round(averageRating));
 
+  return { averageRating, averageRatingStars };
+}
+
+export const evaluationComponents = {
+  EvaluationCard,
+  SellerEvaluations,
+  AddEvaluationButton,
+  EvaluationActions,
+  AddEvaluationModal,
+  EditEvaluationModal,
+  calculateAverageRating
+};
