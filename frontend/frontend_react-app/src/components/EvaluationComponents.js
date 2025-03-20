@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as evaluationAPI from '../api/evaluationAPI.js';
+import { evaluationAPI } from '../api/evaluationAPI.js';
 import { formatDate } from '../utils/dateUtils.js';
 
 function EvaluationCard({ evaluation }) {
