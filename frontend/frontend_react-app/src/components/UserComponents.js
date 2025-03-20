@@ -119,7 +119,74 @@ function ProfileEditForm({ user }) {
                     readOnly={!isEditMode}
                 />
             </div>
-            {/* Adicione outros campos aqui */}
+            <div>
+                <label htmlFor="username">Username:</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            <div>
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            <div>
+                <label htmlFor="confirmPassword">Confirme a Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.email || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            <div>
+                <label htmlFor="phone">Telefone:</label>
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    maxLength="9" 
+                    minLength="9"
+                    value={formData.phone || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            <div>
+                <label htmlFor="phone">Telefone:</label>
+                <input
+                    type="text"
+                    id="picture"
+                    name="picture"
+                    value={formData.picture || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
             {!isEditMode ? (
                 <button type="button" onClick={toggleEditMode}>
                     Editar Perfil
