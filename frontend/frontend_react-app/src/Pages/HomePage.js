@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Aside from '../components/Aside';
 import ProductCard from '../components/ProductCard';
 import { CategoryCard } from '../components/CategoryComponents';
-import * as productAPI from '../api/productAPI'; //
+import { productAPI } from '../api/productAPI'; //
 import { categoryAPI } from '../api/categoryAPI'; // Certifique-se de que está importando corretamente
 
 console.log('Objeto categoryAPI:', categoryAPI);

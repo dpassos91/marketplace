@@ -1,5 +1,3 @@
-
-// src/api/productAPI.js
 import { ApiConfig } from './ApiConfig';
 import { PRODUCT_STATES } from './productStates';
 
@@ -9,7 +7,7 @@ const { apiCall, API_ENDPOINTS } = ApiConfig;
  * Fetches all products from the API.
  * @returns {Promise<Array>} A promise that resolves to an array of product objects.
  */
-export const getAllProducts = async () => {
+const getAllProducts = async () => {
   try {
     return await apiCall(API_ENDPOINTS.products.all);
   } catch (error) {
@@ -22,7 +20,7 @@ export const getAllProducts = async () => {
  * Fetches all active products from the API.
  * @returns {Promise<Array>} A promise that resolves to an array of active product objects.
  */
-export const getAllActiveProducts = async () => {
+const getAllActiveProducts = async () => {
   try {
     return await apiCall(API_ENDPOINTS.products.active);
   } catch (error) {
@@ -37,7 +35,7 @@ export const getAllActiveProducts = async () => {
  * @param {number} [size=10] - The number of products per page.
  * @returns {Promise<Object>} A promise that resolves to a paginated product response.
  */
-export const getProductsPaginated = async (page = 0, size = 10) => {
+const getProductsPaginated = async (page = 0, size = 10) => {
   try {
     return await apiCall(API_ENDPOINTS.products.paginated(page, size));
   } catch (error) {
@@ -51,7 +49,7 @@ export const getProductsPaginated = async (page = 0, size = 10) => {
  * @param {string|number} productId - The ID of the product to retrieve.
  * @returns {Promise<Object|null>} A promise that resolves to the product object.
  */
-export const getProductById = async (productId) => {
+const getProductById = async (productId) => {
   try {
     return await apiCall(API_ENDPOINTS.products.byId(productId));
   } catch (error) {
@@ -65,7 +63,7 @@ export const getProductById = async (productId) => {
  * @param {string|number} categoryId - The ID of the category to filter products by.
  * @returns {Promise<Array>} A promise that resolves to an array of product objects.
  */
-export const getProductsByCategory = async (categoryId) => {
+const getProductsByCategory = async (categoryId) => {
   try {
     return await apiCall(API_ENDPOINTS.products.byCategory(categoryId));
   } catch (error) {
@@ -79,7 +77,7 @@ export const getProductsByCategory = async (categoryId) => {
  * @param {string|number} sellerId - The ID of the seller.
  * @returns {Promise<Array>} A promise that resolves to an array of product objects.
  */
-export const getProductsBySeller = async (sellerId) => {
+const getProductsBySeller = async (sellerId) => {
   try {
     return await apiCall(API_ENDPOINTS.products.bySeller(sellerId));
   } catch (error) {
@@ -93,7 +91,7 @@ export const getProductsBySeller = async (sellerId) => {
  * @param {string} title - The search term.
  * @returns {Promise<Array>} A promise that resolves to an array of matching product objects.
  */
-export const searchProductsByTitle = async (title) => {
+const searchProductsByTitle = async (title) => {
   try {
     return await apiCall(API_ENDPOINTS.products.search(title));
   } catch (error) {
@@ -107,7 +105,7 @@ export const searchProductsByTitle = async (title) => {
  * @param {string} location - The location to filter products by.
  * @returns {Promise<Array>} A promise that resolves to an array of product objects.
  */
-export const getProductsByLocation = async (location) => {
+const getProductsByLocation = async (location) => {
   try {
     return await apiCall(API_ENDPOINTS.products.byLocation(location));
   } catch (error) {
@@ -121,7 +119,7 @@ export const getProductsByLocation = async (location) => {
  * @param {string|number} status - The status ID or code to filter products by.
  * @returns {Promise<Array>} A promise that resolves to an array of product objects.
  */
-export const getProductsByStatus = async (status) => {
+const getProductsByStatus = async (status) => {
   try {
     return await apiCall(API_ENDPOINTS.products.byStatus(status));
   } catch (error) {
@@ -135,7 +133,7 @@ export const getProductsByStatus = async (status) => {
  * @param {Object} product - The product data to be created.
  * @returns {Promise<Object>} A promise that resolves to the newly created product object.
  */
-export const createProduct = async (product) => {
+const createProduct = async (product) => {
   try {
     return await apiCall(API_ENDPOINTS.products.create, {
       method: 'POST',
@@ -153,7 +151,7 @@ export const createProduct = async (product) => {
  * @param {Object} updatedProduct - The updated product data.
  * @returns {Promise<Object>} A promise that resolves to the updated product object.
  */
-export const updateProduct = async (productId, updatedProduct) => {
+const updateProduct = async (productId, updatedProduct) => {
   try {
     return await apiCall(API_ENDPOINTS.products.update(productId), {
       method: 'PUT',
@@ -171,7 +169,7 @@ export const updateProduct = async (productId, updatedProduct) => {
  * @param {string|number} stateIdOrDescription - Either a state ID or description string.
  * @returns {Promise<Object>} A promise that resolves to the updated product object.
  */
-export const updateProductStatus = async (productId, stateIdOrDescription) => {
+const updateProductStatus = async (productId, stateIdOrDescription) => {
   try {
     let stateId = stateIdOrDescription;
 
@@ -202,7 +200,7 @@ export const updateProductStatus = async (productId, stateIdOrDescription) => {
  * @param {string|number} buyerId - The ID of the user purchasing the product.
  * @returns {Promise<Object>} A promise that resolves to the updated product object.
  */
-export const purchaseProduct = async (productId, buyerId) => {
+const purchaseProduct = async (productId, buyerId) => {
   try {
     if (!productId || !buyerId) {
       throw new Error('Product ID and buyer ID are required');
@@ -222,7 +220,7 @@ export const purchaseProduct = async (productId, buyerId) => {
  * @param {string|number} productId - The ID of the product to deactivate.
  * @returns {Promise<Object>} A promise that resolves to the deactivated product object.
  */
-export const softDeleteProduct = async (productId) => {
+const softDeleteProduct = async (productId) => {
   try {
     return await apiCall(API_ENDPOINTS.products.deactivate(productId), {
       method: 'PUT',
@@ -238,7 +236,7 @@ export const softDeleteProduct = async (productId) => {
  * @param {string|number} productId - The ID of the product to delete permanently.
  * @returns {Promise<boolean>} A promise that resolves to true if deletion is successful.
  */
-export const permanentlyDeleteProduct = async (productId) => {
+const permanentlyDeleteProduct = async (productId) => {
   try {
     await apiCall(API_ENDPOINTS.products.permanentDelete(productId), {
       method: 'DELETE',
@@ -256,7 +254,7 @@ export const permanentlyDeleteProduct = async (productId) => {
  * @param {string|number} newStateId - The new state ID to set for the product.
  * @returns {Promise<Object>} A promise that resolves to the reactivated product object.
  */
-export const reactivateProduct = async (productId, newStateId) => {
+const reactivateProduct = async (productId, newStateId) => {
   try {
     return await apiCall(API_ENDPOINTS.products.reactivate(productId, newStateId), {
       method: 'PUT',
@@ -271,7 +269,7 @@ export const reactivateProduct = async (productId, newStateId) => {
  * Fetches all inactive (deactivated) products.
  * @returns {Promise<Array>} A promise that resolves to an array of inactive product objects.
  */
-export const getInactiveProducts = async () => {
+const getInactiveProducts = async () => {
   try {
     return await apiCall(API_ENDPOINTS.products.inactive);
   } catch (error) {
@@ -284,7 +282,7 @@ export const getInactiveProducts = async () => {
  * Gets the total count of all products.
  * @returns {Promise<number>} A promise that resolves to the total product count.
  */
-export const getProductCount = async () => {
+const getProductCount = async () => {
   try {
     return await apiCall(API_ENDPOINTS.products.count);
   } catch (error) {
@@ -297,7 +295,7 @@ export const getProductCount = async () => {
  * Gets the count of active products only.
  * @returns {Promise<number>} A promise that resolves to the active product count.
  */
-export const getActiveProductCount = async () => {
+const getActiveProductCount = async () => {
   try {
     return await apiCall(API_ENDPOINTS.products.activeCount);
   } catch (error) {
@@ -310,13 +308,36 @@ export const getActiveProductCount = async () => {
  * Fetches all edited products from the API.
  * @returns {Promise<Array>} A promise that resolves to an array of edited product objects.
  */
-export const getAllEditedProducts = async () => {
+const getAllEditedProducts = async () => {
   try {
     return await apiCall(API_ENDPOINTS.products.edited);
   } catch (error) {
     console.error('Failed to fetch edited products:', error);
     return [];
   }
+};
+
+export const productAPI = {
+  getAllProducts,
+  getAllActiveProducts,
+  getProductsPaginated,
+  getProductById,
+  getProductsByCategory,
+  getProductsBySeller,
+  searchProductsByTitle,
+  getProductsByLocation,
+  getProductsByStatus,
+  createProduct,
+  updateProduct,
+  updateProductStatus,
+  purchaseProduct,
+  softDeleteProduct,
+  permanentlyDeleteProduct,
+  reactivateProduct,
+  getInactiveProducts,
+  getProductCount,
+  getActiveProductCount,
+  getAllEditedProducts
 };
 
 
