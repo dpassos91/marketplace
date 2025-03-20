@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { userAPI } from '../api/UserAPI';
+import { userAPI } from '../api/userAPI';
 import useAuthStore from '../stores/authStore';
 
 export function useAuth() {
