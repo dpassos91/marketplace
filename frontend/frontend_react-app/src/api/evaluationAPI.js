@@ -1,5 +1,3 @@
-'use strict';
-
 import { API_ENDPOINTS } from '../config/ApiConfig.js';
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 
@@ -12,7 +10,7 @@ import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
  * @returns {Promise<Array>} A promise that resolves to an array of evaluation objects.
  * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
  */
-export async function getEvaluationsForSeller(sellerId) {
+async function getEvaluationsForSeller(sellerId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.byEvaluated(sellerId),
@@ -41,7 +39,7 @@ export async function getEvaluationsForSeller(sellerId) {
  * @returns {Promise<Object>} A promise that resolves to the evaluation object.
  * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
  */
-export async function getEvaluationById(evaluationId) {
+async function getEvaluationById(evaluationId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.byId(evaluationId),
@@ -72,7 +70,7 @@ export async function getEvaluationById(evaluationId) {
  * @returns {Promise<Object>} A promise that resolves to the JSON response containing all evaluations.
  * @throws {Error} If there is an error fetching the evaluations or the response is not OK.
  */
-export async function getAllEvaluations() {
+async function getAllEvaluations() {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.all,
@@ -104,7 +102,7 @@ export async function getAllEvaluations() {
  * @returns {Promise<Object>} A promise that resolves to the newly created evaluation object.
  * @throws {Error} Throws an error if the creation fails or if the HTTP response is not ok.
  */
-export async function addEvaluation(evaluationData) {
+async function addEvaluation(evaluationData) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.create,
@@ -137,7 +135,7 @@ export async function addEvaluation(evaluationData) {
  * @returns {Promise<Object>} A promise that resolves to the updated evaluation object.
  * @throws {Error} Throws an error if the update fails or if the HTTP response is not ok.
  */
-export async function updateEvaluation(evaluationData) {
+async function updateEvaluation(evaluationData) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.update(evaluationData.id),
@@ -167,7 +165,7 @@ export async function updateEvaluation(evaluationData) {
  * @returns {Promise<string>} A promise that resolves to the response text from the server.
  * @throws {Error} Throws an error if the deletion fails or if the HTTP response is not ok.
  */
-export async function deleteEvaluation(evaluationId) {
+async function deleteEvaluation(evaluationId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.delete(evaluationId),
@@ -197,7 +195,7 @@ export async function deleteEvaluation(evaluationId) {
  * Returns false if an error occurs.
  * @throws {Error} Throws an error if the HTTP response is not ok.
  */
-export async function hasUserEvaluatedSeller(sellerId) {
+async function hasUserEvaluatedSeller(sellerId) {
   try {
     const response = await makeAuthenticatedRequest(
       `${API_ENDPOINTS.evaluations.hasEvaluated}?sellerId=${sellerId}`,
@@ -228,7 +226,7 @@ export async function hasUserEvaluatedSeller(sellerId) {
  * @returns {Promise<Array>} A promise that resolves to an array of products eligible for evaluation.
  * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
  */
-export async function getEligibleProductsForEvaluation(userId) {
+async function getEligibleProductsForEvaluation(userId) {
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.eligible(userId),
@@ -249,3 +247,14 @@ export async function getEligibleProductsForEvaluation(userId) {
     throw error;
   }
 }
+
+export const evaluationAPI = {
+  getEvaluationsForSeller,
+  getEvaluationById,
+  getAllEvaluations,
+  addEvaluation,
+  updateEvaluation,
+  deleteEvaluation,
+  hasUserEvaluatedSeller,
+  getEligibleProductsForEvaluation
+};
