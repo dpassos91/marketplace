@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Aside from '../components/Aside';
 import ProductCard from '../components/ProductCard'; // Certifique-se de ter este componente
-import 
+import { userComponents } from '../components/userComponents';
+import { useAuth } from '../hooks/UseAuth';
+import { productAPI } from '../api/productAPI'; // Se já não estiver importado
+import { userAPI } from '../api/userAPI'; // Se já não estiver importado
+
+const { ProfileUI } = userComponents; // Importa apenas o que precisas
+//Notei que faltava esta importação, por isso importei-a agora
 
 function ProfilePage() {
   // Estado para os dados do utilizador
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    phone: '',
-    email: '',
-    picture: '',
-  });
-
-  // Estado para controlar o modo de edição
-  const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState(null); // Alterado para null inicialmente
+  const [isOwnProfile, setIsOwnProfile] = useState(true); // Assumindo que é o perfil do próprio utilizador
 
   // Estado para os produtos do utilizador
   const [userProducts, setUserProducts] = useState([]);
@@ -23,18 +20,37 @@ function ProfilePage() {
   // Estado para as avaliações
   const [evaluations, setEvaluations] = useState([]);
 
-  // Função para buscar os dados do utilizador (substitua pela sua lógica real)
+  const { user: currentUser } = useAuth(); // Obtém o user do contexto de autenticação
 
+  // Função para buscar os dados do utilizador (substitua pela sua lógica real)
+  const fetchUserData = async () => {
+    try {
+      //Se currentUser existir, vai buscar as informações desse utilizador
+      if (currentUser) {
+        const userData = await userAPI.getUserById(currentUser.id);
+        setUser(userData);
+      } else {
+        // Lidar com o caso em que o utilizador não está autenticado (redirecionar, mostrar mensagem, etc.)
+        console.warn('Utilizador não autenticado.');
+        //Exemplo:
+        //return <Navigate to="/login" />;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados do utilizador:', error);
+    }
+  };
 
   // Função para buscar os produtos do utilizador (substitua pela sua lógica real)
   const fetchUserProducts = async () => {
     // Substitua esta lógica com a sua chamada à API real
-    const mockProducts = [
-      { id: 1, name: 'Produto 1', description: 'Descrição do produto 1', price: 20 },
-      { id: 2, name: 'Produto 2', description: 'Descrição do produto 2', price: 30 },
-    ];
-
-    setUserProducts(mockProducts);
+    try {
+      if (currentUser) {
+        const products = await productAPI.getProductsBySeller(currentUser.id);
+        setUserProducts(products);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar produtos do utilizador:', error);
+    }
   };
 
   // Função para buscar as avaliações (substitua pela sua lógica real)
@@ -53,29 +69,12 @@ function ProfilePage() {
     fetchUserData();
     fetchUserProducts();
     fetchEvaluations();
-  }, []);
+  }, [currentUser]); // Dependência em currentUser para refazer a busca quando o usuário muda
 
-  // Função para alternar o modo de edição
-  const toggleEditMode = () => {
-    setIsEditing(!isEditing);
-  };
-
-  // Função para lidar com as alterações nos inputs
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser(prevUser => ({
-      ...prevUser,
-      [name]: value,
-    }));
-  };
-
-  // Função para lidar com o envio do formulário
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aqui você faria a chamada à API para salvar as alterações
-    console.log('Dados a serem salvos:', user);
-    setIsEditing(false);
-  };
+  // Se o utilizador ainda não foi carregado, mostrar mensagem de loading ou retornar null
+  if (!user) {
+    return <p>A carregar informações do utilizador...</p>; // Ou outro indicador de loading
+  }
 
   return (
     <main className="main-container">
@@ -84,98 +83,8 @@ function ProfilePage() {
         <div className="info-pessoal">
           <div className="perfil-utilizador">
             <h2>Página Pessoal</h2>
-            <form id="perfil-form" onSubmit={handleSubmit}>
-              <section className="nome-wrapper">
-                <label htmlFor="firstName">Primeiro nome:</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={user.firstName}
-                  required
-                  readOnly={!isEditing}
-                  placeholder="Primeiro nome"
-                  onChange={handleInputChange}
-                />
-              </section>
-              <section className="nome-wrapper">
-                <label htmlFor="lastName">Último nome:</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={user.lastName}
-                  required
-                  readOnly={!isEditing}
-                  placeholder="Último nome"
-                  onChange={handleInputChange}
-                />
-              </section>
-              <section className="username-wrapper">
-                <label htmlFor="username">Username:</label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={user.username}
-                  readOnly
-                  onChange={handleInputChange}
-                />
-              </section>
-              <section className="telefone-wrapper">
-                <label htmlFor="phone">Telefone:</label>
-                <input
-                  type="text"
-                  id="phone"
-                  name="phone"
-                  value={user.phone}
-                  required
-                  readOnly={!isEditing}
-                  placeholder="Telefone"
-                  onChange={handleInputChange}
-                />
-              </section>
-              <section className="email-wrapper">
-                <label htmlFor="email">Email:</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={user.email}
-                  required
-                  readOnly={!isEditing}
-                  onChange={handleInputChange}
-                />
-              </section>
-              <section className="img-link-wrapper">
-                <label htmlFor="picture">Foto de Perfil: (Link)</label>
-                <input
-                  type="profile-pic"
-                  id="picture"
-                  name="picture"
-                  value={user.picture}
-                  required
-                  readOnly={!isEditing}
-                  placeholder="Link para a foto de perfil"
-                  onChange={handleInputChange}
-                />
-              </section>
-              <section className="buttons-wrapper">
-                <button
-                  type="button"
-                  className="editar-pag-pessoal"
-                  id="toggle-readonly"
-                  onClick={toggleEditMode}
-                >
-                  {isEditing ? 'Cancelar Edição' : 'Editar Informação do Utilizador'}
-                </button>
-                {isEditing && (
-                  <button type="submit" className="save-user-changes" title="Guardar alterações">
-                    Guardar
-                  </button>
-                )}
-              </section>
-            </form>
+            {/* Renderiza o componente ProfileUI, passando os dados necessários */}
+            <ProfileUI user={user} isOwnProfile={isOwnProfile} />
           </div>
           <div className="outras-info">
             <section className="imagem-perfil-wrapper">
@@ -212,3 +121,4 @@ function ProfilePage() {
 }
 
 export default ProfilePage;
+

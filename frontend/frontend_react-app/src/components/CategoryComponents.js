@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { categoryAPI } from '../api/categoryAPI'; 
 
 // Componente de Card de Categoria
-export function CategoryCard({ category }) {
+function CategoryCard({ category }) {
   const navigate = useNavigate();
   const imageUrl = category.imageUrl || 'https://ps.w.org/gazchaps-woocommerce-auto-category-product-thumbnails/assets/icon-256x256.png?rev=1848416';
 
@@ -26,7 +26,7 @@ export function CategoryCard({ category }) {
 }
 
 // Componente de Carrossel de Categorias
-export function CategoriesCarousel() {
+function CategoriesCarousel() {
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
   const carouselRef = useRef(null);
@@ -73,7 +73,7 @@ export function CategoriesCarousel() {
 }
 
 // Hook para filtrar produtos por categoria
-export function useProductsByCategory(products, categoryId) {
+function useProductsByCategory(products, categoryId) {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [category, setCategory] = useState(null);
   const [error, setError] = useState(null);
@@ -105,7 +105,7 @@ export function useProductsByCategory(products, categoryId) {
 }
 
 // Componente de Lista de Produtos
-export function ProductList({ products, categoryId }) {
+function ProductList({ products, categoryId }) {
   const { filteredProducts, category, error } = useProductsByCategory(products, categoryId);
 
   if (error) return <p className="error-message">{error}</p>;
@@ -121,7 +121,7 @@ export function ProductList({ products, categoryId }) {
   );
 }
 
-// Nota: Você precisará criar um componente ProductCard separadamente
+// Componente de Card de Produto
 function ProductCard({ product }) {
   const imageUrl = product.imageUrl || 'https://via.placeholder.com/150';
   
@@ -140,4 +140,11 @@ function ProductCard({ product }) {
   );
 }
 
-export default ProductCard;
+export const categoryComponents = {
+  CategoryCard,
+  CategoriesCarousel,
+  useProductsByCategory,
+  ProductList,
+  ProductCard
+};
+

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/UseAuth';
 import { userAPI } from '../api/userAPI';
 import { productAPI } from '../api/productAPI';
-import { ProductCard } from './ProductCard'; // Certifique-se de que este caminho está correto
-import * as productComponent from '../components/ProductComponent'; // Ajuste conforme necessário
+import { productComponents } from './productComponents';
+import { categoryComponents } from './categoryComponents';
+
+const { ProductCard } = categoryComponents;
+const { getProductsByIds } = productComponents;
+
 
 function LoginForm() {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -148,7 +152,7 @@ function ProfileUI({ user, isOwnProfile }) {
     try {
       const result = await userAPI.updateUser(user.id, formData);
       if (result.produtos && result.produtos.length > 0) {
-        const userProducts = await productComponent.getProductsByIds(result.produtos);
+        const userProducts = await productComponents.getProductsByIds(result.produtos);
         result.produtos = userProducts;
       } else {
         result.produtos = [];
