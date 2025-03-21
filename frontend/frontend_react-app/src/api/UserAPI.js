@@ -23,7 +23,7 @@ const loginUser = async (credentials) => {
   }
 
   const token = await response.text();
-  setAuthToken(token);
+  sessionStorage.setItem('authToken', token); // Armazena o token
 
   try {
     const userInfo = await getUserByUsername(credentials.username);
@@ -45,6 +45,12 @@ const getUserById = async (userId) => {
 };
 
 const updateUser = async (userId, userData) => {
+  const token = sessionStorage.getItem('authToken');
+  if (!token) {
+    console.error('Token de autenticação não encontrado');
+    throw new Error('Usuário não autenticado');
+  }
+  console.log("Dados enviados para a API:", userData);
   return apiCall(API_ENDPOINTS.users.update(userId), {
     method: 'PUT',
     body: JSON.stringify(userData),

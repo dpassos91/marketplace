@@ -121,24 +121,50 @@ const DEFAULT_OPTIONS = {
   
   // Função genérica para fazer chamadas de API
   const apiCall = async (url, options = {}) => {
-  console.log('Chamando API:', url);
-  try {
-  const response = await fetch(url, authInterceptor({
-  headers: { 'Content-Type': 'application/json' },
-  ...options,
-  }));
-  console.log('Resposta da API:', response.status, response.statusText);
-  if (!response.ok) {
-  throw new Error(`Erro na API: ${response.statusText}`);
-  }
-  const data = await response.json();
-  console.log('Dados recebidos:', data);
-  return data;
-  } catch (error) {
-  handleApiError(error);
-  throw error;
-  }
-  };
+    console.log('Chamando API:', url, 'com opções:', options);
+
+    // Obtém o token do sessionStorage
+    const token = sessionStorage.getItem('authToken');
+    console.log('authToken no sessionStorage:', token);
+
+    // Prepara as opções finais, incluindo o token (se existir)
+    const finalOptions = {
+        ...options,
+        headers: {
+            // Se houver token, inclui o prefixo 'Bearer'
+            'token': sessionStorage.getItem('authToken'),
+            'Content-Type': 'application/json',
+            ...options.headers,  // Garante que os headers extras sejam preservados
+        },
+    };
+
+    console.log('Headers:', finalOptions.headers);
+    console.log('Opções finais:', finalOptions);
+
+    try {
+        // Realiza a chamada à API
+        const response = await fetch(url, finalOptions);
+        console.log('Resposta da API:', response.status, response.statusText);
+
+        // Se a resposta não for bem-sucedida, lança um erro
+        if (!response.ok) {
+            const errorBody = await response.text();
+            console.error('Corpo da resposta de erro:', errorBody);
+            throw new Error(`Erro na API: ${response.status} ${response.statusText}\n${errorBody}`);
+        }
+
+        // Se a resposta for bem-sucedida, processa a resposta
+        const data = await response.json();
+        console.log('Dados recebidos:', data);
+        return data;
+    } catch (error) {
+        // Tratamento de erro
+        console.error('Erro completo:', error);
+        handleApiError(error);
+        throw error;
+    }
+};
+
   
   export const ApiConfig = {
   API_BASE_URL,

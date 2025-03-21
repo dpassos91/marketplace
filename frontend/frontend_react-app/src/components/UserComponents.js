@@ -177,7 +177,7 @@ function ProfileEditForm({ user }) {
                 />
             </div>
             <div>
-                <label htmlFor="phone">Fotografia:</label>
+                <label htmlFor="picture">Fotografia:</label>
                 <input
                     type="text"
                     id="picture"
