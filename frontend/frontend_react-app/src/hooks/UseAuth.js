@@ -46,15 +46,29 @@ export function useAuth() {
     }
   };  
 
-  const logout = () => {
-    console.log('Função de logout chamada'); // Adicione este log
-    useAuthStore.getState().logout(); // Limpa o estado do usuário no store
-    localStorage.removeItem('userData'); // Remove do localStorage
-    sessionStorage.removeItem('authToken');
-    console.log('userData removido da local storage'); // Adicione este log
-    console.log('Conteúdo da local storage após o logout:', localStorage.getItem('userData')); // Adicione este log
-    navigate('/');
+  const logout = async () => {
+    console.log('Função de logout chamada');
+    try {
+      // Chama a API de logout no backend
+      await userAPI.logoutUser(); // Você precisa implementar esta função no userAPI
+  
+      // Limpa o estado local e armazenamento
+      useAuthStore.getState().logout();
+      localStorage.removeItem('userData');
+      sessionStorage.removeItem('authToken');
+  
+      console.log('userData removido da local storage');
+      console.log('Conteúdo da local storage após o logout:', localStorage.getItem('userData'));
+  
+      // Redireciona para a página inicial
+      navigate('/');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      // Você pode decidir se quer forçar o logout local mesmo se a chamada à API falhar
+      alert('Houve um problema ao fazer logout. Por favor, tente novamente.');
+    }
   };
+  
 
   const currentUser = useAuthStore(state => state.user);
 

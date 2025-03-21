@@ -35,10 +35,20 @@ const loginUser = async (credentials) => {
 };
 
 const logoutUser = async () => {
-  const result = await apiCall(API_ENDPOINTS.users.logout, { method: 'POST' });
-  removeAuthToken();
-  return result;
+  try {
+    const result = await apiCall(API_ENDPOINTS.users.logout, { method: 'POST' });
+    if (result === "Successfully logged out!") {
+      removeAuthToken();
+      // Redirecionar para a página de login ou atualizar o estado da aplicação
+      window.location.href = '/login';
+    } else {
+      console.error("Logout falhou:", result);
+    }
+  } catch (error) {
+    console.error("Erro durante o logout:", error);
+  }
 };
+
 
 const getUserById = async (userId) => {
   return apiCall(API_ENDPOINTS.users.byId(userId));
