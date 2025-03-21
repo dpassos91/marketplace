@@ -123,18 +123,15 @@ const DEFAULT_OPTIONS = {
   const apiCall = async (url, options = {}) => {
     console.log('Chamando API:', url, 'com opções:', options);
 
-    // Obtém o token do sessionStorage
     const token = sessionStorage.getItem('authToken');
     console.log('authToken no sessionStorage:', token);
 
-    // Prepara as opções finais, incluindo o token (se existir)
     const finalOptions = {
         ...options,
         headers: {
-            // Se houver token, inclui o prefixo 'Bearer'
             'token': sessionStorage.getItem('authToken'),
             'Content-Type': 'application/json',
-            ...options.headers,  // Garante que os headers extras sejam preservados
+            ...options.headers,
         },
     };
 
@@ -142,28 +139,33 @@ const DEFAULT_OPTIONS = {
     console.log('Opções finais:', finalOptions);
 
     try {
-        // Realiza a chamada à API
         const response = await fetch(url, finalOptions);
         console.log('Resposta da API:', response.status, response.statusText);
 
-        // Se a resposta não for bem-sucedida, lança um erro
         if (!response.ok) {
             const errorBody = await response.text();
             console.error('Corpo da resposta de erro:', errorBody);
             throw new Error(`Erro na API: ${response.status} ${response.statusText}\n${errorBody}`);
         }
 
-        // Se a resposta for bem-sucedida, processa a resposta
-        const data = await response.json();
-        console.log('Dados recebidos:', data);
-        return data;
+        // Tenta processar a resposta como JSON, se falhar, retorna o texto
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            const data = await response.json();
+            console.log('Dados recebidos:', data);
+            return data;
+        } else {
+            const text = await response.text();
+            console.log('Texto recebido:', text);
+            return text;
+        }
     } catch (error) {
-        // Tratamento de erro
         console.error('Erro completo:', error);
         handleApiError(error);
         throw error;
     }
 };
+
 
   
   export const ApiConfig = {
