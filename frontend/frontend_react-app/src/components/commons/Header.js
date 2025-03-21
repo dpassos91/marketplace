@@ -1,19 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import { useAuth } from '../../hooks/UseAuth';
+import AddProductModal from '../AddProductModal';
 
 function Header() {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     console.log('URL da imagem do usuário:', user?.picture);
   }, [user]);
 
   const handleOpenModal = () => {
-    navigate('/sell-product');
+    setIsModalOpen(true); // Abre o modal em vez de navegar
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Fecha o modal
   };
 
   const handleProfileClick = () => {
@@ -21,6 +27,7 @@ function Header() {
   };
 
   return (
+    <>
     <header id="header">
       <div className="logo">
         <Link to="/" title="Home">
@@ -56,7 +63,7 @@ function Header() {
               </button>
             </div>
             <div className="button" id="openModalBtn">
-              <button onClick={handleOpenModal} title="Vender um produto" className="btn btn-outline-success">
+              <button onClick={handleOpenModal} title="Adicionar um produto" className="btn btn-outline-success">
                 <i className="fa fa-plus" aria-hidden="true"></i>
               </button>
             </div>
@@ -70,6 +77,8 @@ function Header() {
         )}
       </nav>
     </header>
+    <AddProductModal isOpen={isModalOpen} onClose={handleCloseModal} />
+    </>
   );
 }
 
