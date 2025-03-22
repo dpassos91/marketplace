@@ -7,8 +7,9 @@ import { categoryComponents } from '../components/categoryComponents';
 import { evaluationComponents } from '../components/evaluationComponents';
 import { userComponents } from '../components/userComponents';
 import Aside from '../components/Aside';
+import { productComponents } from '../components/productComponents';
 
-const { ProductCard } = categoryComponents;
+const { ProductCard } = productComponents;
 const { SellerEvaluations } = evaluationComponents;
 const { ProfileEditForm } = userComponents;
 

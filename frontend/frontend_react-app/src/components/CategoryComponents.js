@@ -121,30 +121,10 @@ function ProductList({ products, categoryId }) {
   );
 }
 
-// Componente de Card de Produto
-function ProductCard({ product }) {
-  const imageUrl = product.imageUrl || 'https://via.placeholder.com/150';
-  
-  return (
-    <div className="card product-card">
-      <img src={imageUrl} alt={product.name} />
-      <div>
-        <h2>{product.name}</h2>
-        <p>{product.description || 'Descrição não disponível'}</p>
-        <p>Preço: {product.price ? `${product.price}€` : 'N/A'}</p>
-        <button type="button" title="Ver detalhes">
-          Ver detalhes
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export const categoryComponents = {
   CategoryCard,
   CategoriesCarousel,
   useProductsByCategory,
   ProductList,
-  ProductCard
 };
 
