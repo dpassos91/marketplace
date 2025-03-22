@@ -129,7 +129,7 @@ const DEFAULT_OPTIONS = {
     const finalOptions = {
         ...options,
         headers: {
-            'token': sessionStorage.getItem('authToken'),
+            'token': token,
             'Content-Type': 'application/json',
             ...options.headers,
         },

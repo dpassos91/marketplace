@@ -390,22 +390,15 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
 
         setIsSubmitting(true);
         try {
-            const user = JSON.parse(sessionStorage.getItem('user'));
-            if (!user || !user.id) {
-                throw new Error('You must be logged in to add a product');
-            }
-
             const productToSave = {
                 ...product,
                 price: parseFloat(product.price),
                 categoryId: parseInt(product.categoryId),
-                sellerId: user.id,
-                estadoById: PRODUCT_STATES.DISPONIVEL.id,
             };
 
-            await onSave(productToSave);
+            await onSave(productToSave); // Call onSave with validated data
             alert('Product saved successfully!');
-            navigate('/'); // or wherever you want to redirect after saving
+
         } catch (error) {
             console.error('Error saving product:', error);
             alert('Error saving product. Please try again.');
@@ -492,38 +485,6 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
     );
 }
 
-function AddProductModal() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleSave = async (newProduct) => {
-        try {
-            await productAPI.createProduct(newProduct);
-            setIsModalOpen(false);
-            // You might want to refresh the product list or navigate somewhere here
-        } catch (error) {
-            console.error('Error creating product:', error);
-            throw error;
-        }
-    };
-
-    return (
-        <>
-            <button onClick={() => setIsModalOpen(true)}>Add New Product</button>
-            {isModalOpen && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h2>Add New Product</h2>
-                        <ProductForm
-                            onSave={handleSave}
-                            onCancel={() => setIsModalOpen(false)}
-                        />
-                    </div>
-                </div>
-            )}
-        </>
-    );
-}
-
 export const productComponents = {
     ProductCard,
     ProductList,
@@ -532,7 +493,6 @@ export const productComponents = {
     DeleteProductButton,
     EditProductForm,
     ProductForm,
-    AddProductModal
 };
 
 
