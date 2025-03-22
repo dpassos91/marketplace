@@ -6,7 +6,8 @@ import RegisterPage from './pages/RegisterPage';
 import ProductPage from './pages/ProductPage';
 import UserProfilePage from './pages/UserProfilePage';
 import Layout from './components/commons/Layout';
-import ProtectedRoute from './utils/protectedRoute'; // Ajuste o caminho conforme necessário
+import ProtectedRoute from './utils/protectedRoute';
+import { productComponents } from './components/productComponents';
 import './App.css';
 import useAuthStore from './stores/authStore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/products" element={<ProductPage />} />
+          <Route path="/detalhes-produto/:id" element={<productComponents.ProductDetails />} /> {/* Nova rota */}
           {/* Rotas protegidas */}
           <Route element={<ProtectedRoute />}>
             <Route path="/profile/:userId" element={<UserProfilePage />} />
@@ -46,6 +48,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useFormInput } from '../hooks/UseFormInput';
 import { categoryAPI } from '../api/categoryAPI.js';
 import { productAPI } from '../api/productAPI.js'; 
 import { PRODUCT_STATES } from '../api/productStates.js';
 import { categoryComponents } from './categoryComponents.js';
+import useAuthStore from '../stores/authStore'; // Ajusta o caminho conforme necessário
+
 
 // Product Related Components
+
 function ProductCard({ product }) {
     const navigate = useNavigate();
 
@@ -83,6 +87,8 @@ function ProductDetails() {
     const [product, setProduct] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const { id } = useParams();
+    const navigate = useNavigate();
+    const user = useAuthStore(state => state.user);
 
     useEffect(() => {
         async function fetchProductDetails() {
@@ -90,90 +96,94 @@ function ProductDetails() {
                 const productData = await productAPI.getProductById(id);
                 if (!productData) {
                     alert('Produto não encontrado!');
+                    navigate('/');
                     return;
                 }
                 setProduct(productData);
             } catch (error) {
-                console.error('Error loading product details:', error);
+                console.error('Erro ao carregar detalhes do produto:', error);
+                alert('Erro ao carregar detalhes do produto. Por favor, tente novamente.');
             }
         }
         fetchProductDetails();
-    }, [id]);
+    }, [id, navigate]);
+
+    const handleSaveProduct = async (updatedProduct) => {
+        try {
+            await productAPI.updateProduct(updatedProduct.id, updatedProduct);
+            setProduct(updatedProduct);
+            setIsEditing(false);
+            alert('Produto atualizado com sucesso!');
+        } catch (error) {
+            console.error('Erro ao atualizar produto:', error);
+            alert('Erro ao atualizar produto. Por favor, tente novamente.');
+        }
+    };
+
+    const handleDeleteProduct = async () => {
+        if (window.confirm('Tem certeza que deseja eliminar este produto?')) {
+            try {
+                await productAPI.deleteProduct(product.id);
+                alert('Produto eliminado com sucesso!');
+                navigate('/');
+            } catch (error) {
+                console.error('Erro ao eliminar produto:', error);
+                alert('Erro ao eliminar produto. Por favor, tente novamente.');
+            }
+        }
+    };
 
     if (!product) {
         return <p>Carregando detalhes do produto...</p>;
     }
+
+    const canEditOrDelete = user && (user.id === product.sellerId || user.role === 'ADMIN');
 
     return (
         <div className="detalhes-container">
             <div className="imagem">
                 <img src={product.imageUrl} alt={product.title} />
             </div>
-            <form id="detalhes-produto-form">
-                <label htmlFor="nome-produto">Nome do Produto:</label>
-                <input type="text" id="nome-produto" value={product.title} readOnly={!isEditing} />
-
-                <label htmlFor="localizacao">Localização:</label>
-                <input type="text" id="localizacao" value={product.location} readOnly={!isEditing} />
-
-                <label htmlFor="categoria-readonly">Categoria:</label>
-                <input type="text" id="categoria-readonly" value={product.categoryName} readOnly={!isEditing} />
-
-                {isEditing && (
-                    <>
-                        <label htmlFor="categoria">Categoria:</label>
-                        <select id="categoria" title="Categoria do Produto">
-                            <option value="">Selecione uma categoria</option>
-                            {/* Populate categories here */}
-                        </select>
-                    </>
-                )}
-
-                <label htmlFor="preco">Preço:</label>
-                <input type="text" id="preco" value={`${parseFloat(product.price).toFixed(2)}€`} readOnly={!isEditing} />
-
-                <label htmlFor="publicado-por">Publicado por:</label>
-                <div className="seller-info">
-                    <input type="text" id="publicado-por" value={product.sellerUsername} readOnly />
-                    <Link to={`/perfil-utilizador/${product.sellerId}`} className="seller-profile-link" title="Ver perfil do vendedor">
-                        <i className="fa fa-user" aria-hidden="true"></i> Ver perfil
+            {isEditing ? (
+                <EditProductForm
+                    initialProduct={product}
+                    onSave={handleSaveProduct}
+                />
+            ) : (
+                <div id="detalhes-produto-form">
+                    <h2>{product.title}</h2>
+                    <p><strong>Localização:</strong> {product.location}</p>
+                    <p><strong>Categoria:</strong> {product.categoryName}</p>
+                    <p><strong>Preço:</strong> {parseFloat(product.price).toFixed(2)}€</p>
+                    <p><strong>Publicado por:</strong> {product.sellerUsername}</p>
+                    <Link to={`/profile/${product.sellerId}`} className="seller-profile-link" title="Ver perfil do vendedor">
+                        <i className="fa fa-user" aria-hidden="true"></i> Ver perfil do vendedor
                     </Link>
+                    <p><strong>Descrição:</strong> {product.description}</p>
+                    <p><strong>Estado:</strong> {product.status}</p>
+
+                    <section className="detalhes-form-buttons">
+                        <button id="enviar-mensagem" type="button" title="Enviar Mensagem\nFuncionalidade não implementada">
+                            Enviar Mensagem <i className="fa fa-paper-plane-o" aria-hidden="true"></i>
+                        </button>
+
+                        <button id="comprar-produto" type="button" title="Comprar" data-produto-id={product.id}>
+                            Comprar <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                        </button>
+
+                        {canEditOrDelete && (
+                            <>
+                                <button id="editar-produto" type="button" title="Editar Produto" onClick={() => setIsEditing(true)}>
+                                    Editar <i className="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button id="eliminar-produto" type="button" title="Eliminar Produto" onClick={handleDeleteProduct}>
+                                    Eliminar <i className="fa fa-times" aria-hidden="true"></i>
+                                </button>
+                            </>
+                        )}
+                    </section>
                 </div>
-                <label htmlFor="descricao">Descrição:</label>
-                <textarea id="descricao" readOnly={!isEditing} value={product.description} />
-
-                <label htmlFor="estado-produto-readonly">Estado:</label>
-                <input type="text" id="estado-produto-readonly" value={product.status} readOnly={!isEditing} />
-
-                {isEditing && (
-                    <>
-                        <label htmlFor="estado-produto">Estado:</label>
-                        <select name="estado-produto" id="estado-produto" title="Estado do Produto">
-                            {/* Populate state options here */}
-                        </select>
-                    </>
-                )}
-
-                <section className="detalhes-form-buttons">
-                    <button id="enviar-mensagem" type="button" title="Enviar Mensagem\nFuncionalidade não implementada">
-                        Enviar Mensagem <i className="fa fa-paper-plane-o" aria-hidden="true"></i>
-                    </button>
-
-                    <button id="comprar-produto" type="button" title="Comprar" data-produto-id={product.id}>
-                        Comprar <i className="fa fa-shopping-cart" aria-hidden="true"></i>
-                    </button>
-
-                    {/* Add logic to show/hide these buttons based on user permissions */}
-                    {/* <button id="editar-produto" type="button" title="Editar Produto" onClick={() => setIsEditing(!isEditing)}>
-            {isEditing ? 'Salvar' : 'Editar'} <i className="fa fa-pencil" aria-hidden="true"></i>
-          </button> */}
-                    {/*  <button id="eliminar-produto" type="button" title="Eliminar Produto">
-            Eliminar <i className="fa fa-times" aria-hidden="true"></i>
-          </button> */}
-                </section>
-
-                <input type="hidden" id="categoria-id" value={product.categoryId} />
-            </form>
+            )}
         </div>
     );
 }
@@ -219,10 +229,10 @@ function DeleteProductButton({ productId }) {
     );
 }
 
-function EditProductForm({ product, onSave }) {
+function EditProductForm({ initialProduct, onSave }) {
     const [categories, setCategories] = useState([]);
-    const [editedProduct, setEditedProduct] = useState({ ...product });
     const [isEditing, setIsEditing] = useState(false);
+    const [editedProduct, handleInputChange, setEditedProduct] = useFormInput(initialProduct);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -236,19 +246,11 @@ function EditProductForm({ product, onSave }) {
         fetchCategories();
     }, []);
 
-    const handleInputChange = (e) => {
-        const { id, value } = e.target;
-        setEditedProduct(prev => ({
-            ...prev,
-            [id]: id === 'price' ? parseFloat(value) : value
-        }));
-    };
-
     const handleCategoryChange = (e) => {
-        const selectedCategory = categories.find(cat => cat.id === e.target.value);
+        const selectedCategory = categories.find(cat => cat.id === parseInt(e.target.value));
         setEditedProduct(prev => ({
             ...prev,
-            categoryId: e.target.value,
+            categoryId: parseInt(e.target.value),
             categoryName: selectedCategory?.name || ''
         }));
     };
@@ -259,6 +261,7 @@ function EditProductForm({ product, onSave }) {
             status: e.target.value
         }));
     };
+
     const handleSave = async () => {
         try {
             await onSave(editedProduct);
@@ -269,11 +272,41 @@ function EditProductForm({ product, onSave }) {
     };
 
     return (
-        <>
-            <label htmlFor="preco">Preço:</label>
+        <form>
+            <label htmlFor="title">Nome do Produto:</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value={editedProduct.title}
+                onChange={handleInputChange}
+                readOnly={!isEditing}
+            />
+
+            <label htmlFor="description">Descrição:</label>
+            <textarea
+                id="description"
+                name="description"
+                value={editedProduct.description}
+                onChange={handleInputChange}
+                readOnly={!isEditing}
+            />
+
+            <label htmlFor="location">Localização:</label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                value={editedProduct.location}
+                onChange={handleInputChange}
+                readOnly={!isEditing}
+            />
+
+            <label htmlFor="price">Preço:</label>
             <input
                 type="number"
                 id="price"
+                name="price"
                 value={isEditing ? editedProduct.price : parseFloat(editedProduct.price).toFixed(2)}
                 onChange={handleInputChange}
                 readOnly={!isEditing}
@@ -284,6 +317,7 @@ function EditProductForm({ product, onSave }) {
                     <label htmlFor="categoria">Categoria:</label>
                     <select
                         id="categoria"
+                        name="categoryId"
                         value={editedProduct.categoryId}
                         onChange={handleCategoryChange}
                     >
@@ -298,6 +332,7 @@ function EditProductForm({ product, onSave }) {
                     <label htmlFor="estado-produto">Estado:</label>
                     <select
                         id="estado-produto"
+                        name="status"
                         value={editedProduct.status}
                         onChange={handleStateChange}
                     >
@@ -321,9 +356,10 @@ function EditProductForm({ product, onSave }) {
                 {isEditing ? 'Salvar' : 'Editar'}
                 <i className={`fa fa-${isEditing ? 'save' : 'pencil'}`} aria-hidden="true" />
             </button>
-        </>
+        </form>
     );
 }
+
 
 // Uso no componente ProductDetails
 function ProductDetails2() {
