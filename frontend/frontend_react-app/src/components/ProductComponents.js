@@ -6,6 +6,7 @@ import { productAPI } from '../api/productAPI.js';
 import { PRODUCT_STATES } from '../api/productStates.js';
 import { categoryComponents } from './categoryComponents.js';
 import useAuthStore from '../stores/authStore.js'; // Ajusta o caminho conforme necessário
+import useProductStore from '../stores/productStore.js';
 
 
 // Product Related Components
@@ -84,11 +85,11 @@ function RecentProducts() {
 }
 
 function ProductDetails() {
-    const [product, setProduct] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
     const user = useAuthStore(state => state.user);
+    const { product, setProduct } = useProductStore(); // Use as funções do store
+    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         async function fetchProductDetails() {
@@ -99,19 +100,20 @@ function ProductDetails() {
                     navigate('/');
                     return;
                 }
-                setProduct(productData);
+                setProduct(productData); // Define o produto no store Zustand
             } catch (error) {
                 console.error('Erro ao carregar detalhes do produto:', error);
                 alert('Erro ao carregar detalhes do produto. Por favor, tente novamente.');
             }
         }
         fetchProductDetails();
-    }, [id, navigate]);
+    }, [id, navigate, setProduct]);
 
     const handleSaveProduct = async (updatedProduct) => {
         try {
+            // Envia o objeto `updatedProduct` completo para a API
             await productAPI.updateProduct(updatedProduct.id, updatedProduct);
-            setProduct(updatedProduct);
+            setProduct(updatedProduct); // Atualiza o produto no store Zustand
             setIsEditing(false);
             alert('Produto atualizado com sucesso!');
         } catch (error) {
@@ -119,6 +121,7 @@ function ProductDetails() {
             alert('Erro ao atualizar produto. Por favor, tente novamente.');
         }
     };
+
 
     const handleDeleteProduct = async () => {
         if (window.confirm('Tem certeza que deseja eliminar este produto?')) {
@@ -150,9 +153,8 @@ function ProductDetails() {
             </div>
             {isEditing ? (
                 <EditProductForm
-                    initialProduct={product}
                     onSave={handleSaveProduct}
-                    onCancel={handleCancel} // Passa a função handleCancel como prop
+                    onCancel={handleCancel}
                 />
             ) : (
                 <div id="detalhes-produto-form">
@@ -189,21 +191,20 @@ function ProductDetails() {
     );
 }
 
-
-function EditProductForm({ initialProduct, onSave, onCancel }) { // Recebe a função onCancel como prop
+function EditProductForm({ onSave, onCancel }) {
+    const { product } = useProductStore(); // Use o produto do store Zustand
     const [categories, setCategories] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedProduct, handleInputChange, setEditedProduct] = useFormInput(initialProduct);
+    const [editedProduct, handleInputChange, setEditedProduct] = useFormInput(product);
 
     useEffect(() => {
-        const fetchCategories = async () => {
+        async function fetchCategories() {
             try {
                 const data = await categoryAPI.getAllCategories();
                 setCategories(data);
             } catch (error) {
                 console.error('Error loading categories:', error);
             }
-        };
+        }
         fetchCategories();
     }, []);
 
@@ -217,20 +218,32 @@ function EditProductForm({ initialProduct, onSave, onCancel }) { // Recebe a fun
     };
 
     const handleStateChange = (e) => {
+        const statusText = e.target.value;
+        const state = PRODUCT_STATES.fromDescription(statusText);
+
+        if (!state) {
+            console.error('Invalid product state:', statusText);
+            alert('Estado do produto inválido!');
+            return;
+        }
+
         setEditedProduct(prev => ({
             ...prev,
-            status: e.target.value
+            status: state.description, // Define a descrição
+            estadoById: state.id // Define o ID
         }));
     };
 
+
     const handleSave = async () => {
         try {
+            // Garante que o objeto `editedProduct` completo seja passado para `onSave`
             await onSave(editedProduct);
-            setIsEditing(false);
         } catch (error) {
             console.error('Error saving product:', error);
         }
     };
+    
 
     return (
         <div id="detalhes-produto-form">
@@ -300,10 +313,10 @@ function EditProductForm({ initialProduct, onSave, onCancel }) { // Recebe a fun
                 </select>
             </p>
             <section className="detalhes-form-buttons">
-                <button type="button" onClick={() => onSave(editedProduct)}>
+                <button type="button" onClick={handleSave}>
                     Salvar <i className="fa fa-save" aria-hidden="true"></i>
                 </button>
-                <button type="button" onClick={onCancel}> {/* Usa a função onCancel passada como prop */}
+                <button type="button" onClick={onCancel}>
                     Cancelar <i className="fa fa-times" aria-hidden="true"></i>
                 </button>
             </section>
