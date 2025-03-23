@@ -133,6 +133,10 @@ function ProductDetails() {
         }
     };
 
+    const handleCancel = () => {
+        setIsEditing(false);
+    };
+
     if (!product) {
         return <p>Carregando detalhes do produto...</p>;
     }
@@ -148,6 +152,7 @@ function ProductDetails() {
                 <EditProductForm
                     initialProduct={product}
                     onSave={handleSaveProduct}
+                    onCancel={handleCancel} // Passa a função handleCancel como prop
                 />
             ) : (
                 <div id="detalhes-produto-form">
@@ -156,17 +161,13 @@ function ProductDetails() {
                     <p><strong>Categoria:</strong> {product.categoryName}</p>
                     <p><strong>Preço:</strong> {parseFloat(product.price).toFixed(2)}€</p>
                     <p><strong>Publicado por:</strong> {product.sellerUsername}</p>
+                    <p><strong>Descrição:</strong> {product.description}</p>
+                    <p><strong>Estado:</strong> {product.status}</p>
                     <Link to={`/profile/${product.sellerId}`} className="seller-profile-link" title="Ver perfil do vendedor">
                         <i className="fa fa-user" aria-hidden="true"></i> Ver perfil do vendedor
                     </Link>
-                    <p><strong>Descrição:</strong> {product.description}</p>
-                    <p><strong>Estado:</strong> {product.status}</p>
 
                     <section className="detalhes-form-buttons">
-                        <button id="enviar-mensagem" type="button" title="Enviar Mensagem\nFuncionalidade não implementada">
-                            Enviar Mensagem <i className="fa fa-paper-plane-o" aria-hidden="true"></i>
-                        </button>
-
                         <button id="comprar-produto" type="button" title="Comprar" data-produto-id={product.id}>
                             Comprar <i className="fa fa-shopping-cart" aria-hidden="true"></i>
                         </button>
@@ -188,48 +189,8 @@ function ProductDetails() {
     );
 }
 
-function DeleteProductButton({ productId }) {
-    const [isDeleting, setIsDeleting] = useState(false);
-    const navigate = useNavigate();
 
-    const handleDelete = async () => {
-        const confirmDelete = window.confirm(
-            'Tem certeza que deseja desativar este produto? Esta ação pode ser revertida na área administrativa.'
-        );
-
-        if (confirmDelete) {
-            try {
-                setIsDeleting(true);
-                await productAPI.softDeleteProduct(productId);
-                alert('Produto desativado com sucesso.');
-                navigate('/');
-            } catch (error) {
-                console.error('Error deactivating product:', error);
-                alert('Ocorreu um erro ao desativar o produto. Por favor, tente novamente.');
-            } finally {
-                setIsDeleting(false);
-            }
-        }
-    };
-
-    return (
-        <button
-            id="eliminar-produto"
-            type="button"
-            title="Eliminar Produto"
-            onClick={handleDelete}
-            disabled={isDeleting}
-        >
-            {isDeleting ? (
-                <>A processar... <i className="fa fa-spinner fa-spin" /></>
-            ) : (
-                <>Eliminar <i className="fa fa-times" /></>
-            )}
-        </button>
-    );
-}
-
-function EditProductForm({ initialProduct, onSave }) {
+function EditProductForm({ initialProduct, onSave, onCancel }) { // Recebe a função onCancel como prop
     const [categories, setCategories] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [editedProduct, handleInputChange, setEditedProduct] = useFormInput(initialProduct);
@@ -272,117 +233,123 @@ function EditProductForm({ initialProduct, onSave }) {
     };
 
     return (
-        <form>
-            <label htmlFor="title">Nome do Produto:</label>
-            <input
-                type="text"
-                id="title"
-                name="title"
-                value={editedProduct.title}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-            />
-
-            <label htmlFor="description">Descrição:</label>
-            <textarea
-                id="description"
-                name="description"
-                value={editedProduct.description}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-            />
-
-            <label htmlFor="location">Localização:</label>
-            <input
-                type="text"
-                id="location"
-                name="location"
-                value={editedProduct.location}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-            />
-
-            <label htmlFor="price">Preço:</label>
-            <input
-                type="number"
-                id="price"
-                name="price"
-                value={isEditing ? editedProduct.price : parseFloat(editedProduct.price).toFixed(2)}
-                onChange={handleInputChange}
-                readOnly={!isEditing}
-            />
-
-            {isEditing && (
-                <>
-                    <label htmlFor="categoria">Categoria:</label>
-                    <select
-                        id="categoria"
-                        name="categoryId"
-                        value={editedProduct.categoryId}
-                        onChange={handleCategoryChange}
-                    >
-                        <option value="">Selecione uma categoria</option>
-                        {categories.map(category => (
-                            <option key={category.id} value={category.id}>
-                                {category.name}
+        <div id="detalhes-produto-form">
+            <h2>
+                <input
+                    type="text"
+                    name="title"
+                    value={editedProduct.title}
+                    onChange={handleInputChange}
+                />
+            </h2>
+            <p>
+                <strong>Localização:</strong>
+                <input
+                    type="text"
+                    name="location"
+                    value={editedProduct.location}
+                    onChange={handleInputChange}
+                />
+            </p>
+            <p>
+                <strong>Categoria:</strong>
+                <select
+                    name="categoryId"
+                    value={editedProduct.categoryId}
+                    onChange={handleCategoryChange}
+                >
+                    {categories.map(category => (
+                        <option key={category.id} value={category.id}>
+                            {category.name}
+                        </option>
+                    ))}
+                </select>
+            </p>
+            <p>
+                <strong>Preço:</strong>
+                <input
+                    type="number"
+                    name="price"
+                    value={editedProduct.price}
+                    onChange={handleInputChange}
+                />
+            </p>
+            <p><strong>Publicado por:</strong> {editedProduct.sellerUsername}</p>
+            <p>
+                <strong>Descrição:</strong>
+                <textarea
+                    name="description"
+                    value={editedProduct.description}
+                    onChange={handleInputChange}
+                />
+            </p>
+            <p>
+                <strong>Estado:</strong>
+                <select
+                    name="status"
+                    value={editedProduct.status}
+                    onChange={handleStateChange}
+                >
+                    {Object.values(PRODUCT_STATES)
+                        .filter(state => state.id !== PRODUCT_STATES.INATIVO.id)
+                        .map(state => (
+                            <option key={state.id} value={state.description}>
+                                {state.description}
                             </option>
                         ))}
-                    </select>
-
-                    <label htmlFor="estado-produto">Estado:</label>
-                    <select
-                        id="estado-produto"
-                        name="status"
-                        value={editedProduct.status}
-                        onChange={handleStateChange}
-                    >
-                        {Object.values(PRODUCT_STATES)
-                            .filter(state => state.id !== PRODUCT_STATES.INATIVO.id)
-                            .map(state => (
-                                <option key={state.id} value={state.description}>
-                                    {state.description}
-                                </option>
-                            ))}
-                    </select>
-                </>
-            )}
-
-            <button
-                id="editar-produto"
-                type="button"
-                title="Editar Produto"
-                onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-            >
-                {isEditing ? 'Salvar' : 'Editar'}
-                <i className={`fa fa-${isEditing ? 'save' : 'pencil'}`} aria-hidden="true" />
-            </button>
-        </form>
+                </select>
+            </p>
+            <section className="detalhes-form-buttons">
+                <button type="button" onClick={() => onSave(editedProduct)}>
+                    Salvar <i className="fa fa-save" aria-hidden="true"></i>
+                </button>
+                <button type="button" onClick={onCancel}> {/* Usa a função onCancel passada como prop */}
+                    Cancelar <i className="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </section>
+        </div>
     );
 }
 
 
-// Uso no componente ProductDetails
-function ProductDetails2() {
-    // ... (código anterior)
-    const [product, setProduct] = useState(null);
+function DeleteProductButton({ productId }) {
+    const [isDeleting, setIsDeleting] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSaveProduct = async (updatedProduct) => {
-        try {
-            const savedProduct = await productAPI.updateProduct(updatedProduct);
-            setProduct(savedProduct);
-            alert('Produto atualizado com sucesso!');
-        } catch (error) {
-            alert('Erro ao atualizar o produto');
-            throw error;
+    const handleDelete = async () => {
+        const confirmDelete = window.confirm(
+            'Tem certeza que deseja desativar este produto? Esta ação pode ser revertida na área administrativa.'
+        );
+
+        if (confirmDelete) {
+            try {
+                setIsDeleting(true);
+                await productAPI.softDeleteProduct(productId);
+                alert('Produto desativado com sucesso.');
+                navigate('/');
+            } catch (error) {
+                console.error('Error deactivating product:', error);
+                alert('Ocorreu um erro ao desativar o produto. Por favor, tente novamente.');
+            } finally {
+                setIsDeleting(false);
+            }
         }
     };
 
     return (
-        <div className="detalhes-container">
-            {/* ... outros elementos */}
-            <EditProductForm product={product} onSave={handleSaveProduct} />
-            <DeleteProductButton productId={product?.id} />
-        </div>
+        <button
+            id="eliminar-produto"
+            type="button"
+            title="Eliminar Produto"
+            onClick={handleDelete}
+            disabled={isDeleting}
+        >
+            {isDeleting ? (
+                <>A processar... <i className="fa fa-spinner fa-spin" /></>
+            ) : (
+                <>Eliminar <i className="fa fa-times" /></>
+            )}
+        </button>
     );
 }
 
