@@ -36,7 +36,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/products" element={<ProductPage />} />
-          <Route path="/detalhes-produto/:id" element={<productComponents.ProductDetails />} /> {/* Nova rota */}
+          <Route path="/detalhes-produto/:id" element={<productComponents.ProductDetails />} /> 
           {/* Rotas protegidas */}
           <Route element={<ProtectedRoute />}>
             <Route path="/profile/:userId" element={<UserProfilePage />} />

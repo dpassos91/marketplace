@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useFormInput } from '../hooks/UseFormInput';
+import { useFormInput } from '../hooks/UseFormInput.js';
 import { categoryAPI } from '../api/categoryAPI.js';
 import { productAPI } from '../api/productAPI.js'; 
 import { PRODUCT_STATES } from '../api/productStates.js';
 import { categoryComponents } from './categoryComponents.js';
-import useAuthStore from '../stores/authStore'; // Ajusta o caminho conforme necessário
+import useAuthStore from '../stores/authStore.js'; // Ajusta o caminho conforme necessário
 
 
 // Product Related Components
