@@ -101,7 +101,11 @@ function ProductDetails() {
     const canBuy = user && !isOwner;
     
     // Verifica se o produto não está no estado "Comprado" para permitir edição
-    const canEditOrDelete = user && (isOwner || user.isAdmin === true) && product.status !== PRODUCT_STATES.COMPRADO.description;
+    const canEditOrDelete = user && (
+        (isOwner && product.status !== PRODUCT_STATES.COMPRADO.description && product.status !== PRODUCT_STATES.INATIVO.description) ||
+        user.isAdmin === true
+      );
+      
 
 
     useEffect(() => {
@@ -259,16 +263,27 @@ function ProductDetails() {
     
                         {/* Botões Editar/Eliminar - para proprietário ou admin */}
                         {/* Botões Editar/Eliminar - apenas para proprietário ou admin */}
-{canEditOrDelete && (
-    <>
-        <button id="editar-produto" type="button" title="Editar Produto" onClick={() => setIsEditing(true)}>
-            Editar <i className="fa fa-pencil" aria-hidden="true"></i>
-        </button>
-        <button id="eliminar-produto" type="button" title="Eliminar Produto" onClick={handleDeleteProduct}>
-            Eliminar <i className="fa fa-times" aria-hidden="true"></i>
-        </button>
-    </>
+                        {canEditOrDelete && (
+  <>
+    <button
+      id="editar-produto"
+      type="button"
+      title="Editar Produto"
+      onClick={() => setIsEditing(true)}
+    >
+      Editar <i className="fa fa-pencil" aria-hidden="true"></i>
+    </button>
+    <button
+      id="eliminar-produto"
+      type="button"
+      title="Eliminar Produto"
+      onClick={handleDeleteProduct}
+    >
+      Eliminar <i className="fa fa-times" aria-hidden="true"></i>
+    </button>
+  </>
 )}
+
 
                     </section>
                 </div>
