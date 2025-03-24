@@ -18,7 +18,7 @@ function HomePage() {
     const loadData = async () => {
       try {
         // Buscar os últimos produtos adicionados
-        const productsData = await productAPI.getAllProducts();
+        const productsData = await productAPI.getAllActiveProducts();
         setRecentProducts(productsData);
 
         // Buscar as categorias disponíveis

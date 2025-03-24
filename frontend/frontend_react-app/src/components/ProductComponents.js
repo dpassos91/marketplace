@@ -130,7 +130,7 @@ function ProductDetails() {
     const handleDeleteProduct = async () => {
         if (window.confirm('Tem certeza que deseja eliminar este produto?')) {
             try {
-                await productAPI.deleteProduct(product.id);
+                await productAPI.softDeleteProduct(product.id);
                 alert('Produto eliminado com sucesso!');
                 navigate('/');
             } catch (error) {
