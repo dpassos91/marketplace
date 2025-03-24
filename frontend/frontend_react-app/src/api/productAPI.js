@@ -22,12 +22,16 @@ const getAllProducts = async () => {
  */
 const getAllActiveProducts = async () => {
   try {
-    return await apiCall(API_ENDPOINTS.products.active);
+    const products = await apiCall(API_ENDPOINTS.products.active);
+    // Filtrar produtos para incluir somente aqueles no estado "Disponível"
+    return products.filter(product => product.status === PRODUCT_STATES.DISPONIVEL.description);
   } catch (error) {
     console.error('Failed to fetch active products:', error);
     return [];
   }
 };
+
+
 
 /**
  * Fetches paginated products from the API.

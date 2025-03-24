@@ -23,42 +23,46 @@ function ProductCard({ product }) {
                 <h2>{product.categoryName}</h2>
                 <span>{parseFloat(product.price).toFixed(2)}€</span>
                 <button
-                    type="button"
-                    title="descricao"
-                    onClick={() => navigate(`/detalhes-produto/${product.id}`)}
-                >
-                    Saber mais
-                </button>
+    type="button"
+    title="descricao"
+    onClick={() => navigate(`/detalhes-produto/${product.id}`)}
+>
+    Saber mais
+</button>
+
+
             </div>
         </div>
     );
 }
 
 function ProductList() {
-    const [products, setProducts] = useState([]);
-    const { categoryId } = useParams();
+  const [products, setProducts] = useState([]);
+  const { categoryId } = useParams();
+  const user = useAuthStore(state => state.user); // Obtém o usuário logado
 
-    useEffect(() => {
-        async function fetchProducts() {
-            const allProducts = await productAPI.getAllActiveProducts();
-            if (categoryId) {
-                const categoryComponent = await import('./categoryComponents.js');
-                const filteredProducts = await categoryComponent.displayProductsByCategory(allProducts, categoryId);
-                setProducts(filteredProducts);
-            } else {
-                setProducts(allProducts);
-            }
-        }
-        fetchProducts();
-    }, [categoryId]);
+  useEffect(() => {
+    async function fetchProducts() {
+      const userId = user ? user.id : null; // Obtém o ID do usuário ou null se não estiver logado
+      const allProducts = await productAPI.getAllActiveProducts(userId); // Passa o userId
+      if (categoryId) {
+        const categoryComponent = await import('./categoryComponents.js');
+        const filteredProducts = await categoryComponent.displayProductsByCategory(allProducts, categoryId);
+        setProducts(filteredProducts);
+      } else {
+        setProducts(allProducts);
+      }
+    }
+    fetchProducts();
+  }, [categoryId, user]);
 
-    return (
-        <div className="product-list">
-            {products.map(product => (
-                <ProductCard key={product.id} product={product} />
-            ))}
-        </div>
-    );
+  return (
+    <div className="product-list">
+      {products.map(product => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
 }
 
 function RecentProducts() {
@@ -95,7 +99,10 @@ function ProductDetails() {
     // Verifica se o usuário é o proprietário ou admin
     const isOwner = user && product && user.id === product.sellerId;
     const canBuy = user && !isOwner;
-    const canEditOrDelete = user && (isOwner || user.isAdmin === true);
+    
+    // Verifica se o produto não está no estado "Comprado" para permitir edição
+    const canEditOrDelete = user && (isOwner || user.isAdmin === true) && product.status !== PRODUCT_STATES.COMPRADO.description;
+
 
     useEffect(() => {
         async function fetchProductDetails() {
@@ -251,23 +258,24 @@ function ProductDetails() {
                         )}
     
                         {/* Botões Editar/Eliminar - para proprietário ou admin */}
-                        {canEditOrDelete && (
-                            <>
-                                <button id="editar-produto" type="button" title="Editar Produto" onClick={() => setIsEditing(true)}>
-                                    Editar <i className="fa fa-pencil" aria-hidden="true"></i>
-                                </button>
-                                <button id="eliminar-produto" type="button" title="Eliminar Produto" onClick={handleDeleteProduct}>
-                                    Eliminar <i className="fa fa-times" aria-hidden="true"></i>
-                                </button>
-                            </>
-                        )}
+                        {/* Botões Editar/Eliminar - apenas para proprietário ou admin */}
+{canEditOrDelete && (
+    <>
+        <button id="editar-produto" type="button" title="Editar Produto" onClick={() => setIsEditing(true)}>
+            Editar <i className="fa fa-pencil" aria-hidden="true"></i>
+        </button>
+        <button id="eliminar-produto" type="button" title="Eliminar Produto" onClick={handleDeleteProduct}>
+            Eliminar <i className="fa fa-times" aria-hidden="true"></i>
+        </button>
+    </>
+)}
+
                     </section>
                 </div>
             )}
         </div>
     );
 }    
-
 
 function EditProductForm({ onSave, onCancel }) {
     const { product } = useProductStore(); // Use o produto do store Zustand
@@ -375,21 +383,22 @@ function EditProductForm({ onSave, onCancel }) {
                 />
             </p>
             <p>
-                <strong>Estado:</strong>
-                <select
-                    name="status"
-                    value={editedProduct.status}
-                    onChange={handleStateChange}
-                >
-                    {Object.values(PRODUCT_STATES)
-                        .filter(state => state.id !== PRODUCT_STATES.INATIVO.id)
-                        .map(state => (
-                            <option key={state.id} value={state.description}>
-                                {state.description}
-                            </option>
-                        ))}
-                </select>
-            </p>
+  <strong>Estado:</strong>
+  <select
+    name="status"
+    value={editedProduct.status}
+    onChange={handleStateChange}
+    disabled={editedProduct.status === PRODUCT_STATES.COMPRADO.description}
+  >
+    {Object.values(PRODUCT_STATES)
+      .filter(state => state.id !== PRODUCT_STATES.INATIVO.id)
+      .map(state => (
+        <option key={state.id} value={state.description}>
+          {state.description}
+        </option>
+      ))}
+  </select>
+</p>
             <section className="detalhes-form-buttons">
                 <button type="button" onClick={handleSave}>
                     Salvar <i className="fa fa-save" aria-hidden="true"></i>
@@ -401,7 +410,6 @@ function EditProductForm({ onSave, onCancel }) {
         </div>
     );
 }
-
 
 function DeleteProductButton({ productId }) {
     const [isDeleting, setIsDeleting] = useState(false);
