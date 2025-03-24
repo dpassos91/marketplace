@@ -234,9 +234,21 @@ function ProductDetails() {
                     <p><strong>Publicado por:</strong> {product.sellerUsername}</p>
                     <p><strong>Descrição:</strong> {product.description}</p>
                     <p><strong>Estado:</strong> {product.status}</p>
-                    <Link to={`/profile/${product.sellerId}`} className="seller-profile-link" title="Ver perfil do vendedor">
-                        <i className="fa fa-user" aria-hidden="true"></i> Ver perfil do vendedor
-                    </Link>
+                    <Link
+  to={user ? `/profile/${product.sellerId}` : '#'}
+  className="seller-profile-link"
+  title="Ver perfil do vendedor"
+  onClick={(e) => {
+    if (!user) {
+      e.preventDefault(); // Evita a navegação para o link
+      alert('Só pode aceder a este perfil se for membro da nossa comunidade. Registe-se e/ou faça login!');
+      navigate('/login');
+    }
+  }}
+>
+  <i className="fa fa-user" aria-hidden="true"></i> Ver perfil do vendedor
+</Link>
+
                     {console.log('Seller ID:', product.sellerId)}
     
                     <section className="detalhes-form-buttons">
