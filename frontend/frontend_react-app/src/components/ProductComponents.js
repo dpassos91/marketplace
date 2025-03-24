@@ -88,8 +88,14 @@ function ProductDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
     const user = useAuthStore(state => state.user);
-    const { product, setProduct } = useProductStore(); // Use as funções do store
+    const { product, setProduct } = useProductStore();
     const [isEditing, setIsEditing] = useState(false);
+    const [isBuying, setIsBuying] = useState(false);
+
+    // Verifica se o usuário é o proprietário ou admin
+    const isOwner = user && product && user.id === product.sellerId;
+    const canBuy = user && !isOwner;
+    const canEditOrDelete = user && (isOwner || user.isAdmin === true);
 
     useEffect(() => {
         async function fetchProductDetails() {
@@ -100,7 +106,7 @@ function ProductDetails() {
                     navigate('/');
                     return;
                 }
-                setProduct(productData); // Define o produto no store Zustand
+                setProduct(productData);
             } catch (error) {
                 console.error('Erro ao carregar detalhes do produto:', error);
                 alert('Erro ao carregar detalhes do produto. Por favor, tente novamente.');
@@ -111,9 +117,8 @@ function ProductDetails() {
 
     const handleSaveProduct = async (updatedProduct) => {
         try {
-            // Envia o objeto `updatedProduct` completo para a API
             await productAPI.updateProduct(updatedProduct.id, updatedProduct);
-            setProduct(updatedProduct); // Atualiza o produto no store Zustand
+            setProduct(updatedProduct);
             setIsEditing(false);
             alert('Produto atualizado com sucesso!');
         } catch (error) {
@@ -121,7 +126,6 @@ function ProductDetails() {
             alert('Erro ao atualizar produto. Por favor, tente novamente.');
         }
     };
-
 
     const handleDeleteProduct = async () => {
         if (window.confirm('Tem certeza que deseja eliminar este produto?')) {
@@ -140,11 +144,65 @@ function ProductDetails() {
         setIsEditing(false);
     };
 
+    const handleComprar = async () => {
+        try {
+            if (!user) {
+                alert('Precisa de iniciar sessão para comprar produtos.');
+                navigate('/login');
+                return;
+            }
+
+            // Verificar se é o dono do produto
+            if (user.id === product.sellerId) {
+                alert('Não pode comprar o seu próprio produto.');
+                return;
+            }
+
+            // Verificar disponibilidade
+            const productState = PRODUCT_STATES.fromDescription(product.status);
+            if (!productState || productState.id !== PRODUCT_STATES.DISPONIVEL.id) {
+                alert('Este produto não está disponível para compra.');
+                return;
+            }
+
+            // Confirmação da compra
+            const confirmPurchase = window.confirm('Tem certeza que deseja comprar este produto?');
+            if (!confirmPurchase) return;
+
+            setIsBuying(true);
+            
+            // Chamar API de compra
+            await productAPI.purchaseProduct(product.id, user.id);
+            
+            // Atualizar estado do produto
+            const updatedProduct = { 
+                ...product, 
+                status: PRODUCT_STATES.COMPRADO.description 
+            };
+            setProduct(updatedProduct);
+            
+            alert('Produto comprado com sucesso!');
+        } catch (error) {
+            console.error('Erro ao comprar produto:', error);
+            
+            let errorMessage = 'Erro ao processar a compra. Tente novamente.';
+            if (error.response) {
+                if (error.response.data.includes('not available')) {
+                    errorMessage = 'Produto já não está disponível';
+                } else if (error.response.data.includes('own product')) {
+                    errorMessage = 'Não pode comprar seu próprio produto';
+                }
+            }
+            
+            alert(errorMessage);
+        } finally {
+            setIsBuying(false);
+        }
+    };
+
     if (!product) {
         return <p>Carregando detalhes do produto...</p>;
     }
-
-    const canEditOrDelete = user && (user.id === product.sellerId || user.role === 'ADMIN');
 
     return (
         <div className="detalhes-container">
@@ -168,12 +226,31 @@ function ProductDetails() {
                     <Link to={`/profile/${product.sellerId}`} className="seller-profile-link" title="Ver perfil do vendedor">
                         <i className="fa fa-user" aria-hidden="true"></i> Ver perfil do vendedor
                     </Link>
-
+                    {console.log('Seller ID:', product.sellerId)}
+    
                     <section className="detalhes-form-buttons">
-                        <button id="comprar-produto" type="button" title="Comprar" data-produto-id={product.id}>
-                            Comprar <i className="fa fa-shopping-cart" aria-hidden="true"></i>
-                        </button>
-
+                        {/* Botão Comprar - só para não proprietários */}
+                        {canBuy && (
+                            <button 
+                                id="comprar-produto" 
+                                type="button" 
+                                title="Comprar" 
+                                onClick={handleComprar} 
+                                disabled={isBuying}
+                            >
+                                {isBuying ? (
+                                    <>
+                                        A processar... <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                                    </>
+                                ) : (
+                                    <>
+                                        Comprar <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                                    </>
+                                )}
+                            </button>
+                        )}
+    
+                        {/* Botões Editar/Eliminar - para proprietário ou admin */}
                         {canEditOrDelete && (
                             <>
                                 <button id="editar-produto" type="button" title="Editar Produto" onClick={() => setIsEditing(true)}>
@@ -189,7 +266,8 @@ function ProductDetails() {
             )}
         </div>
     );
-}
+}    
+
 
 function EditProductForm({ onSave, onCancel }) {
     const { product } = useProductStore(); // Use o produto do store Zustand

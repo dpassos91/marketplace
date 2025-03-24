@@ -23,6 +23,8 @@ export default function UserProfilePage() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log('profileUserId:', profileUserId);
+        console.log('currentUser:', currentUser);
         const fetchData = async () => {
             try {
                 await fetchUserData();
@@ -37,32 +39,34 @@ export default function UserProfilePage() {
     }, [profileUserId, currentUser]);
 
     const fetchUserData = async () => {
+        console.log('Fetching user data for ID:', profileUserId);
         try {
-            const userId = profileUserId || (currentUser && currentUser.id);
-            if (userId) {
-                const userData = await userAPI.getUserById(userId);
+            if (profileUserId) {
+                const userData = await userAPI.getUserById(profileUserId);
                 setUserToDisplay(userData);
-                setIsOwnProfile(currentUser && String(currentUser.id) === String(userId));
+                setIsOwnProfile(currentUser && String(currentUser.id) === String(profileUserId));
             } else {
-                console.warn('Utilizador não autenticado.');
-                navigate('/login');
+                console.warn('ID do usuário não fornecido na URL.');
+                console.log('Redirecionaria para homepage');
             }
         } catch (error) {
             console.error('Erro ao buscar dados do utilizador:', error);
+            // Você pode adicionar um redirecionamento ou mensagem de erro aqui
         }
     };
+    
 
     const fetchUserProducts = async () => {
         try {
-            const userId = profileUserId || (currentUser && currentUser.id);
-            if (userId) {
-                const products = await productAPI.getProductsBySeller(userId);
+            if (profileUserId) {
+                const products = await productAPI.getProductsBySeller(profileUserId);
                 setUserProducts(products);
             }
         } catch (error) {
             console.error('Erro ao buscar produtos do utilizador:', error);
         }
     };
+    
 
     const fetchEvaluations = async () => {
         try {
