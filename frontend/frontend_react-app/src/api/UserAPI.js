@@ -40,7 +40,8 @@ const logoutUser = async () => {
     if (result === "Successfully logged out!") {
       removeAuthToken();
       // Redirecionar para a página de login ou atualizar o estado da aplicação
-      window.location.href = '/login';
+      alert ("Logout realizado com sucesso! Até breve :)");
+      window.location.href = '/';
     } else {
       console.error("Logout falhou:", result);
     }
@@ -48,7 +49,6 @@ const logoutUser = async () => {
     console.error("Erro durante o logout:", error);
   }
 };
-
 
 const getUserById = async (userId) => {
   return apiCall(API_ENDPOINTS.users.byId(userId));
