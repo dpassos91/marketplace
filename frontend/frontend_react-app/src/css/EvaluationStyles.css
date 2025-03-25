@@ -1,0 +1,80 @@
+/* EvaluationStyles.css */
+
+/* Geral */
+.seller-evaluations {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.seller-evaluations h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* AverageRating */
+.average-rating {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #555;
+    text-align: left; /* Ajuste conforme necessário */
+}
+
+/* EvaluationCard */
+.evaluation-card {
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.evaluation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.evaluation-header h4 {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+.evaluation-rating {
+    font-size: 14px;
+    color: #ffc107;
+}
+
+.evaluation-date {
+    font-size: 12px;
+    color: #777;
+}
+
+.evaluation-body p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* AddEvaluationButton */
+.add-evaluation-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-evaluation-btn:hover {
+    background-color: #0056b3;
+}

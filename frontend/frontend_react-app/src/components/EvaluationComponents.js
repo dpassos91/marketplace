@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { evaluationAPI } from '../api/evaluationAPI.js';
 import { formatDate } from '../utils/dateUtils.js';
+import { evaluationAPI } from '../api/evaluationAPI.js';
+import '../css/EvaluationStyles.css'; // Certifique-se de criar este arquivo CSS
 
 function EvaluationCard({ evaluation }) {
   const ratingStars = '★'.repeat(evaluation.rating) + '☆'.repeat(5 - evaluation.rating);
@@ -15,63 +16,39 @@ function EvaluationCard({ evaluation }) {
       <div className="evaluation-body">
         <p>{evaluation.comment}</p>
       </div>
-      {evaluation.canEdit && (
-        <div className="evaluation-actions">
-          <button className="btn-primary edit-evaluation-btn">Editar</button>
-          <button className="btn-danger delete-evaluation-btn">Apagar</button>
-        </div>
-      )}
     </div>
   );
 }
 
-function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation }) {
-  const [canEvaluate, setCanEvaluate] = useState(false);
-  const [loading, setLoading] = useState(true);
+function AverageRating({ averageRating, averageRatingStars, numberOfEvaluations }) {
+  return (
+    <div className="average-rating">
+      Média: {averageRatingStars} ({averageRating.toFixed(1)} de 5) - {numberOfEvaluations} avaliações
+    </div>
+  );
+}
 
-  useEffect(() => {
-    const checkIfCanEvaluate = async () => {
-      try {
-        if (currentUser && currentUser.id) {
-          // Buscar produtos elegíveis para avaliação
-          const eligibleProducts = await evaluationAPI.getEligibleProductsForEvaluation(currentUser.id);
-
-          // Filtrar produtos elegíveis para este vendedor específico
-          const sellerProducts = eligibleProducts.filter(product => product.sellerId == sellerId);
-
-          // Verificar se há produtos para avaliar
-          setCanEvaluate(sellerProducts.length > 0);
-        } else {
-          setCanEvaluate(false);
-        }
-      } catch (error) {
-        console.error('Error checking evaluation eligibility:', error);
-        setCanEvaluate(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkIfCanEvaluate();
-  }, [sellerId, currentUser]);
-
-  if (loading) {
-    return <p>Carregando...</p>; // Mostra uma mensagem de carregamento enquanto verifica
-  }
+function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation, canEvaluate }) {
+  const { calculateAverageRating } = evaluationComponents;
+  const { averageRating, averageRatingStars } = calculateAverageRating(evaluations);
 
   return (
-    <div>
+    <div className="seller-evaluations">
       <h2>Avaliações do Vendedor</h2>
-      {evaluations.map((evaluation) => (
-        <div key={evaluation.id}>
-          <p>
-            <strong>{evaluation.author}:</strong> {evaluation.comment} (Rating: {evaluation.rating})
-          </p>
-        </div>
-      ))}
 
-      {/* Renderizar o botão apenas se puder avaliar */}
-      {canEvaluate && (
+      <AverageRating
+        averageRating={averageRating}
+        averageRatingStars={averageRatingStars}
+        numberOfEvaluations={evaluations.length}
+      />
+
+      <div className="evaluations-list">
+        {evaluations.map((evaluation) => (
+          <EvaluationCard key={evaluation.id} evaluation={evaluation} />
+        ))}
+      </div>
+
+      {currentUser && currentUser.id !== sellerId && canEvaluate && (
         <button
           className="btn-primary add-evaluation-btn"
           onClick={() => onAddEvaluation(sellerId)}
@@ -260,141 +237,35 @@ function AddEvaluationModal({ sellerId, onClose, onSubmit, currentUser }) {
                 maxLength="500"
               />
             </div>
+            <button type="submit" className="btn-primary">
+              Adicionar Avaliação
+            </button>
           </form>
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="submit" className="btn-primary" form="addEvaluationForm">Enviar Avaliação</button>
         </div>
       </div>
     </div>
   );
 }
 
+const calculateAverageRating = (evaluations) => {
+  if (!evaluations || evaluations.length === 0) {
+    return { averageRating: 0, averageRatingStars: 'N/A' };
+  }
 
-function EditEvaluationModal({ evaluation, sellerId, onClose, onUpdate }) {
-  const [formData, setFormData] = useState({
-    id: evaluation.id,
-    title: evaluation.title,
-    rating: evaluation.rating,
-    comment: evaluation.comment,
-    evaluatorId: evaluation.evaluatorId
-  });
-
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
-  };
-
-  const handleRatingClick = (rating) => {
-    setFormData(prev => ({ ...prev, rating }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.title.trim()) {
-      alert('Por favor preencha o título.');
-      return;
-    }
-
-    if (formData.rating === 0) {
-      alert('Por favor selecione um rating para esta review.');
-      return;
-    }
-
-    if (!formData.comment.trim()) {
-      alert('Por favor preencha o comentário.');
-      return;
-    }
-
-    try {
-      await evaluationAPI.updateEvaluation(formData);
-      alert('Avaliação atualizada com sucesso!');
-      onUpdate();
-      onClose();
-    } catch (error) {
-      console.error('Erro a atualizar a avaliação:', error);
-      alert('Falha a atualizar a avaliação.');
-    }
-  };
-
-  return (
-    <div className="custom-modal-overlay">
-      <div className="custom-modal">
-        <div className="modal-header">
-          <h3>Editar Review</h3>
-          <button type="button" className="close-modal" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <form id="editEvaluationForm" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="title">Título</label>
-              <input
-                type="text"
-                id="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                required
-                maxLength="100"
-              />
-            </div>
-            <div className="form-group">
-              <label>Rating</label>
-              <div className="rating-selector">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <span
-                    key={star}
-                    className={`star ${formData.rating >= star ? 'filled' : ''}`}
-                    onClick={() => handleRatingClick(star)}
-                  >
-                    {formData.rating >= star ? '★' : '☆'}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="comment">Comentário</label>
-              <textarea
-                id="comment"
-                value={formData.comment}
-                onChange={handleInputChange}
-                rows="3"
-                required
-                maxLength="500"
-              />
-            </div>
-          </form>
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="submit" className="btn-primary" form="editEvaluationForm">Atualizar</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Função para calcular a média das avaliações
-function calculateAverageRating(evaluations) {
-  const totalRating = evaluations.reduce(
-    (sum, evaluation) => sum + evaluation.rating,
-    0
-  );
+  const totalRating = evaluations.reduce((sum, evaluation) => sum + evaluation.rating, 0);
   const averageRating = totalRating / evaluations.length;
-  const averageRatingStars =
-    '★'.repeat(Math.round(averageRating)) +
-    '☆'.repeat(5 - Math.round(averageRating));
+  const averageRatingStars = '★'.repeat(Math.round(averageRating)) + '☆'.repeat(5 - Math.round(averageRating));
 
   return { averageRating, averageRatingStars };
-}
+};
 
 export const evaluationComponents = {
   EvaluationCard,
+  AverageRating,
   SellerEvaluations,
   AddEvaluationButton,
   EvaluationActions,
   AddEvaluationModal,
-  EditEvaluationModal,
-  calculateAverageRating
+  calculateAverageRating,
 };
+
