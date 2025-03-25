@@ -48,7 +48,6 @@ function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation
   );
 }
 
-
 function AddEvaluationButton({ currentUser, sellerId, onAddEvaluation }) {
   if (!currentUser || currentUser.id === sellerId) return null;
 
@@ -81,25 +80,32 @@ function EvaluationActions({ evaluation, sellerId, onEdit, onDelete }) {
   );
 }
 
-function AddEvaluationModal({ sellerId, onClose, onSubmit }) {
+function AddEvaluationModal({ sellerId, onClose, onSubmit, currentUser }) {
+  console.log("AddEvaluationModal renderizado!")
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
 
   useEffect(() => {
-    async function fetchEligibleProducts() {
-      try {
-        const fetchedProducts = await evaluationAPI.getEligibleProductsForEvaluation();
+  async function fetchEligibleProducts() {
+    try {
+      if (currentUser && currentUser.id) {
+        const fetchedProducts = await evaluationAPI.getEligibleProductsForEvaluation(currentUser.id);
+        console.log("Produtos elegíveis recebidos:", fetchedProducts);  // Adicione este log
         const sellerProducts = fetchedProducts.filter(product => product.sellerId == sellerId);
         setProducts(sellerProducts);
-      } catch (error) {
-        console.error('Error fetching eligible products:', error);
+      } else {
+        console.warn("currentUser ou currentUser.id não estão definidos!");
       }
+    } catch (error) {
+      console.error('Error fetching eligible products:', error);
     }
+  }
 
-    fetchEligibleProducts();
-  }, [sellerId]);
+  fetchEligibleProducts();
+}, [sellerId, currentUser]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

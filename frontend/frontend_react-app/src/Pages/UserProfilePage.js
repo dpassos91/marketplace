@@ -122,7 +122,12 @@ export default function UserProfilePage() {
   };
 
   // Funções para abrir e fechar o modal de avaliação
-  const handleAddEvaluationClick = () => setShowAddEvaluationModal(true);
+  const handleAddEvaluationClick = () => {
+    console.log("Botão de avaliação clicado. Estado atual do modal:", showAddEvaluationModal);
+    setShowAddEvaluationModal(true);
+    console.log("Modal deve estar visível agora.");
+  };
+  
 
   const handleCloseAddEvaluationModal = () => setShowAddEvaluationModal(false);
 
@@ -180,12 +185,24 @@ export default function UserProfilePage() {
 
         {/* Modal de Adicionar Avaliação */}
         {showAddEvaluationModal && (
-          <AddEvaluationModal 
-            sellerId={profileUserId} 
-            onClose={handleCloseAddEvaluationModal} 
-            onSubmit={handleEvaluationAdded} 
-          />
-        )}
+  (() => {
+    try {
+      console.log("Tentando renderizar AddEvaluationModal");
+      return (
+        <AddEvaluationModal
+          sellerId={profileUserId}
+          onClose={handleCloseAddEvaluationModal}
+          onSubmit={handleEvaluationAdded}
+          currentUser={currentUser}
+        />
+      );
+    } catch (error) {
+      console.error("Erro ao renderizar AddEvaluationModal:", error);
+      return null;
+    }
+  })()
+)}
+
       </div>
     </main>
   );

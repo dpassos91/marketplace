@@ -230,7 +230,12 @@ async function hasUserEvaluatedSeller(sellerId) {
  * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
  */
 async function getEligibleProductsForEvaluation(userId) {
+  console.log('Iniciando fetch de produtos elegíveis para avaliação...');
+  console.log(`Parâmetro userId recebido: ${userId}`);
+
   try {
+    console.log('Fazendo requisição para o endpoint:', API_ENDPOINTS.evaluations.eligible(userId));
+    
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.eligible(userId),
       {
@@ -238,18 +243,23 @@ async function getEligibleProductsForEvaluation(userId) {
       }
     );
 
+    console.log('Resposta recebida do servidor:', response);
+
     if (!response.ok) {
-      throw new Error(
-        `Error fetching eligible products: ${response.statusText}`
-      );
+      console.error(`Erro na resposta HTTP! Status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log('Dados recebidos do servidor:', data);
+
+    return data;
   } catch (error) {
-    console.error('Error fetching eligible products:', error);
-    throw error;
+    console.error('Erro ao buscar produtos elegíveis:', error);
+    throw new Error(`Error fetching eligible products: ${error.message}`);
   }
 }
+
 
 export const evaluationAPI = {
   getEvaluationsForSeller,
