@@ -25,7 +25,40 @@ function EvaluationCard({ evaluation }) {
   );
 }
 
-function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation, canEvaluate }) {
+function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation }) {
+  const [canEvaluate, setCanEvaluate] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkIfCanEvaluate = async () => {
+      try {
+        if (currentUser && currentUser.id) {
+          // Buscar produtos elegíveis para avaliação
+          const eligibleProducts = await evaluationAPI.getEligibleProductsForEvaluation(currentUser.id);
+
+          // Filtrar produtos elegíveis para este vendedor específico
+          const sellerProducts = eligibleProducts.filter(product => product.sellerId == sellerId);
+
+          // Verificar se há produtos para avaliar
+          setCanEvaluate(sellerProducts.length > 0);
+        } else {
+          setCanEvaluate(false);
+        }
+      } catch (error) {
+        console.error('Error checking evaluation eligibility:', error);
+        setCanEvaluate(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkIfCanEvaluate();
+  }, [sellerId, currentUser]);
+
+  if (loading) {
+    return <p>Carregando...</p>; // Mostra uma mensagem de carregamento enquanto verifica
+  }
+
   return (
     <div>
       <h2>Avaliações do Vendedor</h2>
@@ -36,7 +69,9 @@ function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation
           </p>
         </div>
       ))}
-      {currentUser && currentUser.id !== sellerId && canEvaluate && (
+
+      {/* Renderizar o botão apenas se puder avaliar */}
+      {canEvaluate && (
         <button
           className="btn-primary add-evaluation-btn"
           onClick={() => onAddEvaluation(sellerId)}
@@ -143,7 +178,7 @@ function AddEvaluationModal({ sellerId, onClose, onSubmit, currentUser }) {
 
     try {
       const evaluationData = {
-        evaluatorId: currentUser.id, // Certifique-se de que você tem acesso ao ID do usuário logado
+        evaluatorId: currentUser.id, 
         evaluatedId: sellerId,
         productId: formData.productId,
         rating: formData.rating,
