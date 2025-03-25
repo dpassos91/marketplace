@@ -16,11 +16,13 @@ function CategoryCard({ category }) {
       <img src={imageUrl} alt={category.name} />
       <div>
         <h1>{category.name}</h1>
-        <p>{category.description || 'Explore produtos desta categoria'}</p>
+        <p>{category.description}</p>
         <button 
           type="button" 
           title="Ver produtos"
-          onClick={() => navigate(`/produtos?category=${category.id}`)}
+          onClick={() => {
+            navigate(`/products?category=${category.id}`);
+          }}
         >
           Ver produtos
         </button>

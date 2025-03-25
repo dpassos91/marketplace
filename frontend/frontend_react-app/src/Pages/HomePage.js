@@ -47,9 +47,11 @@ function HomePage() {
           
           <h1>Categorias disponíveis</h1>
           <section className="card-container categories-container">
-            {categories.map((category) => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
+          {categories.map((category) => {
+  console.log('Categoria:', category);
+  return <CategoryCard key={category.id} category={category} />;
+})}
+
           </section>
         </div>
       </main>
