@@ -5,10 +5,9 @@ import { useAuth } from '../hooks/UseAuth';
 import { userAPI } from '../api/userAPI';
 import { productAPI } from '../api/productAPI';
 import { productComponents } from './productComponents';
-import { categoryComponents } from './categoryComponents';
 import { evaluationComponents } from './evaluationComponents';
 
-const { ProductCard } = categoryComponents;
+const { ProductCard } = productComponents;
 const { SellerEvaluations } = evaluationComponents;
 const { getProductById } = productAPI;
 

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Aside from '../components/Aside';
 import { productComponents } from '../components/productComponents';
-import { categoryComponents } from '../components/categoryComponents';
+import CategoryCard from '../components/category/CategoryCard';
 import { productAPI } from '../api/productAPI'; //
 import { categoryAPI } from '../api/categoryAPI'; // Certifique-se de que está importando corretamente
 
 console.log('Objeto categoryAPI:', categoryAPI);
 
-const { CategoryCard } = categoryComponents;
 const { ProductCard } = productComponents;
 
 function HomePage() {

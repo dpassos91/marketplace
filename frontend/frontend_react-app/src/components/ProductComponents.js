@@ -45,7 +45,7 @@ function ProductList() {
       const userId = user ? user.id : null; // Obtém o ID do usuário ou null se não estiver logado
       const allProducts = await productAPI.getAllActiveProducts(userId); // Passa o userId
       if (categoryId) {
-        const categoryComponent = await import('./categoryComponents.js');
+        const categoryComponent = await import('../components/category/ProductsByCategory.js');
         const filteredProducts = await categoryComponent.displayProductsByCategory(allProducts, categoryId);
         setProducts(filteredProducts);
       } else {
