@@ -11,7 +11,7 @@ import { productComponents } from '../components/productComponents';
 
 const { ProductCard } = productComponents;
 const { SellerEvaluations } = evaluationComponents;
-const { ProfileEditForm } = userComponents;
+const { ProfileInfo } = userComponents;
 
 export default function UserProfilePage() {
     const [userToDisplay, setUserToDisplay] = useState(null);
@@ -51,11 +51,10 @@ export default function UserProfilePage() {
                 setIsOwnProfile(currentUser && String(currentUser.id) === String(profileUserId));
             } else {
                 console.warn('ID do usuário não fornecido na URL.');
-                console.log('Redirecionaria para homepage');
+                navigate('/');
             }
         } catch (error) {
             console.error('Erro ao buscar dados do utilizador:', error);
-            // Você pode adicionar um redirecionamento ou mensagem de erro aqui
         }
     };
 
@@ -63,7 +62,7 @@ export default function UserProfilePage() {
         try {
             if (profileUserId) {
                 const products = await productAPI.getProductsBySeller(profileUserId);
-                setUserProducts(products); // Proprietário vê todos os produtos
+                setUserProducts(products);
             }
         } catch (error) {
             console.error('Erro ao buscar todos os produtos do utilizador:', error);
@@ -73,13 +72,9 @@ export default function UserProfilePage() {
     const fetchAvailableUserProducts = async () => {
         try {
             if (profileUserId) {
-                // Busca todos os produtos do vendedor
                 const products = await productAPI.getProductsBySeller(profileUserId);
-
-                // Filtra apenas os produtos com status "Disponível"
                 const availableProducts = products.filter(product => product.status === 'Disponível');
-
-                setUserProducts(availableProducts); // Visitantes veem apenas produtos disponíveis
+                setUserProducts(availableProducts);
             }
         } catch (error) {
             console.error('Erro ao buscar produtos disponíveis do utilizador:', error);
@@ -88,7 +83,6 @@ export default function UserProfilePage() {
 
     const fetchEvaluations = async () => {
         try {
-            // Implemente a chamada real à API de avaliações aqui
             const mockEvaluations = [
                 { id: 1, author: 'User1', comment: 'Excelente produto!', rating: 5 },
                 { id: 2, author: 'User2', comment: 'Muito bom!', rating: 4 },
@@ -101,12 +95,15 @@ export default function UserProfilePage() {
 
     const handleUpdateProfile = async (updatedData) => {
         try {
-          const updatedUser = await userAPI.updateUser(userToDisplay.id, updatedData);
-          setUserToDisplay(updatedUser);
+            const result = await userAPI.updateUser(userToDisplay.id, updatedData);
+            setUserToDisplay(result);
+            console.log('Atualização bem-sucedida:', result);
+            alert('Dados atualizados com sucesso!');
         } catch (error) {
-          alert('Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.');
+            console.error('Erro detalhado:', error);
+            alert('Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.');
         }
-    };
+    }
 
     if (!userToDisplay) {
         return <p>A carregar informações do utilizador...</p>;
@@ -119,12 +116,11 @@ export default function UserProfilePage() {
                 <div className="info-pessoal">
                     <div className="perfil-utilizador">
                         <h2>Página Pessoal</h2>
-                        {isOwnProfile && (
-                            <ProfileEditForm 
-                                user={userToDisplay} 
-                                onUpdate={handleUpdateProfile} 
-                            />
-                        )}
+                        <ProfileInfo 
+                            user={userToDisplay} 
+                            isOwnProfile={isOwnProfile} 
+                            onUpdate={handleUpdateProfile} 
+                        />
                     </div>
                     <div className="outras-info">
                         <section className="imagem-perfil-wrapper">
@@ -138,7 +134,7 @@ export default function UserProfilePage() {
                     </div>
                 </div>
                 <div className="main-card-container">
-                    <h1 id="productsHeader">Os meus Produtos</h1>
+                    <h1 id="productsHeader">{isOwnProfile ? "Os meus Produtos" : "Produtos do Vendedor"}</h1>
                     <section className="card-container">
                         {userProducts.map((product) => (
                             <ProductCard key={product.id} product={product} />
@@ -165,6 +161,7 @@ export default function UserProfilePage() {
         </main>
     );
 }
+
 
 
 

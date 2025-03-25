@@ -248,6 +248,163 @@ function UserProfile() {
     );
 }
 
+function ProfileInfo({ user, isOwnProfile, onUpdate }) {
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [formData, setFormData] = useState({ ...user });
+
+    useEffect(() => {
+        setFormData({ ...user });
+    }, [user]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const toggleEditMode = () => {
+        if (isOwnProfile) {
+            setIsEditMode(!isEditMode);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (isOwnProfile) {
+            await onUpdate(formData);
+            setIsEditMode(false);
+        }
+    };
+
+    return (
+        <form id="perfil-form" onSubmit={handleSubmit}>
+            {/* Nome */}
+            <div>
+                <label htmlFor="firstName">Nome:</label>
+                <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            
+            {/* Apelido */}
+            <div>
+                <label htmlFor="lastName">Apelido:</label>
+                <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+            
+            {/* Username */}
+            <div>
+                <label htmlFor="username">Username:</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+
+            {/* Email */}
+            <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    value={formData.email || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+
+            {/* Telefone */}
+            <div>
+                <label htmlFor="phone">Telefone:</label>
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    maxLength="9" 
+                    minLength="9"
+                    value={formData.phone || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+
+            {/* Fotografia */}
+            <div>
+                <label htmlFor="picture">Fotografia:</label>
+                <input
+                    type="text"
+                    id="picture"
+                    name="picture"
+                    value={formData.picture || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+
+            {/* Campos de senha - apenas para o proprietário */}
+            {isOwnProfile && (
+                <>
+                    <div>
+                        <label htmlFor="password">Password:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                        />
+                    </div>
+                    
+                    <div>
+                        <label htmlFor="confirmPassword">Confirme a Password:</label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            value={''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                        />
+                    </div>
+                </>
+            )}
+
+            {/* Botões de edição - apenas para o proprietário */}
+            {isOwnProfile && (
+                !isEditMode ? (
+                    <button type="button" onClick={toggleEditMode}>
+                        Editar Perfil
+                    </button>
+                ) : (
+                    <>
+                        <button type="submit">Salvar Alterações</button>
+                        <button type="button" onClick={toggleEditMode}>
+                            Cancelar
+                        </button>
+                    </>
+                )
+            )}
+        </form>
+    );
+}
+
 function UserProducts({ userId, isOwnProfile }) {
     const [products, setProducts] = useState([]);
 
@@ -281,11 +438,6 @@ function UserProducts({ userId, isOwnProfile }) {
             ))}
         </div>
     );
-}
-
-function validateFormPassword() {
-    // Implemente a lógica de validação de senha aqui
-    return true; // Retorno simplificado para este exemplo
 }
 
 function validatePassword(password) {
@@ -481,6 +633,7 @@ export const userComponents = {
     LoginForm,
     ProfileEditForm,
     UserProfile,
+    ProfileInfo,
     RegistrationForm,
     LogoutButton,
     DeleteUserButton,
