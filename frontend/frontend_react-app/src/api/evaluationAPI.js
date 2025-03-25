@@ -193,8 +193,7 @@ async function deleteEvaluation(evaluationId) {
  * @async
  * @function hasUserEvaluatedSeller
  * @param {string|number} sellerId - The ID of the seller to check.
- * @returns {Promise<boolean|Object>} A promise that resolves to the evaluation status information.
- * Returns false if an error occurs.
+ * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the user has evaluated the seller.
  * @throws {Error} Throws an error if the HTTP response is not ok.
  */
 async function hasUserEvaluatedSeller(sellerId) {
@@ -212,12 +211,14 @@ async function hasUserEvaluatedSeller(sellerId) {
       );
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data.hasEvaluated; // Assumindo que o backend retorna um objeto com a propriedade hasEvaluated
   } catch (error) {
     console.error('Error checking evaluation status:', error);
-    return false;
+    throw error; // Lança o erro para que o componente possa lidar com ele
   }
 }
+
 
 /**
  * Retrieves products that the specified user is eligible to evaluate.

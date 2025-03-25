@@ -25,94 +25,29 @@ function EvaluationCard({ evaluation }) {
   );
 }
 
-function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [allEvaluations, setAllEvaluations] = useState(evaluations || []);
-
-  useEffect(() => {
-    async function loadEvaluations() {
-      try {
-        setLoading(true);
-        const fetchedEvaluations = await evaluationAPI.getEvaluationsForSeller(sellerId);
-
-        if (!fetchedEvaluations || fetchedEvaluations.length === 0) {
-          setAllEvaluations([]);
-          return;
-        }
-
-        const preparedEvaluations = fetchedEvaluations.map(evaluation => ({
-          ...evaluation,
-          canEdit: currentUser && (
-            String(evaluation.evaluatorId) === String(currentUser.id) || currentUser.admin
-          )
-        }));
-
-        setAllEvaluations(preparedEvaluations);
-      } catch (error) {
-        console.error('Erro ao carregar avaliações:', error);
-        setError('Falha ao carregar avaliações. Por favor volte a tentar mais tarde.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadEvaluations();
-  }, [sellerId, currentUser]);
-
-  const handleEditEvaluation = (evaluation, sellerId) => {
-    // Lógica para exibir o modal de edição da avaliação
-    console.log('Editar avaliação:', evaluation, 'para o vendedor:', sellerId);
-  };
-
-  const handleDeleteEvaluation = async (evaluationId, sellerId) => {
-    if (window.confirm('Tem a certeza que pretende eliminar esta review?')) {
-      try {
-        // Chamar a API para deletar a avaliação
-        await evaluationAPI.deleteEvaluation(evaluationId);
-
-        // Atualizar a lista de avaliações após a exclusão
-        setAllEvaluations(prevEvaluations => prevEvaluations.filter(evaluation => evaluation.id !== evaluationId));
-        alert('Review eliminada com sucesso!');
-      } catch (error) {
-        console.error('Erro ao eliminar a avaliação:', error);
-        alert('Falha ao apagar a avaliação.');
-      }
-    }
-  };
-
-  function calculateAverageRating(evaluations) {
-    const totalRating = evaluations.reduce((sum, evaluation) => sum + evaluation.rating, 0);
-    const averageRating = totalRating / evaluations.length;
-    const averageRatingStars = '★'.repeat(Math.round(averageRating)) + '☆'.repeat(5 - Math.round(averageRating));
-    return { averageRating, averageRatingStars };
-  }
-
-  if (loading) return <div className="loading-spinner">A carregar avaliações...</div>;
-  if (error) return <p className="text-danger">{error}</p>;
-  if (allEvaluations.length === 0) return <p>Este vendedor ainda não foi avaliado.</p>;
-
-  const { averageRating, averageRatingStars } = calculateAverageRating(allEvaluations);
-
+function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation, canEvaluate }) {
   return (
     <div>
-      <AddEvaluationButton
-        currentUser={currentUser}
-        sellerId={sellerId}
-        onAddEvaluation={onAddEvaluation}
-      />
-      <div className="average-rating">
-        <h3>Rating médio: {averageRatingStars} ({averageRating.toFixed(1)})</h3>
-        <p>{allEvaluations.length} {allEvaluations.length !== 1 ? 'evaluations' : 'evaluation'}</p>
-      </div>
-      <div className="evaluations-list">
-        {allEvaluations.map(evaluation => (
-          <EvaluationCard key={evaluation.id} evaluation={evaluation} />
-        ))}
-      </div>
+      <h2>Avaliações do Vendedor</h2>
+      {evaluations.map((evaluation) => (
+        <div key={evaluation.id}>
+          <p>
+            <strong>{evaluation.author}:</strong> {evaluation.comment} (Rating: {evaluation.rating})
+          </p>
+        </div>
+      ))}
+      {currentUser && currentUser.id !== sellerId && canEvaluate && (
+        <button
+          className="btn-primary add-evaluation-btn"
+          onClick={() => onAddEvaluation(sellerId)}
+        >
+          Avaliar Vendedor
+        </button>
+      )}
     </div>
   );
 }
+
 
 function AddEvaluationButton({ currentUser, sellerId, onAddEvaluation }) {
   if (!currentUser || currentUser.id === sellerId) return null;
@@ -147,144 +82,84 @@ function EvaluationActions({ evaluation, sellerId, onEdit, onDelete }) {
 }
 
 function AddEvaluationModal({ sellerId, onClose, onSubmit }) {
-  const [eligibleProducts, setEligibleProducts] = useState([]);
-  const [formData, setFormData] = useState({
-    productId: '',
-    title: '',
-    rating: 0,
-    comment: ''
-  });
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
-    const fetchEligibleProducts = async () => {
+    async function fetchEligibleProducts() {
       try {
-        const currentUser = JSON.parse(sessionStorage.getItem('user'));
-        if (!currentUser || !currentUser.id) {
-          alert('Precisa de estar autenticado para submeter uma avaliação.');
-          onClose();
-          return;
-        }
-
-        const products = await evaluationAPI.getEligibleProductsForEvaluation(currentUser.id);
-        const sellerProducts = products.filter(product => product.sellerId == sellerId);
-
-        if (sellerProducts.length === 0) {
-          alert('Não existem produtos elegíveis para avaliar este vendedor.');
-          onClose();
-          return;
-        }
-
-        setEligibleProducts(sellerProducts);
+        const fetchedProducts = await evaluationAPI.getEligibleProductsForEvaluation();
+        const sellerProducts = fetchedProducts.filter(product => product.sellerId == sellerId);
+        setProducts(sellerProducts);
       } catch (error) {
         console.error('Error fetching eligible products:', error);
-        alert('Não foi possível carregar os produtos para avaliação. Tente novamente mais tarde.');
-        onClose();
       }
-    };
+    }
 
     fetchEligibleProducts();
-  }, [sellerId, onClose]);
-
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
-  };
-
-  const handleRatingClick = (rating) => {
-    setFormData(prev => ({ ...prev, rating }));
-  };
+  }, [sellerId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!formData.productId) {
-      alert('Por favor selecione um produto para avaliar.');
+    if (!selectedProduct || rating === 0) {
+      alert('Por favor, selecione um produto e forneça uma avaliação.');
       return;
     }
-
-    if (!formData.title.trim()) {
-      alert('Por favor preencha o título.');
-      return;
-    }
-
-    if (formData.rating === 0) {
-      alert('Por favor selecione um rating para esta review.');
-      return;
-    }
-
-    if (!formData.comment.trim()) {
-      alert('Por favor preencha o comentário.');
-      return;
-    }
-
-    const currentUser = JSON.parse(sessionStorage.getItem('user'));
-    const evaluationData = {
-      ...formData,
-      evaluatedId: sellerId,
-      evaluatorId: currentUser.id,
-      productId: parseInt(formData.productId)
-    };
 
     try {
-      const response = await evaluationAPI.addEvaluation(evaluationData);
-      if (response.error) {
-        throw new Error(response.error);
-      }
-      alert('Review submetida com sucesso!');
+      const evaluationData = {
+        evaluatedId: sellerId,
+        productId: selectedProduct.id,
+        rating,
+        comment,
+      };
+
+      await evaluationAPI.addEvaluation(evaluationData);
       onSubmit();
-      onClose();
     } catch (error) {
-      console.error('Erro ao submeter a avaliação:', error);
-      alert(`Falha na submissão da avaliação: ${error.message || 'Erro desconhecido'}`);
+      console.error('Error adding evaluation:', error);
+      alert('Erro ao adicionar avaliação. Por favor, tente novamente.');
     }
   };
 
   return (
-    <div className="custom-modal-overlay">
-      <div className="custom-modal">
-        <div className="modal-header">
-          <h3>Adicionar Review</h3>
-          <button type="button" className="close-modal" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <form id="evaluationForm" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="productId">Escolha o produto comprado:</label>
-              <select id="productId" value={formData.productId} onChange={handleInputChange} required>
-                <option value="">Selecione um produto</option>
-                {eligibleProducts.map(product => (
-                  <option key={product.id} value={product.id}>{product.title}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label htmlFor="title">Título</label>
-              <input type="text" id="title" value={formData.title} onChange={handleInputChange} required maxLength="100" />
-            </div>
-            <div className="form-group">
-              <label>Rating</label>
-              <div className="rating-selector">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <span
-                    key={star}
-                    className={`star ${formData.rating >= star ? 'filled' : ''}`}
-                    onClick={() => handleRatingClick(star)}
-                  >
-                    {formData.rating >= star ? '★' : '☆'}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="comment">Comentário</label>
-              <textarea id="comment" value={formData.comment} onChange={handleInputChange} rows="3" required maxLength="500" />
-            </div>
-          </form>
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
-          <button type="submit" className="btn-primary" form="evaluationForm">Submit</button>
-        </div>
+    <div className="modal">
+      <div className="modal-content">
+        <h2>Avaliar Vendedor</h2>
+        <form onSubmit={handleSubmit}>
+          <select
+            value={selectedProduct?.id || ''}
+            onChange={(e) => {
+              const selectedProductId = e.target.value;
+              const product = products.find((p) => p.id == selectedProductId);
+              setSelectedProduct(product);
+            }}
+          >
+            <option value="">Selecione um produto</option>
+            {products.map((product) => (
+              <option key={product.id} value={product.id}>
+                {product.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            min="1"
+            max="5"
+            value={rating}
+            onChange={(e) => setRating(Number(e.target.value))}
+            placeholder="Avaliação (1-5)"
+          />
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Comentário (opcional)"
+          />
+          <button type="submit">Enviar Avaliação</button>
+          <button type="button" onClick={onClose}>Cancelar</button>
+        </form>
       </div>
     </div>
   );
