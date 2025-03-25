@@ -31,8 +31,6 @@ const getAllActiveProducts = async () => {
   }
 };
 
-
-
 /**
  * Fetches paginated products from the API.
  * @param {number} [page=0] - The page number to retrieve.
