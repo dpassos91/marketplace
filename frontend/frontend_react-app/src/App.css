@@ -2116,6 +2116,19 @@ button:disabled {
   background-color: #545b62;
 }
 
+.star {
+  font-size: 2rem;
+  color: #ccc; /* Cor padrão */
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.star.active {
+  color: gold; /* Cor quando está dourada */
+}
+
+
+
 
 
 
