@@ -143,12 +143,16 @@ function AddEvaluationModal({ sellerId, onClose, onSubmit, currentUser }) {
 
     try {
       const evaluationData = {
+        evaluatorId: currentUser.id, // Certifique-se de que você tem acesso ao ID do usuário logado
         evaluatedId: sellerId,
         productId: formData.productId,
-        title: formData.title,
         rating: formData.rating,
         comment: formData.comment,
+        title: formData.title
       };
+  
+      console.log('Dados a serem enviados:', evaluationData); // Para debug
+      
 
       await evaluationAPI.addEvaluation(evaluationData);
       alert('Avaliação adicionada com sucesso!');

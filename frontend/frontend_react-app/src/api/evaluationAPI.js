@@ -115,7 +115,9 @@ async function addEvaluation(evaluationData) {
     );
 
     if (!response.ok) {
-      throw new Error(`Error creating evaluation: ${response.statusText}`);
+      const errorBody = await response.text();
+      console.error('Error response:', errorBody);
+      throw new Error(`Error creating evaluation: ${response.statusText}. Details: ${errorBody}`);
     }
 
     return await response.json();
