@@ -28,7 +28,11 @@ export default function UserProfilePage() {
         const fetchData = async () => {
             try {
                 await fetchUserData();
-                await fetchUserProducts();
+                if (isOwnProfile) {
+                    await fetchAllUserProducts();
+                } else {
+                    await fetchAvailableUserProducts();
+                }
                 await fetchEvaluations();
             } catch (error) {
                 console.error('Erro ao carregar dados do perfil:', error);
@@ -36,7 +40,7 @@ export default function UserProfilePage() {
         };
 
         fetchData();
-    }, [profileUserId, currentUser]);
+    }, [profileUserId, currentUser, isOwnProfile]);
 
     const fetchUserData = async () => {
         console.log('Fetching user data for ID:', profileUserId);
@@ -54,19 +58,33 @@ export default function UserProfilePage() {
             // Você pode adicionar um redirecionamento ou mensagem de erro aqui
         }
     };
-    
 
-    const fetchUserProducts = async () => {
+    const fetchAllUserProducts = async () => {
         try {
             if (profileUserId) {
                 const products = await productAPI.getProductsBySeller(profileUserId);
-                setUserProducts(products);
+                setUserProducts(products); // Proprietário vê todos os produtos
             }
         } catch (error) {
-            console.error('Erro ao buscar produtos do utilizador:', error);
+            console.error('Erro ao buscar todos os produtos do utilizador:', error);
         }
     };
-    
+
+    const fetchAvailableUserProducts = async () => {
+        try {
+            if (profileUserId) {
+                // Busca todos os produtos do vendedor
+                const products = await productAPI.getProductsBySeller(profileUserId);
+
+                // Filtra apenas os produtos com status "Disponível"
+                const availableProducts = products.filter(product => product.status === 'Disponível');
+
+                setUserProducts(availableProducts); // Visitantes veem apenas produtos disponíveis
+            }
+        } catch (error) {
+            console.error('Erro ao buscar produtos disponíveis do utilizador:', error);
+        }
+    };
 
     const fetchEvaluations = async () => {
         try {
@@ -88,8 +106,7 @@ export default function UserProfilePage() {
         } catch (error) {
           alert('Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.');
         }
-      };
-      
+    };
 
     if (!userToDisplay) {
         return <p>A carregar informações do utilizador...</p>;
@@ -148,6 +165,7 @@ export default function UserProfilePage() {
         </main>
     );
 }
+
 
 
 
