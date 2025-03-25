@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { categoryAPI } from '../api/categoryAPI'; 
+import { productComponents  } from './productComponents';
+
+const { ProductCard } = productComponents;
+
 
 // Componente de Card de Categoria
 function CategoryCard({ category }) {

@@ -4,7 +4,6 @@ import { useFormInput } from '../hooks/UseFormInput.js';
 import { categoryAPI } from '../api/categoryAPI.js';
 import { productAPI } from '../api/productAPI.js'; 
 import { PRODUCT_STATES } from '../api/productStates.js';
-import { categoryComponents } from './categoryComponents.js';
 import useAuthStore from '../stores/authStore.js'; // Ajusta o caminho conforme necessário
 import useProductStore from '../stores/productStore.js';
 
