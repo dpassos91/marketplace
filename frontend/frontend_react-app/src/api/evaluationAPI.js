@@ -1,7 +1,7 @@
 import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
-import { ApiConfig } from './ApiConfig.js';
+import { apiConfig } from './apiConfig.js';
 
-const { API_ENDPOINTS} = ApiConfig;
+const { API_ENDPOINTS} = apiConfig;
 
 /**
  * Fetches all evaluations for a specific seller.

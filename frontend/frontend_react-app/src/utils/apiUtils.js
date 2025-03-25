@@ -1,7 +1,7 @@
-import { ApiConfig } from '../api/ApiConfig.js';
+import { apiConfig } from '../api/apiConfig.js';
 import { getAuthToken } from '../utils/authUtils.js';
 
-const { DEFAULT_OPTIONS } = ApiConfig;
+const { DEFAULT_OPTIONS } = apiConfig;
 
 // Make an authenticated request to the API
 export async function makeAuthenticatedRequest(url, options = {}) {

@@ -1,7 +1,7 @@
-import { ApiConfig } from './ApiConfig.js';
+import { apiConfig } from './apiConfig.js';
 import { setAuthToken, removeAuthToken } from '../utils/authUtils.js';
 
-const { apiCall, API_ENDPOINTS } = ApiConfig;
+const { apiCall, API_ENDPOINTS } = apiConfig;
 
 // Funções internas
 const registerUser = async (userData) => {

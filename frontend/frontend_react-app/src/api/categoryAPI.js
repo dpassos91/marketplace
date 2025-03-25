@@ -1,6 +1,6 @@
-import { ApiConfig } from '../api/ApiConfig';
+import { apiConfig } from '../api/apiConfig';
 
-const { apiCall, API_ENDPOINTS } = ApiConfig;
+const { apiCall, API_ENDPOINTS } = apiConfig;
 
 const getAllCategories = async () => {
   return await apiCall(API_ENDPOINTS.categories.all);

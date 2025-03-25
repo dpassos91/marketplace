@@ -1,7 +1,7 @@
-import { ApiConfig } from './ApiConfig';
+import { apiConfig } from './apiConfig';
 import { PRODUCT_STATES } from './productStates';
 
-const { apiCall, API_ENDPOINTS } = ApiConfig;
+const { apiCall, API_ENDPOINTS } = apiConfig;
 
 /**
  * Fetches all products from the API.

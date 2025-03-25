@@ -168,7 +168,7 @@ const DEFAULT_OPTIONS = {
 
 
   
-  export const ApiConfig = {
+  export const apiConfig = {
   API_BASE_URL,
   API_ENDPOINTS,
   DEFAULT_OPTIONS,

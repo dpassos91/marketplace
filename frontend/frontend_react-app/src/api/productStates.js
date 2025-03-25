@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Product state definitions that match the backend's ProductStateId enum
  */
