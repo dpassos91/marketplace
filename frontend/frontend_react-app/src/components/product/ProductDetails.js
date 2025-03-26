@@ -142,6 +142,7 @@ const openModal = () => {
                 <p><strong>Preço:</strong> {parseFloat(product.price).toFixed(2)}€</p>
                 <p><strong>Publicado por:</strong> {product.sellerUsername}</p>
                 <p><strong>Descrição:</strong> {product.description}</p>
+                <p><strong>Data de publicação:</strong> {new Date(product.date).toLocaleDateString()}</p>
                 <p><strong>Estado:</strong> {product.status}</p>
                 <Link
                     to={user ? `/profile/${product.sellerId}` : '#'}
