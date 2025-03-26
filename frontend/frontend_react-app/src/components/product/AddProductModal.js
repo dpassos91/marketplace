@@ -12,7 +12,7 @@ function AddProductModal({ isOpen, onClose }) {
     const handleSave = async (productData) => {
         try {
             if (!user || !user.id) {
-                throw new Error('You must be logged in to add a product');
+                throw new Error('Faça login antes de adicionar um produto!');
             }
 
             const productToSave = {
@@ -23,10 +23,9 @@ function AddProductModal({ isOpen, onClose }) {
             };
 
             await productAPI.createProduct(productToSave);
-            alert('Product saved successfully!');
+            alert('Produto criado com sucesso!');
         } catch (error) {
-            console.error('Error saving product:', error);
-            alert('Error saving product. Please try again.');
+            alert('Erro ao criar produto. Por favor, tente novamente.');
         } finally {
             onClose();
         }
