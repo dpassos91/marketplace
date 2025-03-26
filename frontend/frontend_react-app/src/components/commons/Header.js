@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import { useAuth } from '../../hooks/UseAuth';
-import AddProductModal from '../AddProductModal';
+import AddProductModal from '.././product/AddProductModal';
 
 function Header() {
   const user = useAuthStore((state) => state.user);

@@ -1,6 +1,6 @@
 import React from 'react';
-import { formatDate } from '../utils/dateUtils.js';
-import '../css/EvaluationStyles.css';
+import { formatDate } from '../../utils/dateUtils';
+import '../../css/EvaluationStyles.css';
 
 function EvaluationCard({ evaluation }) {
   const ratingStars = '★'.repeat(evaluation.rating) + '☆'.repeat(5 - evaluation.rating);

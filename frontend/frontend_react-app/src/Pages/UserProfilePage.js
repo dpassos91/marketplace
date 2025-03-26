@@ -5,13 +5,12 @@ import { userAPI } from '../api/userAPI';
 import { productAPI } from '../api/productAPI';
 import { evaluationAPI } from '../api/evaluationAPI';
 import Aside from '../components/Aside';
-import { productComponents } from '../components/productComponents';
-import { evaluationComponents } from '../components/evaluationComponents';
 import { userComponents } from '../components/userComponents';
+import SellerEvaluations from '../components/evaluation/SellerEvaluations';
+import AddEvaluationModal from '../components/evaluation/AddEvaluationModal';
+import ProductCard from '../components/product/ProductCard';
 
-const { ProductCard } = productComponents;
 const { ProfileInfo } = userComponents;
-const { SellerEvaluations, AddEvaluationModal } = evaluationComponents;
 
 export default function UserProfilePage() {
   const [userToDisplay, setUserToDisplay] = useState(null);

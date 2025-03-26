@@ -1,5 +1,5 @@
 import { apiConfig } from './apiConfig';
-import { PRODUCT_STATES } from './productStates';
+import { PRODUCT_STATES } from '../components/product/productStates';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 

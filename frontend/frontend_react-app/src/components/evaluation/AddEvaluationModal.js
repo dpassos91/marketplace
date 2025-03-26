@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { evaluationAPI } from '../api/evaluationAPI.js';
+import { evaluationAPI } from '../../api/evaluationAPI';
 
 function AddEvaluationModal({ sellerId, onClose, onSubmit, currentUser }) {
   console.log("AddEvaluationModal renderizado!")

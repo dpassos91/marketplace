@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import AddProductModal from '../AddProductModal';
+import AddProductModal from '../../components/product/AddProductModal';
 
 function Layout({ children }) {
   return (

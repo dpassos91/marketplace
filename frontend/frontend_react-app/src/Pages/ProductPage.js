@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { productAPI } from '../api/productAPI';
-import { productComponents } from '../components/productComponents';
-import { PRODUCT_STATES } from '../api/productStates'; // Importe os estados do produto
+import { PRODUCT_STATES } from '../components/product/productStates'; // Importe os estados do produto
+import ProductCard from '../components/product/ProductCard';
 
 function ProductsPage() {
     const [searchParams] = useSearchParams();
@@ -57,7 +57,7 @@ function ProductsPage() {
                     <p>Nenhum produto disponível encontrado.</p>
                 ) : (
                     products.map(product => (
-                        <productComponents.ProductCard key={product.id} product={product} />
+                        <ProductCard key={product.id} product={product} />
                     ))
                 )}
             </div>

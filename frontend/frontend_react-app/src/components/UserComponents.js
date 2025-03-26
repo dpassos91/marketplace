@@ -4,12 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/UseAuth';
 import { userAPI } from '../api/userAPI';
 import { productAPI } from '../api/productAPI';
-import { productComponents } from './productComponents';
-import { evaluationComponents } from './evaluationComponents';
-
-const { ProductCard } = productComponents;
-const { SellerEvaluations } = evaluationComponents;
-const { getProductById } = productAPI;
+import ProductCard from './../components/product/ProductCard'
 
 function LoginForm() {
     const [credentials, setCredentials] = useState({ username: '', password: '' });

@@ -1,9 +1,10 @@
 import React from 'react';
 import EvaluationCard from './EvaluationCard';
 import AverageRating from './AverageRating';
+import calculateAverageRating from '../../utils/calculateAverageRating';
 
 function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation, canEvaluate }) {
-  const { calculateAverageRating } = evaluationComponents;
+
   const { averageRating, averageRatingStars } = calculateAverageRating(evaluations);
 
   return (

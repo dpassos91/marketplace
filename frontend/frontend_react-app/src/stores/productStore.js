@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PRODUCT_STATES } from '../api/productStates';
+import { PRODUCT_STATES } from '../components/product/productStates';
 
 const useProductStore = create((set) => ({
   product: null,

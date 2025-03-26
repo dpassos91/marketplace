@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Aside from '../components/Aside';
-import { productComponents } from '../components/productComponents';
 import CategoryCard from '../components/category/CategoryCard';
 import { productAPI } from '../api/productAPI'; //
 import { categoryAPI } from '../api/categoryAPI'; // Certifique-se de que está importando corretamente
+import ProductCard from '../components/product/ProductCard'; // Certifique-se de que está importando corretamente
 
-console.log('Objeto categoryAPI:', categoryAPI);
-
-const { ProductCard } = productComponents;
 
 function HomePage() {
   const [recentProducts, setRecentProducts] = useState([]);
