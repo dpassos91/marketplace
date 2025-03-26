@@ -26,28 +26,6 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
     return (
         <form id="perfil-form" onSubmit={handleSubmit}>
             <div>
-                <label htmlFor="firstName">Nome:</label>
-                <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                />
-            </div>
-            <div>
-                <label htmlFor="lastName">Apelido:</label>
-                <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                />
-            </div>
-            <div>
                 <label htmlFor="username">Username:</label>
                 <input
                     type="text"
@@ -69,7 +47,32 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                     readOnly={!isEditMode}
                 />
             </div>
-            <div>
+            
+            {isOwnProfile && (
+                <>
+                <div>
+                <label htmlFor="lastName">Apelido:</label>
+                <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+                <div>
+                <label htmlFor="firstName">Nome:</label>
+                <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName || ''}
+                    onChange={handleInputChange}
+                    readOnly={!isEditMode}
+                />
+            </div>
+                <div>
                 <label htmlFor="phone">Telefone:</label>
                 <input
                     type="text"
@@ -82,7 +85,7 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                     readOnly={!isEditMode}
                 />
             </div>
-            <div>
+                <div>
                 <label htmlFor="picture">Fotografia:</label>
                 <input
                     type="text"
@@ -93,8 +96,6 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                     readOnly={!isEditMode}
                 />
             </div>
-            {isOwnProfile && (
-                <>
                     <div>
                         <label htmlFor="password">Password:</label>
                         <input
