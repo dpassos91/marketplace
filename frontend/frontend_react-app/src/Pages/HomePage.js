@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Aside from '../components/Aside';
+import Aside from '../components/commons/Aside';
 import CategoryCard from '../components/category/CategoryCard';
 import { productAPI } from '../api/productAPI'; //
 import { categoryAPI } from '../api/categoryAPI'; // Certifique-se de que está importando corretamente

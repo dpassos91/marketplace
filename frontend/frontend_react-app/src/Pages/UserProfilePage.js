@@ -4,13 +4,12 @@ import { useAuth } from '../hooks/UseAuth';
 import { userAPI } from '../api/userAPI';
 import { productAPI } from '../api/productAPI';
 import { evaluationAPI } from '../api/evaluationAPI';
-import Aside from '../components/Aside';
-import { userComponents } from '../components/userComponents';
+import Aside from '../components/commons/Aside';
+import ProfileInfo from '../components/user/ProfileInfo';
 import SellerEvaluations from '../components/evaluation/SellerEvaluations';
 import AddEvaluationModal from '../components/evaluation/AddEvaluationModal';
 import ProductCard from '../components/product/ProductCard';
 
-const { ProfileInfo } = userComponents;
 
 export default function UserProfilePage() {
   const [userToDisplay, setUserToDisplay] = useState(null);

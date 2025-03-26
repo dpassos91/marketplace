@@ -1,6 +1,6 @@
 // EditProductForm.js
 import React, { useState, useEffect } from 'react';
-import { useFormInput } from '../../hooks/UseFormInput.js';
+import { useFormInput } from '../../hooks/useFormInput.js';
 import { categoryAPI } from '../../api/categoryAPI.js';
 import { PRODUCT_STATES } from '../../components/product/productStates.js';
 import useProductStore from '../../stores/productStore.js';
