@@ -53,7 +53,7 @@ function AddEvaluationModal({ sellerId, onClose, onSubmit, currentUser }) {
     }
 
     if (!formData.rating === 0) {
-      alert('Por favor selecione um rating para esta review.');
+      alert('Por favor selecione um valor para esta avaliação.');
       return;
     }
 
