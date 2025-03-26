@@ -11,6 +11,7 @@ import ProductDetails from './components/product/ProductDetails';
 import './App.css';
 import useAuthStore from './stores/authStore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   const login = useAuthStore((state) => state.login);
@@ -41,6 +42,7 @@ function App() {
           {/* Rotas protegidas */}
           <Route element={<ProtectedRoute />}>
             <Route path="/profile/:userId" element={<UserProfilePage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Route>
         </Routes>
       </Layout>
