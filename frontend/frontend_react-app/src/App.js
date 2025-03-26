@@ -42,7 +42,7 @@ function App() {
           {/* Rotas protegidas */}
           <Route element={<ProtectedRoute />}>
             <Route path="/profile/:userId" element={<UserProfilePage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/*" element={<AdminPage />} />
           </Route>
         </Routes>
       </Layout>
