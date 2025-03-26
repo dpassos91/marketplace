@@ -47,8 +47,7 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
                 categoryId: parseInt(product.categoryId),
             };
 
-            await onSave(productToSave); // Call onSave with validated data
-            alert('Product saved successfully!');
+            await onSave(productToSave);
 
         } catch (error) {
             console.error('Error saving product:', error);
