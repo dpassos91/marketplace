@@ -3,8 +3,7 @@ import EvaluationCard from './EvaluationCard';
 import AverageRating from './AverageRating';
 import calculateAverageRating from '../../utils/calculateAverageRating';
 
-function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation, canEvaluate }) {
-
+function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation, onEditEvaluation, canEvaluate }) {
   const { averageRating, averageRatingStars } = calculateAverageRating(evaluations);
 
   return (
@@ -19,7 +18,12 @@ function SellerEvaluations({ sellerId, evaluations, currentUser, onAddEvaluation
 
       <div className="evaluations-list">
         {evaluations.map((evaluation) => (
-          <EvaluationCard key={evaluation.id} evaluation={evaluation} />
+          <EvaluationCard 
+            key={evaluation.id} 
+            evaluation={evaluation}
+            currentUser={currentUser}
+            onEditEvaluation={onEditEvaluation}
+          />
         ))}
       </div>
 

@@ -78,3 +78,20 @@
 .add-evaluation-btn:hover {
     background-color: #0056b3;
 }
+
+.evaluation-edit {
+    text-align: right;
+    margin-top: 10px;
+  }
+  
+  .evaluation-edit button {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .evaluation-edit button:hover {
+    background-color: #e0e0e0;
+  }

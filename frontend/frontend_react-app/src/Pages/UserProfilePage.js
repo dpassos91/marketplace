@@ -7,22 +7,21 @@ import { evaluationAPI } from '../api/evaluationAPI';
 import Aside from '../components/commons/Aside';
 import ProfileInfo from '../components/user/ProfileInfo';
 import SellerEvaluations from '../components/evaluation/SellerEvaluations';
-import AddEvaluationModal from '../components/evaluation/AddEvaluationModal';
+import EvaluationModal from '../components/evaluation/EvaluationModal';
 import ProductCard from '../components/product/ProductCard';
-
 
 export default function UserProfilePage() {
   const [userToDisplay, setUserToDisplay] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [userProducts, setUserProducts] = useState([]);
   const [evaluations, setEvaluations] = useState([]);
-  const [canEvaluate, setCanEvaluate] = useState(false); // Novo estado para verificar elegibilidade
-  const [showAddEvaluationModal, setShowAddEvaluationModal] = useState(false);
+  const [canEvaluate, setCanEvaluate] = useState(false);
+  const [showEvaluationModal, setShowEvaluationModal] = useState(false);
+  const [currentEvaluation, setCurrentEvaluation] = useState(null);
   const { id: profileUserId } = useParams();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  // Carrega dados do perfil e verifica elegibilidade para avaliação
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,7 +32,7 @@ export default function UserProfilePage() {
           await fetchAvailableUserProducts();
         }
         await fetchEvaluations();
-        await checkEvaluationEligibility(); // Verifica se o usuário pode avaliar o vendedor
+        await checkEvaluationEligibility();
       } catch (error) {
         console.error('Erro ao carregar dados do perfil:', error);
       }
@@ -42,7 +41,6 @@ export default function UserProfilePage() {
     fetchData();
   }, [profileUserId, currentUser, isOwnProfile]);
 
-  // Função para buscar dados do utilizador
   const fetchUserData = async () => {
     try {
       if (profileUserId) {
@@ -58,7 +56,6 @@ export default function UserProfilePage() {
     }
   };
 
-  // Função para buscar todos os produtos do utilizador
   const fetchAllUserProducts = async () => {
     try {
       if (profileUserId) {
@@ -70,7 +67,6 @@ export default function UserProfilePage() {
     }
   };
 
-  // Função para buscar apenas produtos disponíveis
   const fetchAvailableUserProducts = async () => {
     try {
       if (profileUserId) {
@@ -83,7 +79,6 @@ export default function UserProfilePage() {
     }
   };
 
-  // Função para buscar avaliações do vendedor
   const fetchEvaluations = async () => {
     try {
       const fetchedEvaluations = await evaluationAPI.getEvaluationsForSeller(profileUserId);
@@ -93,21 +88,19 @@ export default function UserProfilePage() {
     }
   };
 
-  // Função para verificar se o usuário pode avaliar o vendedor
   const checkEvaluationEligibility = async () => {
     if (currentUser && profileUserId && !isOwnProfile) {
       try {
         const eligibleProducts = await evaluationAPI.getEligibleProductsForEvaluation(currentUser.id);
         const hasPurchasedFromSeller = eligibleProducts.some(product => product.sellerId == profileUserId);
-        setCanEvaluate(hasPurchasedFromSeller); // Define se o usuário pode avaliar
+        setCanEvaluate(hasPurchasedFromSeller);
       } catch (error) {
         console.error('Erro ao verificar elegibilidade para avaliação:', error);
-        setCanEvaluate(false); // Define como falso em caso de erro
+        setCanEvaluate(false);
       }
     }
   };
 
-  // Função para atualizar o perfil do utilizador
   const handleUpdateProfile = async (updatedData) => {
     try {
       const result = await userAPI.updateUser(userToDisplay.id, updatedData);
@@ -119,20 +112,29 @@ export default function UserProfilePage() {
     }
   };
 
-  // Funções para abrir e fechar o modal de avaliação
   const handleAddEvaluationClick = () => {
-    console.log("Botão de avaliação clicado. Estado atual do modal:", showAddEvaluationModal);
-    setShowAddEvaluationModal(true);
-    console.log("Modal deve estar visível agora.");
+    setCurrentEvaluation(null);
+    setShowEvaluationModal(true);
   };
-  
 
-  const handleCloseAddEvaluationModal = () => setShowAddEvaluationModal(false);
+  const handleEditEvaluationClick = (evaluation) => {
+    setCurrentEvaluation(evaluation);
+    setShowEvaluationModal(true);
+  };
 
-  // Função chamada após uma avaliação ser adicionada
-  const handleEvaluationAdded = async () => {
-    await fetchEvaluations(); // Recarrega as avaliações
-    setShowAddEvaluationModal(false); // Fecha o modal
+  const handleCloseEvaluationModal = () => {
+    setShowEvaluationModal(false);
+    setCurrentEvaluation(null);
+  };
+
+  const handleEvaluationSubmitted = async () => {
+    await fetchEvaluations();
+    setShowEvaluationModal(false);
+    setCurrentEvaluation(null);
+  };
+
+  const canEditEvaluation = (evaluation) => {
+    return currentUser && evaluation.evaluatorId === currentUser.id;
   };
 
   if (!userToDisplay) return <p>A carregar informações do utilizador...</p>;
@@ -170,37 +172,27 @@ export default function UserProfilePage() {
           </section>
         </div>
 
-        {/* Avaliações */}
         <div className="container mt-5" id="evaluationsSection">
           <SellerEvaluations 
             sellerId={profileUserId}
             evaluations={evaluations}
             currentUser={currentUser}
             onAddEvaluation={handleAddEvaluationClick}
-            canEvaluate={canEvaluate} // Passa a elegibilidade como prop
+            onEditEvaluation={handleEditEvaluationClick}
+            canEvaluate={canEvaluate}
+            canEditEvaluation={canEditEvaluation}
           />
         </div>
 
-        {/* Modal de Adicionar Avaliação */}
-        {showAddEvaluationModal && (
-  (() => {
-    try {
-      console.log("Tentando renderizar AddEvaluationModal");
-      return (
-        <AddEvaluationModal
-          sellerId={profileUserId}
-          onClose={handleCloseAddEvaluationModal}
-          onSubmit={handleEvaluationAdded}
-          currentUser={currentUser}
-        />
-      );
-    } catch (error) {
-      console.error("Erro ao renderizar AddEvaluationModal:", error);
-      return null;
-    }
-  })()
-)}
-
+        {showEvaluationModal && (
+          <EvaluationModal
+            sellerId={profileUserId}
+            onClose={handleCloseEvaluationModal}
+            onSubmit={handleEvaluationSubmitted}
+            currentUser={currentUser}
+            initialData={currentEvaluation}
+          />
+        )}
       </div>
     </main>
   );

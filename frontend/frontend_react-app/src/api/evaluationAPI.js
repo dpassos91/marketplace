@@ -140,6 +140,7 @@ async function addEvaluation(evaluationData) {
  * @throws {Error} Throws an error if the update fails or if the HTTP response is not ok.
  */
 async function updateEvaluation(evaluationData) {
+  console.log('Dados enviados para atualização:', evaluationData);
   try {
     const response = await makeAuthenticatedRequest(
       API_ENDPOINTS.evaluations.update(evaluationData.id),
@@ -148,14 +149,10 @@ async function updateEvaluation(evaluationData) {
         body: JSON.stringify(evaluationData),
       }
     );
-
-    if (!response.ok) {
-      throw new Error(`Error updating evaluation: ${response.statusText}`);
-    }
-
+    console.log('Resposta da API (atualização):', response);
     return await response.json();
   } catch (error) {
-    console.error('Error updating evaluation:', error);
+    console.error('Erro ao atualizar avaliação:', error);
     throw error;
   }
 }
@@ -261,7 +258,6 @@ async function getEligibleProductsForEvaluation(userId) {
     throw new Error(`Error fetching eligible products: ${error.message}`);
   }
 }
-
 
 export const evaluationAPI = {
   getEvaluationsForSeller,

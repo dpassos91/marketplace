@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { DEFAULT_OPTIONS } from '../api/ApiConfig';
+import { DEFAULT_OPTIONS } from '../api/apiConfig';
 import { useAuth } from './UseAuth'; // Ajuste o caminho conforme necessário
 
 export function useAuthenticatedRequest() {

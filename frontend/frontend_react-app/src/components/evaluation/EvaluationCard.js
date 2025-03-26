@@ -2,7 +2,7 @@ import React from 'react';
 import { formatDate } from '../../utils/dateUtils';
 import '../../css/EvaluationStyles.css';
 
-function EvaluationCard({ evaluation }) {
+function EvaluationCard({ evaluation, currentUser, onEditEvaluation }) {
   const ratingStars = '★'.repeat(evaluation.rating) + '☆'.repeat(5 - evaluation.rating);
 
   return (
@@ -15,8 +15,14 @@ function EvaluationCard({ evaluation }) {
       <div className="evaluation-body">
         <p>{evaluation.comment}</p>
       </div>
+      {currentUser && currentUser.id === evaluation.evaluatorId && (
+        <div className="evaluation-edit">
+          <button onClick={() => onEditEvaluation(evaluation)}>Editar</button>
+        </div>
+      )}
     </div>
   );
 }
 
 export default EvaluationCard;
+
