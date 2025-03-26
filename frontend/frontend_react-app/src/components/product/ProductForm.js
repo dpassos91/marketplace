@@ -20,7 +20,7 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
                 const fetchedCategories = await categoryAPI.getAllCategories();
                 setCategories(fetchedCategories);
             } catch (error) {
-                console.error('Error loading categories:', error);
+                console.error('Erro ao carregar as categorias:', error);
             }
         };
         fetchCategories();
@@ -35,7 +35,7 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
         e.preventDefault();
 
         if (!validateForm()) {
-            alert('Please fill in all required fields with valid values');
+            alert('Por favor preencha todos os campos corretamente.');
             return;
         }
 
@@ -50,8 +50,7 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
             await onSave(productToSave);
 
         } catch (error) {
-            console.error('Error saving product:', error);
-            alert('Error saving product. Please try again.');
+            console.error('Erro a criar produto:', error);
         } finally {
             setIsSubmitting(false);
         }
