@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useFetchUsers from '../../hooks/useFetchUsers';
 import { userAPI } from '../../api/userAPI';
+import Modal from '../commons/Modal';
 
 const USERS_PER_PAGE = 10;
 
@@ -8,6 +9,10 @@ const UserTable = () => {
   const { users, loading, error } = useFetchUsers();
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(users?.length / USERS_PER_PAGE);
+
+  // Estado para controle do modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({ userId: null, action: '', message: '' });
 
   const getUsersForPage = (page) => {
     if (!users) return [];
@@ -24,46 +29,43 @@ const UserTable = () => {
     window.location.href = `http://localhost:3000/profile/${userId}`;
   };
 
-  const handleSuspendUser = async (userId) => {
+  const handleActionConfirm = async () => {
+    const { userId, action } = modalData;
+
     try {
-      await userAPI.suspendUser(userId);
-      alert(`Utilizador ${userId} suspenso com sucesso!`);
-      //window.location.reload();
+      if (action === 'suspend') {
+        await userAPI.suspendUser(userId);
+        alert(`Utilizador ${userId} suspenso com sucesso!`);
+      } else if (action === 'reactivate') {
+        await userAPI.reactivateUser(userId);
+        alert(`Utilizador ${userId} reativado com sucesso!`);
+      } else if (action === 'delete') {
+        await userAPI.deleteUser(userId);
+        alert(`Utilizador ${userId} excluído com sucesso!`);
+      }
+      // Atualizar lista de utilizadores
+      window.location.reload(); // Pode substituir por lógica de atualização mais eficiente
     } catch (err) {
       console.error(err);
-      alert('Erro ao suspender utilizador.');
+      alert(`Erro ao realizar ação: ${action}`);
+    } finally {
+      setIsModalOpen(false); // Fechar o modal após a ação
     }
   };
 
-  const handleReactivateUser = async (userId) => {
-    try {
-      await userAPI.reactivateUser(userId);
-      alert(`Utilizador ${userId} reativado com sucesso!`);
-      //window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao reativar utilizador.');
+  const handleOpenModal = (userId, action) => {
+    let message = '';
+    if (action === 'suspend') {
+      message = `Tem certeza de que deseja suspender o utilizador com ID ${userId}?`;
+    } else if (action === 'reactivate') {
+      message = `Tem certeza de que deseja reativar o utilizador com ID ${userId}?`;
+    } else if (action === 'delete') {
+      message = `Tem certeza de que deseja excluir o utilizador com ID ${userId}?`;
     }
-  };
 
-  const handleDeleteUser = async (userId) => {
-    try {
-      await userAPI.deleteUser(userId);
-      alert(`Utilizador ${userId} excluído com sucesso!`);
-      //window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao excluir utilizador.');
-    }
+    setModalData({ userId, action, message });
+    setIsModalOpen(true);
   };
-
-  useEffect(() => {
-    if (users) {
-      getUsersForPage(currentPage).forEach(user => {
-        console.log(`User ${user.username} is_active:`, user.is_active, typeof user.is_active);
-      });
-    }
-  }, [users, currentPage]);
 
   if (loading) {
     return <div>A carregar utilizadores...</div>;
@@ -75,6 +77,23 @@ const UserTable = () => {
 
   return (
     <div>
+      {/* Modal de confirmação */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Confirmação de Ação"
+      >
+        <p>{modalData.message}</p>
+        <div style={{ textAlign: 'right', marginTop: '10px' }}>
+          <button className="btn-secondary" onClick={() => setIsModalOpen(false)}>
+            Cancelar
+          </button>
+          <button className="btn-primary" onClick={handleActionConfirm}>
+            Confirmar
+          </button>
+        </div>
+      </Modal>
+
       <table>
         <thead>
           <tr>
@@ -102,21 +121,21 @@ const UserTable = () => {
                     {active ? (
                       <button
                         className="btn-card tabela-btn btn-info"
-                        onClick={() => handleSuspendUser(user.id)}
+                        onClick={() => handleOpenModal(user.id, 'suspend')}
                       >
                         Suspender
                       </button>
                     ) : (
                       <button
                         className="btn-card tabela-btn btn-success"
-                        onClick={() => handleReactivateUser(user.id)}
+                        onClick={() => handleOpenModal(user.id, 'reactivate')}
                       >
                         Reativar
                       </button>
                     )}
                     <button
                       className="btn-card tabela-btn btn-edit"
-                      onClick={() => handleDeleteUser(user.id)}
+                      onClick={() => handleOpenModal(user.id, 'delete')}
                     >
                       Excluir
                     </button>
@@ -153,4 +172,5 @@ const UserTable = () => {
 };
 
 export default UserTable;
+
 
