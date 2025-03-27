@@ -1,271 +1,155 @@
-import { makeAuthenticatedRequest } from '../utils/apiUtils.js';
 import { apiConfig } from './apiConfig.js';
 
-const { API_ENDPOINTS} = apiConfig;
+const { apiCall, API_ENDPOINTS } = apiConfig;
 
 /**
- * Fetches all evaluations for a specific seller.
- *
+ * Função para buscar todas as avaliações.
+ * 
  * @async
- * @function getEvaluationsForSeller
- * @param {string|number} sellerId - The ID of the seller whose evaluations are being retrieved.
- * @returns {Promise<Array>} A promise that resolves to an array of evaluation objects.
- * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
+ * @function getAllEvaluations
+ * @returns {Promise<Array>} Lista de avaliações.
  */
-async function getEvaluationsForSeller(sellerId) {
-  try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.byEvaluated(sellerId),
-      {
-        method: 'GET',
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Error fetching evaluations: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching evaluations:', error);
-    throw error;
-  }
-}
+const getAllEvaluations = async () => {
+  return apiCall(API_ENDPOINTS.evaluations.all, { method: 'GET' });
+};
 
 /**
- * Retrieves a specific evaluation by its ID.
- *
+ * Função para buscar uma avaliação específica pelo ID.
+ * 
  * @async
  * @function getEvaluationById
- * @param {string|number} evaluationId - The ID of the evaluation to retrieve.
- * @returns {Promise<Object>} A promise that resolves to the evaluation object.
- * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
+ * @param {string|number} evaluationId - O ID da avaliação.
+ * @returns {Promise<Object>} A avaliação com o ID fornecido.
  */
-async function getEvaluationById(evaluationId) {
-  try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.byId(evaluationId),
-      {
-        method: 'GET',
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Error fetching evaluation: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching evaluation:', error);
-    throw error;
-  }
-}
-
+const getEvaluationById = async (evaluationId) => {
+  return apiCall(API_ENDPOINTS.evaluations.byId(evaluationId), { method: 'GET' });
+};
 
 /**
- * Fetches all evaluations from the API.
- *
- * This function makes an authenticated GET request to the evaluations endpoint
- * and returns the response data as a JSON object. If the request fails or the
- * response is not OK, an error is thrown.
- *
- * @returns {Promise<Object>} A promise that resolves to the JSON response containing all evaluations.
- * @throws {Error} If there is an error fetching the evaluations or the response is not OK.
+ * Função para buscar todas as avaliações de um vendedor específico.
+ * 
+ * @async
+ * @function getEvaluationsForSeller
+ * @param {string|number} sellerId - O ID do vendedor.
+ * @returns {Promise<Array>} Lista de avaliações para o vendedor.
  */
-async function getAllEvaluations() {
-  try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.all,
-      {
-        method: 'GET',
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Error fetching evaluations: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching evaluations:', error);
-    throw error;
-  }
-}
+const getEvaluationsForSeller = async (sellerId) => {
+  return apiCall(API_ENDPOINTS.evaluations.byEvaluated(sellerId), { method: 'GET' });
+};
 
 /**
- * Creates a new evaluation.
- *
+ * Função para buscar a média das avaliações de um usuário.
+ * 
+ * @async
+ * @function getAverageRating
+ * @param {string|number} userId - O ID do usuário.
+ * @returns {Promise<Object>} A média das avaliações do usuário.
+ */
+const getAverageRating = async (userId) => {
+  return apiCall(API_ENDPOINTS.evaluations.averageRating(userId), { method: 'GET' });
+};
+
+/**
+ * Função para criar uma nova avaliação.
+ * 
  * @async
  * @function addEvaluation
- * @param {Object} evaluationData - The evaluation data to be submitted.
- * @param {string|number} evaluationData.evaluatedId - The ID of the user being evaluated.
- * @param {number} evaluationData.rating - The rating score (typically 1-5).
- * @param {string} [evaluationData.comment] - Optional comment for the evaluation.
- * @returns {Promise<Object>} A promise that resolves to the newly created evaluation object.
- * @throws {Error} Throws an error if the creation fails or if the HTTP response is not ok.
+ * @param {Object} evaluationData - Dados da avaliação a ser criada.
+ * @returns {Promise<Object>} A avaliação criada.
  */
-async function addEvaluation(evaluationData) {
-  try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.create,
-      {
-        method: 'POST',
-        body: JSON.stringify(evaluationData),
-      }
-    );
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response:', errorBody);
-      throw new Error(`Error creating evaluation: ${response.statusText}. Details: ${errorBody}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error creating evaluation:', error);
-    throw error;
-  }
-}
+const addEvaluation = async (evaluationData) => {
+  return apiCall(API_ENDPOINTS.evaluations.create, {
+    method: 'POST',
+    body: JSON.stringify(evaluationData),
+  });
+};
 
 /**
- * Updates an existing evaluation.
- *
+ * Função para atualizar uma avaliação existente.
+ * 
  * @async
  * @function updateEvaluation
- * @param {Object} evaluationData - The updated evaluation data.
- * @param {string|number} evaluationData.id - The ID of the evaluation to update.
- * @param {number} [evaluationData.rating] - The updated rating score.
- * @param {string} [evaluationData.comment] - The updated comment.
- * @returns {Promise<Object>} A promise that resolves to the updated evaluation object.
- * @throws {Error} Throws an error if the update fails or if the HTTP response is not ok.
+ * @param {Object} evaluationData - Dados atualizados da avaliação.
+ * @returns {Promise<Object>} A avaliação atualizada.
  */
-async function updateEvaluation(evaluationData) {
-  console.log('Dados enviados para atualização:', evaluationData);
-  try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.update(evaluationData.id),
-      {
-        method: 'PUT',
-        body: JSON.stringify(evaluationData),
-      }
-    );
-    console.log('Resposta da API (atualização):', response);
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao atualizar avaliação:', error);
-    throw error;
-  }
-}
+const updateEvaluation = async (evaluationData) => {
+  return apiCall(API_ENDPOINTS.evaluations.update(evaluationData.id), {
+    method: 'PUT',
+    body: JSON.stringify(evaluationData),
+  });
+};
 
 /**
- * Deletes an evaluation by its ID.
- *
+ * Função para excluir uma avaliação.
+ * 
  * @async
  * @function deleteEvaluation
- * @param {string|number} evaluationId - The ID of the evaluation to delete.
- * @returns {Promise<string>} A promise that resolves to the response text from the server.
- * @throws {Error} Throws an error if the deletion fails or if the HTTP response is not ok.
+ * @param {string|number} evaluationId - O ID da avaliação a ser excluída.
+ * @returns {Promise<Object>} A confirmação da exclusão da avaliação.
  */
-async function deleteEvaluation(evaluationId) {
-  try {
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.delete(evaluationId),
-      {
-        method: 'DELETE',
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Error deleting evaluation: ${response.statusText}`);
-    }
-
-    return await response.text();
-  } catch (error) {
-    console.error('Error deleting evaluation:', error);
-    throw error;
-  }
-}
+const deleteEvaluation = async (evaluationId) => {
+  return apiCall(API_ENDPOINTS.evaluations.delete(evaluationId), { method: 'DELETE' });
+};
 
 /**
- * Checks if the current authenticated user has already evaluated a specific seller.
- *
+ * Função para verificar se o comprador já avaliou o vendedor para um produto.
+ * 
  * @async
- * @function hasUserEvaluatedSeller
- * @param {string|number} sellerId - The ID of the seller to check.
- * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the user has evaluated the seller.
- * @throws {Error} Throws an error if the HTTP response is not ok.
+ * @function hasEvaluated
+ * @param {string|number} buyerId - O ID do comprador.
+ * @param {string|number} sellerId - O ID do vendedor.
+ * @param {string|number} productId - O ID do produto.
+ * @returns {Promise<Object>} A resposta indicando se o comprador avaliou o vendedor para o produto.
  */
-async function hasUserEvaluatedSeller(sellerId) {
-  try {
-    const response = await makeAuthenticatedRequest(
-      `${API_ENDPOINTS.evaluations.hasEvaluated}?sellerId=${sellerId}`,
-      {
-        method: 'GET',
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `Error checking evaluation status: ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    return data.hasEvaluated; // Assumindo que o backend retorna um objeto com a propriedade hasEvaluated
-  } catch (error) {
-    console.error('Error checking evaluation status:', error);
-    throw error; // Lança o erro para que o componente possa lidar com ele
-  }
-}
-
+const hasEvaluated = async (buyerId, sellerId, productId) => {
+  return apiCall(API_ENDPOINTS.evaluations.hasEvaluated(buyerId, sellerId, productId), { method: 'GET' });
+};
 
 /**
- * Retrieves products that the specified user is eligible to evaluate.
- *
+ * Função para contar o número total de avaliações.
+ * 
  * @async
- * @function getEligibleProductsForEvaluation
- * @param {string|number} userId - The ID of the user to check for eligible products.
- * @returns {Promise<Array>} A promise that resolves to an array of products eligible for evaluation.
- * @throws {Error} Throws an error if the HTTP request fails or if the response is not ok.
+ * @function countEvaluations
+ * @returns {Promise<Object>} O total de avaliações.
  */
-async function getEligibleProductsForEvaluation(userId) {
-  console.log('Iniciando fetch de produtos elegíveis para avaliação...');
-  console.log(`Parâmetro userId recebido: ${userId}`);
+const countEvaluations = async () => {
+  return apiCall(API_ENDPOINTS.evaluations.count, { method: 'GET' });
+};
 
-  try {
-    console.log('Fazendo requisição para o endpoint:', API_ENDPOINTS.evaluations.eligible(userId));
-    
-    const response = await makeAuthenticatedRequest(
-      API_ENDPOINTS.evaluations.eligible(userId),
-      {
-        method: 'GET',
-      }
-    );
+/**
+ * Função para contar o número de avaliações de um usuário específico.
+ * 
+ * @async
+ * @function countEvaluationsByUser
+ * @param {string|number} userId - O ID do usuário.
+ * @returns {Promise<Object>} O número de avaliações do usuário.
+ */
+const countEvaluationsByUser = async (userId) => {
+  return apiCall(API_ENDPOINTS.evaluations.countByEvaluated(userId), { method: 'GET' });
+};
 
-    console.log('Resposta recebida do servidor:', response);
-
-    if (!response.ok) {
-      console.error(`Erro na resposta HTTP! Status: ${response.status}`);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Dados recebidos do servidor:', data);
-
-    return data;
-  } catch (error) {
-    console.error('Erro ao buscar produtos elegíveis:', error);
-    throw new Error(`Error fetching eligible products: ${error.message}`);
-  }
-}
+/**
+ * Função para verificar quais usuários são elegíveis para avaliar.
+ * 
+ * @async
+ * @function checkEligibility
+ * @param {string|number} userId - O ID do usuário.
+ * @returns {Promise<Object>} A lista de usuários elegíveis para avaliação.
+ */
+const checkEligibility = async (userId) => {
+  return apiCall(API_ENDPOINTS.evaluations.eligible(userId), { method: 'GET' });
+};
 
 export const evaluationAPI = {
-  getEvaluationsForSeller,
-  getEvaluationById,
   getAllEvaluations,
+  getEvaluationById,
+  getEvaluationsForSeller,
+  getAverageRating,
   addEvaluation,
   updateEvaluation,
   deleteEvaluation,
-  hasUserEvaluatedSeller,
-  getEligibleProductsForEvaluation
+  hasEvaluated,
+  countEvaluations,
+  countEvaluationsByUser,
+  checkEligibility,
 };
