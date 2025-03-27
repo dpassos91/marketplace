@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddCategoryModal from '../admin/AddCategoryModal';
-import FilterProductsByCategory from '../admin/FilterProductsByCategory'; // Importar o modal de filtro
-
+import FilterProductsByCategory from '../admin/FilterProductsByCategory'; // Importar o modal de filtro por categoria
+import FilterProductsBySeller from '../admin/FilterProductsBySeller'; // Importar o modal de filtro por vendedor
 
 function AdminProductsPage() {
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false); // Novo estado para o filtro
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false); // Novo estado para o filtro por categoria
+  const [isFilterBySellerModalOpen, setIsFilterBySellerModalOpen] = useState(false); // Novo estado para o filtro por vendedor
   const navigate = useNavigate();
 
   const handleNavigateToInativos = () => {
@@ -26,7 +27,7 @@ function AdminProductsPage() {
         <button className="btn-primary" onClick={() => setIsFilterModalOpen(true)}>
           Filtrar por Categoria
         </button>
-        <button className="btn-primary" onClick={() => navigate('/admin/produtos/filtrar-vendedor')}>
+        <button className="btn-primary" onClick={() => setIsFilterBySellerModalOpen(true)}>
           Filtrar por Vendedor
         </button>
       </div>
@@ -47,6 +48,15 @@ function AdminProductsPage() {
           <FilterProductsByCategory 
             isOpen={isFilterModalOpen} 
             onClose={() => setIsFilterModalOpen(false)} 
+          />
+        </div>
+      )}
+
+      {isFilterBySellerModalOpen && (
+        <div style={{ zIndex: 9999 }}>
+          <FilterProductsBySeller 
+            isOpen={isFilterBySellerModalOpen} 
+            onClose={() => setIsFilterBySellerModalOpen(false)} 
           />
         </div>
       )}
