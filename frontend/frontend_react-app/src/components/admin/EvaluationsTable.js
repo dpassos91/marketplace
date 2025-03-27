@@ -9,7 +9,7 @@ const EvaluationRow = React.memo(({ evaluation, onEdit, onDelete }) => {
     <tr>
       <td style={{ textAlign: 'center' }}>{evaluation.evaluatorUsername}</td>
       <td style={{ textAlign: 'center' }}>{evaluation.evaluatedUsername}</td>
-      <td style={{ textAlign: 'center' }}>{evaluation.comment}</td>
+      <td style={{ textAlign: 'center' }}>{evaluation.date}</td>
       <td style={{ textAlign: 'center' }}>{evaluation.rating}</td>
       <td style={{ textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
@@ -123,7 +123,7 @@ const EvaluationsTable = () => {
           <tr>
             <th style={{ textAlign: 'center' }}>Avaliador</th>
             <th style={{ textAlign: 'center' }}>Avaliado</th>
-            <th style={{ textAlign: 'center' }}>Comentário</th>
+            <th style={{ textAlign: 'center' }}>Data</th>
             <th style={{ textAlign: 'center' }}>Nota</th>
             <th style={{ textAlign: 'center' }}>Ações</th>
           </tr>
