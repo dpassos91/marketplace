@@ -83,27 +83,24 @@ const UserTable = () => {
         apiResponse = await userAPI.deleteUser(userId);
       }
   
-      // Se a resposta da API não for nula, exiba a mensagem
-      if (apiResponse) {
-        let message = `Ação ${action} realizada com sucesso para o utilizador ${userId}!`;
+      // Mensagens personalizadas
+      const customMessages = {
+        suspend: `O utilizador ${userId} foi suspenso com sucesso.`,
+        reactivate: `O utilizador ${userId} foi reativado com sucesso.`,
+        delete: `O utilizador ${userId} foi eliminado permanentemente.`,
+      };
   
-        if (typeof apiResponse === 'string') {
-          message = apiResponse;
-        } else if (apiResponse.message) {
-          message = apiResponse.message;
-        }
-  
-        alert(message);
-      }
+      alert(customMessages[action]); // Usa a mensagem personalizada
   
       refetch(); // Atualiza a lista de usuários
     } catch (err) {
       console.error(err);
-      alert(`Erro ao realizar ação: ${action}`);
+      alert(`Erro ao realizar a ação: ${action}`);
     } finally {
       setIsModalOpen(false);
     }
   }, [modalData, refetch]);
+  
   
 
   const handleOpenModal = useCallback((userId, action) => {
