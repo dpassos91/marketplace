@@ -90,3 +90,4 @@ function FilterProductsByCategory({ isOpen, onClose, onFilter }) {
 
 export default FilterProductsByCategory;
 
+
