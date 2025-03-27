@@ -14,7 +14,6 @@ function EvaluationManager({ sellerId, currentUser }) {
   const fetchEvaluations = async () => {
     try {
       const fetchedEvaluations = await evaluationAPI.getEvaluationsForSeller(sellerId);
-      console.log('Avaliações carregadas:', fetchedEvaluations); // Adicionar este log
       setEvaluations(fetchedEvaluations);
     } catch (error) {
       console.error('Erro ao buscar avaliações:', error);
@@ -27,7 +26,6 @@ function EvaluationManager({ sellerId, currentUser }) {
   };
 
   const handleEditEvaluation = (evaluation) => {
-    console.log('Avaliação selecionada para edição:', evaluation); // Verificar os dados da avaliação
     setCurrentEvaluation(evaluation);
     setIsModalOpen(true);
   };
@@ -44,14 +42,20 @@ function EvaluationManager({ sellerId, currentUser }) {
   return (
     <div>
       <h2>Avaliações</h2>
-      <button onClick={handleAddEvaluation}>Adicionar Avaliação</button>
+      {/* Só o admin pode adicionar novas avaliações */}
+      {currentUser && currentUser.isAdmin && (
+        <button onClick={handleAddEvaluation}>Adicionar Avaliação</button>
+      )}
       
       {evaluations.map(evaluation => (
         <div key={evaluation.id}>
           <h3>{evaluation.title}</h3>
           <p>Rating: {evaluation.rating}</p>
           <p>{evaluation.comment}</p>
-          <button onClick={() => handleEditEvaluation(evaluation)}>Editar</button>
+          {/* Admin e o avaliador podem editar */}
+          {(currentUser.isAdmin || currentUser.id === evaluation.evaluatorId) && (
+            <button onClick={() => handleEditEvaluation(evaluation)}>Editar</button>
+          )}
         </div>
       ))}
 
