@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { userAPI } from '../api/userAPI';
 
 function useFetchUsers() {
@@ -6,24 +6,24 @@ function useFetchUsers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const fetchedUsers = await userAPI.getTotalUsers();
-        setUsers(fetchedUsers);
-      } catch (err) {
-        setError(err.message || 'Ocorreu um erro ao carregar os utilizadores.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const fetchedUsers = await userAPI.getTotalUsers();
+      setUsers(fetchedUsers);
+    } catch (err) {
+      setError(err.message || 'Ocorreu um erro ao carregar os utilizadores.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { users, loading, error };
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  return { users, loading, error, refetch: fetchUsers };
 }
 
 export default useFetchUsers;
