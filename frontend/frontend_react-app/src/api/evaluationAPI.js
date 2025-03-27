@@ -72,12 +72,13 @@ const addEvaluation = async (evaluationData) => {
  * @param {Object} evaluationData - Dados atualizados da avaliação.
  * @returns {Promise<Object>} A avaliação atualizada.
  */
-const updateEvaluation = async (evaluationData) => {
-  return apiCall(API_ENDPOINTS.evaluations.update(evaluationData.id), {
+const updateEvaluation = async (id, evaluationData) => {
+  return apiCall(API_ENDPOINTS.evaluations.update(id), {
     method: 'PUT',
     body: JSON.stringify(evaluationData),
   });
 };
+
 
 /**
  * Função para excluir uma avaliação.
