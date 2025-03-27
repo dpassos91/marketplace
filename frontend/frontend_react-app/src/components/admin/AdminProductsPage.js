@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AddCategoryModal from '../admin/AddCategoryModal';
 
 function AdminProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigateToInativos = () => {
+    navigate('/admin/produtos/inativos');
+  };
 
   return (
     <div>
@@ -11,13 +17,27 @@ function AdminProductsPage() {
         <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
           Adicionar Categoria
         </button>
-        <button className="btn-primary">Listar Produtos Inativos</button>
-        <button className="btn-primary">Filtrar por Categoria</button>
-        <button className="btn-primary">Filtrar por Vendedor</button>
+        <button className="btn-primary" onClick={handleNavigateToInativos}>
+          Listar Produtos Inativos
+        </button>
+        <button className="btn-primary" onClick={() => navigate('/admin/produtos/filtrar-categoria')}>
+          Filtrar por Categoria
+        </button>
+        <button className="btn-primary" onClick={() => navigate('/admin/produtos/filtrar-vendedor')}>
+          Filtrar por Vendedor
+        </button>
       </div>
 
       {/* Modal */}
-      <AddCategoryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onCategoryAdded={() => console.log('Categoria adicionada!')} />
+      {isModalOpen && (
+        <div style={{ zIndex: 9999 }}>
+          <AddCategoryModal 
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)} 
+            onCategoryAdded={() => console.log('Categoria adicionada!')} 
+          />
+        </div>
+      )}
     </div>
   );
 }
