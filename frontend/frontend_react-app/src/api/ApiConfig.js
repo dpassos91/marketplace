@@ -174,12 +174,7 @@ const DEFAULT_OPTIONS = {
         throw error;
     }
 };
-
-
-
-
   
-
   export const apiConfig = {
   API_BASE_URL,
   API_ENDPOINTS,
