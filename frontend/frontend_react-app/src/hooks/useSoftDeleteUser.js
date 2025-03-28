@@ -1,4 +1,4 @@
-// src/hooks/useSoftDeleteUser.js
+
 import { userAPI } from '../api/userAPI';
 
 function useSoftDeleteUser() {

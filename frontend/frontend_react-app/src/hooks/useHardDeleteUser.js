@@ -1,5 +1,4 @@
-// src/hooks/useHardDeleteUser.js
-import { useAuth } from './UseAuth';
+import { useAuth } from './useAuth';
 import { userAPI } from '../api/userAPI';
 
 function useHardDeleteUser() {

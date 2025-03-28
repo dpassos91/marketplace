@@ -4,9 +4,10 @@ import useAuthStore from '../stores/authStore';
 
 export function useAuth() {
   const navigate = useNavigate();
+  const { login: loginStore, logout: logoutStore, user: currentUser } = useAuthStore();
 
   const handleAuthSuccess = (userData, successMessage) => {
-    useAuthStore.getState().login(userData); // Atualiza o estado do usuário no store
+    loginStore(userData); // Atualiza o estado do utilizador no store
     localStorage.setItem('userData', JSON.stringify(userData)); // Persiste no localStorage
     alert(successMessage);
     navigate('/');
@@ -22,7 +23,7 @@ export function useAuth() {
   const login = async (credentials) => {
     try {
       const userData = await userAPI.loginUser(credentials);
-      useAuthStore.getState().login(userData); // Atualiza o estado do usuário no store
+      loginStore(userData); // Atualiza o estado do utilizador no store
       localStorage.setItem('userData', JSON.stringify(userData)); // Persiste no localStorage
       alert(`Login bem sucedido! Bem-vindo/a ${userData.firstName} ${userData.lastName}!`);
       navigate('/');
@@ -50,10 +51,10 @@ export function useAuth() {
     console.log('Função de logout chamada');
     try {
       // Chama a API de logout no backend
-      await userAPI.logoutUser(); // Você precisa implementar esta função no userAPI
+      await userAPI.logoutUser();
   
       // Limpa o estado local e armazenamento
-      useAuthStore.getState().logout();
+      logoutStore();
       localStorage.removeItem('userData');
       sessionStorage.removeItem('authToken');
   
@@ -64,14 +65,9 @@ export function useAuth() {
       navigate('/');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-      // Você pode decidir se quer forçar o logout local mesmo se a chamada à API falhar
       alert('Houve um problema ao fazer logout. Por favor, tente novamente.');
     }
   };
-  
-
-  const currentUser = useAuthStore(state => state.user);
 
   return { login, register, logout, currentUser };
 }
-

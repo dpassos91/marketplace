@@ -1,4 +1,3 @@
-// hooks/useFormInput.js
 import { useState } from 'react';
 
 export function useFormInput(initialState) {
