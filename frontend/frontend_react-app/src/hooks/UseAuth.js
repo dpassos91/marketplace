@@ -17,6 +17,7 @@ export function useAuth() {
       const userData = await userAPI.loginUser(credentials);
       const userDataToStore = {
         id: userData.id,
+        name: userData.firstName + ' ' + userData.lastName,
         picture: userData.picture,
         admin: userData.admin
       };

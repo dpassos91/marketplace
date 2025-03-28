@@ -1,11 +1,10 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import useFetchUsers from '../../hooks/useFetchUsers';
 import { userAPI } from '../../api/userAPI';
-import Modal from '../commons/Modal';
 
 const USERS_PER_PAGE = 10;
 
-const UserRow = React.memo(({ user, onRedirect, onOpenModal }) => {
+const UserRow = React.memo(({ user, onRedirect, onAction }) => {
   const active = Boolean(user.active);
 
   return (
@@ -23,23 +22,23 @@ const UserRow = React.memo(({ user, onRedirect, onOpenModal }) => {
           {active ? (
             <button
               className="btn-card tabela-btn btn-info"
-              onClick={() => onOpenModal(user.id, 'suspend')}
+              onClick={() => onAction(user.id, 'suspend')}
             >
               Suspender
             </button>
           ) : (
             <button
               className="btn-card tabela-btn btn-success"
-              onClick={() => onOpenModal(user.id, 'reactivate')}
+              onClick={() => onAction(user.id, 'reactivate')}
             >
               Reativar
             </button>
           )}
           <button
             className="btn-card tabela-btn btn-edit"
-            onClick={() => onOpenModal(user.id, 'delete')}
+            onClick={() => onAction(user.id, 'delete')}
           >
-            Excluir
+            Eliminar
           </button>
         </div>
       </td>
@@ -50,8 +49,6 @@ const UserRow = React.memo(({ user, onRedirect, onOpenModal }) => {
 const UserTable = () => {
   const { users, loading, error, refetch } = useFetchUsers();
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalData, setModalData] = useState({ userId: null, action: '', message: '' });
 
   const totalPages = useMemo(() => Math.ceil((users?.length || 0) / USERS_PER_PAGE), [users]);
 
@@ -70,49 +67,39 @@ const UserTable = () => {
     window.location.href = `http://localhost:3000/profile/${userId}`;
   }, []);
 
-  const handleActionConfirm = useCallback(async () => {
-    const { userId, action } = modalData;
-  
-    try {
-      let apiResponse = null;
-      if (action === 'suspend') {
-        apiResponse = await userAPI.suspendUser(userId);
-      } else if (action === 'reactivate') {
-        apiResponse = await userAPI.reactivateUser(userId);
-      } else if (action === 'delete') {
-        apiResponse = await userAPI.deleteUser(userId);
-      }
-  
-      // Mensagens personalizadas
-      const customMessages = {
-        suspend: `O utilizador ${userId} foi suspenso com sucesso.`,
-        reactivate: `O utilizador ${userId} foi reativado com sucesso.`,
-        delete: `O utilizador ${userId} foi eliminado permanentemente.`,
-      };
-  
-      alert(customMessages[action]); // Usa a mensagem personalizada
-  
-      refetch(); // Atualiza a lista de usuários
-    } catch (err) {
-      console.error(err);
-      alert(`Erro ao realizar a ação: ${action}`);
-    } finally {
-      setIsModalOpen(false);
-    }
-  }, [modalData, refetch]);
-  
-  
-
-  const handleOpenModal = useCallback((userId, action) => {
-    const messages = {
+  const handleAction = useCallback(async (userId, action) => {
+    const confirmationMessages = {
       suspend: `Tem certeza de que deseja suspender o utilizador com ID ${userId}?`,
       reactivate: `Tem certeza de que deseja reativar o utilizador com ID ${userId}?`,
-      delete: `Tem certeza de que deseja excluir o utilizador com ID ${userId}?`
+      delete: `Tem certeza de que deseja excluir o utilizador com ID ${userId}?`,
     };
 
-    setModalData({ userId, action, message: messages[action] });
-    setIsModalOpen(true);
-  }, []);
+    if (window.confirm(confirmationMessages[action])) {
+      try {
+        let apiResponse = null;
+        if (action === 'suspend') {
+          apiResponse = await userAPI.suspendUser(userId);
+        } else if (action === 'reactivate') {
+          apiResponse = await userAPI.reactivateUser(userId);
+        } else if (action === 'delete') {
+          apiResponse = await userAPI.deleteUser(userId);
+        }
+
+        const successMessages = {
+          suspend: `O utilizador ${userId} foi suspenso com sucesso.`,
+          reactivate: `O utilizador ${userId} foi reativado com sucesso.`,
+          delete: `O utilizador ${userId} foi eliminado permanentemente.`,
+        };
+
+        alert(successMessages[action]);
+
+        refetch(); // Atualiza a lista de usuários
+      } catch (err) {
+        console.error(err);
+        alert(`Erro ao realizar a ação: ${action}`);
+      }
+    }
+  }, [refetch]);
 
   if (loading) {
     return <div>A carregar utilizadores...</div>;
@@ -128,22 +115,6 @@ const UserTable = () => {
 
   return (
     <div>
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Confirmação de Ação"
-      >
-        <p>{modalData.message}</p>
-        <div style={{ textAlign: 'right', marginTop: '10px' }}>
-          <button className="btn-secondary" onClick={() => setIsModalOpen(false)}>
-            Cancelar
-          </button>
-          <button className="btn-primary" onClick={handleActionConfirm}>
-            Confirmar
-          </button>
-        </div>
-      </Modal>
-
       <table>
         <thead>
           <tr>
@@ -158,7 +129,7 @@ const UserTable = () => {
               key={user.id}
               user={user}
               onRedirect={handleRedirectToProfile}
-              onOpenModal={handleOpenModal}
+              onAction={handleAction}
             />
           ))}
         </tbody>
@@ -188,6 +159,7 @@ const UserTable = () => {
 };
 
 export default UserTable;
+
 
 
 

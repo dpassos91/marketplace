@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -9,7 +9,7 @@ function Header() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [admin, setadmin] = useState(false);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     console.log('URL da imagem do usuário:', user?.picture);
@@ -17,21 +17,25 @@ function Header() {
     // Verifica se existe o userData no localStorage e se o utilizador é admin
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData && userData.admin) {
-      setadmin(true);
+      setAdmin(true);
     }
-  }, [user]);
+  }, [user?.picture, user?.admin]); // Depende apenas das propriedades específicas do objeto user
 
-  const handleOpenModal = () => {
+  const handleOpenModal = useCallback(() => {
     setIsModalOpen(true); // Abre o modal em vez de navegar
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false); // Fecha o modal
-  };
+  }, []);
 
-  const handleProfileClick = () => {
-    navigate(`/profile/${user.id}`); // Certifique-se de que esta rota está definida no seu router
-  };
+  const handleProfileClick = useCallback(() => {
+    navigate(`/profile/${user?.id}`); // Certifique-se de que esta rota está definida no seu router
+  }, [navigate, user?.id]);
+
+  const profilePicture = useMemo(() => {
+    return user?.picture || '/path/to/default/image.jpg';
+  }, [user?.picture]);
 
   return (
     <>
@@ -43,14 +47,14 @@ function Header() {
         </div>
 
         <div className="bem-vindo" id="welcome-message">
-          {user && `Bem-vindo, ${user.firstName}!`}
+          {user && `Bem-vindo, ${user.name}!`}
         </div>
 
         {user ? (
           <div className="img-perfil" id="profile-picture-container" onClick={handleProfileClick}>
             <img
-              src={user.picture || '/path/to/default/image.jpg'}
-              alt={user.firstName ? `Foto de perfil de ${user.firstName}` : 'Erro ao carregar a imagem'}
+              src={profilePicture}
+              alt={user.name ? `Foto de perfil de ${user.name}` : 'Erro ao carregar a imagem'}
               id="profile-picture"
               onError={(e) => {
                 e.target.onerror = null;
@@ -102,4 +106,5 @@ function Header() {
 }
 
 export default Header;
+
 
