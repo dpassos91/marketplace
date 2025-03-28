@@ -13,21 +13,27 @@ function useUserProfile() {
     useEffect(() => {
         const fetchUserData = async () => {
             let fetchedUser;
-            if (profileUserId) {
-                fetchedUser = await userAPI.getUserById(profileUserId);
-                setIsOwnProfile(currentUser && String(currentUser.id) === String(profileUserId));
-            } else if (currentUser) {
-                fetchedUser = await userAPI.getUserById(currentUser.id);
-                setIsOwnProfile(true);
-            } else {
-                navigate('/login');
-                return;
-            }
+            try {
+                if (profileUserId) {
+                    fetchedUser = await userAPI.getUserById(profileUserId);
+                    setIsOwnProfile(currentUser && String(currentUser.id) === String(profileUserId));
+                } else if (currentUser) {
+                    fetchedUser = await userAPI.getUserById(currentUser.id);
+                    setIsOwnProfile(true);
+                } else {
+                    navigate('/login');
+                    return;
+                }
 
-            if (!fetchedUser) {
+                if (!fetchedUser) {
+                    setUserToDisplay(null);
+                } else {
+                    setUserToDisplay(fetchedUser);
+                }
+            } catch (error) {
+                // Em caso de erro na API, podemos capturar e lidar com isso
+                console.error('Error fetching user data:', error);
                 setUserToDisplay(null);
-            } else {
-                setUserToDisplay(fetchedUser);
             }
         };
 
@@ -38,3 +44,4 @@ function useUserProfile() {
 }
 
 export default useUserProfile;
+

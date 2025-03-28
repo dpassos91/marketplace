@@ -1,4 +1,3 @@
-// EditProductForm.js
 import React, { useState, useEffect } from 'react';
 import { useFormInput } from '../../hooks/useFormInput.js';
 import { categoryAPI } from '../../api/categoryAPI.js';
@@ -41,16 +40,18 @@ function EditProductForm({ onSave, onCancel }) {
             return;
         }
 
-        setEditedProduct(prev => ({
+        setEditedProduct(prev => ({ 
             ...prev,
             status: state.description,
-            estadoById: state.id
+            estadoById: state.id        
         }));
     };
 
     const handleSave = async () => {
+        console.log("Produto antes de salvar:", editedProduct);
         try {
             await onSave(editedProduct);
+            console.log('Produto salvo:', editedProduct);
         } catch (error) {
             console.error('Error saving product:', error);
         }

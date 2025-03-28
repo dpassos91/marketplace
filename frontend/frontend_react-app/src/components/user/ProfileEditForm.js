@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/UseAuth';
-import { userAPI } from '../api/userAPI';
-import { productAPI } from '../api/productAPI';
-import { useFormInput } from '../hooks/useFormInput'; // Importe o hook
+import { useAuth } from '../../hooks/useAuth'; // Importe o hook
+import { userAPI } from '../../api/userAPI';
+import { productAPI } from '../../api/productAPI';
+import { useFormInput } from '../../hooks/useFormInput'; // Importe o hook
 
 function ProfileEditForm({ user }) {
   const [isEditMode, setIsEditMode] = useState(false);

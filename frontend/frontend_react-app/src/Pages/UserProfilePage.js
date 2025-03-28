@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../hooks/UseAuth';
+import { useAuth } from '../hooks/useAuth';
 import { userAPI } from '../api/userAPI';
 import { productAPI } from '../api/productAPI';
 import { evaluationAPI } from '../api/evaluationAPI';
