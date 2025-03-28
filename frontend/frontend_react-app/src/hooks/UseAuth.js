@@ -6,14 +6,6 @@ export function useAuth() {
   const navigate = useNavigate();
   const { login: loginStore, logout: logoutStore, user: currentUser } = useAuthStore();
 
-  const handleAuthSuccess = (userData, successMessage) => {
-    loginStore(userData); // Atualiza o estado do utilizador no store
-    localStorage.setItem('userData', JSON.stringify(userData)); // Persiste no localStorage
-    alert(successMessage);
-    navigate('/');
-    return true;
-  };
-
   const handleAuthError = (error, errorMessage) => {
     console.error(errorMessage, error);
     alert(errorMessage + ' Tente novamente.');
@@ -23,8 +15,13 @@ export function useAuth() {
   const login = async (credentials) => {
     try {
       const userData = await userAPI.loginUser(credentials);
-      loginStore(userData); // Atualiza o estado do utilizador no store
-      localStorage.setItem('userData', JSON.stringify(userData)); // Persiste no localStorage
+      const userDataToStore = {
+        id: userData.id,
+        picture: userData.picture,
+        admin: userData.admin
+      };
+      useAuthStore.getState().login(userDataToStore); // Atualiza o estado do usuário no store
+      localStorage.setItem('userData', JSON.stringify(userDataToStore)); // Persiste no localStorage
       alert(`Login bem sucedido! Bem-vindo/a ${userData.firstName} ${userData.lastName}!`);
       navigate('/');
       return true;
