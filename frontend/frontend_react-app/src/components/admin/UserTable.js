@@ -1,50 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import useFetchUsers from '../../hooks/useFetchUsers';
 import { userAPI } from '../../api/userAPI';
+import UserRow from './UserRow'; // Importe o UserRow
 
 const USERS_PER_PAGE = 10;
-
-const UserRow = React.memo(({ user, onRedirect, onAction }) => {
-  const active = Boolean(user.active);
-
-  return (
-    <tr className={active ? '' : 'suspended-user'}>
-      <td style={{ textAlign: 'center' }}>{user.username}</td>
-      <td style={{ textAlign: 'center' }}>{user.email}</td>
-      <td style={{ textAlign: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-          <button
-            className="btn-card tabela-btn btn-danger"
-            onClick={() => onRedirect(user.id)}
-          >
-            Consultar perfil
-          </button>
-          {active ? (
-            <button
-              className="btn-card tabela-btn btn-info"
-              onClick={() => onAction(user.id, 'suspend')}
-            >
-              Suspender
-            </button>
-          ) : (
-            <button
-              className="btn-card tabela-btn btn-success"
-              onClick={() => onAction(user.id, 'reactivate')}
-            >
-              Reativar
-            </button>
-          )}
-          <button
-            className="btn-card tabela-btn btn-edit"
-            onClick={() => onAction(user.id, 'delete')}
-          >
-            Eliminar
-          </button>
-        </div>
-      </td>
-    </tr>
-  );
-});
 
 const UserTable = () => {
   const { users, loading, error, refetch } = useFetchUsers();

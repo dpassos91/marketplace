@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { userAPI } from '../api/userAPI';
+import { userAPI } from '../api/userAPI'; // Ajuste o caminho conforme necessário
 
 function useFetchUsers() {
   const [users, setUsers] = useState([]);

@@ -1,0 +1,55 @@
+/* AdminSidebar.module.css */
+.admin-sidebar {
+    width: 310px;
+    background-color: var(--white-100);
+    border: 10px solid var(--primary-400);
+    border-radius: 10px;
+    padding: 20px;
+    margin-right: 20px;
+    /* Adiciona margem à direita para separar do conteúdo */
+    position: sticky;
+    top: 60px;
+    /* Ajusta conforme necessário para evitar sobreposição com o header */
+    height: fit-content;
+  }
+  
+  .admin-sidebar h2 {
+    color: var(--black);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .admin-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .admin-sidebar li {
+    margin-bottom: 10px;
+  }
+  
+  .admin-sidebar a {
+    display: block;
+    text-decoration: none;
+    color: var(--primary-100);
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .admin-sidebar a:hover {
+    background-color: var(--primary-100);
+    color: var(--primary-400);
+  }
+  
+  @media (max-width: 768px) {
+    .admin-sidebar {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 20px;
+      position: static;
+      /* Remove o sticky */
+    }
+  }
+  

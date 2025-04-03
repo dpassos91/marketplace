@@ -1,0 +1,55 @@
+/* UserManagementButtons.module.css */
+
+.btnCard {
+  background-color: var(--white-100);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px; /* Reduzi o padding */
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: var(--box-shadow);
+  font-size: 0.9rem; /* Ajustei o tamanho da fonte */
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnCard:hover {
+  transform: scale(1.05);
+}
+
+.tabelaBtn {
+  /* Estilos adicionais para botões na tabela, se necessário */
+  margin: 2px;
+}
+
+.btnDanger {
+  background-color: var(--secondary-color);
+  color: var(--white-100);
+}
+
+.btnDanger:hover {
+  background-color: var(--secondary-300);
+}
+
+.btnInfo {
+  background-color: var(--primary-color);
+  color: var(--white-100);
+}
+
+.btnInfo:hover {
+  background-color: var(--primary-300);
+}
+
+.btnEdit {
+  background-color: var(--secondary-color);
+  color: var(--white-100);
+}
+
+.btnEdit:hover {
+  background-color: var(--secondary-300);
+}
+
+  

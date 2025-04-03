@@ -1,0 +1,15 @@
+/* AdminContent.module.css */
+.admin-content {
+    flex: 1;
+    padding: 20px;
+    background-color: var(--white-100);
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+  }
+  
+  .admin-content h1 {
+    color: var(--black);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  

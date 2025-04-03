@@ -1,0 +1,66 @@
+/* Header.module.css */
+header {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background-color: var(--primary-400);
+    color: var(--white-100);
+    font-size: large;
+    padding: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+  }
+  
+  header a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  header h1 {
+    font-family: 'Nature Impact Demo', sans-serif;
+    margin: 5px;
+    flex: 1;
+  }
+  
+  header .bem-vindo {
+    font-size: 1.5rem;
+  }
+  
+  .bem-vindo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .img-perfil {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+  }
+  
+  .img-perfil img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  header .button {
+    padding: 10px 10px;
+    border-radius: 5px;
+    font-size: 2rem;
+  }
+  
+  header .fa:hover {
+    transform: scale(1.05) translate(-5px);
+    cursor: pointer;
+  }
+  
+  header .fa {
+    color: var(--white-100);
+  }
+  
