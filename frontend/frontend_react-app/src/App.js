@@ -1,17 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ProductPage from './pages/ProductPage';
-import UserProfilePage from './pages/UserProfilePage';
+import HomePage from './Pages/HomePage';
+import LoginPage from './Pages/LoginPage';
+import RegisterPage from './Pages/RegisterPage';
+import ProductPage from './Pages/ProductPage';
+import UserProfilePage from './Pages/UserProfilePage';
 import Layout from './components/commons/Layout';
 import ProtectedRoute from './utils/protectedRoute';
 import ProductDetails from './components/product/ProductDetails';
 import './App.css';
 import useAuthStore from './stores/authStore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import AdminPage from './pages/AdminPage';
+import AdminPage from './Pages/AdminPage';
 
 function App() {
   const login = useAuthStore((state) => state.login);

@@ -17,7 +17,7 @@ import jakarta.persistence.TypedQuery;
 public class ProductDao {
     private static final Logger logger = LogManager.getLogger(ProductDao.class);
 
-    @PersistenceContext(unitName = "diogo-proj4")
+    @PersistenceContext(unitName = "diogopassos-proj5")
     private EntityManager em;
 
     /**
