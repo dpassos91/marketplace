@@ -91,7 +91,7 @@ export default function UserProfilePage() {
   const checkEvaluationEligibility = async () => {
     if (currentUser && profileUserId && !isOwnProfile) {
       try {
-        const eligibleProducts = await evaluationAPI.getEligibleProductsForEvaluation(currentUser.id);
+        const eligibleProducts = await evaluationAPI.checkEligibility(currentUser.id);
         const hasPurchasedFromSeller = eligibleProducts.some(product => product.sellerId == profileUserId);
         setCanEvaluate(hasPurchasedFromSeller);
       } catch (error) {

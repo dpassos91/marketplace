@@ -4,7 +4,7 @@
  */
 
 // Base URL
-const API_BASE_URL = 'http://localhost:8080/diogo-proj4/rest';
+const API_BASE_URL = 'http://localhost:8080/diogopassos-proj5/rest';
 
 // API Endpoints
 const API_ENDPOINTS = {
