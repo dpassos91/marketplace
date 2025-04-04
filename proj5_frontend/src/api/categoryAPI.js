@@ -1,4 +1,4 @@
-import { apiConfig } from './apiConfig';
+import { apiConfig } from '../api/apiConfig';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 

@@ -9,7 +9,6 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
     comment: '',
     productId: ''
   });
-  const [hasProductsToEvaluate, setHasProductsToEvaluate] = useState(false);
 
   const isEditMode = !!initialData;
 
@@ -20,14 +19,11 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
           const fetchedProducts = await evaluationAPI.checkEligibility(currentUser.id);
           const sellerProducts = fetchedProducts.filter(product => product.sellerId == sellerId);
           setProducts(sellerProducts);
-          setHasProductsToEvaluate(sellerProducts.length > 0); // Verifica se há produtos para avaliar
         } else {
           console.warn("currentUser ou currentUser.id não estão definidos!");
-          setHasProductsToEvaluate(false);
         }
       } catch (error) {
         console.error('Erro ao buscar produtos elegíveis:', error);
-        setHasProductsToEvaluate(false);
       }
     }
 
@@ -107,69 +103,64 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
           <button type="button" className="close-modal" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
-          {/* Renderiza o formulário apenas se houver produtos para avaliar ou se estiver no modo de edição */}
-          {(hasProductsToEvaluate || isEditMode) ? (
-            <form id="evaluationForm" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="productId">Produto</label>
-                <select
-                  id="productId"
-                  value={formData.productId}
-                  onChange={handleInputChange}
-                  required={!isEditMode}
-                  disabled={isEditMode} // Desativa a seleção de produto no modo de edição
-                >
-                  <option value="">Selecione um produto</option>
-                  {products.map((product) => (
-                    <option key={product.id} value={product.id}>
-                      {product.title}
-                    </option>
-                  ))}
-                </select>
+          <form id="evaluationForm" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="productId">Produto</label>
+              <select
+                id="productId"
+                value={formData.productId}
+                onChange={handleInputChange}
+                required={!isEditMode}
+                disabled={isEditMode} // Desativa a seleção de produto no modo de edição
+              >
+                <option value="">Selecione um produto</option>
+                {products.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="title">Título</label>
+              <input
+                type="text"
+                id="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+                maxLength="100"
+              />
+            </div>
+            <div className="form-group">
+              <label>Rating</label>
+              <div className="rating-selector">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <span
+                    key={star}
+                    className={`star ${formData.rating >= star ? 'filled' : ''}`}
+                    onClick={() => handleRatingClick(star)}
+                  >
+                    {formData.rating >= star ? '★' : '☆'}
+                  </span>
+                ))}
               </div>
-              <div className="form-group">
-                <label htmlFor="title">Título</label>
-                <input
-                  type="text"
-                  id="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  required
-                  maxLength="100"
-                />
-              </div>
-              <div className="form-group">
-                <label>Rating</label>
-                <div className="rating-selector">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <span
-                      key={star}
-                      className={`star ${formData.rating >= star ? 'filled' : ''}`}
-                      onClick={() => handleRatingClick(star)}
-                    >
-                      {formData.rating >= star ? '★' : '☆'}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="form-group">
-                <label htmlFor="comment">Comentário</label>
-                <textarea
-                  id="comment"
-                  value={formData.comment}
-                  onChange={handleInputChange}
-                  rows="3"
-                  required
-                  maxLength="500"
-                />
-              </div>
-              <button type="submit" className="btn-primary">
-                {isEditMode ? 'Atualizar' : 'Adicionar'} Avaliação
-              </button>
-            </form>
-          ) : (
-            <p>Não há produtos disponíveis para avaliação.</p>
-          )}
+            </div>
+            <div className="form-group">
+              <label htmlFor="comment">Comentário</label>
+              <textarea
+                id="comment"
+                value={formData.comment}
+                onChange={handleInputChange}
+                rows="3"
+                required
+                maxLength="500"
+              />
+            </div>
+            <button type="submit" className="btn-primary">
+              {isEditMode ? 'Atualizar' : 'Adicionar'} Avaliação
+            </button>
+          </form>
         </div>
       </div>
     </div>
