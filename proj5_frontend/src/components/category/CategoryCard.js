@@ -1,6 +1,7 @@
 // CategoryCard.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import './CategoryCard.css';
 
 function CategoryCard({ category }) {
   const navigate = useNavigate();
@@ -11,12 +12,11 @@ function CategoryCard({ category }) {
       <img src={imageUrl} alt={category.name} />
       <div>
         <h1>{category.name}</h1>
-        <p>{category.description}</p>
         <button 
           type="button" 
           title="Ver produtos"
           onClick={() => {
-            navigate(`/products?category=${category.id}`);
+            navigate(`/produtos?categoria=${category.id}`);
           }}
         >
           Ver produtos

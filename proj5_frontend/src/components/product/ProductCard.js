@@ -1,6 +1,6 @@
-// ProductCard.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import './ProductCard.css';
 
 function ProductCard({ product }) {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ function ProductCard({ product }) {
                 <h1>{product.title}</h1>
                 <h4>{product.location}</h4>
                 <h2>{product.categoryName}</h2>
-                <span>{parseFloat(product.price).toFixed(2)}€</span>
+                <h4>{parseFloat(product.price).toFixed(2)}€</h4>
                 <button
                     type="button"
                     title="descricao"
