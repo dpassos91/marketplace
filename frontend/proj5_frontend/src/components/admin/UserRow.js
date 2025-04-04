@@ -11,28 +11,28 @@ const UserRow = React.memo(({ user, onRedirect, onAction }) => {
       <td style={{ textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
           <button
-            className={`${styles.btnCard} ${styles.btnDanger}`}
+            className={`${styles.btnCard} ${styles.btnInfo}`}
             onClick={() => onRedirect(user.id)}
           >
             Consultar perfil
           </button>
           {active ? (
             <button
-              className={`${styles.btnCard} ${styles.btnInfo}`}
+              className={`${styles.btnCard} ${styles.btnEdit}`}
               onClick={() => onAction(user.id, 'suspend')}
             >
               Suspender
             </button>
           ) : (
             <button
-              className={`${styles.btnCard} ${styles.btnInfo}`}
+              className={`${styles.btnCard} ${styles.btnDanger}`}
               onClick={() => onAction(user.id, 'reactivate')}
             >
               Reativar
             </button>
           )}
           <button
-            className={`${styles.btnCard} ${styles.btnEdit}`}
+            className={`${styles.btnCard} ${styles.btnDanger}`}
             onClick={() => onAction(user.id, 'delete')}
           >
             Eliminar

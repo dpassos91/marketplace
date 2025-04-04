@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import useFetchUsers from '../../hooks/useFetchUsers';
 import { userAPI } from '../../api/userAPI';
-import UserRow from './UserRow'; // Importe o UserRow
+import UserRow from './UserRow'; 
+import './Table.css'
 
 const USERS_PER_PAGE = 10;
 
