@@ -1,25 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './AdminSidebar.css';
+import styles from './AdminSidebar.module.css'; // Importação atualizada
 
 function AdminSidebar() {
   return (
-    <aside className="admin-sidebar">
+    <aside className={styles['admin-sidebar']}>
       <h2>Painel de Administração</h2>
       <nav>
         <ul>
           <li>
-            <Link to="/admin/avaliacoes" className="btn-produtos" id="gestao-avaliacoes">
+            <Link 
+              to="/admin/avaliacoes" 
+              className={styles['btn-produtos']} 
+              id="gestao-avaliacoes"
+            >
               Gestão de Avaliações
             </Link>
           </li>
           <li>
-            <Link to="/admin/produtos" className="btn-produtos" id="gestao-produtos">
+            <Link 
+              to="/admin/produtos" 
+              className={styles['btn-produtos']} 
+              id="gestao-produtos"
+            >
               Gestão de Produtos
             </Link>
           </li>
           <li>
-            <Link to="/admin/utilizadores" className="btn-produtos" id="gestao-utilizadores">
+            <Link 
+              to="/admin/utilizadores" 
+              className={styles['btn-produtos']} 
+              id="gestao-utilizadores"
+            >
               Gestão de Utilizadores
             </Link>
           </li>
@@ -30,4 +42,5 @@ function AdminSidebar() {
 }
 
 export default AdminSidebar;
+
 
