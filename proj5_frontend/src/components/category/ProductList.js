@@ -1,4 +1,3 @@
-// ProductList.js
 import React from 'react';
 import ProductCard from './ProductCard';
 import useProductsByCategory from './useProductsByCategory';

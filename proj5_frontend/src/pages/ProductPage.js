@@ -9,7 +9,7 @@ function ProductsPage() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [categoryName, setCategoryName] = useState('');
-    const categoryId = searchParams.get('category');
+    const categoryId = searchParams.get('categoria');
 
     useEffect(() => {
         const fetchProducts = async () => {
