@@ -12,6 +12,7 @@ import './App.css';
 import useAuthStore from './stores/authStore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import AdminPage from './pages/AdminPage';
+//import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const login = useAuthStore((state) => state.login);

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import { useAuth } from '../../hooks/useAuth';
 import AddProductModal from '.././product/AddProductModal';
+import './Header.css'; // Certifique-se de que o caminho está correto
 
 function Header() {
   const user = useAuthStore((state) => state.user);

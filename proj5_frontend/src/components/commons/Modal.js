@@ -1,5 +1,5 @@
-// Modal.js
 import React from 'react';
+import './Modal.css'; // Certifique-se de que o caminho está correto
 
 function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
