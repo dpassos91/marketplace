@@ -1,0 +1,19 @@
+/* Footer */
+
+footer {
+    background-color: var(--primary-400);
+    color: var(--white-100);
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    box-sizing: border-box;
+  }
+  
+  footer .centro_atendimento,
+  .direitos_autor {
+    font-size: 0.6rem;
+  }

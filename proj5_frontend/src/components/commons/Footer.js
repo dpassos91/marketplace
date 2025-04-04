@@ -1,5 +1,5 @@
-// src/Footer.js
 import React from 'react';
+import './Footer.css'; // Certifique-se de que o caminho está correto
 
 function Footer() {
   return (
@@ -9,7 +9,7 @@ function Footer() {
       </div>
 
       <div>
-        <h4>Diogo Passos | Projeto 4 | AOR - PAJ 2025</h4>
+        <h4>Diogo Passos | Projeto 5 | AOR - PAJ 2025</h4>
       </div>
 
       <div className="centro_atendimento">

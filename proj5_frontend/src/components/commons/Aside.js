@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './Aside.css'; // Certifique-se de que o caminho está correto
 
 function Aside() {
   return (

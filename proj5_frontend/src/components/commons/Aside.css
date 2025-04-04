@@ -1,0 +1,18 @@
+.aside-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  aside {
+    position: sticky;
+    top: 100px;
+    background-color: var(--white-100);
+    height: fit-content;
+    width: fit-content;
+    max-width: 20vw;
+    border: 10px solid var(--primary-400);
+    padding: 10px;
+    margin: 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
