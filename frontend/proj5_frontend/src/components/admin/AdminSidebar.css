@@ -31,11 +31,12 @@
   .admin-sidebar a {
     display: block;
     text-decoration: none;
-    color: var(--primary-100);
+    color: var(--black);
     font-weight: 500;
     padding: 10px 20px;
     border-radius: 4px;
     transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center
   }
   
   .admin-sidebar a:hover {

@@ -7,15 +7,15 @@ import EvaluationsTable from '../components/admin/EvaluationsTable';
 import InactiveProductsTable from '../components/admin/InactiveProductsTable';
 import AlteredProducts from '../components/admin/AlteredProducts';
 import AdminProductsPage from '../components/admin/AdminProductsPage'; // Importe a página de produtos
-import './AdminContent.css'; // Importe o CSS para o layout da página de administração
+import styles from './AdminContent.module.css'; // Importa o CSS Module
 
 function AdminPage() {
   return (
     <>
-      <main className="main-container">
+      <main className={styles['main-container']}> {/* Aplique a classe do CSS Module */}
         <AdminSidebar />
 
-        <div className="admin-content">
+        <div className={styles['admin-content']}> {/* Aplique a classe do CSS Module */}
           <Routes>
             <Route path="/" element={<WelcomeSection />} />
             <Route path="/utilizadores" element={<UserTable />} />
@@ -32,4 +32,5 @@ function AdminPage() {
 }
 
 export default AdminPage;
+
 
