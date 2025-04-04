@@ -6,7 +6,7 @@ function Aside() {
   return (
     <div className="aside-container">
       <div className="nav-pag">
-        <Link to="/products">
+        <Link to="/produtos">
           <button className="btn-produtos" type="button">
             <h2>Produtos</h2>
           </button>

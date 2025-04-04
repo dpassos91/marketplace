@@ -36,13 +36,13 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/products" element={<ProductPage />} />
+          <Route path="/registo" element={<RegisterPage />} />
+          <Route path="/produtos" element={<ProductPage />} />
           <Route path="/detalhes-produto/:id" element={<ProductDetails />} /> 
-          <Route path="/profile/:id" element={<UserProfilePage />} />
+          <Route path="/perfil/:id" element={<UserProfilePage />} />
           {/* Rotas protegidas */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/profile/:userId" element={<UserProfilePage />} />
+            <Route path="/perfil/:userId" element={<UserProfilePage />} />
             <Route path="/admin/*" element={<AdminPage />} />
           </Route>
         </Routes>
