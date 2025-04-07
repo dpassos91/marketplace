@@ -23,7 +23,6 @@
   "register.phone": "Telefone",
   "register.picture": "Fotografia",
   "register.submit": "Registar",
-  
   "registerplaceholder.firstName": "Digite o seu primeiro nome",
   "registerplaceholder.lastName": "Digite o seu último nome",
   "registerplaceholder.username": "Escolha o seu username",
@@ -31,5 +30,9 @@
   "registerplaceholder.confirmPassword": "Confirme a sua password",
   "registerplaceholder.email": "Digite o seu email",
   "registerplaceholder.phone": "--- --- ---",
-  "registerplaceholder.picture": "Cole o link da imagem aqui"
+  "registerplaceholder.picture": "Cole o link da imagem aqui",
+
+  "aside.products": "Produtos",
+  "aside.aboutUs": "Sobre Nós",
+  "aside.description": "No Loop Market, promovemos a economia circular, reutilizando e reciclando recursos para minimizar o desperdício. Nossa plataforma conecta consumidores e empresas a produtos sustentáveis, prolongando o ciclo de vida dos materiais e reduzindo o impacto ambiental."
 }
