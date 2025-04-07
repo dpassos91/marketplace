@@ -110,3 +110,20 @@ header {
 .navbar .button i {
   margin: 0; /* Centralizar o ícone */
 }
+
+/* Header.css */
+.language-selector-container {
+  position: absolute;
+  right: 150px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+}
+
+/* Se estiver usando flexbox no header */
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative; /* Importante para o posicionamento absoluto do seletor */
+}

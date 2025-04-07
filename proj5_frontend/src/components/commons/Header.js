@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import { useAuth } from '../../hooks/useAuth';
 import AddProductModal from '.././product/AddProductModal';
-import './Header.css'; // Certifique-se de que o caminho está correto
+import './Header.css'; 
+import LanguageSelector from './LanguageSelector';
 
 function Header() {
   const user = useAuthStore((state) => state.user);
@@ -51,6 +52,10 @@ function Header() {
           {user && `Bem-vindo, ${user.name}!`}
         </div>
 
+        <div className="language-selector-container">
+          <LanguageSelector />
+        </div>
+
         {user ? (
           <div className="img-perfil" id="profile-picture-container" onClick={handleProfileClick}>
             <img
@@ -61,7 +66,7 @@ function Header() {
                 e.target.onerror = null;
                 e.target.src = '/path/to/default/image.jpg';
               }}
-              style={{ cursor: 'pointer' }} // Adiciona um cursor de ponteiro para indicar que é clicável
+              style={{ cursor: 'pointer' }} 
             />
           </div>
         ) : null}
