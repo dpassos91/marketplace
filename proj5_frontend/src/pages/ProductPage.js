@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import { productAPI } from '../api/productAPI';
 import { PRODUCT_STATES } from '../components/product/productStates';
 import ProductCard from '../components/product/ProductCard';
-import SpinnerLeaf from '../components/SpinnerLeaf';
+import SpinnerLeaf from '../components/commons/SpinnerLeaf';
 
 function ProductsPage() {
     const [searchParams] = useSearchParams();
