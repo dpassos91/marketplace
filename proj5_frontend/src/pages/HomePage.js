@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Aside from '../components/commons/Aside';
 import CategoryCard from '../components/category/CategoryCard';
-import { productAPI } from '../api/productAPI'; //
-import { categoryAPI } from '../api/categoryAPI'; // Certifique-se de que está importando corretamente
-import ProductCard from '../components/product/ProductCard'; // Certifique-se de que está importando corretamente
-
+import ProductsCarousel from '../components/product/ProductsCarousel'; // Novo componente
+import { productAPI } from '../api/productAPI';
+import { categoryAPI } from '../api/categoryAPI';
+import '../components/product/ProductsCarousel.css'; // Estilos para o carousel
 
 function HomePage() {
   const [recentProducts, setRecentProducts] = useState([]);
@@ -13,21 +13,18 @@ function HomePage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Buscar os últimos produtos adicionados
         const productsData = await productAPI.getAllActiveProducts();
         setRecentProducts(productsData);
 
-        // Buscar as categorias disponíveis
-        const categoriesData = await categoryAPI.getAllCategories(); // Usando categoryAPI corretamente
+        const categoriesData = await categoryAPI.getAllCategories();
         setCategories(categoriesData);
-        console.log('Categorias carregadas:', categoriesData); // Corrigido para mostrar o resultado correto
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }
     };
 
     loadData();
-  }, []); // Certifique-se de que o array de dependências está vazio para evitar loops infinitos
+  }, []);
 
   return (
     <>
@@ -35,19 +32,13 @@ function HomePage() {
         <Aside />
         <div className="main-card-container">
           <h1>Últimos produtos adicionados</h1>
-          <section className="card-container recent-products">
-            {recentProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </section>
+          <ProductsCarousel products={recentProducts} />
           
           <h1>Categorias disponíveis</h1>
           <section className="card-container categories-container">
-          {categories.map((category) => {
-  console.log('Categoria:', category);
-  return <CategoryCard key={category.id} category={category} />;
-})}
-
+            {categories.map(category => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
           </section>
         </div>
       </main>
@@ -56,3 +47,4 @@ function HomePage() {
 }
 
 export default HomePage;
+

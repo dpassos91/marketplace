@@ -1,0 +1,38 @@
+import React, { useRef } from 'react';
+import ProductCard from './ProductCard';
+import './ProductsCarousel.css'; // Certifique-se de ter um CSS para o carrossel
+
+function ProductsCarousel({ products }) {
+  const carouselRef = useRef(null);
+
+  const scrollCarousel = (direction) => {
+    if (carouselRef.current) {
+      // Ajuste o 300 para a largura do seu card + margens
+      carouselRef.current.scrollBy({
+        left: direction * 200,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  if (!products || products.length === 0) return <p>Nenhum produto recente.</p>;
+
+  return (
+    <div className="products-carousel-wrapper">
+      <button className="carousel-control prev" onClick={() => scrollCarousel(-1)}>&lt;</button>
+      <div className="products-carousel">
+        <div className="products-carousel-inner" ref={carouselRef}>
+          {products
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Ordena do mais recente
+            .slice(0, 3) // Mostra até 6 produtos (2 páginas de 3)
+            .map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+        </div>
+      </div>
+      <button className="carousel-control next" onClick={() => scrollCarousel(1)}>&gt;</button>
+    </div>
+  );
+}
+
+export default ProductsCarousel;

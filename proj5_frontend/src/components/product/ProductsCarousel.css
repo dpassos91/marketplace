@@ -1,0 +1,47 @@
+/* ProductsCarousel.css */
+.products-carousel-wrapper {
+    position: relative;
+    margin: 2rem 0;
+  }
+  
+  .products-carousel {
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .products-carousel-inner {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .carousel-control.prev {
+    left: 0;
+  }
+  
+  .carousel-control.next {
+    right: 0;
+  }
+
+  @media (max-width: 768px) {
+    .products-carousel-inner {
+      overflow-x: auto; /* Permite scroll manual em mobile */
+    }
+    
+    .carousel-control {
+      display: none; /* Esconde botões em mobile */
+    }
+  }
