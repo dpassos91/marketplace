@@ -38,5 +38,10 @@
   "aside.callToAction": "Each purchase at Loop Market supports more conscious and eco-friendly consumption. Join us and contribute to a greener, more sustainable future.",
 
   "homePage.recentProducts": "Latest added products",
-  "homePage.categories": "Available categories"
+  "homePage.categories": "Available categories",
+
+  "productPage.loading": "Loading products...",
+  "productPage.categoryTitle": "Products in Category {categoryName}",
+  "productPage.allTitle": "All Products",
+  "productPage.noneAvailable": "No available products found."
 }

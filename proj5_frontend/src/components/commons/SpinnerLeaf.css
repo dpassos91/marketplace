@@ -1,0 +1,24 @@
+.spinner-icon {
+    width: 48px;
+    height: 48px;
+    animation: rotateLeaf 1.2s linear infinite;
+    transform-origin: center;
+    display: block;
+    margin: auto;
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--primary-400); /* ou outra cor que combine com a identidade */
+  }
+  
+  @keyframes rotateLeaf {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  

@@ -37,5 +37,10 @@
   "aside.description": "No Loop Market, promovemos a economia circular, reutilizando e reciclando recursos para minimizar o desperdício. Nossa plataforma conecta consumidores e empresas a produtos sustentáveis, prolongando o ciclo de vida dos materiais e reduzindo o impacto ambiental.",
 
   "homePage.recentProducts": "Últimos produtos adicionados",
-  "homePage.categories": "Categorias disponíveis"
+  "homePage.categories": "Categorias disponíveis",
+
+  "productPage.loading": "Carregando produtos...",
+  "productPage.categoryTitle": "Produtos da Categoria {categoryName}",
+  "productPage.allTitle": "Todos os Produtos",
+  "productPage.noneAvailable": "Nenhum produto disponível encontrado."
 }

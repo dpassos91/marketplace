@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
 import { productAPI } from '../api/productAPI';
-import { PRODUCT_STATES } from '../components/product/productStates'; // Importe os estados do produto
+import { PRODUCT_STATES } from '../components/product/productStates';
 import ProductCard from '../components/product/ProductCard';
+import SpinnerLeaf from '../components/SpinnerLeaf';
 
 function ProductsPage() {
     const [searchParams] = useSearchParams();
@@ -22,8 +24,7 @@ function ProductsPage() {
                     fetchedProducts = await productAPI.getAllActiveProducts();
                 }
 
-                // Filtra produtos ativos e não comprados
-                const availableProducts = fetchedProducts.filter(product => 
+                const availableProducts = fetchedProducts.filter(product =>
                     product.active && product.status !== PRODUCT_STATES.COMPRADO.description
                 );
 
@@ -45,16 +46,37 @@ function ProductsPage() {
         fetchProducts();
     }, [categoryId]);
 
-    if (loading) return <div>Carregando produtos...</div>;
-
+    if (loading) {
+        return (
+          <div className="loading-container">
+            <SpinnerLeaf />
+            <p><FormattedMessage id="productPage.loading" defaultMessage="Carregando produtos..." /></p>
+          </div>
+        );
+    }
+    
+      
     return (
         <div className="main-content">
             <h1 id="page-title" className="product-list-title">
-                {categoryId ? `Produtos da Categoria ${categoryName}` : 'Todos os Produtos'}
+                {categoryId ? (
+                    <FormattedMessage
+                        id="productPage.categoryTitle"
+                        defaultMessage="Produtos da Categoria {categoryName}"
+                        values={{ categoryName }}
+                    />
+                ) : (
+                    <FormattedMessage id="productPage.allTitle" defaultMessage="Todos os Produtos" />
+                )}
             </h1>
             <div className="product-list">
                 {products.length === 0 ? (
-                    <p>Nenhum produto disponível encontrado.</p>
+                    <p>
+                        <FormattedMessage
+                            id="productPage.noneAvailable"
+                            defaultMessage="Nenhum produto disponível encontrado."
+                        />
+                    </p>
                 ) : (
                     products.map(product => (
                         <ProductCard key={product.id} product={product} />
@@ -66,5 +88,6 @@ function ProductsPage() {
 }
 
 export default ProductsPage;
+
 
 
