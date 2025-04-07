@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { FormattedMessage } from 'react-intl'; // Para textos traduzidos
 import '../App.css';
 
 function LoginPage() {
@@ -17,9 +18,13 @@ function LoginPage() {
     <>
       <main className="login">
         <div className="login-container">
-          <h2>Login</h2>
+          {/* Título traduzido */}
+          <h2><FormattedMessage id="login.title" defaultMessage="Login" /></h2>
           <form id="formulario_login" onSubmit={handleSubmit}>
-            <label htmlFor="username">Nome de Utilizador</label>
+            {/* Nome de Utilizador */}
+            <label htmlFor="username">
+              <FormattedMessage id="login.username" defaultMessage="Nome de Utilizador" />
+            </label>
             <input
               type="text"
               id="username"
@@ -28,7 +33,10 @@ function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <label htmlFor="password">Password</label>
+            {/* Password */}
+            <label htmlFor="password">
+              <FormattedMessage id="login.password" defaultMessage="Password" />
+            </label>
             <input
               type="password"
               id="password"
@@ -37,9 +45,15 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button type="submit">Entrar</button>
+            {/* Botão Entrar */}
+            <button type="submit">
+              <FormattedMessage id="login.submit" defaultMessage="Entrar" />
+            </button>
+            {/* Botão Registar */}
             <Link to="/Register">
-              <button type="button">Registar</button>
+              <button type="button">
+                <FormattedMessage id="login.register" defaultMessage="Registar" />
+              </button>
             </Link>
           </form>
         </div>

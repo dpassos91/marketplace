@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { IntlProvider } from 'react-intl'; 
-import { userStore } from './stores/userStore'; 
+import { IntlProvider } from 'react-intl';
+import { userStore } from './stores/userStore';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -14,95 +14,82 @@ import './App.css';
 import useAuthStore from './stores/authStore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import AdminPage from './pages/AdminPage';
-import languages from './translations';
 
 function App() {
-  const login = useAuthStore((state) => state.login);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Acesso ao store de usuário
-  const { 
-    locale,
-    initializeLanguage,
-    translations,
-    loadTranslations
-  } = userStore();
+    const login = useAuthStore((state) => state.login);
+    const [isLoading, setIsLoading] = useState(true);
 
-  // Efeito para carregar dados iniciais
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        // 1. Carrega usuário do localStorage
-        const storedUser = localStorage.getItem('userData');
-        if (storedUser) {
-          login(JSON.parse(storedUser));
-        }
+    // Acesso ao store de usuário
+    const {
+        locale,
+        translations,
+        initializeLanguage
+    } = userStore();
 
-        // 2. Inicializa idioma e traduções
-        initializeLanguage(); // Detecta idioma do navegador
-        loadTranslations(languages[locale] || languages.pt);
-        
-      } catch (error) {
-        console.error("Erro na inicialização:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Efeito para carregar dados iniciais
+    useEffect(() => {
+        const initializeApp = async () => {
+            try {
+                // 1. Carrega usuário do localStorage
+                const storedUser = localStorage.getItem('userData');
+                if (storedUser) {
+                    login(JSON.parse(storedUser));
+                }
 
-    initializeApp();
-  }, [login, initializeLanguage, loadTranslations, locale]);
+                // 2. Inicializa idioma
+                initializeLanguage();
 
-  if (isLoading) {
+            } catch (error) {
+                console.error("Erro na inicialização:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        initializeApp();
+    }, [login, initializeLanguage]);
+
+    if (isLoading) {
+        return (
+            <div className="loading-screen">
+                Carregando...
+            </div>
+        );
+    }
+
     return (
-      <div className="loading-screen">
-        <div className="spinner-container">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">
-              {/* Texto de loading via tradução */}
-              {translations.app?.loading || "A carregar..."}
-            </span>
-          </div>
-          <p className="mt-2">
-            {translations.app?.loading || "A carregar..."}
-          </p>
-        </div>
-      </div>
+        <IntlProvider
+            locale={locale}
+            messages={translations}
+            onError={(err) => {
+                if (err.code === 'MISSING_TRANSLATION') {
+                    console.warn('Erro de tradução:', err.message);
+                }
+            }}
+        >
+            <Router>
+                <Layout>
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/registo" element={<RegisterPage />} />
+                        <Route path="/produtos" element={<ProductPage />} />
+                        <Route path="/detalhes-produto/:id" element={<ProductDetails />} />
+                        <Route path="/perfil/:id" element={<UserProfilePage />} />
+                        <Route element={<ProtectedRoute />}>
+                            <Route path="/perfil/:userId" element={<UserProfilePage />} />
+                            <Route path="/admin/*" element={<AdminPage />} />
+                        </Route>
+                    </Routes>
+                </Layout>
+            </Router>
+        </IntlProvider>
     );
-  }
-
-  return (
-    <IntlProvider 
-      locale={locale}
-      messages={translations}
-      onError={(err) => {
-        if (err.code === 'MISSING_TRANSLATION') {
-          console.warn('Tradução faltando:', err.message);
-          return;
-        }
-        throw err;
-      }}
-    >
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registo" element={<RegisterPage />} />
-            <Route path="/produtos" element={<ProductPage />} />
-            <Route path="/detalhes-produto/:id" element={<ProductDetails />} />
-            <Route path="/perfil/:id" element={<UserProfilePage />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/perfil/:userId" element={<UserProfilePage />} />
-              <Route path="/admin/*" element={<AdminPage />} />
-            </Route>
-          </Routes>
-        </Layout>
-      </Router>
-    </IntlProvider>
-  );
 }
 
 export default App;
+
+
 
 
 

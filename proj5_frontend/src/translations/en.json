@@ -1,4 +1,7 @@
-{ "app.loading": "Loading...",
-"home.welcome": "Welcome",
-"login.title": "Login"
+{
+  "login.title": "Login",
+  "login.username": "Username",
+  "login.password": "Password",
+  "login.submit": "Sign in",
+  "login.register": "Register"
 }

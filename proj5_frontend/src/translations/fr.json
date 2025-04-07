@@ -1,4 +1,8 @@
-{"app.loading": "Chargement...",
-"home.welcome": "Bienvenue",
-"login.title": "Connexion"
+{
+  "login.title": "Connexion",
+  "login.username": "Nom d'utilisateur",
+  "login.password": "Mot de passe",
+  "login.submit": "Se connecter",
+  "login.register": "S'inscrire"
 }
+  
