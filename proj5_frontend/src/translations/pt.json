@@ -3,5 +3,10 @@
   "login.username": "Nome de utilizador",
   "login.password": "Palavra-passe",
   "login.submit": "Entrar",
-  "login.register": "Registar"
+  "login.register": "Registar",
+  "footer.rights": "© 2025 | Todos os direitos reservados",
+  "footer.author": "Diogo Passos | Projeto 5 | AOR - PAJ 2025",
+  "footer.center": "Centro de Atendimento",
+  "footer.service": "Seg-Sex, 08h - 18h",
+  "footer.phone": "Telefone: +351 || 239 123 456"
 }

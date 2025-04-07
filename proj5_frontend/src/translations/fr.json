@@ -3,6 +3,12 @@
   "login.username": "Nom d'utilisateur",
   "login.password": "Mot de passe",
   "login.submit": "Se connecter",
-  "login.register": "S'inscrire"
+  "login.register": "S'inscrire",
+  "footer.rights": "© 2025 | Tous droits réservés",
+  "footer.author": "Diogo Passos | Projet 5 | AOR - PAJ 2025",
+  "footer.center": "Centre de Service Client",
+  "footer.service": "Lun-Ven, 08h - 18h",
+  "footer.phone": "Téléphone : +351 || 239 123 456"
+  
 }
   
