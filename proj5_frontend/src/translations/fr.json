@@ -4,11 +4,33 @@
   "login.password": "Mot de passe",
   "login.submit": "Se connecter",
   "login.register": "S'inscrire",
+  
   "footer.rights": "© 2025 | Tous droits réservés",
   "footer.author": "Diogo Passos | Projet 5 | AOR - PAJ 2025",
   "footer.center": "Centre de Service Client",
   "footer.service": "Lun-Ven, 08h - 18h",
-  "footer.phone": "Téléphone : +351 || 239 123 456"
+  "footer.phone": "Téléphone : +351 || 239 123 456",
+
+  "alert.passwordsMismatch": "Les mots de passe ne correspondent pas",
+  "alert.registerFailed": "Erreur lors de l'enregistrement de l'utilisateur. Veuillez réessayer",
+  "register.title": "Nouvelle inscription",
+  "register.firstName": "Prénom",
+  "register.lastName": "Nom de famille",
+  "register.username": "Nom d'utilisateur",
+  "register.password": "Mot de passe",
+  "register.confirmPassword": "Confirmer le mot de passe",
+  "register.email": "Email",
+  "register.phone": "Téléphone",
+  "register.picture": "Photo",
+  "register.submit": "S'inscrire",
+  "registerplaceholder.firstName": "Entrez votre prénom",
+  "registerplaceholder.lastName": "Entrez votre nom de famille",
+  "registerplaceholder.username": "Choisissez votre nom d'utilisateur",
+  "registerplaceholder.password": "Entrez votre mot de passe",
+  "registerplaceholder.confirmPassword": "Confirmez votre mot de passe",
+  "registerplaceholder.email": "Entrez votre email",
+  "registerplaceholder.phone": "--- --- ---",
+  "registerplaceholder.picture": "Collez le lien de l'image ici"
   
 }
   

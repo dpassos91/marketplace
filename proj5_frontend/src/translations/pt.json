@@ -4,9 +4,32 @@
   "login.password": "Palavra-passe",
   "login.submit": "Entrar",
   "login.register": "Registar",
+
   "footer.rights": "© 2025 | Todos os direitos reservados",
   "footer.author": "Diogo Passos | Projeto 5 | AOR - PAJ 2025",
   "footer.center": "Centro de Atendimento",
   "footer.service": "Seg-Sex, 08h - 18h",
-  "footer.phone": "Telefone: +351 || 239 123 456"
+  "footer.phone": "Telefone: +351 || 239 123 456",
+  
+  "alert.passwordsMismatch": "As palavras-passe não coincidem",
+  "alert.registerFailed": "Erro ao registar utilizador. Tente novamente",
+  "register.title": "Novo registo",
+  "register.firstName": "Primeiro nome",
+  "register.lastName": "Último nome",
+  "register.username": "Nome de Utilizador",
+  "register.password": "Password",
+  "register.confirmPassword": "Confirme a Password",
+  "register.email": "Email",
+  "register.phone": "Telefone",
+  "register.picture": "Fotografia",
+  "register.submit": "Registar",
+  
+  "registerplaceholder.firstName": "Digite o seu primeiro nome",
+  "registerplaceholder.lastName": "Digite o seu último nome",
+  "registerplaceholder.username": "Escolha o seu username",
+  "registerplaceholder.password": "Digite a sua password",
+  "registerplaceholder.confirmPassword": "Confirme a sua password",
+  "registerplaceholder.email": "Digite o seu email",
+  "registerplaceholder.phone": "--- --- ---",
+  "registerplaceholder.picture": "Cole o link da imagem aqui"
 }

@@ -4,9 +4,31 @@
   "login.password": "Password",
   "login.submit": "Sign in",
   "login.register": "Register",
+
   "footer.rights": "© 2025 | All rights reserved",
   "footer.author": "Diogo Passos | Project 5 | AOR - PAJ 2025",
   "footer.center": "Customer Support Center",
   "footer.service": "Mon-Fri, 08am - 06pm",
-  "footer.phone": "Phone: +351 || 239 123 456"
+  "footer.phone": "Phone: +351 || 239 123 456",
+  
+  "alert.passwordsMismatch": "Passwords do not match",
+  "alert.registerFailed": "Error registering user. Please try again",
+  "register.title": "New Registration",
+  "register.firstName": "First Name",
+  "register.lastName": "Last Name",
+  "register.username": "Username",
+  "register.password": "Password",
+  "register.confirmPassword": "Confirm Password",
+  "register.email": "Email",
+  "register.phone": "Phone",
+  "register.picture": "Picture",
+  "register.submit": "Register",
+  "registerplaceholder.firstName": "Enter your first name",
+  "registerplaceholder.lastName": "Enter your last name",
+  "registerplaceholder.username": "Choose your username",
+  "registerplaceholder.password": "Enter your password",
+  "registerplaceholder.confirmPassword": "Confirm your password",
+  "registerplaceholder.email": "Enter your email",
+  "registerplaceholder.phone": "--- --- ---",
+  "registerplaceholder.picture": "Paste the image link here"
 }

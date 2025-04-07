@@ -50,7 +50,7 @@ function LoginPage() {
               <FormattedMessage id="login.submit" defaultMessage="Entrar" />
             </button>
             {/* Botão Registar */}
-            <Link to="/Register">
+            <Link to="/registo">
               <button type="button">
                 <FormattedMessage id="login.register" defaultMessage="Registar" />
               </button>
