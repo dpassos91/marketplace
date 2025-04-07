@@ -4,6 +4,7 @@ import CategoryCard from '../components/category/CategoryCard';
 import ProductsCarousel from '../components/product/ProductsCarousel'; // Novo componente
 import { productAPI } from '../api/productAPI';
 import { categoryAPI } from '../api/categoryAPI';
+import { FormattedMessage } from 'react-intl'; // Importar FormattedMessage
 import '../components/product/ProductsCarousel.css'; // Estilos para o carousel
 
 function HomePage() {
@@ -31,10 +32,14 @@ function HomePage() {
       <main className="main-container">
         <Aside />
         <div className="main-card-container">
-          <h1>Últimos produtos adicionados</h1>
+          <h1>
+            <FormattedMessage id="homePage.recentProducts" defaultMessage="Últimos produtos adicionados" />
+          </h1>
           <ProductsCarousel products={recentProducts} />
           
-          <h1>Categorias disponíveis</h1>
+          <h1>
+            <FormattedMessage id="homePage.categories" defaultMessage="Categorias disponíveis" />
+          </h1>
           <section className="card-container categories-container">
             {categories.map(category => (
               <CategoryCard key={category.id} category={category} />
@@ -47,4 +52,5 @@ function HomePage() {
 }
 
 export default HomePage;
+
 

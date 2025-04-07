@@ -35,6 +35,9 @@
   "aside.products": "Produits",
   "aside.aboutUs": "À propos de nous",
   "aside.description": "Chez Loop Market, nous promouvons l'économie circulaire en réutilisant et recyclant les ressources pour minimiser les déchets. Notre plateforme connecte les consommateurs et les entreprises à des produits durables, prolongeant le cycle de vie des matériaux et réduisant l'impact environnemental.",
-  "aside.callToAction": "Chaque achat sur Loop Market soutient une consommation plus consciente et écologique. Rejoignez-nous et contribuez à un avenir plus vert et durable."
+  "aside.callToAction": "Chaque achat sur Loop Market soutient une consommation plus consciente et écologique. Rejoignez-nous et contribuez à un avenir plus vert et durable.",
+
+  "homePage.recentProducts": "Derniers produits ajoutés",
+  "homePage.categories": "Catégories disponibles"
 }
   
