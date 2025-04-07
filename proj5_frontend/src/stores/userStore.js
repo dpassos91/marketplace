@@ -16,7 +16,7 @@ export const userStore = create(
             updateLocale: (locale) => set({ locale }),
             //updateNotifications: (notifications) => set=({notifications}),
             //addNotification: (newNotification) => set((state) => ({notifications:
-                [...state.notifications, newNotification]}))
+                //[...state.notifications, newNotification]}))
 
         }),
         { 
