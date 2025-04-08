@@ -5,6 +5,7 @@ import { productAPI } from '../api/productAPI';
 import { PRODUCT_STATES } from '../components/product/productStates';
 import ProductCard from '../components/product/ProductCard';
 import SpinnerLeaf from '../components/commons/SpinnerLeaf';
+import './ProductPage.css'; 
 
 function ProductsPage() {
     const [searchParams] = useSearchParams();
@@ -58,33 +59,38 @@ function ProductsPage() {
       
     return (
         <div className="main-content">
-            <h1 id="page-title" className="product-list-title">
-                {categoryId ? (
-                    <FormattedMessage
-                        id="productPage.categoryTitle"
-                        defaultMessage="Produtos da Categoria {categoryName}"
-                        values={{ categoryName }}
-                    />
-                ) : (
-                    <FormattedMessage id="productPage.allTitle" defaultMessage="Todos os Produtos" />
-                )}
-            </h1>
-            <div className="product-list">
-                {products.length === 0 ? (
-                    <p>
-                        <FormattedMessage
-                            id="productPage.noneAvailable"
-                            defaultMessage="Nenhum produto disponível encontrado."
-                        />
-                    </p>
-                ) : (
-                    products.map(product => (
-                        <ProductCard key={product.id} product={product} />
-                    ))
-                )}
-            </div>
+          <h1 id="page-title" className="product-list-title">
+            {categoryId ? (
+              <FormattedMessage
+                id="productPage.categoryTitle"
+                defaultMessage="Produtos da Categoria {categoryName}"
+                values={{ categoryName }}
+              />
+            ) : (
+              <FormattedMessage id="productPage.allTitle" defaultMessage="Todos os Produtos" />
+            )}
+          </h1>
+      
+          <div className="product-list">
+            {products.length === 0 ? (
+              <div className="empty-products">
+                <img src="/img/sem-produtos.png" alt="Sem produtos" />
+                <p>
+                  <FormattedMessage
+                    id="productPage.noneAvailable"
+                    defaultMessage="Nenhum produto disponível encontrado."
+                  />
+                </p>
+              </div>
+            ) : (
+              products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            )}
+          </div>
         </div>
-    );
+      );
+      
 }
 
 export default ProductsPage;

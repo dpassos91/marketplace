@@ -1,0 +1,17 @@
+.product-list-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-products {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .empty-products img {
+    width: 200px;
+    opacity: 0.8;
+    margin-bottom: 1rem;
+  }
+  
