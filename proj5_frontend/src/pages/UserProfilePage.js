@@ -10,6 +10,7 @@ import SellerEvaluations from '../components/evaluation/SellerEvaluations';
 import EvaluationModal from '../components/evaluation/EvaluationModal';
 import ProductCard from '../components/product/ProductCard';
 import { useIntl, FormattedMessage } from 'react-intl';
+import SpinnerLeaf from '../components/commons/SpinnerLeaf';
 
 export default function UserProfilePage() {
   const { formatMessage } = useIntl();
@@ -139,7 +140,20 @@ export default function UserProfilePage() {
     return currentUser && evaluation.evaluatorId === currentUser.id;
   };
 
-  if (!userToDisplay) return <p><FormattedMessage id="userProfile.loading" defaultMessage="A carregar informações do utilizador..." /></p>;
+  if (!userToDisplay) {
+    return (
+      <div className="loading-container">
+        <SpinnerLeaf />
+        <p>
+          <FormattedMessage
+            id="userProfile.loading"
+            defaultMessage="A carregar informações do utilizador..."
+          />
+        </p>
+      </div>
+    );
+  }
+  
 
   return (
     <main className="main-container">

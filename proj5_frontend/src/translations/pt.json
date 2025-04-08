@@ -96,6 +96,18 @@
   "auth.register.failed": "Erro ao registar utilizador:",
   "auth.logout.success": "Logout realizado com sucesso! Até breve :)",
   "auth.logout.failed": "Houve um problema ao fazer logout. Por favor, tente novamente.",
-  "auth.tryAgain": "Tente novamente."
+  "auth.tryAgain": "Tente novamente.",
+
+  "profileInfo.username": "Username:",
+  "profileInfo.email": "Email:",
+  "profileInfo.lastName": "Apelido:",
+  "profileInfo.firstName": "Nome:",
+  "profileInfo.phone": "Telefone:",
+  "profileInfo.picture": "Fotografia:",
+  "profileInfo.password": "Password:",
+  "profileInfo.confirmPassword": "Confirme a Password:",
+  "profileInfo.edit": "Editar Perfil",
+  "profileInfo.save": "Salvar Alterações",
+  "profileInfo.cancel": "Cancelar"
 
 }

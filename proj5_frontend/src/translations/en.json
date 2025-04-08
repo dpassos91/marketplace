@@ -97,6 +97,18 @@
   "auth.register.failed": "Error registering user:",
   "auth.logout.success": "Successfully logged out! See you soon :)",
   "auth.logout.failed": "There was a problem logging out. Please try again.",
-  "auth.tryAgain": "Please try again."
+  "auth.tryAgain": "Please try again.",
+
+  "profileInfo.username": "Username:",
+  "profileInfo.email": "Email:",
+  "profileInfo.lastName": "Last Name:",
+  "profileInfo.firstName": "First Name:",
+  "profileInfo.phone": "Phone:",
+  "profileInfo.picture": "Picture:",
+  "profileInfo.password": "Password:",
+  "profileInfo.confirmPassword": "Confirm Password:",
+  "profileInfo.edit": "Edit Profile",
+  "profileInfo.save": "Save Changes",
+  "profileInfo.cancel": "Cancel"
 
 }

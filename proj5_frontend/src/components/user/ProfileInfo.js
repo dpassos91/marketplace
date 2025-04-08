@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormInput } from '../../hooks/useFormInput';
+import { FormattedMessage } from 'react-intl';
 
 function ProfileInfo({ user, isOwnProfile, onUpdate }) {
     const [isEditMode, setIsEditMode] = useState(false);
@@ -26,7 +27,9 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
     return (
         <form id="perfil-form" onSubmit={handleSubmit}>
             <div>
-                <label htmlFor="username">Username:</label>
+                <label htmlFor="username">
+                    <FormattedMessage id="profileInfo.username" defaultMessage="Username:" />
+                </label>
                 <input
                     type="text"
                     id="username"
@@ -37,7 +40,9 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                 />
             </div>
             <div>
-                <label htmlFor="email">Email:</label>
+                <label htmlFor="email">
+                    <FormattedMessage id="profileInfo.email" defaultMessage="Email:" />
+                </label>
                 <input
                     type="text"
                     id="email"
@@ -47,57 +52,67 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                     readOnly={!isEditMode}
                 />
             </div>
-            
+
             {isOwnProfile && (
                 <>
-                <div>
-                <label htmlFor="lastName">Apelido:</label>
-                <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                />
-            </div>
-                <div>
-                <label htmlFor="firstName">Nome:</label>
-                <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                />
-            </div>
-                <div>
-                <label htmlFor="phone">Telefone:</label>
-                <input
-                    type="text"
-                    id="phone"
-                    name="phone"
-                    maxLength="9"
-                    minLength="9"
-                    value={formData.phone || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                />
-            </div>
-                <div>
-                <label htmlFor="picture">Fotografia:</label>
-                <input
-                    type="text"
-                    id="picture"
-                    name="picture"
-                    value={formData.picture || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                />
-            </div>
                     <div>
-                        <label htmlFor="password">Password:</label>
+                        <label htmlFor="lastName">
+                            <FormattedMessage id="profileInfo.lastName" defaultMessage="Apelido:" />
+                        </label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            name="lastName"
+                            value={formData.lastName || ''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="firstName">
+                            <FormattedMessage id="profileInfo.firstName" defaultMessage="Nome:" />
+                        </label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            name="firstName"
+                            value={formData.firstName || ''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="phone">
+                            <FormattedMessage id="profileInfo.phone" defaultMessage="Telefone:" />
+                        </label>
+                        <input
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            maxLength="9"
+                            minLength="9"
+                            value={formData.phone || ''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="picture">
+                            <FormattedMessage id="profileInfo.picture" defaultMessage="Fotografia:" />
+                        </label>
+                        <input
+                            type="text"
+                            id="picture"
+                            name="picture"
+                            value={formData.picture || ''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="password">
+                            <FormattedMessage id="profileInfo.password" defaultMessage="Password:" />
+                        </label>
                         <input
                             type="password"
                             id="password"
@@ -108,7 +123,9 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                         />
                     </div>
                     <div>
-                        <label htmlFor="confirmPassword">Confirme a Password:</label>
+                        <label htmlFor="confirmPassword">
+                            <FormattedMessage id="profileInfo.confirmPassword" defaultMessage="Confirme a Password:" />
+                        </label>
                         <input
                             type="password"
                             id="confirmPassword"
@@ -120,16 +137,19 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                     </div>
                 </>
             )}
+
             {isOwnProfile && (
                 !isEditMode ? (
                     <button type="button" onClick={toggleEditMode}>
-                        Editar Perfil
+                        <FormattedMessage id="profileInfo.edit" defaultMessage="Editar Perfil" />
                     </button>
                 ) : (
                     <>
-                        <button type="submit">Salvar Alterações</button>
+                        <button type="submit">
+                            <FormattedMessage id="profileInfo.save" defaultMessage="Salvar Alterações" />
+                        </button>
                         <button type="button" onClick={toggleEditMode}>
-                            Cancelar
+                            <FormattedMessage id="profileInfo.cancel" defaultMessage="Cancelar" />
                         </button>
                     </>
                 )
@@ -139,3 +159,4 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
 }
 
 export default ProfileInfo;
+

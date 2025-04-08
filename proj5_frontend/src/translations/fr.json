@@ -97,6 +97,18 @@
   "auth.register.failed": "Erreur lors de l'enregistrement de l'utilisateur :",
   "auth.logout.success": "Déconnexion réussie ! À bientôt :)",
   "auth.logout.failed": "Un problème est survenu lors de la déconnexion. Veuillez réessayer.",
-  "auth.tryAgain": "Veuillez réessayer."
+  "auth.tryAgain": "Veuillez réessayer.",
+
+  "profileInfo.username": "Nom d'utilisateur:",
+  "profileInfo.email": "Email:",
+  "profileInfo.lastName": "Nom:",
+  "profileInfo.firstName": "Prénom:",
+  "profileInfo.phone": "Téléphone:",
+  "profileInfo.picture": "Photo:",
+  "profileInfo.password": "Mot de passe:",
+  "profileInfo.confirmPassword": "Confirmez le mot de passe:",
+  "profileInfo.edit": "Modifier le profil",
+  "profileInfo.save": "Enregistrer les modifications",
+  "profileInfo.cancel": "Annuler"
 }
   
