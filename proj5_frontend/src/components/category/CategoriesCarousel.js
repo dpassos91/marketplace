@@ -1,47 +1,42 @@
-// CategoriesCarousel.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import CategoryCard from './CategoryCard';
-import { categoryAPI } from '../api/categoryAPI';
+import '../product/ProductsCarousel.css'; // Estilos para o carousel
+import { FormattedMessage } from 'react-intl';
 
-function CategoriesCarousel() {
-  const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
+function CategoriesCarousel({ categories }) {
   const carouselRef = useRef(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await categoryAPI.getAllCategories();
-        setCategories(data);
-      } catch (err) {
-        console.error('Error displaying categories:', err);
-        setError('Erro ao carregar categorias.');
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
+      const scrollAmount = carouselRef.current.offsetWidth; // largura visível da área
       carouselRef.current.scrollBy({
-        left: direction * 300,
+        left: direction * scrollAmount,
         behavior: 'smooth'
       });
     }
   };
 
-  if (error) return <p>{error}</p>;
-  if (categories.length === 0) return <p>Nenhuma categoria disponível.</p>;
+  if (!categories || categories.length === 0) {
+    return (
+      <p>
+        <FormattedMessage
+          id="categoriesCarousel.notLoaded"
+          defaultMessage="Nenhuma categoria disponível."
+        />
+      </p>
+    );
+  }
 
   return (
-    <div className="categories-carousel-wrapper">
+    <div className="products-carousel-wrapper">
       <button className="carousel-control prev" onClick={() => scrollCarousel(-1)}>&lt;</button>
-      <div className="categories-carousel">
-        <div className="categories-carousel-inner" ref={carouselRef}>
-          {categories.map(category => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
+      <div className="products-carousel">
+        <div className="products-carousel-inner" ref={carouselRef}>
+          {categories
+            .sort((a, b) => a.name.localeCompare(b.name)) // ou qualquer outra lógica
+            .map(category => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
         </div>
       </div>
       <button className="carousel-control next" onClick={() => scrollCarousel(1)}>&gt;</button>

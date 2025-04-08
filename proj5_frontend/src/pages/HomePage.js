@@ -6,6 +6,7 @@ import { productAPI } from '../api/productAPI';
 import { categoryAPI } from '../api/categoryAPI';
 import { FormattedMessage } from 'react-intl'; // Importar FormattedMessage
 import '../components/product/ProductsCarousel.css'; // Estilos para o carousel
+import CategoriesCarousel from '../components/category/CategoriesCarousel';
 
 function HomePage() {
   const [recentProducts, setRecentProducts] = useState([]);
@@ -36,10 +37,10 @@ function HomePage() {
             <FormattedMessage id="homePage.recentProducts" defaultMessage="Últimos produtos adicionados" />
           </h1>
           <ProductsCarousel products={recentProducts} />
-          
           <h1>
             <FormattedMessage id="homePage.categories" defaultMessage="Categorias disponíveis" />
           </h1>
+          <CategoriesCarousel categories={categories} />
           <section className="card-container categories-container">
             {categories.map(category => (
               <CategoryCard key={category.id} category={category} />

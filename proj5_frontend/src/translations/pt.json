@@ -75,5 +75,8 @@
   "productDetails.button.delete": "Eliminar",
   "productDetails.button.processing": "A processar...",
 
-  "productsCarousel.notLoaded": "Nenhum produto adicionado recentemente."
+  "productsCarousel.notLoaded": "Nenhum produto adicionado recentemente.",
+
+  "categoriesCarousel.notLoaded": "Nenhuma categoria disponível."
+
 }
