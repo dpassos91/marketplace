@@ -7,19 +7,29 @@
   .products-carousel {
     overflow: hidden;
     width: 100%;
+    max-width: 1000px; /* 3 cards de 300 + margens */
+    margin: 0 auto;
   }
   
   .products-carousel-inner {
     display: flex;
-    gap: 1rem;
+    gap: 16px;
     padding: 0.5rem;
+    overflow-x: auto;;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
   }
   
+  .products-carousel-inner::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+  }
+
   .carousel-control {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--primary-400) !important;
     color: white;
     border: none;
     padding: 1rem;

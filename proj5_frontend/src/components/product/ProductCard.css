@@ -5,6 +5,8 @@
     transition: transform 0.3s ease;
     padding-bottom: 15px;
     box-shadow: var(--box-shadow);
+
+    flex: 0 0 auto;
   }
 
   .card:hover {

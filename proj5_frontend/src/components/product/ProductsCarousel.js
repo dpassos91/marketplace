@@ -7,14 +7,15 @@ function ProductsCarousel({ products }) {
   const carouselRef = useRef(null);
 
   const scrollCarousel = (direction) => {
-    if (carouselRef.current) {
-      // Ajuste o 300 para a largura do seu card + margens
-      carouselRef.current.scrollBy({
-        left: direction * 200,
-        behavior: 'smooth'
-      });
-    }
-  };
+  if (carouselRef.current) {
+    const itemWidth = 300 + 16; // 300px card + ~16px gap
+    carouselRef.current.scrollBy({
+      left: direction * itemWidth,
+      behavior: 'smooth'
+    });
+  }
+};
+
 
   if (!products || products.length === 0) return <p><FormattedMessage id="productsCarousel.notLoaded" defaultMessage="Nenhum produto adicionado recentemente."/></p>;
 
@@ -25,7 +26,7 @@ function ProductsCarousel({ products }) {
         <div className="products-carousel-inner" ref={carouselRef}>
           {products
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Ordena do mais recente
-            .slice(0, 3) // Mostra até 6 produtos (2 páginas de 3)
+            .slice(0, 6) // Mostra até 6 produtos (2 páginas de 3)
             .map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
