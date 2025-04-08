@@ -12,26 +12,14 @@ const registerUser = async (userData) => {
 };
 
 const loginUser = async (credentials) => {
-  const response = await fetch(API_ENDPOINTS.users.login, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  });
-
+  const response = await fetch(...);
   if (!response.ok) {
-    throw new Error(`Login failed: ${response.statusText}`);
+    throw new Error('Login failed'); 
   }
-
   const token = await response.text();
-  sessionStorage.setItem('authToken', token); // Armazena o token
-
-  try {
-    const userInfo = await getUserByUsername(credentials.username);
-    return { ...userInfo, token };
-  } catch (profileError) {
-    console.warn('Could not fetch user profile after login:', profileError);
-    return { username: credentials.username, token };
-  }
+  sessionStorage.setItem('authToken', token);
+  const userInfo = await getUserByUsername(credentials.username);
+  return { ...userInfo, token };
 };
 
 const logoutUser = async () => {

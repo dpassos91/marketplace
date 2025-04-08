@@ -17,31 +17,41 @@ export function useAuth() {
   const login = async (credentials) => {
     try {
       const userData = await userAPI.loginUser(credentials);
+  
+      const fullName = `${userData.firstName} ${userData.lastName}`;
       const userDataToStore = {
         id: userData.id,
-        name: userData.firstName + ' ' + userData.lastName,
+        name: fullName,
         picture: userData.picture,
         admin: userData.admin
       };
+  
+      // Armazena no estado e no localStorage
       useAuthStore.getState().login(userDataToStore);
       localStorage.setItem('userData', JSON.stringify(userDataToStore));
+  
+      // Alerta internacionalizado
       alert(
         formatMessage(
-          {
-            id: 'auth.login.success',
-            defaultMessage: 'Login bem sucedido! Bem-vindo/a {name}!'
-          },
-          { name: `${userData.firstName} ${userData.lastName}` }
+          { id: 'auth.login.success', defaultMessage: 'Login bem sucedido! Bem-vindo/a {name}!' },
+          { name: fullName }
         )
       );
+  
       navigate('/');
       return true;
     } catch (error) {
       console.error('Login falhou:', error);
-      alert(formatMessage({ id: 'auth.login.failed', defaultMessage: 'Login falhou! Por favor verifique as suas credenciais.' }));
+      alert(
+        formatMessage({
+          id: 'auth.login.failed',
+          defaultMessage: 'Login falhou! Por favor verifique as suas credenciais.'
+        })
+      );
       return false;
     }
   };
+  
 
   const register = async (newUser) => {
     console.log('A função de registro está sendo chamada com:', newUser);
