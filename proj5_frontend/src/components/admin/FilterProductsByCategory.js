@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../commons/Modal';
-import EditProductModal from '../commons/EditProductModal';
+import EditProductModal from './EditProductModal';
 import { apiConfig } from '../../api/apiConfig';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;

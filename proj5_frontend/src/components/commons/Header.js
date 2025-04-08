@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import AddProductModal from '.././product/AddProductModal';
 import './Header.css'; 
 import LanguageSelector from './LanguageSelector';
+import { FormattedMessage } from 'react-intl';
 
 function Header() {
   const user = useAuthStore((state) => state.user);
@@ -16,7 +17,6 @@ function Header() {
   useEffect(() => {
     console.log('URL da imagem do usuário:', user?.picture);
 
-    // Verifica se existe o userData no localStorage e se o utilizador é admin
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData && userData.admin) {
       setAdmin(true);
@@ -49,12 +49,12 @@ function Header() {
         </div>
 
         <div className="bem-vindo" id="welcome-message">
-          {user && `Bem-vindo, ${user.name}!`}
+          {user && <FormattedMessage id="header.welcome" defaultMessage="Bem-vindo, {name}!" values={{ name: user.name }} />}
         </div>
 
         <div className={`language-selector-container ${user ? 'with-user' : 'no-user'}`}>
-  <LanguageSelector />
-</div>
+          <LanguageSelector />
+        </div>
 
         {user ? (
           <div className="img-perfil" id="profile-picture-container" onClick={handleProfileClick}>
@@ -74,25 +74,22 @@ function Header() {
         <nav className="navbar">
           {user ? (
             <>
-              {/* Botão de logout */}
               <div className="button" id="botao-logout">
                 <button onClick={() => logout()} title="Logout" className="btn btn-outline-danger">
                   <i className="fa fa-sign-out" aria-hidden="true"></i>
                 </button>
               </div>
               
-              {/* Botão para adicionar produto */}
               <div className="button" id="openModalBtn">
                 <button onClick={handleOpenModal} title="Adicionar um produto" className="btn btn-outline-success">
                   <i className="fa fa-plus" aria-hidden="true"></i>
                 </button>
               </div>
 
-              {/* Botão de "Área de administração", visível apenas para admins */}
               {admin && (
                 <div className="button" id="admin-area-btn" style={{ marginLeft: '65px' }}>
                   <Link to="/admin" title="Área de administração" className="btn btn-outline-warning">
-                    <i className="fa fa-cogs" aria-hidden="true"></i> Área de administração
+                    <i className="fa fa-cogs" aria-hidden="true"></i> <FormattedMessage id="header.adminArea" defaultMessage="Área de administração" />
                   </Link>
                 </div>
               )}
