@@ -9,8 +9,10 @@ import ProfileInfo from '../components/user/ProfileInfo';
 import SellerEvaluations from '../components/evaluation/SellerEvaluations';
 import EvaluationModal from '../components/evaluation/EvaluationModal';
 import ProductCard from '../components/product/ProductCard';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 export default function UserProfilePage() {
+  const { formatMessage } = useIntl();
   const [userToDisplay, setUserToDisplay] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [userProducts, setUserProducts] = useState([]);
@@ -105,10 +107,10 @@ export default function UserProfilePage() {
     try {
       const result = await userAPI.updateUser(userToDisplay.id, updatedData);
       setUserToDisplay(result);
-      alert('Dados atualizados com sucesso!');
+      alert(formatMessage({ id: 'userProfile.alert.updateSuccess', defaultMessage: 'Dados atualizados com sucesso!' }));
     } catch (error) {
       console.error('Erro detalhado:', error);
-      alert('Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.');
+      alert(formatMessage({ id: 'userProfile.alert.updateError', defaultMessage: 'Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.' }));
     }
   };
 
@@ -137,7 +139,7 @@ export default function UserProfilePage() {
     return currentUser && evaluation.evaluatorId === currentUser.id;
   };
 
-  if (!userToDisplay) return <p>A carregar informações do utilizador...</p>;
+  if (!userToDisplay) return <p><FormattedMessage id="userProfile.loading" defaultMessage="A carregar informações do utilizador..." /></p>;
 
   return (
     <main className="main-container">
@@ -145,7 +147,7 @@ export default function UserProfilePage() {
       <div className="wrapper-pag-pessoal">
         <div className="info-pessoal">
           <div className="perfil-utilizador">
-            <h2>Página Pessoal</h2>
+            <h2><FormattedMessage id="userProfile.title" defaultMessage="Página Pessoal" /></h2>
             <ProfileInfo 
               user={userToDisplay} 
               isOwnProfile={isOwnProfile} 
@@ -164,7 +166,12 @@ export default function UserProfilePage() {
         </div>
         
         <div className="main-card-container">
-          <h1 id="productsHeader">{isOwnProfile ? "Os meus Produtos" : "Produtos do Vendedor"}</h1>
+          <h1 id="productsHeader">
+            <FormattedMessage
+              id={isOwnProfile ? "userProfile.myProducts" : "userProfile.sellerProducts"}
+              defaultMessage={isOwnProfile ? "Os meus Produtos" : "Produtos do Vendedor"}
+            />
+          </h1>
           <section className="card-container">
             {userProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -197,6 +204,7 @@ export default function UserProfilePage() {
     </main>
   );
 }
+
 
 
 

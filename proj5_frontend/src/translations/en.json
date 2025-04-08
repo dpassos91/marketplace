@@ -78,6 +78,13 @@
 
   "productsCarousel.notLoaded": "No recently added products.",
 
-  "categoriesCarousel.notLoaded": "No categories available."
+  "categoriesCarousel.notLoaded": "No categories available.",
+
+  "userProfile.title": "Personal Page",
+  "userProfile.loading": "Loading user information...",
+  "userProfile.myProducts": "My Products",
+  "userProfile.sellerProducts": "Seller's Products",
+  "userProfile.alert.updateSuccess": "Profile updated successfully!",
+  "userProfile.alert.updateError": "An error occurred while updating the profile. Please try again later."
 
 }

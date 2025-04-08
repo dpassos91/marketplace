@@ -41,11 +41,6 @@ function HomePage() {
             <FormattedMessage id="homePage.categories" defaultMessage="Categorias disponíveis" />
           </h1>
           <CategoriesCarousel categories={categories} />
-          <section className="card-container categories-container">
-            {categories.map(category => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
-          </section>
         </div>
       </main>
     </>

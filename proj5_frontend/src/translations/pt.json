@@ -77,6 +77,13 @@
 
   "productsCarousel.notLoaded": "Nenhum produto adicionado recentemente.",
 
-  "categoriesCarousel.notLoaded": "Nenhuma categoria disponível."
+  "categoriesCarousel.notLoaded": "Nenhuma categoria disponível.",
+
+  "userProfile.title": "Página Pessoal",
+  "userProfile.loading": "A carregar informações do utilizador...",
+  "userProfile.myProducts": "Os meus Produtos",
+  "userProfile.sellerProducts": "Produtos do Vendedor",
+  "userProfile.alert.updateSuccess": "Dados atualizados com sucesso!",
+  "userProfile.alert.updateError": "Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde."
 
 }
