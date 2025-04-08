@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../api/userAPI';
 import useAuthStore from '../stores/authStore';
+import { useIntl } from 'react-intl';
 
 export function useAuth() {
   const navigate = useNavigate();
+  const { formatMessage } = useIntl();
   const { login: loginStore, logout: logoutStore, user: currentUser } = useAuthStore();
 
-  const handleAuthError = (error, errorMessage) => {
-    console.error(errorMessage, error);
-    alert(errorMessage + ' Tente novamente.');
+  const handleAuthError = (error, errorMessageId, defaultMessage) => {
+    console.error(defaultMessage, error);
+    alert(formatMessage({ id: errorMessageId, defaultMessage }) + ' ' + formatMessage({ id: 'auth.tryAgain', defaultMessage: 'Tente novamente.' }));
     return false;
   };
 
@@ -21,14 +23,22 @@ export function useAuth() {
         picture: userData.picture,
         admin: userData.admin
       };
-      useAuthStore.getState().login(userDataToStore); // Atualiza o estado do usuário no store
-      localStorage.setItem('userData', JSON.stringify(userDataToStore)); // Persiste no localStorage
-      alert(`Login bem sucedido! Bem-vindo/a ${userData.firstName} ${userData.lastName}!`);
+      useAuthStore.getState().login(userDataToStore);
+      localStorage.setItem('userData', JSON.stringify(userDataToStore));
+      alert(
+        formatMessage(
+          {
+            id: 'auth.login.success',
+            defaultMessage: 'Login bem sucedido! Bem-vindo/a {name}!'
+          },
+          { name: `${userData.firstName} ${userData.lastName}` }
+        )
+      );
       navigate('/');
       return true;
     } catch (error) {
       console.error('Login falhou:', error);
-      alert('Login falhou! Por favor verifique as suas credenciais.');
+      alert(formatMessage({ id: 'auth.login.failed', defaultMessage: 'Login falhou! Por favor verifique as suas credenciais.' }));
       return false;
     }
   };
@@ -37,33 +47,30 @@ export function useAuth() {
     console.log('A função de registro está sendo chamada com:', newUser);
     try {
       const userData = await userAPI.registerUser(newUser);
-      alert('Utilizador registado! Por favor, faça login.');
-      navigate('/login'); // Redireciona para a página de login
+      alert(formatMessage({ id: 'auth.register.success', defaultMessage: 'Utilizador registado! Por favor, faça login.' }));
+      navigate('/login');
       return true;
     } catch (error) {
-      return handleAuthError(error, 'Erro ao registar utilizador:');
+      return handleAuthError(error, 'auth.register.failed', 'Erro ao registar utilizador:');
     }
   };  
 
   const logout = async () => {
     console.log('Função de logout chamada');
     try {
-      // Chama a API de logout no backend
       await userAPI.logoutUser();
-  
-      // Limpa o estado local e armazenamento
+
       logoutStore();
       localStorage.removeItem('userData');
       sessionStorage.removeItem('authToken');
-  
+
       console.log('userData removido da local storage');
       console.log('Conteúdo da local storage após o logout:', localStorage.getItem('userData'));
-  
-      // Redireciona para a página inicial
+
       navigate('/');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-      alert('Houve um problema ao fazer logout. Por favor, tente novamente.');
+      alert(formatMessage({ id: 'auth.logout.failed', defaultMessage: 'Houve um problema ao fazer logout. Por favor, tente novamente.' }));
     }
   };
 

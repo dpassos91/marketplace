@@ -1,7 +1,7 @@
-// CategoryCard.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CategoryCard.css';
+import { FormattedMessage } from 'react-intl';
 
 function CategoryCard({ category }) {
   const navigate = useNavigate();
@@ -13,14 +13,14 @@ function CategoryCard({ category }) {
       <div>
         <h1>{category.name}</h1>
         <button 
-          type="button" 
-          title="Ver produtos"
-          onClick={() => {
-            navigate(`/produtos?categoria=${category.id}`);
-          }}
-        >
-          Ver produtos
-        </button>
+  type="button" 
+  title={category.name}
+  onClick={() => {
+    navigate(`/produtos?categoria=${category.id}`);
+  }}
+>
+  <FormattedMessage id="categoryCard.viewProducts" defaultMessage="Ver produtos" />
+</button>
       </div>
     </div>
   );

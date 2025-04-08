@@ -86,6 +86,15 @@
   "userProfile.alert.updateSuccess": "Dados atualizados com sucesso!",
   "userProfile.alert.updateError": "Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
 
-  "productCard.moreInfo": "Saber mais"
+  "productCard.moreInfo": "Saber mais",
+
+  "categoryCard.viewProducts": "Ver produtos",
+
+  "auth.login.success": "Login bem sucedido! Bem-vindo/a {name}!",
+  "auth.login.failed": "Login falhou! Por favor verifique as suas credenciais.",
+  "auth.register.success": "Utilizador registado! Por favor, faça login.",
+  "auth.register.failed": "Erro ao registar utilizador:",
+  "auth.logout.failed": "Houve um problema ao fazer logout. Por favor, tente novamente.",
+  "auth.tryAgain": "Tente novamente."
 
 }

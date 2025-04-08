@@ -87,6 +87,15 @@
   "userProfile.alert.updateSuccess": "Profile updated successfully!",
   "userProfile.alert.updateError": "An error occurred while updating the profile. Please try again later.",
 
-  "productCard.moreInfo": "Learn more"
+  "productCard.moreInfo": "Learn more",
+
+  "categoryCard.viewProducts": "View products",
+
+  "auth.login.success": "Login successful! Welcome {name}!",
+  "auth.login.failed": "Login failed! Please check your credentials.",
+  "auth.register.success": "User registered! Please log in.",
+  "auth.register.failed": "Error registering user:",
+  "auth.logout.failed": "There was a problem logging out. Please try again.",
+  "auth.tryAgain": "Please try again."
 
 }

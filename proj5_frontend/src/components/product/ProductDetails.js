@@ -7,6 +7,7 @@ import { PRODUCT_STATES } from '../product/productStates.js';
 import useAuthStore from '../../stores/authStore.js';
 import useProductStore from '../../stores/productStore.js';
 import Modal from '../commons/Modal.js';
+import SpinnerLeaf from '../commons/SpinnerLeaf.js';
 
 function ProductDetails() {
     const { formatMessage } = useIntl();
@@ -125,9 +126,19 @@ function ProductDetails() {
     const closeModal = () => setIsModalOpen(false);
 
     if (!product) {
-        return <p><FormattedMessage id="productDetails.loading" defaultMessage="Carregando detalhes do produto..." /></p>;
-    }
-
+        return (
+          <div className="loading-container">
+            <SpinnerLeaf />
+            <p>
+              <FormattedMessage
+                id="productDetails.loading"
+                defaultMessage="Carregando detalhes do produto..."
+              />
+            </p>
+          </div>
+        );
+      }
+      
     return (
         <div className="detalhes-container">
             <div className="imagem">
