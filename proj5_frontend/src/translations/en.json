@@ -74,5 +74,7 @@
   "productDetails.button.buy": "Buy",
   "productDetails.button.edit": "Edit",
   "productDetails.button.delete": "Delete",
-  "productDetails.button.processing": "Processing..."
+  "productDetails.button.processing": "Processing...",
+
+  "productsCarousel.notLoaded": "No recently added products."
 }

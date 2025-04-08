@@ -73,5 +73,7 @@
   "productDetails.button.buy": "Comprar",
   "productDetails.button.edit": "Editar",
   "productDetails.button.delete": "Eliminar",
-  "productDetails.button.processing": "A processar..."
+  "productDetails.button.processing": "A processar...",
+
+  "productsCarousel.notLoaded": "Nenhum produto adicionado recentemente."
 }

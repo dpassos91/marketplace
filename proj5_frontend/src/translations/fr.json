@@ -74,7 +74,9 @@
   "productDetails.button.buy": "Acheter",
   "productDetails.button.edit": "Modifier",
   "productDetails.button.delete": "Supprimer",
-  "productDetails.button.processing": "Traitement..."
+  "productDetails.button.processing": "Traitement...",
+
+  "productsCarousel.notLoaded": "Aucun produit ajouté récemment."
 
 }
   

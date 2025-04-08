@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import ProductCard from './ProductCard';
-import './ProductsCarousel.css'; // Certifique-se de ter um CSS para o carrossel
+import './ProductsCarousel.css'; 
+import { FormattedMessage } from 'react-intl';
 
 function ProductsCarousel({ products }) {
   const carouselRef = useRef(null);
@@ -15,7 +16,7 @@ function ProductsCarousel({ products }) {
     }
   };
 
-  if (!products || products.length === 0) return <p>Nenhum produto recente.</p>;
+  if (!products || products.length === 0) return <p><FormattedMessage id="productsCarousel.notLoaded" defaultMessage="Nenhum produto adicionado recentemente."/></p>;
 
   return (
     <div className="products-carousel-wrapper">
