@@ -94,6 +94,7 @@
   "auth.login.failed": "Login falhou! Por favor verifique as suas credenciais.",
   "auth.register.success": "Utilizador registado! Por favor, faça login.",
   "auth.register.failed": "Erro ao registar utilizador:",
+  "auth.logout.success": "Logout realizado com sucesso! Até breve :)",
   "auth.logout.failed": "Houve um problema ao fazer logout. Por favor, tente novamente.",
   "auth.tryAgain": "Tente novamente."
 

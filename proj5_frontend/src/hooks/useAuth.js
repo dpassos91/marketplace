@@ -69,20 +69,25 @@ export function useAuth() {
     console.log('Função de logout chamada');
     try {
       await userAPI.logoutUser();
-
+  
       logoutStore();
       localStorage.removeItem('userData');
       sessionStorage.removeItem('authToken');
-
-      console.log('userData removido da local storage');
-      console.log('Conteúdo da local storage após o logout:', localStorage.getItem('userData'));
-
+  
+      alert(formatMessage({
+        id: 'auth.logout.success',
+        defaultMessage: 'Logout realizado com sucesso! Até breve :)'
+      }));
+  
       navigate('/');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-      alert(formatMessage({ id: 'auth.logout.failed', defaultMessage: 'Houve um problema ao fazer logout. Por favor, tente novamente.' }));
+      alert(formatMessage({
+        id: 'auth.logout.failed',
+        defaultMessage: 'Houve um problema ao fazer logout. Por favor, tente novamente.'
+      }));
     }
   };
-
+  
   return { login, register, logout, currentUser };
 }

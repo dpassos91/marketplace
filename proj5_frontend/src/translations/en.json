@@ -95,6 +95,7 @@
   "auth.login.failed": "Login failed! Please check your credentials.",
   "auth.register.success": "User registered! Please log in.",
   "auth.register.failed": "Error registering user:",
+  "auth.logout.success": "Successfully logged out! See you soon :)",
   "auth.logout.failed": "There was a problem logging out. Please try again.",
   "auth.tryAgain": "Please try again."
 

@@ -1,9 +1,8 @@
 import { apiConfig } from './apiConfig.js';
-import { setAuthToken, removeAuthToken } from '../utils/authUtils.js';
+import { removeAuthToken } from '../utils/authUtils.js';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 
-// Funções internas
 const registerUser = async (userData) => {
   return apiCall(API_ENDPOINTS.users.register, {
     method: 'POST',
@@ -12,29 +11,24 @@ const registerUser = async (userData) => {
 };
 
 const loginUser = async (credentials) => {
-  const response = await fetch(...);
-  if (!response.ok) {
-    throw new Error('Login failed'); 
-  }
-  const token = await response.text();
-  sessionStorage.setItem('authToken', token);
-  const userInfo = await getUserByUsername(credentials.username);
-  return { ...userInfo, token };
+  return apiCall(API_ENDPOINTS.users.login, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  }).then(async (token) => {
+    sessionStorage.setItem('authToken', token);
+    const userInfo = await getUserByUsername(credentials.username);
+    return { ...userInfo, token };
+  });
 };
 
 const logoutUser = async () => {
-  try {
-    const result = await apiCall(API_ENDPOINTS.users.logout, { method: 'POST' });
-    if (result === "Successfully logged out!") {
-      removeAuthToken();
-      // Redirecionar para a página de login ou atualizar o estado da aplicação
-      alert ("Logout realizado com sucesso! Até breve :)");
-      window.location.href = '/';
-    } else {
-      console.error("Logout falhou:", result);
-    }
-  } catch (error) {
-    console.error("Erro durante o logout:", error);
+  const result = await apiCall(API_ENDPOINTS.users.logout, { method: 'POST' });
+  if (result === "Successfully logged out!") {
+    removeAuthToken();
+    return true;
+  } else {
+    throw new Error("Logout falhou: " + result);
   }
 };
 
@@ -43,12 +37,6 @@ const getUserById = async (userId) => {
 };
 
 const updateUser = async (userId, userData) => {
-  const token = sessionStorage.getItem('authToken');
-  if (!token) {
-    console.error('Token de autenticação não encontrado');
-    throw new Error('Usuário não autenticado');
-  }
-  console.log("Dados enviados para a API:", userData);
   return apiCall(API_ENDPOINTS.users.update(userId), {
     method: 'PUT',
     body: JSON.stringify(userData),
@@ -79,7 +67,6 @@ const getTotalUsers = async () => {
   return apiCall(API_ENDPOINTS.users.all);
 };
 
-// Exportação no final do arquivo
 export const userAPI = {
   registerUser,
   loginUser,
@@ -93,3 +80,4 @@ export const userAPI = {
   checkUsername,
   getTotalUsers
 };
+

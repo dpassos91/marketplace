@@ -95,6 +95,7 @@
   "auth.login.failed": "Échec de la connexion ! Veuillez vérifier vos identifiants.",
   "auth.register.success": "Utilisateur enregistré ! Veuillez vous connecter.",
   "auth.register.failed": "Erreur lors de l'enregistrement de l'utilisateur :",
+  "auth.logout.success": "Déconnexion réussie ! À bientôt :)",
   "auth.logout.failed": "Un problème est survenu lors de la déconnexion. Veuillez réessayer.",
   "auth.tryAgain": "Veuillez réessayer."
 }
