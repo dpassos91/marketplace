@@ -11,8 +11,8 @@
   "footer.service": "Seg-Sex, 08h - 18h",
   "footer.phone": "Telefone: +351 || 239 123 456",
   
-  "alert.passwordsMismatch": "As palavras-passe não coincidem",
-  "alert.registerFailed": "Erro ao registar utilizador. Tente novamente",
+  "registeralert.passwordsMismatch": "As palavras-passe não coincidem",
+  "registeralert.registerFailed": "Erro ao registar utilizador. Tente novamente",
   "register.title": "Novo registo",
   "register.firstName": "Primeiro nome",
   "register.lastName": "Último nome",
@@ -42,5 +42,36 @@
   "productPage.loading": "Carregando produtos...",
   "productPage.categoryTitle": "Produtos da Categoria {categoryName}",
   "productPage.allTitle": "Todos os Produtos",
-  "productPage.noneAvailable": "Nenhum produto disponível encontrado."
+  "productPage.noneAvailable": "Nenhum produto disponível encontrado.",
+
+  "productDetails.alert.productNotFound": "Produto não encontrado!",
+  "productDetails.alert.productNotLoaded": "Erro ao carregar detalhes do produto. Por favor, tente novamente.",
+  "productDetails.alert.productUpdateSuccess": "Produto atualizado com sucesso!",
+  "productDetails.alert.productUpdateError": "Erro ao atualizar produto. Por favor, tente novamente.",
+  "productDetails.alert.productDeleteSuccess": "Produto eliminado com sucesso!",
+  "productDetails.alert.productDeleteError": "Erro ao eliminar produto. Por favor, tente novamente.",
+  "productDetails.alert.loginRequired": "Precisa de iniciar sessão para comprar produtos.",
+  "productDetails.alert.ownProduct": "Não pode comprar o seu próprio produto.",
+  "productDetails.alert.notAvailable": "Este produto não está disponível para compra.",
+  "productDetails.alert.purchaseSuccess": "Produto comprado com sucesso!",
+  "productDetails.alert.purchaseError": "Erro ao processar a compra. Tente novamente.",
+  "productDetails.alert.mustBeLoggedInToViewProfile": "Só pode aceder a este perfil se for membro da nossa comunidade. Registe-se e/ou faça login!",
+
+  "productDetails.window.confirmDelete": "Tem certeza que deseja eliminar este produto?",
+  "productDetails.window.confirmPurchase": "Tem certeza que deseja comprar este produto?",
+
+  "productDetails.loading": "Carregando detalhes do produto...",
+  "productDetails.location": "Localização:",
+  "productDetails.category": "Categoria:",
+  "productDetails.price": "Preço:",
+  "productDetails.seller": "Publicado por:",
+  "productDetails.description": "Descrição:",
+  "productDetails.date": "Data de publicação:",
+  "productDetails.status": "Estado:",
+  "productDetails.viewSellerProfile": "Ver perfil do vendedor",
+  "productDetails.modalTitle": "Editar Produto",
+  "productDetails.button.buy": "Comprar",
+  "productDetails.button.edit": "Editar",
+  "productDetails.button.delete": "Eliminar",
+  "productDetails.button.processing": "A processar..."
 }

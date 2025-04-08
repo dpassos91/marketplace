@@ -11,8 +11,8 @@
   "footer.service": "Mon-Fri, 08am - 06pm",
   "footer.phone": "Phone: +351 || 239 123 456",
   
-  "alert.passwordsMismatch": "Passwords do not match",
-  "alert.registerFailed": "Error registering user. Please try again",
+  "registeralert.passwordsMismatch": "Passwords do not match",
+  "registeralert.registerFailed": "Error registering user. Please try again",
   "register.title": "New Registration",
   "register.firstName": "First Name",
   "register.lastName": "Last Name",
@@ -43,5 +43,36 @@
   "productPage.loading": "Loading products...",
   "productPage.categoryTitle": "Products in Category {categoryName}",
   "productPage.allTitle": "All Products",
-  "productPage.noneAvailable": "No available products found."
+  "productPage.noneAvailable": "No available products found.",
+
+  "productDetails.alert.productNotFound": "Product not found!",
+  "productDetails.alert.productNotLoaded": "Error loading product details. Please try again.",
+  "productDetails.alert.productUpdateSuccess": "Product updated successfully!",
+  "productDetails.alert.productUpdateError": "Error updating product. Please try again.",
+  "productDetails.alert.productDeleteSuccess": "Product deleted successfully!",
+  "productDetails.alert.productDeleteError": "Error deleting product. Please try again.",
+  "productDetails.alert.loginRequired": "You need to log in to purchase products.",
+  "productDetails.alert.ownProduct": "You cannot buy your own product.",
+  "productDetails.alert.notAvailable": "This product is not available for purchase.",
+  "productDetails.alert.purchaseSuccess": "Product purchased successfully!",
+  "productDetails.alert.purchaseError": "Error processing purchase. Please try again.",
+  "productDetails.alert.mustBeLoggedInToViewProfile": "You must be logged in to view this profile. Please register or log in!",
+
+  "productDetails.window.confirmDelete": "Are you sure you want to delete this product?",
+  "productDetails.window.confirmPurchase": "Are you sure you want to purchase this product?",
+
+  "productDetails.loading": "Loading product details...",
+  "productDetails.location": "Location:",
+  "productDetails.category": "Category:",
+  "productDetails.price": "Price:",
+  "productDetails.seller": "Published by:",
+  "productDetails.description": "Description:",
+  "productDetails.date": "Publication date:",
+  "productDetails.status": "Status:",
+  "productDetails.viewSellerProfile": "View seller profile",
+  "productDetails.modalTitle": "Edit Product",
+  "productDetails.button.buy": "Buy",
+  "productDetails.button.edit": "Edit",
+  "productDetails.button.delete": "Delete",
+  "productDetails.button.processing": "Processing..."
 }

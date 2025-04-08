@@ -24,7 +24,7 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert(formatMessage({ id: 'alert.passwordsMismatch', defaultMessage: 'As passwords não coincidem.' }));
+      alert(formatMessage({ id: 'registeralert.passwordsMismatch', defaultMessage: 'As passwords não coincidem.' }));
       return;
     }
 
@@ -39,10 +39,10 @@ function RegisterPage() {
       if (success) {
         navigate('/login');
       } else {
-        alert(formatMessage({ id: 'alert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.'}));
+        alert(formatMessage({ id: 'registeralert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.'}));
       }
     } catch (error) {
-      alert(formatMessage({ id: 'alert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.'}));
+      alert(formatMessage({ id: 'registeralert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.'}));
       console.error(error);
     }
   };

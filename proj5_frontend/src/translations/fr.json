@@ -11,8 +11,8 @@
   "footer.service": "Lun-Ven, 08h - 18h",
   "footer.phone": "Téléphone : +351 || 239 123 456",
 
-  "alert.passwordsMismatch": "Les mots de passe ne correspondent pas",
-  "alert.registerFailed": "Erreur lors de l'enregistrement de l'utilisateur. Veuillez réessayer",
+  "registeralert.passwordsMismatch": "Les mots de passe ne correspondent pas",
+  "registeralert.registerFailed": "Erreur lors de l'enregistrement de l'utilisateur. Veuillez réessayer",
   "register.title": "Nouvelle inscription",
   "register.firstName": "Prénom",
   "register.lastName": "Nom de famille",
@@ -43,6 +43,38 @@
   "productPage.loading": "Chargement des produits...",
   "productPage.categoryTitle": "Produits dans la catégorie {categoryName}",
   "productPage.allTitle": "Tous les produits",
-  "productPage.noneAvailable": "Aucun produit disponible trouvé."
+  "productPage.noneAvailable": "Aucun produit disponible trouvé.",
+
+  "productDetails.alert.productNotFound": "Produit introuvable !",
+  "productDetails.alert.productNotLoaded": "Erreur lors du chargement des détails du produit. Veuillez réessayer.",
+  "productDetails.alert.productUpdateSuccess": "Produit mis à jour avec succès !",
+  "productDetails.alert.productUpdateError": "Erreur lors de la mise à jour du produit. Veuillez réessayer.",
+  "productDetails.alert.productDeleteSuccess": "Produit supprimé avec succès !",
+  "productDetails.alert.productDeleteError": "Erreur lors de la suppression du produit. Veuillez réessayer.",
+  "productDetails.alert.loginRequired": "Vous devez être connecté pour acheter des produits.",
+  "productDetails.alert.ownProduct": "Vous ne pouvez pas acheter votre propre produit.",
+  "productDetails.alert.notAvailable": "Ce produit n'est pas disponible à l'achat.",
+  "productDetails.alert.purchaseSuccess": "Produit acheté avec succès !",
+  "productDetails.alert.purchaseError": "Erreur lors du traitement de l'achat. Veuillez réessayer.",
+  "productDetails.alert.mustBeLoggedInToViewProfile": "Vous devez être membre pour accéder à ce profil. Inscrivez-vous ou connectez-vous !",
+
+  "productDetails.window.confirmDelete": "Êtes-vous sûr de vouloir supprimer ce produit ?",
+  "productDetails.window.confirmPurchase": "Êtes-vous sûr de vouloir acheter ce produit ?",
+
+  "productDetails.loading": "Chargement des détails du produit...",
+  "productDetails.location": "Emplacement :",
+  "productDetails.category": "Catégorie :",
+  "productDetails.price": "Prix :",
+  "productDetails.seller": "Publié par :",
+  "productDetails.description": "Description :",
+  "productDetails.date": "Date de publication :",
+  "productDetails.status": "Statut :",
+  "productDetails.viewSellerProfile": "Voir le profil du vendeur",
+  "productDetails.modalTitle": "Modifier le produit",
+  "productDetails.button.buy": "Acheter",
+  "productDetails.button.edit": "Modifier",
+  "productDetails.button.delete": "Supprimer",
+  "productDetails.button.processing": "Traitement..."
+
 }
   
