@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
+import { FormattedMessage } from 'react-intl';
 
 function ProductCard({ product }) {
     const navigate = useNavigate();
@@ -14,12 +15,12 @@ function ProductCard({ product }) {
                 <h2>{product.categoryName}</h2>
                 <h4>{parseFloat(product.price).toFixed(2)}€</h4>
                 <button
-                    type="button"
-                    title="descricao"
-                    onClick={() => navigate(`/detalhes-produto/${product.id}`)}
-                >
-                    Saber mais
-                </button>
+  type="button"
+  title="descricao"
+  onClick={() => navigate(`/detalhes-produto/${product.id}`)}
+>
+  <FormattedMessage id="productCard.moreInfo" defaultMessage="Saber mais" />
+</button>
             </div>
         </div>
     );

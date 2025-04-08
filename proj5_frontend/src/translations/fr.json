@@ -85,8 +85,8 @@
   "userProfile.myProducts": "Mes Produits",
   "userProfile.sellerProducts": "Produits du Vendeur",
   "userProfile.alert.updateSuccess": "Profil mis à jour avec succès !",
-  "userProfile.alert.updateError": "Une erreur s'est produite lors de la mise à jour du profil. Veuillez réessayer plus tard."
+  "userProfile.alert.updateError": "Une erreur s'est produite lors de la mise à jour du profil. Veuillez réessayer plus tard.",
 
-
+  "productCard.moreInfo": "En savoir plus"
 }
   
