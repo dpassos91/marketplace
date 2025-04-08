@@ -21,18 +21,18 @@ function Header() {
     if (userData && userData.admin) {
       setAdmin(true);
     }
-  }, [user?.picture, user?.admin]); // Depende apenas das propriedades específicas do objeto user
+  }, [user?.picture, user?.admin]); 
 
   const handleOpenModal = useCallback(() => {
-    setIsModalOpen(true); // Abre o modal em vez de navegar
+    setIsModalOpen(true); 
   }, []);
 
   const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false); // Fecha o modal
+    setIsModalOpen(false); 
   }, []);
 
   const handleProfileClick = useCallback(() => {
-    navigate(`/profile/${user?.id}`); // Certifique-se de que esta rota está definida no seu router
+    navigate(`/perfil/${user?.id}`); 
   }, [navigate, user?.id]);
 
   const profilePicture = useMemo(() => {
@@ -52,9 +52,9 @@ function Header() {
           {user && `Bem-vindo, ${user.name}!`}
         </div>
 
-        <div className="language-selector-container">
-          <LanguageSelector />
-        </div>
+        <div className={`language-selector-container ${user ? 'with-user' : 'no-user'}`}>
+  <LanguageSelector />
+</div>
 
         {user ? (
           <div className="img-perfil" id="profile-picture-container" onClick={handleProfileClick}>

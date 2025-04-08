@@ -30,24 +30,28 @@ function App() {
     useEffect(() => {
         const initializeApp = async () => {
             try {
-                // 1. Carrega usuário do localStorage
                 const storedUser = localStorage.getItem('userData');
-                if (storedUser) {
+                const token = sessionStorage.getItem('authToken');
+    
+                // ❗ Correção de sessão inválida
+                if (storedUser && !token) {
+                    console.warn("Sessão inválida: userData presente mas token em falta. A fazer logout...");
+                    localStorage.removeItem('userData');
+                } else if (storedUser && token) {
                     login(JSON.parse(storedUser));
                 }
-
-                // 2. Inicializa idioma
+    
                 initializeLanguage();
-
             } catch (error) {
                 console.error("Erro na inicialização:", error);
             } finally {
                 setIsLoading(false);
             }
         };
-
+    
         initializeApp();
     }, [login, initializeLanguage]);
+    
 
     if (isLoading) {
         return (

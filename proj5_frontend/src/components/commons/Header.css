@@ -111,13 +111,20 @@ header {
   margin: 0; /* Centralizar o ícone */
 }
 
-.language-selector-container {
+.language-selector-container.no-user {
   position: absolute;
   right: 150px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 1000;
-  
+}
+
+.language-selector-container.with-user {
+  position: relative;
+  margin-left:0px;
+  top: 50%;
+  margin-right: 0;
+  z-index: 1000;
 }
 
 #header {
