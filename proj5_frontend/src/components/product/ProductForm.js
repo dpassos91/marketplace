@@ -1,8 +1,9 @@
-// ProductForm.js
 import React, { useState, useEffect } from 'react';
 import { categoryAPI } from '../../api/categoryAPI';
+import { useIntl } from 'react-intl'; // Importe o useIntl
 
 function ProductForm({ initialProduct, onSave, onCancel }) {
+    const intl = useIntl(); // Inicializa o useIntl
     const [product, setProduct] = useState(initialProduct || {
         title: '',
         description: '',
@@ -20,11 +21,11 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
                 const fetchedCategories = await categoryAPI.getAllCategories();
                 setCategories(fetchedCategories);
             } catch (error) {
-                console.error('Erro ao carregar as categorias:', error);
+                console.error(intl.formatMessage({ id: 'productForm.error.loadingCategories', defaultMessage: 'Erro ao carregar as categorias:' }), error);
             }
         };
         fetchCategories();
-    }, []);
+    }, [intl]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -35,7 +36,7 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
         e.preventDefault();
 
         if (!validateForm()) {
-            alert('Por favor preencha todos os campos corretamente.');
+            alert(intl.formatMessage({ id: 'productForm.error.validateForm', defaultMessage: 'Por favor preencha todos os campos corretamente.' }));
             return;
         }
 
@@ -48,9 +49,8 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
             };
 
             await onSave(productToSave);
-
         } catch (error) {
-            console.error('Erro a criar produto:', error);
+            console.error(intl.formatMessage({ id: 'productForm.error.creatingProduct', defaultMessage: 'Erro a criar produto:' }), error);
         } finally {
             setIsSubmitting(false);
         }
@@ -75,14 +75,14 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
                 name="title"
                 value={product.title}
                 onChange={handleInputChange}
-                placeholder="Título"
+                placeholder={intl.formatMessage({ id: 'productForm.placeholder.title', defaultMessage: 'Título' })}
                 required
             />
             <textarea
                 name="description"
                 value={product.description}
                 onChange={handleInputChange}
-                placeholder="Descrição"
+                placeholder={intl.formatMessage({ id: 'productForm.placeholder.description', defaultMessage: 'Descrição' })}
                 required
             />
             <select
@@ -91,7 +91,7 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
                 onChange={handleInputChange}
                 required
             >
-                <option value="">Selecione uma categoria</option>
+                <option value="">{intl.formatMessage({ id: 'productForm.option.selectCategory', defaultMessage: 'Selecione uma categoria' })}</option>
                 {categories.map(category => (
                     <option key={category.id} value={category.id}>
                         {category.name}
@@ -103,7 +103,7 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
                 name="price"
                 value={product.price}
                 onChange={handleInputChange}
-                placeholder="Preço"
+                placeholder={intl.formatMessage({ id: 'productForm.placeholder.price', defaultMessage: 'Preço' })}
                 min="0"
                 step="0.01"
                 required
@@ -113,22 +113,22 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
                 name="imageUrl"
                 value={product.imageUrl}
                 onChange={handleInputChange}
-                placeholder="Imagem URL"
+                placeholder={intl.formatMessage({ id: 'productForm.placeholder.imageUrl', defaultMessage: 'Imagem URL' })}
             />
             <input
                 type="text"
                 name="location"
                 value={product.location}
                 onChange={handleInputChange}
-                placeholder="Localização"
+                placeholder={intl.formatMessage({ id: 'productForm.placeholder.location', defaultMessage: 'Localização' })}
                 required
             />
             <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Processing...' : 'Adicionar produto'}
+                {isSubmitting ? intl.formatMessage({ id: 'productForm.button.processing', defaultMessage: 'Processing...' }) : intl.formatMessage({ id: 'productForm.button.addProduct', defaultMessage: 'Adicionar produto' })}
             </button>
             {onCancel && (
                 <button type="button" onClick={onCancel}>
-                    Cancelar
+                    {intl.formatMessage({ id: 'productForm.button.cancel', defaultMessage: 'Cancelar' })}
                 </button>
             )}
         </form>
@@ -136,3 +136,4 @@ function ProductForm({ initialProduct, onSave, onCancel }) {
 }
 
 export default ProductForm;
+

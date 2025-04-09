@@ -153,6 +153,24 @@
   "admin.editProduct.status.reserved": "Réservé",
   "admin.editProduct.status.purchased": "Acheté",
   "admin.editProduct.button.cancel": "Annuler",
-  "admin.editProduct.button.save": "Enregistrer"
+  "admin.editProduct.button.save": "Enregistrer",
+
+  "addProduct.error.loginRequired": "Veuillez vous connecter avant d'ajouter un produit!",
+  "addProduct.success": "Produit créé avec succès!",
+  "addProduct.error.creatingProduct": "Erreur lors de la création du produit. Veuillez réessayer.",
+  "addProduct.title": "Ajouter un nouveau produit",
+
+  "productForm.error.loadingCategories": "Erreur lors du chargement des catégories :",
+  "productForm.error.validateForm": "Veuillez remplir correctement tous les champs.",
+  "productForm.error.creatingProduct": "Erreur lors de la création du produit :",
+  "productForm.placeholder.title": "Titre",
+  "productForm.placeholder.description": "Description",
+  "productForm.option.selectCategory": "Sélectionnez une catégorie",
+  "productForm.placeholder.price": "Prix",
+  "productForm.placeholder.imageUrl": "URL de l'image",
+  "productForm.placeholder.location": "Emplacement",
+  "productForm.button.processing": "Traitement...",
+  "productForm.button.addProduct": "Ajouter le produit",
+  "productForm.button.cancel": "Annuler"
 }
   

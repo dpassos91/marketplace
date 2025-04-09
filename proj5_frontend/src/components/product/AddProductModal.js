@@ -1,18 +1,19 @@
-// AddProductModal.js
 import React from 'react';
 import Modal from '../commons/Modal';
 import ProductForm from './ProductForm';
 import { productAPI } from '../../api/productAPI';
 import useAuthStore from '../../stores/authStore';
 import { PRODUCT_STATES } from '../../components/product/productStates';
+import { useIntl } from 'react-intl';  // Importe o useIntl para usar o formatMessage
 
 function AddProductModal({ isOpen, onClose }) {
+    const intl = useIntl();
     const user = useAuthStore((state) => state.user);
 
     const handleSave = async (productData) => {
         try {
             if (!user || !user.id) {
-                throw new Error('Faça login antes de adicionar um produto!');
+                throw new Error(intl.formatMessage({ id: 'addProduct.error.loginRequired', defaultMessage: 'Faça login antes de adicionar um produto!' }));
             }
 
             const productToSave = {
@@ -23,9 +24,9 @@ function AddProductModal({ isOpen, onClose }) {
             };
 
             await productAPI.createProduct(productToSave);
-            alert('Produto criado com sucesso!');
+            alert(intl.formatMessage({ id: 'addProduct.success', defaultMessage: 'Produto criado com sucesso!' }));
         } catch (error) {
-            alert('Erro ao criar produto. Por favor, tente novamente.');
+            alert(intl.formatMessage({ id: 'addProduct.error.creatingProduct', defaultMessage: 'Erro ao criar produto. Por favor, tente novamente.' }));
         } finally {
             onClose();
         }
@@ -36,11 +37,12 @@ function AddProductModal({ isOpen, onClose }) {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Adicionar Novo Produto">
+        <Modal isOpen={isOpen} onClose={onClose} title={intl.formatMessage({ id: 'addProduct.title', defaultMessage: 'Adicionar Novo Produto' })}>
             <ProductForm onSave={handleSave} onCancel={handleCancel} />
         </Modal>
     );
 }
 
 export default AddProductModal;
+
 
