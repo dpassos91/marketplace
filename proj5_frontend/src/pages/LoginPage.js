@@ -8,11 +8,27 @@ function LoginPage() {
   const { login } = useAuth();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const intl = useIntl(); // Adiciona o hook do intl
+  const intl = useIntl();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login({ username, password });
+  };
+
+  const handleInvalid = (e) => {
+    
+    const errorId = `login.${e.target.name}.errorRequired`;
+    e.target.setCustomValidity(intl.formatMessage({ id: errorId }));
+};
+
+
+  const handleChange = (e) => {
+    e.target.setCustomValidity(''); // Limpa a mensagem de validação customizada após ser mostrada uma vez
+    if (e.target.name === 'username') {
+      setUsername(e.target.value);
+    } else if (e.target.name === 'password') {
+      setPassword(e.target.value);
+    }
   };
 
   return (
@@ -22,7 +38,7 @@ function LoginPage() {
           <h2><FormattedMessage id="login.title" defaultMessage="Login" /></h2>
           <form id="formulario_login" onSubmit={handleSubmit}>
             <label htmlFor="username">
-              <FormattedMessage id="login.username" defaultMessage="Nome de Utilizador" />
+              <FormattedMessage id="login.username" defaultMessage="Username" />
             </label>
             <input
               type="text"
@@ -30,9 +46,10 @@ function LoginPage() {
               name="username"
               required
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder={intl.formatMessage({ id: 'login.placeholder.username', defaultMessage: 'Nome de Utilizador' })}
-              title={intl.formatMessage({ id: 'login.error.usernameRequired', defaultMessage: 'Por favor, insira o nome de utilizador.' })} // Mensagem personalizada
+              onChange={handleChange}
+              onInvalid={handleInvalid}
+              placeholder={intl.formatMessage({ id: 'login.placeholder.username', defaultMessage: 'Username' })}
+              title={intl.formatMessage({ id: 'login.error.usernameRequired', defaultMessage: 'Please enter your username.' })}
             />
             <label htmlFor="password">
               <FormattedMessage id="login.password" defaultMessage="Password" />
@@ -43,16 +60,17 @@ function LoginPage() {
               name="password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleChange}
+              onInvalid={handleInvalid}
               placeholder={intl.formatMessage({ id: 'login.placeholder.password', defaultMessage: 'Password' })}
-              title={intl.formatMessage({ id: 'login.error.passwordRequired', defaultMessage: 'Por favor, insira a palavra-passe.' })} // Mensagem personalizada
+              title={intl.formatMessage({ id: 'login.error.passwordRequired', defaultMessage: 'Please enter your password.' })}
             />
             <button type="submit">
-              <FormattedMessage id="login.submit" defaultMessage="Entrar" />
+              <FormattedMessage id="login.submit" defaultMessage="Log In" />
             </button>
             <Link to="/registo">
               <button type="button">
-                <FormattedMessage id="login.register" defaultMessage="Registar" />
+                <FormattedMessage id="login.register" defaultMessage="Register" />
               </button>
             </Link>
           </form>
@@ -63,3 +81,4 @@ function LoginPage() {
 }
 
 export default LoginPage;
+

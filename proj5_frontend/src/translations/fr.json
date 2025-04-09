@@ -6,8 +6,8 @@
   "login.register": "S'inscrire",
   "login.placeholder.username": "Nom d'utilisateur",
   "login.placeholder.password": "Mot de passe",
-  "login.error.usernameRequired": "Veuillez saisir votre nom d'utilisateur.",
-  "login.error.passwordRequired": "Veuillez saisir votre mot de passe.",
+  "login.username.errorRequired": "Veuillez saisir votre nom d'utilisateur.",
+  "login.password.errorRequired": "Veuillez saisir votre mot de passe.",
   
   "footer.rights": "© 2025 | Tous droits réservés",
   "footer.author": "Diogo Passos | Projet 5 | AOR - PAJ 2025",
