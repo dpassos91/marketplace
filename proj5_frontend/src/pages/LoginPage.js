@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { FormattedMessage } from 'react-intl'; // Para textos traduzidos
+import { FormattedMessage, useIntl } from 'react-intl'; // Para textos traduzidos
 import '../App.css';
 
 function LoginPage() {
   const { login } = useAuth();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const intl = useIntl(); // Adiciona o hook do intl
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,10 +19,8 @@ function LoginPage() {
     <>
       <main className="login">
         <div className="login-container">
-          {/* Título traduzido */}
           <h2><FormattedMessage id="login.title" defaultMessage="Login" /></h2>
           <form id="formulario_login" onSubmit={handleSubmit}>
-            {/* Nome de Utilizador */}
             <label htmlFor="username">
               <FormattedMessage id="login.username" defaultMessage="Nome de Utilizador" />
             </label>
@@ -32,8 +31,9 @@ function LoginPage() {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder={intl.formatMessage({ id: 'login.placeholder.username', defaultMessage: 'Nome de Utilizador' })}
+              title={intl.formatMessage({ id: 'login.error.usernameRequired', defaultMessage: 'Por favor, insira o nome de utilizador.' })} // Mensagem personalizada
             />
-            {/* Password */}
             <label htmlFor="password">
               <FormattedMessage id="login.password" defaultMessage="Password" />
             </label>
@@ -44,12 +44,12 @@ function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder={intl.formatMessage({ id: 'login.placeholder.password', defaultMessage: 'Password' })}
+              title={intl.formatMessage({ id: 'login.error.passwordRequired', defaultMessage: 'Por favor, insira a palavra-passe.' })} // Mensagem personalizada
             />
-            {/* Botão Entrar */}
             <button type="submit">
               <FormattedMessage id="login.submit" defaultMessage="Entrar" />
             </button>
-            {/* Botão Registar */}
             <Link to="/registo">
               <button type="button">
                 <FormattedMessage id="login.register" defaultMessage="Registar" />
