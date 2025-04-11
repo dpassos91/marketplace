@@ -4,6 +4,7 @@ import './ProductCard.css';
 import { FormattedMessage } from 'react-intl';
 
 function ProductCard({ product }) {
+    console.log("Renderizar produto:", product);
     const navigate = useNavigate();
 
     return (

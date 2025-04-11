@@ -6,143 +6,196 @@ import useProductStore from '../../stores/productStore.js';
 import { useIntl } from 'react-intl';
 
 function EditProductForm({ onSave, onCancel }) {
-    const intl = useIntl();
-    const { product } = useProductStore();
-    const [categories, setCategories] = useState([]);
-    const [editedProduct, handleInputChange, setEditedProduct] = useFormInput(product);
+  const intl = useIntl();
+  const { product } = useProductStore();
+  const [categories, setCategories] = useState([]);
+  const [editedProduct, handleInputChange, setEditedProduct] = useFormInput(product);
 
-    useEffect(() => {
-        async function fetchCategories() {
-            try {
-                const data = await categoryAPI.getAllCategories();
-                setCategories(data);
-            } catch (error) {
-                console.error('Error loading categories:', error);
-            }
-        }
-        fetchCategories();
-    }, []);
-
-    const handleCategoryChange = (e) => {
-        const selectedCategory = categories.find(cat => cat.id === parseInt(e.target.value));
-        setEditedProduct(prev => ({
-            ...prev,
-            categoryId: parseInt(e.target.value),
-            categoryName: selectedCategory?.name || ''
-        }));
+  // Normaliza o status do produto inicial se necessário
+  useEffect(() => {
+    const normalizedProduct = {
+      ...product,
+      status: PRODUCT_STATES.fromStatus(product.status)?.status || product.status
     };
+    setEditedProduct(normalizedProduct);
+  }, [product]);
 
-    const handleStateChange = (e) => {
-        const statusText = e.target.value;
-        const state = PRODUCT_STATES.fromDescription(statusText);
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const data = await categoryAPI.getAllCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    }
+    fetchCategories();
+  }, []);
 
-        if (!state) {
-            console.error('Invalid product state:', statusText);
-            alert(intl.formatMessage({ id: 'editProductForm.invalidState', defaultMessage: 'Estado do produto inválido!' }));
-            return;
-        }
+  const handleInvalid = (e) => {
+    const errorId = `editProductForm.${e.target.name}.errorRequired`;
+    e.target.setCustomValidity(intl.formatMessage({ id: errorId }));
+  };
 
-        setEditedProduct(prev => ({
-            ...prev,
-            status: state.description,
-            estadoById: state.id        
-        }));
-    };
+  const handleChange = (e) => {
+    e.target.setCustomValidity('');
+    handleInputChange(e);
+  };
 
-    const handleSave = async () => {
-        console.log("Produto antes de salvar:", editedProduct);
-        try {
-            await onSave(editedProduct);
-            console.log('Produto salvo:', editedProduct);
-        } catch (error) {
-            console.error('Error saving product:', error);
-        }
-    };
-
-    return (
-        <div id="detalhes-produto-form">
-            <h2>
-                <input
-                    type="text"
-                    name="title"
-                    value={editedProduct.title}
-                    onChange={handleInputChange}
-                    placeholder={intl.formatMessage({ id: 'editProductForm.titlePlaceholder', defaultMessage: 'Digite o título do produto' })}
-                />
-            </h2>
-            <p>
-                <strong>{intl.formatMessage({ id: 'editProductForm.location', defaultMessage: 'Localização:' })}</strong>
-                <input
-                    type="text"
-                    name="location"
-                    value={editedProduct.location}
-                    onChange={handleInputChange}
-                    placeholder={intl.formatMessage({ id: 'editProductForm.locationPlaceholder', defaultMessage: 'Digite a localização do produto' })}
-                />
-            </p>
-            <p>
-                <strong>{intl.formatMessage({ id: 'editProductForm.category', defaultMessage: 'Categoria:' })}</strong>
-                <select
-                    name="categoryId"
-                    value={editedProduct.categoryId}
-                    onChange={handleCategoryChange}
-                >
-                    {categories.map(category => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
-            </p>
-            <p>
-                <strong>{intl.formatMessage({ id: 'editProductForm.price', defaultMessage: 'Preço:' })}</strong>
-                <input
-                    type="number"
-                    name="price"
-                    value={editedProduct.price}
-                    onChange={handleInputChange}
-                    placeholder={intl.formatMessage({ id: 'editProductForm.pricePlaceholder', defaultMessage: 'Digite o preço do produto' })}
-                />
-            </p>
-            <p><strong>{intl.formatMessage({ id: 'editProductForm.seller', defaultMessage: 'Publicado por:' })}</strong> {editedProduct.sellerUsername}</p>
-            <p>
-                <strong>{intl.formatMessage({ id: 'editProductForm.description', defaultMessage: 'Descrição:' })}</strong>
-                <textarea
-                    name="description"
-                    value={editedProduct.description}
-                    onChange={handleInputChange}
-                    placeholder={intl.formatMessage({ id: 'editProductForm.descriptionPlaceholder', defaultMessage: 'Digite a descrição do produto' })}
-                />
-            </p>
-            <p>
-                <strong>{intl.formatMessage({ id: 'editProductForm.status', defaultMessage: 'Estado:' })}</strong>
-                <select
-                    name="status"
-                    value={editedProduct.status}
-                    onChange={handleStateChange}
-                    disabled={editedProduct.status === PRODUCT_STATES.COMPRADO.description}
-                >
-                    {Object.values(PRODUCT_STATES)
-                        .filter(state => state.id !== PRODUCT_STATES.INATIVO.id)
-                        .map(state => (
-                            <option key={state.id} value={state.description}>
-                                {intl.formatMessage({ id: `editProductForm.state.${state.id}`, defaultMessage: state.description })}
-                            </option>
-                        ))}
-                </select>
-            </p>
-            <section className="detalhes-form-buttons">
-                <button type="button" onClick={handleSave}>
-                    {intl.formatMessage({ id: 'editProductForm.save', defaultMessage: 'Salvar' })} <i className="fa fa-save" aria-hidden="true"></i>
-                </button>
-                <button type="button" onClick={onCancel}>
-                    {intl.formatMessage({ id: 'editProductForm.cancel', defaultMessage: 'Cancelar' })} <i className="fa fa-times" aria-hidden="true"></i>
-                </button>
-            </section>
-        </div>
+  const handleCategoryChange = (e) => {
+    e.target.setCustomValidity('');
+    const selectedCategory = categories.find(
+      (cat) => cat.id === parseInt(e.target.value, 10)
     );
+    setEditedProduct(prev => ({
+      ...prev,
+      categoryId: parseInt(e.target.value, 10),
+      categoryName: selectedCategory?.name || ''
+    }));
+  };
+
+  const handleStateChange = (e) => {
+    e.target.setCustomValidity('');
+    const selectedStatus = e.target.value;
+    const state = PRODUCT_STATES.fromStatus(selectedStatus);
+
+    if (!state) {
+      alert(
+        intl.formatMessage({
+          id: 'editProductForm.invalidState',
+          defaultMessage: 'Estado do produto inválido!'
+        })
+      );
+      return;
+    }
+
+    setEditedProduct(prev => ({
+      ...prev,
+      status: state.status,
+      estadoById: state.id
+    }));
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      await onSave(editedProduct);
+      console.log('Produto salvo:', editedProduct);
+    } catch (error) {
+      console.error('Error saving product:', error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSave}>
+      <input
+        type="text"
+        name="title"
+        value={editedProduct.title}
+        onChange={handleChange}
+        onInvalid={handleInvalid}
+        placeholder={intl.formatMessage({
+          id: 'editProductForm.titlePlaceholder',
+          defaultMessage: 'Digite o título do produto'
+        })}
+        required
+      />
+      <textarea
+        name="description"
+        value={editedProduct.description}
+        onChange={handleChange}
+        onInvalid={handleInvalid}
+        placeholder={intl.formatMessage({
+          id: 'editProductForm.descriptionPlaceholder',
+          defaultMessage: 'Digite a descrição do produto'
+        })}
+        required
+      />
+      <select
+        name="categoryId"
+        value={editedProduct.categoryId}
+        onChange={handleCategoryChange}
+        onInvalid={handleInvalid}
+        required
+      >
+        <option value="">
+          {intl.formatMessage({
+            id: 'editProductForm.selectCategory',
+            defaultMessage: 'Selecione uma categoria'
+          })}
+        </option>
+        {categories.map(category => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </select>
+      <input
+        type="number"
+        name="price"
+        value={editedProduct.price}
+        onChange={handleChange}
+        onInvalid={handleInvalid}
+        placeholder={intl.formatMessage({
+          id: 'editProductForm.pricePlaceholder',
+          defaultMessage: 'Digite o preço do produto'
+        })}
+        required
+      />
+      <input
+        type="text"
+        name="location"
+        value={editedProduct.location}
+        onChange={handleChange}
+        onInvalid={handleInvalid}
+        placeholder={intl.formatMessage({
+          id: 'editProductForm.locationPlaceholder',
+          defaultMessage: 'Digite a localização do produto'
+        })}
+        required
+      />
+      <select
+        name="status"
+        value={editedProduct.status}
+        onChange={handleStateChange}
+        onInvalid={handleInvalid}
+        required
+        disabled={editedProduct.status === PRODUCT_STATES.COMPRADO.status}
+      >
+        {Object.values(PRODUCT_STATES)
+          .filter(state => 
+            typeof state === 'object' && 
+            state.id && 
+            state.id !== PRODUCT_STATES.INATIVO.id
+          )
+          .map(state => (
+            <option key={state.id} value={state.status}>
+              {intl.formatMessage({ 
+                id: state.translationKey, 
+                defaultMessage: state.defaultText 
+              })}
+            </option>
+          ))
+        }
+      </select>
+      <button type="submit">
+        {intl.formatMessage({
+          id: 'editProductForm.save',
+          defaultMessage: 'Salvar'
+        })}
+      </button>
+      <button type="button" onClick={onCancel}>
+        {intl.formatMessage({
+          id: 'editProductForm.cancel',
+          defaultMessage: 'Cancelar'
+        })}
+      </button>
+    </form>
+  );
 }
 
 export default EditProductForm;
+
+
 
 

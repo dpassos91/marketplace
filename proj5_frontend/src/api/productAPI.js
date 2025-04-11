@@ -24,7 +24,7 @@ const getAllActiveProducts = async () => {
   try {
     const products = await apiCall(API_ENDPOINTS.products.active);
     // Filtrar produtos para incluir somente aqueles no estado "Disponível"
-    return products.filter(product => product.status === PRODUCT_STATES.DISPONIVEL.description);
+    return products.filter(product => product.status === PRODUCT_STATES.DISPONIVEL.defaultText);
   } catch (error) {
     console.error('Failed to fetch active products:', error);
     return [];

@@ -4,6 +4,7 @@ import './ProductsCarousel.css';
 import { FormattedMessage } from 'react-intl';
 
 function ProductsCarousel({ products }) {
+  console.log("Produtos recebidos:", products);
   const carouselRef = useRef(null);
 
   const scrollCarousel = (direction) => {

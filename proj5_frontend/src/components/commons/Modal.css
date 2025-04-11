@@ -23,6 +23,7 @@
 .modal-content h2 {
     margin-bottom: 1rem;
     color: var(--black); /* Verde escuro */
+    font-size: 1.5rem;
 }
   
 .modal-content form {

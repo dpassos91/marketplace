@@ -1,63 +1,62 @@
 /**
- * Product state definitions that match the backend's ProductStateId enum
+ * Mapeamento de estados de produto que corresponde ao enum ProductStateId do backend
+ * Agora inclui mapeamento bidirecional status <-> ID
  */
 export const PRODUCT_STATES = {
   RASCUNHO: {
     id: 1,
-    description: 'Rascunho',
+    status: 'Rascunho', // Adicionado para mapeamento direto com a BD
+    translationKey: 'productStates.draft',
+    defaultText: 'Rascunho'
   },
   DISPONIVEL: {
     id: 2,
-    description: 'Disponível',
+    status: 'Disponível', // Valor exato como vem da BD
+    translationKey: 'productStates.available',
+    defaultText: 'Disponível'
   },
   RESERVADO: {
     id: 3,
-    description: 'Reservado',
+    status: 'Reservado',
+    translationKey: 'productStates.reserved',
+    defaultText: 'Reservado'
   },
   COMPRADO: {
     id: 4,
-    description: 'Comprado',
+    status: 'Comprado',
+    translationKey: 'productStates.purchased',
+    defaultText: 'Comprado'
   },
   INATIVO: {
     id: 5,
-    description: 'Inativo',
+    status: 'Inativo',
+    translationKey: 'productStates.inactive',
+    defaultText: 'Inativo'
   },
 
-  // Helper methods
-  fromId: function (id) {
-    for (const key in this) {
-      if (typeof this[key] === 'object' && this[key].id === id) {
-        return this[key];
-      }
-    }
-    return null;
+  // Métodos auxiliares melhorados
+  fromId: function(id) {
+    return Object.values(this).find(state => state.id === id) || null;
   },
 
-  fromDescription: function (description) {
-    if (!description) return null;
-
-    // Normalize the description by removing accents and uppercase
-    const normalizedDesc = description
+  fromStatus: function(status) { // Novo método essencial!
+    if (!status) return null;
+    
+    const normalizedStatus = status
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .toUpperCase();
 
-    for (const key in this) {
-      if (typeof this[key] === 'object') {
-        const stateDesc = this[key].description
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .toUpperCase();
-
-        if (stateDesc === normalizedDesc) {
-          return this[key];
-        }
-      }
-    }
-    return null;
+    return Object.values(this).find(state => 
+      state.status?.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase() === normalizedStatus
+    ) || null;
   },
 
-  isActive: function (stateId) {
+  isActive: function(stateId) {
     return stateId !== this.INATIVO.id;
-  },
+  }
 };
+
+

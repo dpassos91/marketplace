@@ -118,23 +118,32 @@
   "header.welcome": "Welcome, {name}!",
   "header.adminArea": "Admin Area",
 
-  "editProductForm.invalidState": "Invalid product state!",
+"editProductForm.title": "Title",
   "editProductForm.titlePlaceholder": "Enter the product title",
+  "editProductForm.title.errorRequired": "Please enter the product title.",
   "editProductForm.location": "Location:",
   "editProductForm.locationPlaceholder": "Enter the product location",
+  "editProductForm.location.errorRequired": "Please enter the product location.",
   "editProductForm.category": "Category:",
+  "editProductForm.selectCategory": "Select a category",
+  "editProductForm.categoryId.errorRequired": "Please select a category.",
   "editProductForm.price": "Price:",
   "editProductForm.pricePlaceholder": "Enter the product price",
+  "editProductForm.price.errorRequired": "Please enter the product price.",
   "editProductForm.seller": "Published by:",
   "editProductForm.description": "Description:",
   "editProductForm.descriptionPlaceholder": "Enter the product description",
+  "editProductForm.description.errorRequired": "Please enter the product description.",
   "editProductForm.status": "Status:",
+  "editProductForm.invalidState": "Invalid product state!",
   "editProductForm.save": "Save",
   "editProductForm.cancel": "Cancel",
-  "editProductForm.state.1": "Draft",
-  "editProductForm.state.2": "Available",
-  "editProductForm.state.3": "Reserved",
-  "editProductForm.state.4": "Purchased",
+
+  "productStates.draft": "Draft",
+  "productStates.available": "Available",
+  "productStates.reserved": "Reserved",
+  "productStates.purchased": "Purchased",
+  "productStates.inactive": "Inactive",
 
   "admin.editProduct.alert.missingFields": "Please fill in all fields correctly.",
   "admin.editProduct.alert.success": "Product updated successfully!",
@@ -176,6 +185,5 @@
   "productForm.button.processing": "Processing...",
   "productForm.button.addProduct": "Add product",
   "productForm.button.cancel": "Cancel"
-  
 
 }

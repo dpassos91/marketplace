@@ -39,6 +39,7 @@
   "aside.products": "Produtos",
   "aside.aboutUs": "Sobre Nós",
   "aside.description": "No Loop Market, promovemos a economia circular, reutilizando e reciclando recursos para minimizar o desperdício. Nossa plataforma conecta consumidores e empresas a produtos sustentáveis, prolongando o ciclo de vida dos materiais e reduzindo o impacto ambiental.",
+  "aside.callToAction": "Cada compra na Loop Market apoia um consumo mais consciente e ecológico. Junte-se a nós e contribua para um futuro mais verde e sustentável.",
 
   "homePage.recentProducts": "Últimos produtos adicionados",
   "homePage.categories": "Categorias disponíveis",
@@ -117,24 +118,33 @@
   "header.welcome": "Bem-vindo, {name}!",
   "header.adminArea": "Área de administração",
 
-  "editProductForm.invalidState": "Estado do produto inválido!",
+  "editProductForm.title": "Título",
   "editProductForm.titlePlaceholder": "Digite o título do produto",
+  "editProductForm.title.errorRequired": "Por favor, insira o título do produto.",
   "editProductForm.location": "Localização:",
   "editProductForm.locationPlaceholder": "Digite a localização do produto",
+  "editProductForm.location.errorRequired": "Por favor, insira a localização do produto.",
   "editProductForm.category": "Categoria:",
+  "editProductForm.selectCategory": "Selecione uma categoria",
+  "editProductForm.categoryId.errorRequired": "Por favor, selecione uma categoria.",
   "editProductForm.price": "Preço:",
   "editProductForm.pricePlaceholder": "Digite o preço do produto",
+  "editProductForm.price.errorRequired": "Por favor, insira o preço do produto.",
   "editProductForm.seller": "Publicado por:",
   "editProductForm.description": "Descrição:",
   "editProductForm.descriptionPlaceholder": "Digite a descrição do produto",
+  "editProductForm.description.errorRequired": "Por favor, insira a descrição do produto.",
   "editProductForm.status": "Estado:",
+  "editProductForm.invalidState": "Estado do produto inválido!",
   "editProductForm.save": "Salvar",
   "editProductForm.cancel": "Cancelar",
-  "editProductForm.state.1": "Rascunho",
-  "editProductForm.state.2": "Disponível",
-  "editProductForm.state.3": "Reservado",
-  "editProductForm.state.4": "Comprado",
-
+  
+  "productStates.draft": "Rascunho",
+  "productStates.available": "Disponível",
+  "productStates.reserved": "Reservado",
+  "productStates.purchased": "Comprado",
+  "productStates.inactive": "Inativo",
+  
   "admin.editProduct.alert.missingFields": "Preencha todos os campos corretamente.",
   "admin.editProduct.alert.success": "Produto atualizado com sucesso!",
   "admin.editProduct.alert.error": "Erro ao salvar as alterações. Tente novamente.",
@@ -175,6 +185,5 @@
   "productForm.button.processing": "Processando...",
   "productForm.button.addProduct": "Adicionar produto",
   "productForm.button.cancel": "Cancelar"
-  
 
 }

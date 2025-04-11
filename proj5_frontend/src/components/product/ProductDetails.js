@@ -22,7 +22,7 @@ function ProductDetails() {
     const canBuy = user && !isOwner;
 
     const canEditOrDelete = user && (
-        (isOwner && product.status !== PRODUCT_STATES.COMPRADO.description && product.status !== PRODUCT_STATES.INATIVO.description) ||
+        (isOwner && product.status !== PRODUCT_STATES.COMPRADO.defaultText && product.status !== PRODUCT_STATES.INATIVO.defaultText) ||
         user.isAdmin === true
     );
 
@@ -99,7 +99,7 @@ function ProductDetails() {
 
             const updatedProduct = {
                 ...product,
-                status: PRODUCT_STATES.COMPRADO.description
+                status: PRODUCT_STATES.COMPRADO.defaultText
             };
             setProduct(updatedProduct);
 
@@ -152,10 +152,17 @@ function ProductDetails() {
                 <p><strong><FormattedMessage id="productDetails.seller" defaultMessage="Publicado por:" /></strong> {product.sellerUsername}</p>
                 <p><strong><FormattedMessage id="productDetails.description" defaultMessage="Descrição:" /></strong> {product.description}</p>
                 <p><strong><FormattedMessage id="productDetails.date" defaultMessage="Data de publicação:" /></strong> {new Date(product.date).toLocaleDateString()}</p>
-                <p><strong><FormattedMessage id="productDetails.status" defaultMessage="Estado:" /></strong> {product.status}</p>
-
+                <p>
+      <strong>
+        <FormattedMessage id="productDetails.status" defaultMessage="Estado:" />
+      </strong>{' '}
+      <FormattedMessage
+        id={`productStates.${product.status}`}
+        defaultMessage={product.status} // Caso a tradução não exista, exibe o valor original
+      />
+    </p>
                 <Link
-                    to={user ? `/profile/${product.sellerId}` : '#'}
+                    to={user ? `/perfil/${product.sellerId}` : '#'}
                     className="seller-profile-link"
                     title={formatMessage({ id: 'productDetails.viewSellerProfile', defaultMessage: 'Ver perfil do vendedor' })}
                     onClick={(e) => {
