@@ -564,40 +564,10 @@ main {
 /* Admin - all users table */
 
 /* Garantir que a tabela é visível */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 18px;
-  text-align: center;
-}
-
-table th,
-table td {
-  padding: 12px;
-  border: 1px solid #ddd;
-}
-
-table th {
-  background-color: #f2f2f2;
-}
-
-#userCardsContainer {
-  width: 100%;
-  /* Garante que ocupa a largura total */
-  padding: 20px;
-  /* Adiciona algum espaço interno */
-  /* Outros estilos conforme necessário */
-}
 
 /* Botões tabela */
 /* Estilos para os botões na tabela de gestão de utilizadores */
 /* Estilos base para os botões da tabela */
-
-
-
-
-
 
 /* Estilos para os botões de paginação tabela */
 .pagination-button {
@@ -626,14 +596,6 @@ table th {
   background-color: var(--primary-400);
   /* Cor mais escura para o botão ativo */
   color: var(--white-100);
-}
-
-/* Adicione um container para centralizar os botões */
-#confirmationModal .modal-buttons {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  /* Adicione margem acima dos botões para separá-los do texto */
 }
 
 /* Admin - botão de acesso */

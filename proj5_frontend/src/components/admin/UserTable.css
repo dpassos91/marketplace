@@ -1,7 +1,13 @@
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 18px;
+  text-align: center;
+  }
+
+  table th {
+    background-color: #f2f2f2;
   }
   
   th, td {
@@ -69,6 +75,10 @@ table {
 
 .tabela-btn.btn-edit:hover {
   background-color: var(--secondary-300);
+}
+
+.tabela-btn.btn-success:hover {
+  background-color: var(--light-color);
 }
   
   /* Paginação */
