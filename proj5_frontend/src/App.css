@@ -593,58 +593,11 @@ table th {
 /* Botões tabela */
 /* Estilos para os botões na tabela de gestão de utilizadores */
 /* Estilos base para os botões da tabela */
-.tabela-btn {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 15px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  /* Adiciona a transição */
-  box-shadow: var(--box-shadow);
-  font-size: 0.9rem;
-  font-weight: bold;
-  margin: 2px;
-  /* Garante que os estilos base de btn-card sejam aplicados */
-  background-color: var(--white-100);
-  color: var(--primary-400);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.tabela-btn:hover {
-  transform: scale(1.05);
-  /* Aplica o efeito de "movimento para a frente" */
-}
 
-/* Estilos específicos dos botões (correspondendo aos estilos da Gestão de Produtos) */
-.tabela-btn.btn-danger {
-  background-color: var(--secondary-color);
-  color: var(--white-100);
-}
 
-.tabela-btn.btn-danger:hover {
-  background-color: var(--secondary-300);
-}
 
-.tabela-btn.btn-info {
-  background-color: var(--primary-color);
-  color: var(--white-100);
-}
 
-.tabela-btn.btn-info:hover {
-  background-color: var(--primary-300);
-}
-
-.tabela-btn.btn-edit {
-  background-color: var(--secondary-400);
-  color: var(--white-100);
-}
-
-.tabela-btn.btn-edit:hover {
-  background-color: var(--secondary-300);
-}
 
 /* Estilos para os botões de paginação tabela */
 .pagination-button {
@@ -675,122 +628,12 @@ table th {
   color: var(--white-100);
 }
 
-/* Modal de confirmação */
-#confirmationModal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  /* Adicionado para garantir que o modal cobre toda a tela */
-  overflow: auto;
-  /* Adicionado para garantir que o conteúdo role se for muito grande */
-}
-
-#confirmationModal>div {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  text-align: center;
-  /* Adicionado para centralizar o texto dentro do div */
-  width: 80%;
-  /* Ajuste a largura conforme necessário */
-  max-width: 500px;
-  /* Defina uma largura máxima para evitar que o modal fique muito grande */
-}
-
-#confirmationModal button {
-  padding: 10px 20px;
-  margin: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-  /* Adicionado para uma transição suave */
-}
-
-#confirmationModal #confirmButton {
-  background-color: var(--secondary-color);
-  color: var(--white-100);
-}
-
-#confirmationModal #cancelButton {
-  background-color: var(--primary-color);
-  color: var(--white-100);
-}
-
-#confirmationModal button:hover {
-  opacity: 0.8;
-  /* Reduz a opacidade no hover */
-}
-
-#confirmationModal>div {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  text-align: center;
-  /* Adicionado para centralizar o texto dentro do div */
-  width: 80%;
-  /* Ajuste a largura conforme necessário */
-  max-width: 500px;
-  /* Defina uma largura máxima para evitar que o modal fique muito grande */
-}
-
 /* Adicione um container para centralizar os botões */
 #confirmationModal .modal-buttons {
   display: flex;
   justify-content: center;
   margin-top: 20px;
   /* Adicione margem acima dos botões para separá-los do texto */
-}
-
-/* Estilos para os botões */
-#confirmationModal .modal-buttons button {
-  padding: 10px 20px;
-  margin: 0 10px;
-  /* Adicione margem horizontal entre os botões */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-  /* Adicionado para uma transição suave */
-}
-
-/* Cores específicas dos botões */
-#confirmationModal .modal-buttons #confirmButton {
-  background-color: var(--secondary-color);
-  color: var(--white-100);
-}
-
-#confirmationModal .modal-buttons #cancelButton {
-  background-color: var(--primary-color);
-  color: var(--white-100);
-}
-
-/* Estilo de hover para os botões */
-#confirmationModal .modal-buttons button:hover {
-  opacity: 0.8;
-  /* Reduz a opacidade no hover */
-}
-
-/* Admin - utilizador suspenso */
-.suspended-user {
-  text-decoration: line-through;
-  color: gray;
-  /* Opcional: Altera a cor do texto para cinza */
 }
 
 /* Admin - botão de acesso */
