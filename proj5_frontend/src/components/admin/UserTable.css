@@ -9,58 +9,18 @@ table {
     border: 1px solid #ddd;
     text-align: center;
   }
+
+  .table-actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
   
   /* Linha de utilizador suspenso */
-  .suspended-user {
-    background-color: #f9dcdc;
-    color: #a94442;
-  }
+
   
   /* Botões de ação na tabela */
-  .tabela-btn {
-    margin: 0 4px;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .btn-danger {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .btn-danger:hover {
-    background-color: #c82333;
-  }
-  
-  .btn-info {
-    background-color: #17a2b8;
-    color: white;
-  }
-  
-  .btn-info:hover {
-    background-color: #138496;
-  }
-  
-  .btn-success {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .btn-success:hover {
-    background-color: #218838;
-  }
-  
-  .btn-edit {
-    background-color: #6c757d;
-    color: white;
-  }
-  
-  .btn-edit:hover {
-    background-color: #5a6268;
-  }
+
   
   /* Paginação */
   .pagination {
@@ -80,9 +40,9 @@ table {
   }
   
   .pagination button.active {
-    background-color: #007bff;
+    background-color: var(--primary-400);
     color: #fff;
-    border-color: #007bff;
+    border: 1px solid var(--primary-400);
   }
   
   /* Estados especiais (vazio / erro) */
@@ -111,6 +71,10 @@ table {
     margin-top: 40px;
   }
   
+  .loading-users p {
+    margin-top: 10px;
+  }
+
   .loading-users .spinner-icon {
     width: 50px;
     height: 50px;

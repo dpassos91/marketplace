@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import useFetchUsers from '../../hooks/useFetchUsers';
+import useTableData from '../../hooks/useTableData';
 import { userAPI } from '../../api/userAPI';
 import { FormattedMessage, useIntl } from 'react-intl';
 import SpinnerLeaf from '../commons/SpinnerLeaf';
@@ -7,7 +7,6 @@ import './UserTable.css';
 
 const USERS_PER_PAGE = 10;
 
-// UserRow mantém-se igual
 const UserRow = React.memo(({ user, onRedirect, onAction }) => {
   const active = Boolean(user.active);
 
@@ -16,7 +15,7 @@ const UserRow = React.memo(({ user, onRedirect, onAction }) => {
       <td>{user.username}</td>
       <td>{user.email}</td>
       <td>
-        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+        <div className="table-actions">
           <button className="btn-card tabela-btn btn-danger" onClick={() => onRedirect(user.id)}>
             <FormattedMessage id="admin.userTable.profile" defaultMessage="Consultar perfil" />
           </button>
@@ -40,7 +39,16 @@ const UserRow = React.memo(({ user, onRedirect, onAction }) => {
 
 const UserTable = () => {
   const intl = useIntl();
-  const { users, loading, error, refetch } = useFetchUsers();
+
+  const {
+    data: users,
+    loading,
+    error,
+    refetch,
+    removeItem, // disponível se quiseres usar para delete direto
+    setData     // disponível para atualizações manuais
+  } = useTableData(userAPI.getTotalUsers);
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = useMemo(() => Math.ceil((users?.length || 0) / USERS_PER_PAGE), [users]);
@@ -48,8 +56,7 @@ const UserTable = () => {
   const getUsersForPage = useCallback((page) => {
     if (!users) return [];
     const start = (page - 1) * USERS_PER_PAGE;
-    const end = start + USERS_PER_PAGE;
-    return users.slice(start, end);
+    return users.slice(start, start + USERS_PER_PAGE);
   }, [users]);
 
   const handlePageChange = useCallback((newPage) => {
@@ -73,7 +80,7 @@ const UserTable = () => {
         else if (action === 'delete') await userAPI.deleteUser(userId);
 
         alert(intl.formatMessage({ id: `admin.alert.success.${action}` }, { userId }));
-        refetch();
+        refetch(); // ou usa removeItem(userId) se preferires performance
       } catch (err) {
         console.error(err);
         alert(intl.formatMessage({ id: `admin.alert.error.${action}` }));
@@ -81,23 +88,21 @@ const UserTable = () => {
     }
   }, [refetch, intl]);
 
-  // Loading state
   if (loading) {
     return (
       <div className="loading-users">
         <SpinnerLeaf />
-        <div style={{ marginTop: '10px' }}>
+        <div>
           <FormattedMessage id="admin.userTable.loading" defaultMessage="A carregar utilizadores..." />
         </div>
       </div>
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="error-users">
-        <img src="/img/erro-utilizadores.svg" alt="Erro ao carregar utilizadores" />
+        <img src="/img/erro-utilizadores.png" alt="Erro ao carregar utilizadores" />
         <p>
           <FormattedMessage id="admin.userTable.error" defaultMessage="Erro ao carregar utilizadores." />
         </p>
@@ -105,11 +110,10 @@ const UserTable = () => {
     );
   }
 
-  // Empty state
   if (!users || users.length === 0) {
     return (
       <div className="empty-users">
-        <img src="/img/sem-utilizadores.svg" alt="Nenhum utilizador encontrado" />
+        <img src="/img/sem-utilizadores.png" alt="Nenhum utilizador encontrado" />
         <p>
           <FormattedMessage id="admin.userTable.empty" defaultMessage="Nenhum utilizador encontrado." />
         </p>
@@ -117,7 +121,6 @@ const UserTable = () => {
     );
   }
 
-  // Main content
   return (
     <div>
       <table>
@@ -156,6 +159,7 @@ const UserTable = () => {
 };
 
 export default UserTable;
+
 
 
 
