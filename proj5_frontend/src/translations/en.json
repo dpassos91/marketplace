@@ -168,6 +168,10 @@
   "admin.editProduct.button.cancel": "Cancel",
   "admin.editProduct.button.save": "Save",
 
+  "admin.welcomeSection.title": "Welcome to the Administration Panel!",
+  "admin.welcomeSection.instruction": "Select an option from the menu on the left to get started.",
+  "admin.welcomeSection.description": "Here you can manage evaluations, products, and system users.",
+
   "addProduct.error.loginRequired": "Please log in before adding a product!",
   "addProduct.success": "Product successfully created!",
   "addProduct.error.creatingProduct": "Error creating product. Please try again.",
