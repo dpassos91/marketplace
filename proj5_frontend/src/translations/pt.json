@@ -168,6 +168,12 @@
   "admin.editProduct.button.cancel": "Cancelar",
   "admin.editProduct.button.save": "Salvar",
 
+  "admin.sidebar.title": "Painel de Administração",
+  "admin.sidebar.dashboard": "Dashboard",
+  "admin.sidebar.avaliacoes": "Gestão de Avaliações",
+  "admin.sidebar.produtos": "Gestão de Produtos",
+  "admin.sidebar.utilizadores": "Gestão de Utilizadores",
+
   "admin.welcomeSection.title": "Bem-vindo ao Painel de Administração!",
   "admin.welcomeSection.instruction": "Selecione uma opção no menu à esquerda para começar.",
   "admin.welcomeSection.description": "Aqui poderá gerir avaliações, produtos e utilizadores do sistema.",

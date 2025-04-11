@@ -168,6 +168,12 @@
   "admin.editProduct.button.cancel": "Cancel",
   "admin.editProduct.button.save": "Save",
 
+  "admin.sidebar.title": "Administration Panel",
+  "admin.sidebar.dashboard": "Dashboard",
+  "admin.sidebar.avaliacoes": "Evaluation Management",
+  "admin.sidebar.produtos": "Product Management",
+  "admin.sidebar.utilizadores": "User Management",
+
   "admin.welcomeSection.title": "Welcome to the Administration Panel!",
   "admin.welcomeSection.instruction": "Select an option from the menu on the left to get started.",
   "admin.welcomeSection.description": "Here you can manage evaluations, products, and system users.",
