@@ -1,4 +1,3 @@
-// components/SpinnerLeaf.js
 import React from 'react';
 import './SpinnerLeaf.css'; // Onde está o CSS acima
 

@@ -1,44 +1,36 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import useFetchUsers from '../../hooks/useFetchUsers';
 import { userAPI } from '../../api/userAPI';
+import { FormattedMessage, useIntl } from 'react-intl';
+import SpinnerLeaf from '../commons/SpinnerLeaf';
+import './UserTable.css';
 
 const USERS_PER_PAGE = 10;
 
+// UserRow mantém-se igual
 const UserRow = React.memo(({ user, onRedirect, onAction }) => {
   const active = Boolean(user.active);
 
   return (
     <tr className={active ? '' : 'suspended-user'}>
-      <td style={{ textAlign: 'center' }}>{user.username}</td>
-      <td style={{ textAlign: 'center' }}>{user.email}</td>
-      <td style={{ textAlign: 'center' }}>
+      <td>{user.username}</td>
+      <td>{user.email}</td>
+      <td>
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-          <button
-            className="btn-card tabela-btn btn-danger"
-            onClick={() => onRedirect(user.id)}
-          >
-            Consultar perfil
+          <button className="btn-card tabela-btn btn-danger" onClick={() => onRedirect(user.id)}>
+            <FormattedMessage id="admin.userTable.profile" defaultMessage="Consultar perfil" />
           </button>
           {active ? (
-            <button
-              className="btn-card tabela-btn btn-info"
-              onClick={() => onAction(user.id, 'suspend')}
-            >
-              Suspender
+            <button className="btn-card tabela-btn btn-info" onClick={() => onAction(user.id, 'suspend')}>
+              <FormattedMessage id="admin.userTable.suspend" defaultMessage="Suspender" />
             </button>
           ) : (
-            <button
-              className="btn-card tabela-btn btn-success"
-              onClick={() => onAction(user.id, 'reactivate')}
-            >
-              Reativar
+            <button className="btn-card tabela-btn btn-success" onClick={() => onAction(user.id, 'reactivate')}>
+              <FormattedMessage id="admin.userTable.reactivate" defaultMessage="Reativar" />
             </button>
           )}
-          <button
-            className="btn-card tabela-btn btn-edit"
-            onClick={() => onAction(user.id, 'delete')}
-          >
-            Eliminar
+          <button className="btn-card tabela-btn btn-edit" onClick={() => onAction(user.id, 'delete')}>
+            <FormattedMessage id="admin.userTable.delete" defaultMessage="Eliminar" />
           </button>
         </div>
       </td>
@@ -47,6 +39,7 @@ const UserRow = React.memo(({ user, onRedirect, onAction }) => {
 });
 
 const UserTable = () => {
+  const intl = useIntl();
   const { users, loading, error, refetch } = useFetchUsers();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -68,59 +61,71 @@ const UserTable = () => {
   }, []);
 
   const handleAction = useCallback(async (userId, action) => {
-    const confirmationMessages = {
-      suspend: `Tem certeza de que deseja suspender o utilizador com ID ${userId}?`,
-      reactivate: `Tem certeza de que deseja reativar o utilizador com ID ${userId}?`,
-      delete: `Tem certeza de que deseja excluir o utilizador com ID ${userId}?`,
-    };
+    const confirmationMessage = intl.formatMessage(
+      { id: `admin.window.confirm.${action}` },
+      { userId }
+    );
 
-    if (window.confirm(confirmationMessages[action])) {
+    if (window.confirm(confirmationMessage)) {
       try {
-        let apiResponse = null;
-        if (action === 'suspend') {
-          apiResponse = await userAPI.suspendUser(userId);
-        } else if (action === 'reactivate') {
-          apiResponse = await userAPI.reactivateUser(userId);
-        } else if (action === 'delete') {
-          apiResponse = await userAPI.deleteUser(userId);
-        }
+        if (action === 'suspend') await userAPI.suspendUser(userId);
+        else if (action === 'reactivate') await userAPI.reactivateUser(userId);
+        else if (action === 'delete') await userAPI.deleteUser(userId);
 
-        const successMessages = {
-          suspend: `O utilizador ${userId} foi suspenso com sucesso.`,
-          reactivate: `O utilizador ${userId} foi reativado com sucesso.`,
-          delete: `O utilizador ${userId} foi eliminado permanentemente.`,
-        };
-
-        alert(successMessages[action]);
-
-        refetch(); // Atualiza a lista de usuários
+        alert(intl.formatMessage({ id: `admin.alert.success.${action}` }, { userId }));
+        refetch();
       } catch (err) {
         console.error(err);
-        alert(`Erro ao realizar a ação: ${action}`);
+        alert(intl.formatMessage({ id: `admin.alert.error.${action}` }));
       }
     }
-  }, [refetch]);
+  }, [refetch, intl]);
 
+  // Loading state
   if (loading) {
-    return <div>A carregar utilizadores...</div>;
+    return (
+      <div className="loading-users">
+        <SpinnerLeaf />
+        <div style={{ marginTop: '10px' }}>
+          <FormattedMessage id="admin.userTable.loading" defaultMessage="A carregar utilizadores..." />
+        </div>
+      </div>
+    );
   }
 
+  // Error state
   if (error) {
-    return <div>Erro: {error}</div>;
+    return (
+      <div className="error-users">
+        <img src="/img/erro-utilizadores.svg" alt="Erro ao carregar utilizadores" />
+        <p>
+          <FormattedMessage id="admin.userTable.error" defaultMessage="Erro ao carregar utilizadores." />
+        </p>
+      </div>
+    );
   }
 
+  // Empty state
   if (!users || users.length === 0) {
-    return <div>Nenhum usuário encontrado.</div>;
+    return (
+      <div className="empty-users">
+        <img src="/img/sem-utilizadores.svg" alt="Nenhum utilizador encontrado" />
+        <p>
+          <FormattedMessage id="admin.userTable.empty" defaultMessage="Nenhum utilizador encontrado." />
+        </p>
+      </div>
+    );
   }
 
+  // Main content
   return (
     <div>
       <table>
         <thead>
           <tr>
-            <th style={{ textAlign: 'center' }}>Username</th>
-            <th style={{ textAlign: 'center' }}>Email</th>
-            <th style={{ textAlign: 'center' }}>Ações</th>
+            <th><FormattedMessage id="admin.userTable.username" defaultMessage="Username" /></th>
+            <th><FormattedMessage id="admin.userTable.email" defaultMessage="Email" /></th>
+            <th><FormattedMessage id="admin.userTable.actions" defaultMessage="Ações" /></th>
           </tr>
         </thead>
         <tbody>
@@ -135,19 +140,11 @@ const UserTable = () => {
         </tbody>
       </table>
 
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+      <div className="pagination">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button
             key={page}
-            style={{
-              margin: '0 5px',
-              padding: '5px 10px',
-              backgroundColor: page === currentPage ? '#007bff' : '#f0f0f0',
-              color: page === currentPage ? '#fff' : '#000',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
+            className={page === currentPage ? 'active' : ''}
             onClick={() => handlePageChange(page)}
           >
             {page}

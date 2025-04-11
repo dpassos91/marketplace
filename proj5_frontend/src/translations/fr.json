@@ -145,6 +145,30 @@
   "productStates.purchased": "Acheté",
   "productStates.inactive": "Inactif",
 
+  "admin.userTable.profile": "Consulter le profil",
+  "admin.userTable.suspend": "Suspendre",
+  "admin.userTable.reactivate": "Réactiver",
+  "admin.userTable.delete": "Supprimer",
+  "admin.userTable.username": "Nom d'utilisateur",
+  "admin.userTable.email": "Email",
+  "admin.userTable.actions": "Actions",
+  "admin.userTable.loading": "Chargement des utilisateurs...",
+  "admin.userTable.error": "Erreur lors du chargement des utilisateurs.",
+  "admin.userTable.empty": "Aucun utilisateur trouvé.",
+
+  "admin.window.confirm.suspend": "Êtes-vous sûr de vouloir suspendre l'utilisateur avec l'ID {userId} ?",
+  "admin.window.confirm.reactivate": "Êtes-vous sûr de vouloir réactiver l'utilisateur avec l'ID {userId} ?",
+  "admin.window.confirm.delete": "Êtes-vous sûr de vouloir supprimer l'utilisateur avec l'ID {userId} ?",
+
+  "admin.alert.success.suspend": "L'utilisateur {userId} a été suspendu avec succès.",
+  "admin.alert.success.reactivate": "L'utilisateur {userId} a été réactivé avec succès.",
+  "admin.alert.success.delete": "L'utilisateur {userId} a été supprimé définitivement.",
+
+  "admin.alert.error.suspend": "Erreur lors de la suspension de l'utilisateur.",
+  "admin.alert.error.reactivate": "Erreur lors de la réactivation de l'utilisateur.",
+  "admin.alert.error.delete": "Erreur lors de la suppression de l'utilisateur.",
+
+
   "admin.editProduct.alert.missingFields": "Veuillez remplir correctement tous les champs.",
   "admin.editProduct.alert.success": "Produit mis à jour avec succès !",
   "admin.editProduct.alert.error": "Erreur lors de l'enregistrement des modifications. Veuillez réessayer.",

@@ -144,6 +144,30 @@
   "productStates.reserved": "Reservado",
   "productStates.purchased": "Comprado",
   "productStates.inactive": "Inativo",
+
+  "admin.userTable.profile": "Consultar perfil",
+  "admin.userTable.suspend": "Suspender",
+  "admin.userTable.reactivate": "Reativar",
+  "admin.userTable.delete": "Eliminar",
+  "admin.userTable.username": "Username",
+  "admin.userTable.email": "Email",
+  "admin.userTable.actions": "Ações",
+  "admin.userTable.loading": "A carregar utilizadores...",
+  "admin.userTable.error": "Erro ao carregar utilizadores.",
+  "admin.userTable.empty": "Nenhum utilizador encontrado.",
+
+  "admin.window.confirm.suspend": "Tem certeza de que deseja suspender o utilizador com ID {userId}?",
+  "admin.window.confirm.reactivate": "Tem certeza de que deseja reativar o utilizador com ID {userId}?",
+  "admin.window.confirm.delete": "Tem certeza de que deseja excluir o utilizador com ID {userId}?",
+
+  "admin.alert.success.suspend": "O utilizador {userId} foi suspenso com sucesso.",
+  "admin.alert.success.reactivate": "O utilizador {userId} foi reativado com sucesso.",
+  "admin.alert.success.delete": "O utilizador {userId} foi eliminado permanentemente.",
+
+  "admin.alert.error.suspend": "Erro ao tentar suspender o utilizador.",
+  "admin.alert.error.reactivate": "Erro ao tentar reativar o utilizador.",
+  "admin.alert.error.delete": "Erro ao tentar eliminar o utilizador.",
+
   
   "admin.editProduct.alert.missingFields": "Preencha todos os campos corretamente.",
   "admin.editProduct.alert.success": "Produto atualizado com sucesso!",
