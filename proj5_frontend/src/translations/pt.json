@@ -52,6 +52,12 @@
   "admin.evaluationTable.ratingInput": "Nota:",
   "admin.evaluationTable.title": "Título:",
   "admin.modal.editEvaluation": "Editar Avaliação",
+  "admin.products.title": "Gestão de Produtos",
+  "admin.products.addCategory": "Adicionar categoria",
+  "admin.products.filterByCategory": "Filtrar por categoria",
+  "admin.products.filterBySeller": "Filtrar por vendedor",
+  "admin.products.listInactive": "Listar produtos inativos",
+  "admin.products.showModified": "Mostrar produtos alterados",
   "admin.sidebar.avaliacoes": "Gestão de Avaliações",
   "admin.sidebar.dashboard": "Dashboard",
   "admin.sidebar.produtos": "Gestão de Produtos",
@@ -235,7 +241,7 @@
   "registerplaceholder.phone": "--- --- ---",
   "registerplaceholder.picture": "Cole o link da imagem aqui",
   "registerplaceholder.username": "Escolha o seu username",
-  
+
   "userProfile.alert.updateError": "Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
   "userProfile.alert.updateSuccess": "Dados atualizados com sucesso!",
   "userProfile.loading": "A carregar informações do utilizador...",

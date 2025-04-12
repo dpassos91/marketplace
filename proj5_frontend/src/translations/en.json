@@ -255,6 +255,13 @@
   "evaluationForm.error.title": "The title field is required.",
   "evaluationForm.error.comment": "The comment field is required.",
   "evaluationForm.error.rating.required": "The rating field is required.",
-  "evaluationForm.error.rating.invalid": "The rating must be a number between 1 and 5."
+  "evaluationForm.error.rating.invalid": "The rating must be a number between 1 and 5.",
+
+  "admin.products.title": "Product Management",
+  "admin.products.addCategory": "Add Category",
+  "admin.products.filterByCategory": "Filter by Category",
+  "admin.products.filterBySeller": "Filter by Seller",
+  "admin.products.listInactive": "List Inactive Products",
+  "admin.products.showModified": "Show Modified Products"
 
 }

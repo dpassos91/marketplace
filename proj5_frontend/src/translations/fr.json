@@ -255,6 +255,13 @@
   "evaluationForm.error.title": "Le champ titre est obligatoire.",
   "evaluationForm.error.comment": "Le champ commentaire est obligatoire.",
   "evaluationForm.error.rating.required": "Le champ note est obligatoire.",
-  "evaluationForm.error.rating.invalid": "La note doit être un nombre entre 1 et 5."
+  "evaluationForm.error.rating.invalid": "La note doit être un nombre entre 1 et 5.",
+
+  "admin.products.title": "Gestion des Produits",
+  "admin.products.addCategory": "Ajouter une catégorie",
+  "admin.products.filterByCategory": "Filtrer par catégorie",
+  "admin.products.filterBySeller": "Filtrer par vendeur",
+  "admin.products.listInactive": "Lister les produits inactifs",
+  "admin.products.showModified": "Afficher les produits modifiés"
 }
   
