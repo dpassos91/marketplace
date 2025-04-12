@@ -145,6 +145,31 @@
   "productStates.purchased": "Purchased",
   "productStates.inactive": "Inactive",
 
+  "admin.evaluationTable.evaluator": "Evaluator",
+  "admin.evaluationTable.evaluated": "Evaluated",
+  "admin.evaluationTable.date": "Date",
+  "admin.evaluationTable.rating": "Rating",
+  "admin.evaluationTable.actions": "Actions",
+  "admin.evaluationTable.edit": "Edit",
+  "admin.evaluationTable.delete": "Delete",
+  "admin.evaluationTable.loading": "Loading evaluations...",
+  "admin.evaluationTable.title": "Title:",
+  "admin.evaluationTable.comment": "Comment:",
+  "admin.evaluationTable.ratingInput": "Rating:",
+
+  "admin.alert.success.updateEvaluation": "Evaluation updated successfully!",
+  "admin.alert.success.deleteEvaluation": "Evaluation deleted successfully!",
+  "admin.alert.error.loadEvaluations": "Error loading evaluations",
+  "admin.alert.error.updateEvaluation": "Error saving evaluation",
+  "admin.alert.error.deleteEvaluation": "Error deleting evaluation",
+  "admin.alert.error.getEvaluation": "Error retrieving evaluation for editing",
+
+  "admin.window.confirm.deleteEvaluation": "Are you sure you want to delete this evaluation?",
+  "admin.modal.editEvaluation": "Edit Evaluation",
+
+  "admin.common.cancel": "Cancel",
+  "admin.common.save": "Save",
+
   "admin.userTable.profile": "View Profile",
   "admin.userTable.suspend": "Suspend",
   "admin.userTable.reactivate": "Reactivate",
@@ -217,6 +242,19 @@
   "productForm.placeholder.location": "Location",
   "productForm.button.processing": "Processing...",
   "productForm.button.addProduct": "Add product",
-  "productForm.button.cancel": "Cancel"
+  "productForm.button.cancel": "Cancel",
+
+  "evaluationForm.label.title": "Title",
+  "evaluationForm.label.comment": "Comment",
+  "evaluationForm.label.rating": "Rating (1 to 5)",
+
+  "evaluationForm.placeholder.title": "Enter the title",
+  "evaluationForm.placeholder.comment": "Write your comment",
+  "evaluationForm.placeholder.rating": "Rating between 1 and 5",
+
+  "evaluationForm.error.title": "The title field is required.",
+  "evaluationForm.error.comment": "The comment field is required.",
+  "evaluationForm.error.rating.required": "The rating field is required.",
+  "evaluationForm.error.rating.invalid": "The rating must be a number between 1 and 5."
 
 }

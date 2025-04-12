@@ -112,7 +112,7 @@
   "profileInfo.password": "Password:",
   "profileInfo.confirmPassword": "Confirme a Password:",
   "profileInfo.edit": "Editar Perfil",
-  "profileInfo.save": "Salvar Alterações",
+  "profileInfo.save": "Guardar Alterações",
   "profileInfo.cancel": "Cancelar",
 
   "header.welcome": "Bem-vindo, {name}!",
@@ -136,7 +136,7 @@
   "editProductForm.description.errorRequired": "Por favor, insira a descrição do produto.",
   "editProductForm.status": "Estado:",
   "editProductForm.invalidState": "Estado do produto inválido!",
-  "editProductForm.save": "Salvar",
+  "editProductForm.save": "Guardar",
   "editProductForm.cancel": "Cancelar",
   
   "productStates.draft": "Rascunho",
@@ -144,6 +144,31 @@
   "productStates.reserved": "Reservado",
   "productStates.purchased": "Comprado",
   "productStates.inactive": "Inativo",
+
+  "admin.evaluationTable.evaluator": "Avaliador",
+  "admin.evaluationTable.evaluated": "Avaliado",
+  "admin.evaluationTable.date": "Data",
+  "admin.evaluationTable.rating": "Nota",
+  "admin.evaluationTable.actions": "Ações",
+  "admin.evaluationTable.edit": "Editar",
+  "admin.evaluationTable.delete": "Eliminar",
+  "admin.evaluationTable.loading": "A carregar avaliações...",
+  "admin.evaluationTable.title": "Título:",
+  "admin.evaluationTable.comment": "Comentário:",
+  "admin.evaluationTable.ratingInput": "Nota:",
+
+  "admin.alert.success.updateEvaluation": "Avaliação atualizada com sucesso!",
+  "admin.alert.success.deleteEvaluation": "Avaliação eliminada com sucesso!",
+  "admin.alert.error.loadEvaluations": "Erro ao carregar as avaliações",
+  "admin.alert.error.updateEvaluation": "Erro ao guardar a avaliação",
+  "admin.alert.error.deleteEvaluation": "Erro ao excluir a avaliação",
+  "admin.alert.error.getEvaluation": "Erro ao buscar avaliação para editar",
+
+  "admin.window.confirm.deleteEvaluation": "Tem certeza de que deseja eliminar esta avaliação?",
+  "admin.modal.editEvaluation": "Editar Avaliação",
+
+  "admin.common.cancel": "Cancelar",
+  "admin.common.save": "Guardar",
 
   "admin.userTable.profile": "Consultar perfil",
   "admin.userTable.suspend": "Suspender",
@@ -171,7 +196,7 @@
   
   "admin.editProduct.alert.missingFields": "Preencha todos os campos corretamente.",
   "admin.editProduct.alert.success": "Produto atualizado com sucesso!",
-  "admin.editProduct.alert.error": "Erro ao salvar as alterações. Tente novamente.",
+  "admin.editProduct.alert.error": "Erro ao guardar as alterações. Tente novamente.",
   "admin.editProduct.title": "Editar Produto",
   "admin.editProduct.field.title": "Título do Produto:",
   "admin.editProduct.field.price": "Preço (€):",
@@ -190,7 +215,7 @@
   "admin.editProduct.status.reserved": "Reservado",
   "admin.editProduct.status.purchased": "Comprado",
   "admin.editProduct.button.cancel": "Cancelar",
-  "admin.editProduct.button.save": "Salvar",
+  "admin.editProduct.button.save": "Guardar",
 
   "admin.sidebar.title": "Painel de Administração",
   "admin.sidebar.dashboard": "Dashboard",
@@ -218,6 +243,19 @@
   "productForm.placeholder.location": "Localização",
   "productForm.button.processing": "Processando...",
   "productForm.button.addProduct": "Adicionar produto",
-  "productForm.button.cancel": "Cancelar"
+  "productForm.button.cancel": "Cancelar",
+
+  "evaluationForm.label.title": "Título",
+  "evaluationForm.label.comment": "Comentário",
+  "evaluationForm.label.rating": "Nota (1 a 5)",
+
+  "evaluationForm.placeholder.title": "Insira o título",
+  "evaluationForm.placeholder.comment": "Escreva o seu comentário",
+  "evaluationForm.placeholder.rating": "Nota entre 1 e 5",
+
+  "evaluationForm.error.title": "O campo título é obrigatório.",
+  "evaluationForm.error.comment": "O campo comentário é obrigatório.",
+  "evaluationForm.error.rating.required": "O campo nota é obrigatório.",
+  "evaluationForm.error.rating.invalid": "A nota deve ser um número entre 1 e 5."
 
 }

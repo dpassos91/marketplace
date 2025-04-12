@@ -145,6 +145,31 @@
   "productStates.purchased": "Acheté",
   "productStates.inactive": "Inactif",
 
+  "admin.evaluationTable.evaluator": "Évaluateur",
+  "admin.evaluationTable.evaluated": "Évalué",
+  "admin.evaluationTable.date": "Date",
+  "admin.evaluationTable.rating": "Note",
+  "admin.evaluationTable.actions": "Actions",
+  "admin.evaluationTable.edit": "Éditer",
+  "admin.evaluationTable.delete": "Supprimer",
+  "admin.evaluationTable.loading": "Chargement des évaluations...",
+  "admin.evaluationTable.title": "Titre :",
+  "admin.evaluationTable.comment": "Commentaire :",
+  "admin.evaluationTable.ratingInput": "Note :",
+
+  "admin.alert.success.updateEvaluation": "Évaluation mise à jour avec succès !",
+  "admin.alert.success.deleteEvaluation": "Évaluation supprimée avec succès !",
+  "admin.alert.error.loadEvaluations": "Erreur lors du chargement des évaluations",
+  "admin.alert.error.updateEvaluation": "Erreur lors de l'enregistrement de l'évaluation",
+  "admin.alert.error.deleteEvaluation": "Erreur lors de la suppression de l'évaluation",
+  "admin.alert.error.getEvaluation": "Erreur lors de la récupération de l'évaluation pour édition",
+
+  "admin.window.confirm.deleteEvaluation": "Êtes-vous sûr de vouloir supprimer cette évaluation ?",
+  "admin.modal.editEvaluation": "Modifier l'évaluation",
+
+  "admin.common.cancel": "Annuler",
+  "admin.common.save": "Enregistrer",
+
   "admin.userTable.profile": "Consulter le profil",
   "admin.userTable.suspend": "Suspendre",
   "admin.userTable.reactivate": "Réactiver",
@@ -167,7 +192,6 @@
   "admin.alert.error.suspend": "Erreur lors de la suspension de l'utilisateur.",
   "admin.alert.error.reactivate": "Erreur lors de la réactivation de l'utilisateur.",
   "admin.alert.error.delete": "Erreur lors de la suppression de l'utilisateur.",
-
 
   "admin.editProduct.alert.missingFields": "Veuillez remplir correctement tous les champs.",
   "admin.editProduct.alert.success": "Produit mis à jour avec succès !",
@@ -218,6 +242,19 @@
   "productForm.placeholder.location": "Emplacement",
   "productForm.button.processing": "Traitement...",
   "productForm.button.addProduct": "Ajouter le produit",
-  "productForm.button.cancel": "Annuler"
+  "productForm.button.cancel": "Annuler",
+
+  "evaluationForm.label.title": "Titre",
+  "evaluationForm.label.comment": "Commentaire",
+  "evaluationForm.label.rating": "Note (1 à 5)",
+
+  "evaluationForm.placeholder.title": "Saisissez le titre",
+  "evaluationForm.placeholder.comment": "Écrivez votre commentaire",
+  "evaluationForm.placeholder.rating": "Note entre 1 et 5",
+
+  "evaluationForm.error.title": "Le champ titre est obligatoire.",
+  "evaluationForm.error.comment": "Le champ commentaire est obligatoire.",
+  "evaluationForm.error.rating.required": "Le champ note est obligatoire.",
+  "evaluationForm.error.rating.invalid": "La note doit être un nombre entre 1 et 5."
 }
   

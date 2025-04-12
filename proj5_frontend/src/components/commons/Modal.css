@@ -76,3 +76,32 @@
 .modal-content button[type="button"]:hover {
     background-color: var(--secondary-400, #56303a); /* Vinho escuro */
 }
+
+.form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--primary-100, #d2deca);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: var(--white, #ffffff);
+  }
+  
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
