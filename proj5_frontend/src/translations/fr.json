@@ -262,6 +262,13 @@
   "admin.products.filterByCategory": "Filtrer par catégorie",
   "admin.products.filterBySeller": "Filtrer par vendeur",
   "admin.products.listInactive": "Lister les produits inactifs",
-  "admin.products.showModified": "Afficher les produits modifiés"
+  "admin.products.showModified": "Afficher les produits modifiés",
+
+  "admin.addCategory.title": "Ajouter une nouvelle catégorie",
+  "admin.addCategory.placeholder.name": "Nom de la catégorie",
+  "admin.addCategory.error.required": "Veuillez entrer un nom pour la catégorie.",
+  "admin.addCategory.success": "Nouvelle catégorie ajoutée avec succès !",
+  "admin.addCategory.error.generic": "Erreur lors de l'ajout de la catégorie.",
+  "admin.common.add": "Ajouter"
 }
   

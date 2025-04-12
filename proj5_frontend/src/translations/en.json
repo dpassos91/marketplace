@@ -262,6 +262,13 @@
   "admin.products.filterByCategory": "Filter by Category",
   "admin.products.filterBySeller": "Filter by Seller",
   "admin.products.listInactive": "List Inactive Products",
-  "admin.products.showModified": "Show Modified Products"
+  "admin.products.showModified": "Show Modified Products",
+
+  "admin.addCategory.title": "Add New Category",
+  "admin.addCategory.placeholder.name": "Category name",
+  "admin.addCategory.error.required": "Please enter a name for the category.",
+  "admin.addCategory.success": "New category added successfully!",
+  "admin.addCategory.error.generic": "Error adding category.",
+  "admin.common.add": "Add"
 
 }
