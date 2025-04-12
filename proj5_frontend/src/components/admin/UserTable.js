@@ -123,6 +123,7 @@ const UserTable = () => {
 
   return (
     <div>
+      <h2 className="admin-title"> Gestão de Utilizadores </h2>
       <table>
         <thead>
           <tr>

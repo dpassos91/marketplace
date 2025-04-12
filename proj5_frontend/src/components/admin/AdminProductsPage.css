@@ -1,0 +1,19 @@
+.admin-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+
+.admin-actions-grid {
+    display: flex;
+    justify-content: center;
+    gap: 10rem; /* Espaço entre colunas */
+    margin: 3rem 0;
+  }
+  
+  .admin-actions-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Menor espaço entre os botões */
+  }
+  

@@ -143,6 +143,7 @@ const EvaluationsTable = () => {
   
   return (
     <div>
+      <h2 className="admin-title"> Gestão de Avaliações </h2>
       <table>
         <thead>
           <tr>
