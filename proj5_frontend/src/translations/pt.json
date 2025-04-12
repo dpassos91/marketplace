@@ -3,6 +3,7 @@
   "addProduct.error.loginRequired": "Faça login antes de adicionar um produto!",
   "addProduct.success": "Produto criado com sucesso!",
   "addProduct.title": "Adicionar Novo Produto",
+
   "admin.alert.error.delete": "Erro ao tentar eliminar o utilizador.",
   "admin.alert.error.deleteEvaluation": "Erro ao excluir a avaliação",
   "admin.alert.error.getEvaluation": "Erro ao buscar avaliação para editar",
@@ -73,10 +74,12 @@
   "admin.window.confirm.deleteEvaluation": "Tem certeza de que deseja eliminar esta avaliação?",
   "admin.window.confirm.reactivate": "Tem certeza de que deseja reativar o utilizador com ID {userId}?",
   "admin.window.confirm.suspend": "Tem certeza de que deseja suspender o utilizador com ID {userId}?",
+
   "aside.aboutUs": "Sobre Nós",
   "aside.callToAction": "Cada compra na Loop Market apoia um consumo mais consciente e ecológico. Junte-se a nós e contribua para um futuro mais verde e sustentável.",
   "aside.description": "No Loop Market, promovemos a economia circular, reutilizando e reciclando recursos para minimizar o desperdício. Nossa plataforma conecta consumidores e empresas a produtos sustentáveis, prolongando o ciclo de vida dos materiais e reduzindo o impacto ambiental.",
   "aside.products": "Produtos",
+
   "auth.login.failed": "Login falhou! Por favor verifique as suas credenciais.",
   "auth.login.success": "Login bem sucedido! Bem-vindo/a {name}!",
   "auth.logout.failed": "Houve um problema ao fazer logout. Por favor, tente novamente.",
@@ -84,8 +87,11 @@
   "auth.register.failed": "Erro ao registar utilizador:",
   "auth.register.success": "Utilizador registado! Por favor, faça login.",
   "auth.tryAgain": "Tente novamente.",
+
   "categoriesCarousel.notLoaded": "Nenhuma categoria disponível.",
+
   "categoryCard.viewProducts": "Ver produtos",
+
   "editProductForm.cancel": "Cancelar",
   "editProductForm.category": "Categoria:",
   "editProductForm.categoryId.errorRequired": "Por favor, selecione uma categoria.",
@@ -106,6 +112,7 @@
   "editProductForm.title": "Título",
   "editProductForm.title.errorRequired": "Por favor, insira o título do produto.",
   "editProductForm.titlePlaceholder": "Digite o título do produto",
+
   "evaluationForm.error.comment": "O campo comentário é obrigatório.",
   "evaluationForm.error.rating.invalid": "A nota deve ser um número entre 1 e 5.",
   "evaluationForm.error.rating.required": "O campo nota é obrigatório.",
@@ -116,15 +123,19 @@
   "evaluationForm.placeholder.comment": "Escreva o seu comentário",
   "evaluationForm.placeholder.rating": "Nota entre 1 e 5",
   "evaluationForm.placeholder.title": "Insira o título",
+
   "footer.author": "Diogo Passos | Projeto 5 | AOR - PAJ 2025",
   "footer.center": "Centro de Atendimento",
   "footer.phone": "Telefone: +351 || 239 123 456",
   "footer.rights": "© 2025 | Todos os direitos reservados",
   "footer.service": "Seg-Sex, 08h - 18h",
+
   "header.adminArea": "Área de administração",
   "header.welcome": "Bem-vindo, {name}!",
+
   "homePage.categories": "Categorias disponíveis",
   "homePage.recentProducts": "Últimos produtos adicionados",
+
   "login.password": "Palavra-passe",
   "login.password.errorRequired": "Por favor, insira a palavra-passe.",
   "login.placeholder.password": "Palavra-passe",
@@ -134,7 +145,9 @@
   "login.title": "Iniciar sessão",
   "login.username": "Nome de utilizador",
   "login.username.errorRequired": "Por favor, insira o nome de utilizador.",
+
   "productCard.moreInfo": "Saber mais",
+
   "productDetails.alert.loginRequired": "Precisa de iniciar sessão para comprar produtos.",
   "productDetails.alert.mustBeLoggedInToViewProfile": "Só pode aceder a este perfil se for membro da nossa comunidade. Registe-se e/ou faça login!",
   "productDetails.alert.notAvailable": "Este produto não está disponível para compra.",
@@ -163,6 +176,7 @@
   "productDetails.viewSellerProfile": "Ver perfil do vendedor",
   "productDetails.window.confirmDelete": "Tem certeza que deseja eliminar este produto?",
   "productDetails.window.confirmPurchase": "Tem certeza que deseja comprar este produto?",
+
   "productForm.button.addProduct": "Adicionar produto",
   "productForm.button.cancel": "Cancelar",
   "productForm.button.processing": "Processando...",
@@ -175,16 +189,20 @@
   "productForm.placeholder.location": "Localização",
   "productForm.placeholder.price": "Preço",
   "productForm.placeholder.title": "Título",
+
   "productPage.allTitle": "Todos os Produtos",
   "productPage.categoryTitle": "Produtos da Categoria {categoryName}",
   "productPage.loading": "Carregando produtos...",
   "productPage.noneAvailable": "Nenhum produto disponível encontrado.",
+
   "productStates.available": "Disponível",
   "productStates.draft": "Rascunho",
   "productStates.inactive": "Inativo",
   "productStates.purchased": "Comprado",
   "productStates.reserved": "Reservado",
+
   "productsCarousel.notLoaded": "Nenhum produto adicionado recentemente.",
+
   "profileInfo.cancel": "Cancelar",
   "profileInfo.confirmPassword": "Confirme a Password:",
   "profileInfo.edit": "Editar Perfil",
@@ -196,6 +214,7 @@
   "profileInfo.picture": "Fotografia:",
   "profileInfo.save": "Guardar Alterações",
   "profileInfo.username": "Username:",
+
   "register.confirmPassword": "Confirme a Password",
   "register.email": "Email",
   "register.firstName": "Primeiro nome",
@@ -216,6 +235,7 @@
   "registerplaceholder.phone": "--- --- ---",
   "registerplaceholder.picture": "Cole o link da imagem aqui",
   "registerplaceholder.username": "Escolha o seu username",
+  
   "userProfile.alert.updateError": "Ocorreu um erro ao atualizar o perfil. Por favor, tente novamente mais tarde.",
   "userProfile.alert.updateSuccess": "Dados atualizados com sucesso!",
   "userProfile.loading": "A carregar informações do utilizador...",
