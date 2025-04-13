@@ -258,11 +258,12 @@
   "evaluationForm.error.rating.invalid": "The rating must be a number between 1 and 5.",
 
   "admin.products.title": "Product Management",
-  "admin.products.addCategory": "Add Category",
-  "admin.products.filterByCategory": "Filter by Category",
-  "admin.products.filterBySeller": "Filter by Seller",
-  "admin.products.listInactive": "Show Inactive Products",
-  "admin.products.showModified": "Show Modified Products",
+  "admin.products.addCategory": "Add category",
+  "admin.products.filterByCategory": "Filter by category",
+  "admin.products.filterBySeller": "Filter by seller",
+  "admin.products.listInactive": "Show inactive products",
+  "admin.products.listBought": "Show purchased products",
+  "admin.products.showModified": "Show modified products",
 
   "admin.addCategory.title": "Add New Category",
   "admin.addCategory.placeholder.name": "Category name",

@@ -262,6 +262,7 @@
   "admin.products.filterByCategory": "Filtrer par catégorie",
   "admin.products.filterBySeller": "Filtrer par vendeur",
   "admin.products.listInactive": "Afficher les produits inactifs",
+  "admin.products.listBought": "Afficher les produits achetés",
   "admin.products.showModified": "Afficher les produits modifiés",
 
   "admin.addCategory.title": "Ajouter une nouvelle catégorie",
