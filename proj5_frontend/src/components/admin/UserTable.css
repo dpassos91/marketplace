@@ -49,6 +49,16 @@ table {
     justify-content: center;
   }
 
+  /* Aplica-se a qualquer botão com a tua classe personalizada, mesmo quando está disabled */
+.btn-card:disabled,
+.tabela-btn:disabled {
+  background-color: var(--white-100);  /* ou qualquer cor que já usas */
+  color: var(--primary-400);           /* mantém a cor do texto */
+  opacity: 1;                          /* evita ficar esbatido */
+  cursor: not-allowed;                 /* opcional: cursor visível como 'bloqueado' */
+}
+
+
   /* Estilos específicos dos botões (correspondendo aos estilos da Gestão de Produtos) */
 .tabela-btn.btn-danger {
   background-color: var(--secondary-color);

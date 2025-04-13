@@ -5,6 +5,9 @@ import { apiConfig } from '../../api/apiConfig';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { productAPI } from '../../api/productAPI';
 import useProductStore from '../../stores/productStore';
+import SpinnerLeaf from '../commons/SpinnerLeaf';
+import { PRODUCT_STATES } from '../product/productStates';
+
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 
@@ -14,6 +17,9 @@ function FilterProductsByCategory({ isOpen, onClose }) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [products, setProducts] = useState([]);
   const [productToEdit, setProductToEdit] = useState(null);
+  const [suspendingProductId, setSuspendingProductId] = useState(null);
+  const [deletingProductId, setDeletingProductId] = useState(null);
+
 
   const { setProduct } = useProductStore();
 
@@ -41,11 +47,15 @@ function FilterProductsByCategory({ isOpen, onClose }) {
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
     setSelectedCategory(categoryId);
-
+  
     if (categoryId) {
       try {
         const data = await apiCall(API_ENDPOINTS.products.byCategory(categoryId));
-        const availableProducts = data.filter((product) => product.status !== 2);
+        // ⚠️ Aqui filtramos os produtos que NÃO estão nos estados 4 ou 5
+        const availableProducts = data.filter((product) => {
+          const state = PRODUCT_STATES.fromStatus(product.productState);
+          return state && PRODUCT_STATES.isActive(state.id) && state.id !== PRODUCT_STATES.COMPRADO.id;
+        });
         setProducts(availableProducts);
       } catch (error) {
         console.error(
@@ -56,9 +66,60 @@ function FilterProductsByCategory({ isOpen, onClose }) {
           error
         );
       }
+    } else {
+      // Se não houver categoria selecionada, limpa a lista
+      setProducts([]);
     }
   };
+  
 
+  const handleSuspendProduct = async (product, productId) => {
+    const confirmed = window.confirm(
+      intl.formatMessage(
+        {
+          id: 'admin.filterByCategory.window.confirm.suspendProduct',
+          defaultMessage: 'Tem certeza de que deseja suspender o produto {name}?'
+        },
+        { name: product.title }
+      )
+    );
+  
+    if (confirmed) {
+      setSuspendingProductId(productId); // ⬅️ Ativa o loading no botão
+  
+      try {
+        await productAPI.softDeleteProduct(productId);
+        alert(
+          intl.formatMessage(
+            {
+              id: 'admin.filterByCategory.alert.success.suspendProduct',
+              defaultMessage: 'Produto {name} suspenso com sucesso!'
+            },
+            { name: product.title }
+          )
+        );
+  
+        // Atualiza a lista excluindo produtos inativos (suspensos) ou comprados (state 4 e 5)
+        const data = await apiCall(API_ENDPOINTS.products.byCategory(selectedCategory));
+        const availableProducts = data.filter((product) => {
+          const state = PRODUCT_STATES.fromStatus(product.productState);
+          return state && PRODUCT_STATES.isActive(state.id) && state.id !== PRODUCT_STATES.COMPRADO.id;
+        });
+        setProducts(availableProducts);
+      } catch (error) {
+        console.error(error);
+        alert(
+          intl.formatMessage({
+            id: 'admin.filterByCategory.alert.error.suspendProduct',
+            defaultMessage: 'Erro ao suspender produto. Tente novamente.'
+          })
+        );
+      } finally {
+        setSuspendingProductId(null); // ⬅️ Termina o loading
+      }
+    }
+  };
+  
   const handleDeleteProduct = async (product, productId) => {
     const confirmed = window.confirm(
       intl.formatMessage(
@@ -69,22 +130,27 @@ function FilterProductsByCategory({ isOpen, onClose }) {
         { name: product.title }
       )
     );
-
+  
     if (confirmed) {
+      setDeletingProductId(productId); // ⬅️ Ativa o loading
+  
       try {
-        await apiCall(API_ENDPOINTS.products.deactivate(productId));
+        await productAPI.permanentlyDeleteProduct(productId);
         alert(
           intl.formatMessage(
             {
               id: 'admin.filterByCategory.alert.success.deleteProduct',
-              defaultMessage: 'Produto "{name}" eliminado com sucesso!'
+              defaultMessage: 'Produto {name} eliminado com sucesso!'
             },
             { name: product.title }
           )
         );
-
+  
         const data = await apiCall(API_ENDPOINTS.products.byCategory(selectedCategory));
-        const availableProducts = data.filter((p) => p.status !== 4);
+        const availableProducts = data.filter((product) => {
+          const state = PRODUCT_STATES.fromStatus(product.productState);
+          return state && PRODUCT_STATES.isActive(state.id) && state.id !== PRODUCT_STATES.COMPRADO.id;
+        });
         setProducts(availableProducts);
       } catch (error) {
         console.error(error);
@@ -94,49 +160,12 @@ function FilterProductsByCategory({ isOpen, onClose }) {
             defaultMessage: 'Erro ao eliminar o produto. Tente novamente.'
           })
         );
+      } finally {
+        setDeletingProductId(null); // ⬅️ Termina o loading
       }
     }
   };
-
-  const handleSuspendProduct = async (product, productId) => {
-    const confirmed = window.confirm(
-      intl.formatMessage(
-        {
-          id: 'admin.filterByCategory.window.confirm.suspendProduct',
-          defaultMessage: 'Tem certeza de que deseja suspender o produto "{name}"?'
-        },
-        { name: product.title }
-      )
-    );
-
-    if (confirmed) {
-      try {
-        await apiCall(API_ENDPOINTS.products.softDeleteProduct(productId));
-        alert(
-          intl.formatMessage(
-            {
-              id: 'admin.filterByCategory.alert.success.suspendProduct',
-              defaultMessage: 'Produto "{name}" suspenso com sucesso!'
-            },
-            { name: product.title }
-          )
-        );
-
-        const data = await apiCall(API_ENDPOINTS.products.byCategory(selectedCategory));
-        const availableProducts = data.filter((p) => p.status !== 4);
-        setProducts(availableProducts);
-      } catch (error) {
-        console.error(error);
-        alert(
-          intl.formatMessage({
-            id: 'admin.filterByCategory.alert.error.suspendProduct',
-            defaultMessage: 'Erro ao suspender produto. Tente novamente.'
-          })
-        );
-      }
-    }
-  };
-
+  
   return (
     <Modal
       isOpen={isOpen}
@@ -186,27 +215,47 @@ function FilterProductsByCategory({ isOpen, onClose }) {
                   <td>{product.title}</td>
                   <td>{product.price}€</td>
                   <td style={{ textAlign: 'center' }}>
-                    <button
-                      className="btn-card tabela-btn btn-info"
-                      onClick={() => {
-                        setProduct(product);
-                        setProductToEdit(product);
-                      }}
-                    >
-                      <FormattedMessage id="admin.filterByCategory.product.edit" defaultMessage="Editar" />
-                    </button>
-                    <button
-                      className="btn-card tabela-btn btn-danger"
-                      onClick={() => handleSuspendProduct(product, product.id)}
-                    >
-                      <FormattedMessage id="admin.filterByCategory.product.suspend" defaultMessage="Suspender" />
-                    </button>
-                    <button
-                      className="btn-card tabela-btn btn-edit"
-                      onClick={() => handleDeleteProduct(product, product.id)}
-                    >
-                      <FormattedMessage id="admin.filterByCategory.product.delete" defaultMessage="Eliminar" />
-                    </button>
+                  <button
+  className="btn-card tabela-btn btn-info"
+  disabled={product.state === 4 || product.state === 5} // Desativa se já estiver inativo
+  onClick={() => {
+    setProduct(product);
+    setProductToEdit(product);
+  }}
+>
+  <FormattedMessage id="admin.filterByCategory.product.edit" defaultMessage="Editar" />
+</button>
+
+<button
+  className="btn-card tabela-btn btn-danger"
+  onClick={() => handleSuspendProduct(product, product.id)}
+  disabled={suspendingProductId === product.id || product.state === 4 || product.state === 5}
+>
+  {suspendingProductId === product.id ? (
+    <>
+      <FormattedMessage id="admin.loading.suspending" defaultMessage="A suspender..." />
+      &nbsp;<SpinnerLeaf size={16} />
+    </>
+  ) : (
+    <FormattedMessage id="admin.filterByCategory.product.suspend" defaultMessage="Suspender" />
+  )}
+</button>
+
+<button
+  className="btn-card tabela-btn btn-edit"
+  onClick={() => handleDeleteProduct(product, product.id)}
+  disabled={deletingProductId === product.id}
+>
+  {deletingProductId === product.id ? (
+    <>
+      <FormattedMessage id="admin.loading.deleting" defaultMessage="A eliminar..." />
+      &nbsp;<SpinnerLeaf size={16} />
+    </>
+  ) : (
+    <FormattedMessage id="admin.filterByCategory.product.delete" defaultMessage="Eliminar" />
+  )}
+</button>
+
                   </td>
                 </tr>
               ))}

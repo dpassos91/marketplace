@@ -31,9 +31,9 @@ function AdminProductsPage() {
           <button className="btn-card products-btn btn-products" onClick={() => setIsAddCategoryModalOpen(true)}>
             <FormattedMessage id="admin.products.addCategory" defaultMessage="Adicionar categoria" />
           </button>
-          <button className="btn-card products-btn btn-products" onClick={() => setIsFilterModalOpen(true)}>
-            <FormattedMessage id="admin.products.filterByCategory" defaultMessage="Filtrar por categoria" />
-          </button>
+          <button className="btn-card products-btn btn-products" onClick={handleNavigateToAlterados}>
+          <FormattedMessage id="admin.products.showModified" defaultMessage="Mostrar produtos alterados" />
+        </button>
         </div>
 
         <div className="admin-actions-column">
@@ -41,16 +41,17 @@ function AdminProductsPage() {
             <FormattedMessage id="admin.products.filterBySeller" defaultMessage="Filtrar por vendedor" />
           </button>
           <button className="btn-card products-btn btn-products" onClick={handleNavigateToInativos}>
-            <FormattedMessage id="admin.products.listInactive" defaultMessage="Listar produtos inativos" />
+            <FormattedMessage id="admin.products.listInactive" defaultMessage="Mostrar produtos inativos" />
           </button>
         </div>
       </div>
 
       {/* Botão central */}
       <div className="admin-actions-center">
-        <button className="btn-card products-btn btn-products" onClick={handleNavigateToAlterados}>
-          <FormattedMessage id="admin.products.showModified" defaultMessage="Mostrar produtos alterados" />
-        </button>
+        
+        <button className="btn-card products-btn btn-products" onClick={() => setIsFilterModalOpen(true)}>
+            <FormattedMessage id="admin.products.filterByCategory" defaultMessage="Filtrar por categoria" />
+          </button>
       </div>
 
       {/* Modais */}
