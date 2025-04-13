@@ -269,6 +269,22 @@
   "admin.addCategory.error.required": "Please enter a name for the category.",
   "admin.addCategory.success": "New category added successfully!",
   "admin.addCategory.error.generic": "Error adding category.",
-  "admin.common.add": "Add"
+  "admin.common.add": "Add",
+
+  "admin.filterByCategory.title": "Filter by Category",
+  "admin.filterByCategory.select": "Select a category",
+  "admin.filterByCategory.error.loadCategories": "Error loading categories:",
+  "admin.filterByCategory.error.loadProducts": "Error fetching products:",
+
+  "admin.filterByCategory.product.title": "Title",
+  "admin.filterByCategory.product.price": "Price",
+  "admin.filterByCategory.product.actions": "Actions",
+  "admin.filterByCategory.product.delete": "Delete",
+  "admin.filterByCategory.product.edit": "Edit",
+
+  "admin.filterByCategory.window.confirm.suspendProduct": "Are you sure you want to suspend the product with ID {id}?",
+  
+  "admin.filterByCategory.alert.success.suspendProduct": "Product {id} was successfully suspended.",
+  "admin.filterByCategory.alert.error.suspendProduct": "Error suspending the product. Please try again."
 
 }

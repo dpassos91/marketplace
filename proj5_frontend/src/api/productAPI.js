@@ -320,27 +320,28 @@ const getAllEditedProducts = async () => {
 };
 
 export const productAPI = {
-  getAllProducts,
-  getAllActiveProducts,
-  getProductsPaginated,
-  getProductById,
-  getProductsByCategory,
-  getProductsBySeller,
-  searchProductsByTitle,
-  getProductsByLocation,
-  getProductsByStatus,
   createProduct,
+  getAllActiveProducts,
+  getAllEditedProducts,
+  getAllProducts,
+  getActiveProductCount,
+  getInactiveProducts,
+  getProductById,
+  getProductCount,
+  getProductsByCategory,
+  getProductsByLocation,
+  getProductsBySeller,
+  getProductsByStatus,
+  getProductsPaginated,
+  permanentlyDeleteProduct,
+  purchaseProduct,
+  reactivateProduct,
+  searchProductsByTitle,
+  softDeleteProduct,
   updateProduct,
   updateProductStatus,
-  purchaseProduct,
-  softDeleteProduct,
-  permanentlyDeleteProduct,
-  reactivateProduct,
-  getInactiveProducts,
-  getProductCount,
-  getActiveProductCount,
-  getAllEditedProducts
 };
+
 
 
 

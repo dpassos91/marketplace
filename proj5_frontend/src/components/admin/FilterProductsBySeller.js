@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import Modal from '../commons/Modal';
-import EditProductModal from './EditProductModal';
 import { apiConfig } from '../../api/apiConfig';
+import EditProductForm from '../product/EditProductForm';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 
@@ -104,7 +104,7 @@ function FilterProductsBySeller({ isOpen, onClose }) {
 
       {/* Modal de Edição */}
       {productToEdit && (
-        <EditProductModal
+        <EditProductForm
           product={productToEdit}
           onClose={() => setProductToEdit(null)}
           onSave={(updatedProduct) => {

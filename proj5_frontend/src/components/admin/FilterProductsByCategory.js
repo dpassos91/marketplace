@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../commons/Modal';
-import EditProductModal from './EditProductModal';
+import EditProductForm from '../product/EditProductForm';
 import { apiConfig } from '../../api/apiConfig';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { productAPI } from '../../api/productAPI';
+import useProductStore from '../../stores/productStore';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 
 function FilterProductsByCategory({ isOpen, onClose }) {
+  const intl = useIntl();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [products, setProducts] = useState([]);
   const [productToEdit, setProductToEdit] = useState(null);
+
+  const { setProduct } = useProductStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -18,13 +24,16 @@ function FilterProductsByCategory({ isOpen, onClose }) {
           const data = await apiCall(API_ENDPOINTS.categories.all);
           setCategories(data);
         } catch (error) {
-          console.error('Erro ao carregar categorias:', error);
+          console.error(
+            intl.formatMessage({ id: 'admin.filterByCategory.error.loadCategories' }),
+            error
+          );
         }
       };
 
       fetchCategories();
     }
-  }, [isOpen]);
+  }, [isOpen, intl]);
 
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
@@ -33,41 +42,67 @@ function FilterProductsByCategory({ isOpen, onClose }) {
     if (categoryId) {
       try {
         const data = await apiCall(API_ENDPOINTS.products.byCategory(categoryId));
-        // Filtrar produtos que não têm status = 2
         const availableProducts = data.filter((product) => product.status !== 2);
         setProducts(availableProducts);
       } catch (error) {
-        console.error('Erro ao buscar produtos:', error);
+        console.error(
+          intl.formatMessage({ id: 'admin.filterByCategory.error.loadProducts' }),
+          error
+        );
       }
     }
   };
 
-  const handleSuspendProduct = async (productId) => {
-    if (window.confirm(`Tem certeza de que deseja suspender o produto com ID ${productId}?`)) {
+  const handleDeleteProduct = async (product, productId) => {
+    const confirmed = window.confirm(
+      intl.formatMessage(
+        { id: 'admin.filterByCategory.window.confirm.deleteProduct' },
+        { name: product.title }
+      )
+    );
+  
+    if (confirmed) {
       try {
         await apiCall(API_ENDPOINTS.products.deactivate(productId));
-        alert(`Produto ${productId} foi suspenso com sucesso.`);
-        
-        // Atualiza a lista de produtos
+        alert(
+          intl.formatMessage(
+            { id: 'admin.filterByCategory.alert.success.deleteProduct' },
+            { name: product.title }
+          )
+        );
+  
+        // Refresh products
         const data = await apiCall(API_ENDPOINTS.products.byCategory(selectedCategory));
-        const availableProducts = data.filter((product) => product.status !== 4);
+        const availableProducts = data.filter((p) => p.status !== 4);
         setProducts(availableProducts);
       } catch (error) {
-        console.error('Erro ao suspender produto:', error);
-        alert('Erro ao suspender o produto. Tente novamente.');
+        console.error(error);
+        alert(
+          intl.formatMessage({
+            id: 'admin.filterByCategory.alert.error.deleteProduct',
+            defaultMessage: 'Erro ao eliminar o produto. Tente novamente.'
+          })
+        );
       }
     }
   };
+  
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Filtrar por Categoria">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={intl.formatMessage({ id: 'admin.filterByCategory.title' })}
+    >
       <div>
         <select
           value={selectedCategory}
           onChange={handleCategoryChange}
           style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
         >
-          <option value="">Selecione uma categoria</option>
+          <option value="">
+            {intl.formatMessage({ id: 'admin.filterByCategory.select' })}
+          </option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -79,9 +114,15 @@ function FilterProductsByCategory({ isOpen, onClose }) {
           <table>
             <thead>
               <tr>
-                <th>Título</th>
-                <th>Preço</th>
-                <th>Ações</th>
+                <th>
+                  <FormattedMessage id="admin.filterByCategory.product.title" defaultMessage="Título" />
+                </th>
+                <th>
+                  <FormattedMessage id="admin.filterByCategory.product.price" defaultMessage="Preço" />
+                </th>
+                <th>
+                  <FormattedMessage id="admin.filterByCategory.product.actions" defaultMessage="Ações" />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -90,20 +131,20 @@ function FilterProductsByCategory({ isOpen, onClose }) {
                   <td>{product.title}</td>
                   <td>{product.price}€</td>
                   <td style={{ textAlign: 'center' }}>
-                    {/* Botão Suspender */}
                     <button
                       className="btn-card tabela-btn btn-info"
-                      onClick={() => handleSuspendProduct(product.id)}
+                      onClick={() => {
+                        setProduct(product); // <-- passa o produto à store
+                        setProductToEdit(product); // <-- mostra o modal
+                      }}
                     >
-                      Suspender
+                      <FormattedMessage id="admin.filterByCategory.product.edit" defaultMessage="Editar" />
                     </button>
-
-                    {/* Botão Editar */}
                     <button
                       className="btn-card tabela-btn btn-edit"
-                      onClick={() => setProductToEdit(product)}
+                      onClick={() => handleDeleteProduct(product, product.id)}
                     >
-                      Editar
+                      <FormattedMessage id="admin.filterByCategory.product.delete" defaultMessage="Eliminar" />
                     </button>
                   </td>
                 </tr>
@@ -113,27 +154,40 @@ function FilterProductsByCategory({ isOpen, onClose }) {
         )}
       </div>
 
-      {/* Modal de Edição */}
       {productToEdit && (
-        <EditProductModal
-          product={productToEdit}
+        <Modal
+          isOpen={!!productToEdit}
           onClose={() => setProductToEdit(null)}
-          onSave={(updatedProduct) => {
-            // Atualiza a lista de produtos após edição
-            setProducts((prevProducts) =>
-              prevProducts.map((p) =>
-                p.id === updatedProduct.id ? updatedProduct : p
-              )
-            );
-          }}
-        />
+          title={intl.formatMessage({ id: 'productDetails.modalTitle', defaultMessage: 'Editar Produto' })}
+        >
+          <EditProductForm
+            onSave={async (updatedProduct) => {
+              try {
+                await productAPI.updateProduct(updatedProduct.id, updatedProduct);
+                alert(intl.formatMessage({
+                  id: 'productDetails.alert.productUpdateSuccess',
+                  defaultMessage: 'Produto atualizado com sucesso!'
+                }));
+
+                setProducts((prev) =>
+                  prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+                );
+
+                setProductToEdit(null);
+              } catch (error) {
+                console.error('Erro ao atualizar produto:', error);
+                alert(intl.formatMessage({
+                  id: 'productDetails.alert.productUpdateError',
+                  defaultMessage: 'Erro ao atualizar produto. Por favor, tente novamente.'
+                }));
+              }
+            }}
+            onCancel={() => setProductToEdit(null)}
+          />
+        </Modal>
       )}
     </Modal>
   );
 }
 
 export default FilterProductsByCategory;
-
-
-
-
