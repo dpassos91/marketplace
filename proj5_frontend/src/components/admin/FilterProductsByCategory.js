@@ -25,7 +25,10 @@ function FilterProductsByCategory({ isOpen, onClose }) {
           setCategories(data);
         } catch (error) {
           console.error(
-            intl.formatMessage({ id: 'admin.filterByCategory.error.loadCategories' }),
+            intl.formatMessage({
+              id: 'admin.filterByCategory.error.loadCategories',
+              defaultMessage: 'Erro ao carregar categorias'
+            }),
             error
           );
         }
@@ -46,7 +49,10 @@ function FilterProductsByCategory({ isOpen, onClose }) {
         setProducts(availableProducts);
       } catch (error) {
         console.error(
-          intl.formatMessage({ id: 'admin.filterByCategory.error.loadProducts' }),
+          intl.formatMessage({
+            id: 'admin.filterByCategory.error.loadProducts',
+            defaultMessage: 'Erro ao buscar produtos'
+          }),
           error
         );
       }
@@ -56,22 +62,27 @@ function FilterProductsByCategory({ isOpen, onClose }) {
   const handleDeleteProduct = async (product, productId) => {
     const confirmed = window.confirm(
       intl.formatMessage(
-        { id: 'admin.filterByCategory.window.confirm.deleteProduct' },
+        {
+          id: 'admin.filterByCategory.window.confirm.deleteProduct',
+          defaultMessage: 'Tem certeza de que deseja eliminar o produto "{name}"?'
+        },
         { name: product.title }
       )
     );
-  
+
     if (confirmed) {
       try {
         await apiCall(API_ENDPOINTS.products.deactivate(productId));
         alert(
           intl.formatMessage(
-            { id: 'admin.filterByCategory.alert.success.deleteProduct' },
+            {
+              id: 'admin.filterByCategory.alert.success.deleteProduct',
+              defaultMessage: 'Produto "{name}" eliminado com sucesso!'
+            },
             { name: product.title }
           )
         );
-  
-        // Refresh products
+
         const data = await apiCall(API_ENDPOINTS.products.byCategory(selectedCategory));
         const availableProducts = data.filter((p) => p.status !== 4);
         setProducts(availableProducts);
@@ -86,13 +97,54 @@ function FilterProductsByCategory({ isOpen, onClose }) {
       }
     }
   };
-  
+
+  const handleSuspendProduct = async (product, productId) => {
+    const confirmed = window.confirm(
+      intl.formatMessage(
+        {
+          id: 'admin.filterByCategory.window.confirm.suspendProduct',
+          defaultMessage: 'Tem certeza de que deseja suspender o produto "{name}"?'
+        },
+        { name: product.title }
+      )
+    );
+
+    if (confirmed) {
+      try {
+        await apiCall(API_ENDPOINTS.products.softDeleteProduct(productId));
+        alert(
+          intl.formatMessage(
+            {
+              id: 'admin.filterByCategory.alert.success.suspendProduct',
+              defaultMessage: 'Produto "{name}" suspenso com sucesso!'
+            },
+            { name: product.title }
+          )
+        );
+
+        const data = await apiCall(API_ENDPOINTS.products.byCategory(selectedCategory));
+        const availableProducts = data.filter((p) => p.status !== 4);
+        setProducts(availableProducts);
+      } catch (error) {
+        console.error(error);
+        alert(
+          intl.formatMessage({
+            id: 'admin.filterByCategory.alert.error.suspendProduct',
+            defaultMessage: 'Erro ao suspender produto. Tente novamente.'
+          })
+        );
+      }
+    }
+  };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={intl.formatMessage({ id: 'admin.filterByCategory.title' })}
+      title={intl.formatMessage({
+        id: 'admin.filterByCategory.title',
+        defaultMessage: 'Filtrar por Categoria'
+      })}
     >
       <div>
         <select
@@ -101,7 +153,10 @@ function FilterProductsByCategory({ isOpen, onClose }) {
           style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
         >
           <option value="">
-            {intl.formatMessage({ id: 'admin.filterByCategory.select' })}
+            {intl.formatMessage({
+              id: 'admin.filterByCategory.select',
+              defaultMessage: 'Selecione uma categoria'
+            })}
           </option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
@@ -134,11 +189,17 @@ function FilterProductsByCategory({ isOpen, onClose }) {
                     <button
                       className="btn-card tabela-btn btn-info"
                       onClick={() => {
-                        setProduct(product); // <-- passa o produto à store
-                        setProductToEdit(product); // <-- mostra o modal
+                        setProduct(product);
+                        setProductToEdit(product);
                       }}
                     >
                       <FormattedMessage id="admin.filterByCategory.product.edit" defaultMessage="Editar" />
+                    </button>
+                    <button
+                      className="btn-card tabela-btn btn-danger"
+                      onClick={() => handleSuspendProduct(product, product.id)}
+                    >
+                      <FormattedMessage id="admin.filterByCategory.product.suspend" defaultMessage="Suspender" />
                     </button>
                     <button
                       className="btn-card tabela-btn btn-edit"
@@ -158,7 +219,10 @@ function FilterProductsByCategory({ isOpen, onClose }) {
         <Modal
           isOpen={!!productToEdit}
           onClose={() => setProductToEdit(null)}
-          title={intl.formatMessage({ id: 'productDetails.modalTitle', defaultMessage: 'Editar Produto' })}
+          title={intl.formatMessage({
+            id: 'productDetails.modalTitle',
+            defaultMessage: 'Editar Produto'
+          })}
         >
           <EditProductForm
             onSave={async (updatedProduct) => {
@@ -191,3 +255,4 @@ function FilterProductsByCategory({ isOpen, onClose }) {
 }
 
 export default FilterProductsByCategory;
+

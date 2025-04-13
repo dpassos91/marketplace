@@ -28,19 +28,19 @@ function AdminProductsPage() {
 
       <div className="admin-actions-grid">
         <div className="admin-actions-column">
-          <button className="btn-card tabela-btn btn-danger" onClick={() => setIsAddCategoryModalOpen(true)}>
+          <button className="btn-card products-btn btn-products" onClick={() => setIsAddCategoryModalOpen(true)}>
             <FormattedMessage id="admin.products.addCategory" defaultMessage="Adicionar categoria" />
           </button>
-          <button className="btn-card tabela-btn btn-danger" onClick={() => setIsFilterModalOpen(true)}>
+          <button className="btn-card products-btn btn-products" onClick={() => setIsFilterModalOpen(true)}>
             <FormattedMessage id="admin.products.filterByCategory" defaultMessage="Filtrar por categoria" />
           </button>
         </div>
 
         <div className="admin-actions-column">
-          <button className="btn-card tabela-btn btn-danger" onClick={() => setIsFilterBySellerModalOpen(true)}>
+          <button className="btn-card products-btn btn-products" onClick={() => setIsFilterBySellerModalOpen(true)}>
             <FormattedMessage id="admin.products.filterBySeller" defaultMessage="Filtrar por vendedor" />
           </button>
-          <button className="btn-card tabela-btn btn-danger" onClick={handleNavigateToInativos}>
+          <button className="btn-card products-btn btn-products" onClick={handleNavigateToInativos}>
             <FormattedMessage id="admin.products.listInactive" defaultMessage="Listar produtos inativos" />
           </button>
         </div>
@@ -48,7 +48,7 @@ function AdminProductsPage() {
 
       {/* Botão central */}
       <div className="admin-actions-center">
-        <button className="btn-card tabela-btn btn-danger" onClick={handleNavigateToAlterados}>
+        <button className="btn-card products-btn btn-products" onClick={handleNavigateToAlterados}>
           <FormattedMessage id="admin.products.showModified" defaultMessage="Mostrar produtos alterados" />
         </button>
       </div>
