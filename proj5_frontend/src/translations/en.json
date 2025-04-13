@@ -272,17 +272,23 @@
   "admin.addCategory.error.generic": "Error adding category.",
   "admin.common.add": "Add",
 
+  "admin.filterByCategory.error.loadCategories": "Error loading categories",
+  "admin.filterByCategory.error.loadProducts": "Error fetching products",
+  "admin.filterByCategory.window.confirm.suspendProduct": "Are you sure you want to suspend the product {name}?",
+  "admin.filterByCategory.alert.success.suspendProduct": "Product {name} successfully suspended!",
+  "admin.filterByCategory.alert.error.suspendProduct": "Error suspending product. Please try again.",
+  "admin.filterByCategory.window.confirm.deleteProduct": "Are you sure you want to delete the product \"{name}\"?",
+  "admin.filterByCategory.alert.success.deleteProduct": "Product {name} successfully deleted!",
+  "admin.filterByCategory.alert.error.deleteProduct": "Error deleting product. Please try again.",
   "admin.filterByCategory.title": "Filter by Category",
   "admin.filterByCategory.select": "Select a category",
-  "admin.filterByCategory.error.loadCategories": "Error loading categories:",
-  "admin.filterByCategory.error.loadProducts": "Error fetching products:",
   "admin.filterByCategory.product.title": "Title",
   "admin.filterByCategory.product.price": "Price",
   "admin.filterByCategory.product.actions": "Actions",
-  "admin.filterByCategory.product.delete": "Delete",
   "admin.filterByCategory.product.edit": "Edit",
-  "admin.filterByCategory.window.confirm.deleteProduct": "Are you sure you want to delete the product {name}?",
-  "admin.filterByCategory.alert.success.deleteProduct": "Product {name} has been successfully deleted.",
-  "admin.filterByCategory.alert.error.deleteProduct": "Error deleting product {name}. Please try again."
+  "admin.filterByCategory.product.suspend": "Suspend",
+  "admin.filterByCategory.product.delete": "Delete",
+  "admin.loading.suspending": "Suspending...",
+  "admin.loading.deleting": "Deleting..."
 
 }

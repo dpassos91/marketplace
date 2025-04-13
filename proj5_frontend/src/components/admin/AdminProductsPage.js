@@ -12,12 +12,16 @@ function AdminProductsPage() {
   const [isFilterBySellerModalOpen, setIsFilterBySellerModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleNavigateToInativos = () => {
-    navigate('/admin/produtos/inativos');
-  };
-
   const handleNavigateToAlterados = () => {
     navigate('/admin/produtos/alterados');
+  };
+
+  const handleNavigateToComprados = () => {
+    navigate('/admin/produtos/comprados');
+  };
+
+  const handleNavigateToInativos = () => {
+    navigate('/admin/produtos/inativos');
   };
 
   return (
@@ -44,7 +48,7 @@ function AdminProductsPage() {
           <button className="btn-card products-btn btn-products" onClick={handleNavigateToAlterados}>
           <FormattedMessage id="admin.products.showModified" defaultMessage="Mostrar produtos alterados" />
         </button>
-        <button className="btn-card products-btn btn-products" onClick={handleNavigateToInativos}>
+        <button className="btn-card products-btn btn-products" onClick={handleNavigateToComprados}>
             <FormattedMessage id="admin.products.listBought" defaultMessage="Mostrar produtos comprados" />
           </button>
           <button className="btn-card products-btn btn-products" onClick={handleNavigateToInativos}>
