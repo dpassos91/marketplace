@@ -5,7 +5,6 @@ import { apiConfig } from '../../api/apiConfig';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { productAPI } from '../../api/productAPI';
 import useProductStore from '../../stores/productStore';
-import SpinnerLeaf from '../commons/SpinnerLeaf';
 import { PRODUCT_STATES } from '../product/productStates';
 import './UserTable.css';
 import ProductFilterSelect from './ProductFilterSelect';

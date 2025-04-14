@@ -316,9 +316,11 @@
   "admin.window.confirm.products.delete": "Êtes-vous sûr de vouloir supprimer le produit {name} (ID : {productId}) ?",
   "admin.window.confirm.products.reactivate": "Êtes-vous sûr de vouloir réactiver le produit {name} (ID : {productId}) ?",
 
-  "admin.alert.success.products.reactivate": "Produit réactivé avec succès !",
+  "admin.alert.success.products.reactivate": "Produit {name} réactivé avec succès !",
   "admin.alert.error.products.reactivate": "Échec de la réactivation du produit.",
-  "admin.alert.success.products.delete": "Produit supprimé avec succès !",
-  "admin.alert.error.products.delete": "Échec de la suppression du produit."
+  "admin.alert.success.products.delete": "Produit {name} supprimé avec succès !",
+  "admin.alert.error.products.delete": "Échec de la suppression du produit.",
+
+  "admin.filterByCategory.product.id": "ID"
 }
   

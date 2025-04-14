@@ -4,6 +4,8 @@
   "addProduct.success": "Produto criado com sucesso!",
   "addProduct.title": "Adicionar Novo Produto",
 
+  "admin.filterByCategory.product.id": "ID",
+
   "admin.productTable.title": "Produtos Inativos",
   "admin.productTable.name": "Nome",
   "admin.productTable.price": "Preço",
@@ -34,9 +36,9 @@
   "admin.alert.success.reactivate": "O utilizador {userId} foi reativado com sucesso.",
   "admin.alert.success.suspend": "O utilizador {userId} foi suspenso com sucesso.",
   "admin.alert.success.updateEvaluation": "Avaliação atualizada com sucesso!",
-  "admin.alert.sucess.products.reactivate": "Produto reativado com sucesso!",
+  "admin.alert.success.products.reactivate": "Produto {name} reativado com sucesso!",
   "admin.alert.error.products.reactivate": "Erro ao tentar reativar o produto.",
-  "admin.alert.sucess.products.delete": "Produto eliminado com sucesso!",
+  "admin.alert.success.products.delete": "Produto {name} eliminado com sucesso!",
   "admin.alert.error.products.delete": "Erro ao tentar eliminar o produto.",
   "admin.common.add": "Adicionar",
   "admin.common.cancel": "Cancelar",

@@ -316,8 +316,10 @@
 
   "admin.window.confirm.products.delete": "Are you sure you want to delete the product {name} (ID: {productId})?",
   "admin.window.confirm.products.reactivate": "Are you sure you want to reactivate the product {name} (ID: {productId})?",
-  "admin.alert.success.products.reactivate": "Product successfully reactivated!",
+  "admin.alert.success.products.reactivate": "Product {name} successfully reactivated!",
   "admin.alert.error.products.reactivate": "Failed to reactivate the product.",
-  "admin.alert.success.products.delete": "Product successfully deleted!",
-  "admin.alert.error.products.delete": "Failed to delete the product."
+  "admin.alert.success.products.delete": "Product {name} successfully deleted!",
+  "admin.alert.error.products.delete": "Failed to delete the product.",
+
+  "admin.filterByCategory.product.id": "ID"
 }

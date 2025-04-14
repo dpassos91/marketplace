@@ -16,6 +16,7 @@ function ProductTable({
       <thead>
         <tr>
           <th><FormattedMessage id="admin.filterByCategory.product.title" defaultMessage="Título" /></th>
+          <th><FormattedMessage id="admin.filterByCategory.product.id" defaultMessage="ID" /></th>
           <th><FormattedMessage id="admin.filterByCategory.product.price" defaultMessage="Preço" /></th>
           <th><FormattedMessage id="admin.filterByCategory.product.actions" defaultMessage="Ações" /></th>
         </tr>
@@ -24,6 +25,7 @@ function ProductTable({
         {products.map((product) => (
           <tr key={product.id}>
             <td>{product.title}</td>
+            <td>{product.id}</td>
             <td>{product.price}€</td>
             <td style={{ textAlign: 'center' }}>
               <button

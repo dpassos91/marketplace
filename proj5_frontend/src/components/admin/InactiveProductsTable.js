@@ -4,6 +4,8 @@ import useTableData from '../../hooks/useTableData';
 import SpinnerLeaf from '../commons/SpinnerLeaf';
 import { productAPI } from '../../api/productAPI'; // assumindo que criaste esta API
 import { PRODUCT_STATES } from '../product/productStates';
+import ProductFilterState from './ProductFilterState';
+
 
 const PRODUCTS_PER_PAGE = 10;
 
@@ -73,7 +75,7 @@ const InactiveProductsTable = () => {
           removeItem(productId);
         }
   
-        alert(intl.formatMessage({ id: `admin.alert.success.products.${action}` }, { productId }));
+        alert(intl.formatMessage({ id: `admin.alert.success.products.${action}` }, { productId, name }));
       } catch (err) {
         console.error(err);
         alert(intl.formatMessage({ id: `admin.alert.error.products.${action}` }));
@@ -81,35 +83,15 @@ const InactiveProductsTable = () => {
     }
   }, [intl, removeItem]);
   
+  const isEmpty = !products || products.length === 0;
 
-  if (loading) {
+  if (loading || error || isEmpty) {
     return (
-      <div className="loading-products">
-        <SpinnerLeaf />
-        <div>
-          <FormattedMessage id="admin.productTable.loading" defaultMessage="A carregar produtos..." />
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="error-products">
-        <p>
-          <FormattedMessage id="admin.productTable.error" defaultMessage="Erro ao carregar produtos." />
-        </p>
-      </div>
-    );
-  }
-
-  if (!products || products.length === 0) {
-    return (
-      <div className="empty-products">
-        <p>
-          <FormattedMessage id="admin.productTable.empty" defaultMessage="Nenhum produto inativo encontrado." />
-        </p>
-      </div>
+      <ProductFilterState
+        loading={loading}
+        error={error}
+        message={isEmpty ? 'empty' : null}
+      />
     );
   }
 
