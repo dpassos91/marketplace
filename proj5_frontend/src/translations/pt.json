@@ -107,6 +107,19 @@
   "admin.window.confirm.reactivate": "Tem certeza de que deseja reativar o utilizador com ID {userId}?",
   "admin.window.confirm.suspend": "Tem certeza de que deseja suspender o utilizador com ID {userId}?",
 
+  "admin.products.filter": "Filtrar produtos",
+
+  "admin.productFilter.title": "Filtrar produtos",
+  "admin.productFilter.placeholder.select": "Selecione uma opção",
+  "admin.productFilter.group.categories": "Categorias",
+  "admin.productFilter.group.other": "Outros",
+  "admin.filterBySeller.title": "Procurar por vendedor",
+  "admin.filterBySeller.placeholder.sellerId": "ID do Vendedor",
+  "admin.filterBySeller.error.invalid": "Por favor, insira um número inteiro para o ID do vendedor.",
+  "admin.productTable.loading": "A carregar produtos...",
+  "admin.productTable.error": "Erro ao carregar produtos.",
+  "admin.productTable.empty": "Nenhum produto encontrado.",
+
   "aside.aboutUs": "Sobre Nós",
   "aside.callToAction": "Cada compra na Loop Market apoia um consumo mais consciente e ecológico. Junte-se a nós e contribua para um futuro mais verde e sustentável.",
   "aside.description": "No Loop Market, promovemos a economia circular, reutilizando e reciclando recursos para minimizar o desperdício. Nossa plataforma conecta consumidores e empresas a produtos sustentáveis, prolongando o ciclo de vida dos materiais e reduzindo o impacto ambiental.",

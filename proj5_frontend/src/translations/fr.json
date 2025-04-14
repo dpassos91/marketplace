@@ -289,6 +289,20 @@
   "admin.filterByCategory.product.suspend": "Suspendre",
   "admin.filterByCategory.product.delete": "Supprimer",
   "admin.loading.suspending": "Suspension...",
-  "admin.loading.deleting": "Suppression..."
+  "admin.loading.deleting": "Suppression...",
+
+  "admin.productFilter.title": "Filtrer les produits",
+  "admin.productFilter.placeholder.select": "Sélectionnez une option",
+  "admin.productFilter.group.categories": "Catégories",
+  "admin.productFilter.group.other": "Autres",
+  "admin.filterBySeller.title": "Rechercher par vendeur",
+  "admin.filterBySeller.placeholder.sellerId": "ID du vendeur",
+  "admin.filterBySeller.error.invalid": "Veuillez saisir un nombre entier pour l'ID du vendeur.",
+  "admin.productTable.loading": "Chargement des produits...",
+  "admin.productTable.error": "Erreur lors du chargement des produits.",
+  "admin.productTable.empty": "Aucun produit trouvé.",
+
+  "admin.products.filter": "Filtrer les produits"
+
 }
   

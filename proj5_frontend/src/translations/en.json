@@ -289,6 +289,19 @@
   "admin.filterByCategory.product.suspend": "Suspend",
   "admin.filterByCategory.product.delete": "Delete",
   "admin.loading.suspending": "Suspending...",
-  "admin.loading.deleting": "Deleting..."
+  "admin.loading.deleting": "Deleting...",
+
+  "admin.productFilter.title": "Filter products",
+  "admin.productFilter.placeholder.select": "Select an option",
+  "admin.productFilter.group.categories": "Categories",
+  "admin.productFilter.group.other": "Other",
+  "admin.filterBySeller.title": "Search by seller",
+  "admin.filterBySeller.placeholder.sellerId": "Seller ID",
+  "admin.filterBySeller.error.invalid": "Please enter an integer number for the seller ID.",
+  "admin.productTable.loading": "Loading products...",
+  "admin.productTable.error": "Error loading products.",
+  "admin.productTable.empty": "No products found.",
+
+  "admin.products.filter": "Filter products"
 
 }
