@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Modal from '../commons/Modal';
 import EditProductForm from '../product/EditProductForm';
 import { apiConfig } from '../../api/apiConfig';
@@ -10,11 +10,15 @@ import './UserTable.css';
 import ProductFilterSelect from './ProductFilterSelect';
 import TableDataState from './TableDataState';
 import ProductTable from './ProductTable';
+import usePaginationTable from '../../hooks/usePaginationTable';
+import Pagination from '../commons/Pagination';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
+const PRODUCTS_PER_PAGE = 4;
 
 function ProductFilter({ isOpen, onClose }) {
   const intl = useIntl();
+  const previousSelection = useRef('');
   const { setProduct } = useProductStore();
   const [categories, setCategories] = useState([]);
   const [selection, setSelection] = useState('');
@@ -27,44 +31,17 @@ function ProductFilter({ isOpen, onClose }) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    if (isOpen) {
-      const fetchCategories = async () => {
-        try {
-          const data = await apiCall(API_ENDPOINTS.categories.all);
-          setCategories(data);
-        } catch (error) {
-          console.error(intl.formatMessage({ id: 'admin.filterByCategory.error.loadCategories' }), error);
-        }
-      };
-      fetchCategories();
-    }
-  }, [isOpen, intl]);
-
-  useEffect(() => {
-    setProducts([]);
-    setMessage('');
-    setSellerId('');
-
-    if (selection.startsWith('cat-')) {
-      handleSearch();
-    }
-  }, [selection]);
-
-  useEffect(() => {
-    if (selection === 'seller') {
-      const delayDebounce = setTimeout(() => {
-        if (sellerId.trim() === '') return;
-        if (/^\d+$/.test(sellerId.trim())) {
-          handleSearch();
-        } else {
-          setProducts([]);
-          setMessage('invalid');
-        }
-      }, 600);
-      return () => clearTimeout(delayDebounce);
-    }
-  }, [sellerId]);
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems,
+    handlePageChange,
+    setCurrentPage,
+  } = usePaginationTable(
+    products,
+    PRODUCTS_PER_PAGE,
+    (a, b) => (a.title || '').localeCompare(b.title || '')
+  );
 
   const handleSearch = useCallback(async () => {
     setProducts([]);
@@ -100,8 +77,50 @@ function ProductFilter({ isOpen, onClose }) {
     }
   }, [selection, sellerId]);
 
+  useEffect(() => {
+    setProducts([]);
+    setMessage('');
+    setCurrentPage(1);
+
+    if (previousSelection.current === 'seller' && selection !== 'seller') {
+      setSellerId('');
+    }
+
+    if (selection.startsWith('cat-')) {
+      handleSearch();
+    }
+
+    previousSelection.current = selection;
+  }, [selection, handleSearch, setCurrentPage]);
+
+  useEffect(() => {
+    if (selection === 'seller' && /^\d+$/.test(sellerId.trim())) {
+      setCurrentPage(1);
+      handleSearch();
+    } else if (selection === 'seller' && sellerId.trim() !== '') {
+      setProducts([]);
+      setMessage('invalid');
+    }
+  }, [sellerId, selection, handleSearch, setCurrentPage]);
+
+  useEffect(() => {
+    if (isOpen) {
+      const fetchCategories = async () => {
+        try {
+          const data = await apiCall(API_ENDPOINTS.categories.all);
+          setCategories(data);
+        } catch (error) {
+          console.error(intl.formatMessage({ id: 'admin.filterByCategory.error.loadCategories' }), error);
+        }
+      };
+      fetchCategories();
+    }
+  }, [isOpen, intl]);
+
   const handleSuspendProduct = async (product, productId) => {
-    const confirmed = window.confirm(intl.formatMessage({ id: 'admin.filterByCategory.window.confirm.suspendProduct' }, { name: product.title }));
+    const confirmed = window.confirm(
+      intl.formatMessage({ id: 'admin.filterByCategory.window.confirm.suspendProduct' }, { name: product.title })
+    );
     if (!confirmed) return;
 
     setSuspendingProductId(productId);
@@ -118,7 +137,9 @@ function ProductFilter({ isOpen, onClose }) {
   };
 
   const handleDeleteProduct = async (product, productId) => {
-    const confirmed = window.confirm(intl.formatMessage({ id: 'admin.filterByCategory.window.confirm.deleteProduct' }, { name: product.title }));
+    const confirmed = window.confirm(
+      intl.formatMessage({ id: 'admin.filterByCategory.window.confirm.deleteProduct' }, { name: product.title })
+    );
     if (!confirmed) return;
 
     setDeletingProductId(productId);
@@ -135,7 +156,11 @@ function ProductFilter({ isOpen, onClose }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={intl.formatMessage({ id: 'admin.productFilter.title', defaultMessage: 'Filtrar Produtos' })}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={intl.formatMessage({ id: 'admin.productFilter.title', defaultMessage: 'Filtrar Produtos' })}
+    >
       <ProductFilterSelect
         selection={selection}
         setSelection={setSelection}
@@ -145,26 +170,34 @@ function ProductFilter({ isOpen, onClose }) {
         onCancel={onClose}
       />
 
-<TableDataState
-  loading={loading}
-  error={error}
-  message={message}
-  messagePrefix="admin.filterByCategory"
-  image="/img/sem-produtos.png"
-/>
+      <TableDataState
+        loading={loading}
+        error={error}
+        message={message}
+        messagePrefix="admin.filterByCategory"
+        image="/img/sem-produtos.png"
+      />
 
       {!loading && !error && products.length > 0 && (
-        <ProductTable
-          products={products}
-          suspendingProductId={suspendingProductId}
-          deletingProductId={deletingProductId}
-          onSuspend={handleSuspendProduct}
-          onDelete={handleDeleteProduct}
-          onEdit={(product) => {
-            setProduct(product);
-            setProductToEdit(product);
-          }}
-        />
+        <>
+          <ProductTable
+            products={paginatedItems}
+            suspendingProductId={suspendingProductId}
+            deletingProductId={deletingProductId}
+            onSuspend={handleSuspendProduct}
+            onDelete={handleDeleteProduct}
+            onEdit={(product) => {
+              setProduct(product);
+              setProductToEdit(product);
+            }}
+          />
+
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </>
       )}
 
       {productToEdit && (
