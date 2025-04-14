@@ -8,7 +8,7 @@ import useProductStore from '../../stores/productStore';
 import { PRODUCT_STATES } from '../product/productStates';
 import './UserTable.css';
 import ProductFilterSelect from './ProductFilterSelect';
-import ProductFilterState from './ProductFilterState';
+import TableDataState from './TableDataState';
 import ProductTable from './ProductTable';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
@@ -145,7 +145,13 @@ function ProductFilter({ isOpen, onClose }) {
         onCancel={onClose}
       />
 
-      <ProductFilterState loading={loading} error={error} message={message} sellerId={sellerId} selection={selection} />
+<TableDataState
+  loading={loading}
+  error={error}
+  message={message}
+  messagePrefix="admin.filterByCategory"
+  image="/img/sem-produtos.png"
+/>
 
       {!loading && !error && products.length > 0 && (
         <ProductTable

@@ -3,7 +3,7 @@ import { evaluationAPI } from '../../api/evaluationAPI';
 import Modal from '../commons/Modal';
 import { FormattedMessage, useIntl } from 'react-intl';
 import EvaluationForm from '../evaluation/EvaluationForm';
-import SpinnerLeaf from '../commons/SpinnerLeaf';
+import TableDataState from './TableDataState';
 
 const { getAllEvaluations, deleteEvaluation, getEvaluationById, updateEvaluation } = evaluationAPI;
 
@@ -118,26 +118,17 @@ const EvaluationsTable = () => {
     }
   };
   
+  const isEmpty = !evaluations || evaluations.length === 0;
 
-  if (loading) {
+  if (loading || error || isEmpty) {
     return (
-      <div className="loading-users">
-        <SpinnerLeaf />
-        <div>
-          <FormattedMessage id="admin.evaluationTable.loading" defaultMessage="A carregar avaliações..." />
-        </div>
-      </div>
-    );
-  }
-  
-  if (error) {
-    return (
-      <div className="error-users">
-        <img src="/img/erro-avaliacoes.png" alt="Erro ao carregar avaliações" />
-        <p>
-          <FormattedMessage id="admin.evaluationTable.error" defaultMessage="Erro ao carregar avaliações." />
-        </p>
-      </div>
+      <TableDataState
+        loading={loading}
+        error={error}
+        message={isEmpty ? 'empty' : null}
+        messagePrefix="admin.evaluationTable"
+        image="/img/sem-avaliacoes.png"
+      />
     );
   }
   

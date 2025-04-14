@@ -77,7 +77,10 @@
   "admin.evaluationTable.ratingInput": "Nota:",
   "admin.evaluationTable.title": "Título:",
   
-"admin.filterByCategory.error.loadCategories": "Erro ao carregar categorias",
+  "admin.filterByCategory.loading": "A carregar produtos...",
+  "admin.filterByCategory.error": "Erro ao carregar produtos. Por favor, tente novamente.",
+  "admin.filterByCategory.empty": "Não existem produtos nesta categoria.",
+  "admin.filterByCategory.error.loadCategories": "Erro ao carregar categorias",
   "admin.filterByCategory.error.loadProducts": "Erro ao buscar produtos",
   "admin.filterByCategory.window.confirm.suspendProduct": "Tem certeza de que deseja suspender o produto {name}?",
   "admin.filterByCategory.alert.success.suspendProduct": "Produto {name} suspenso com sucesso!",
@@ -95,6 +98,9 @@
   "admin.filterByCategory.product.delete": "Eliminar",
   "admin.loading.suspending": "A suspender...",
   "admin.loading.deleting": "A eliminar...",
+
+  "admin.evaluationTable.error": "Erro ao carregar avaliações. Por favor, tente novamente.",
+  "admin.evaluationTable.empty": "Não existem avaliações registadas.",
   
   "admin.modal.editEvaluation": "Editar Avaliação",
   "admin.products.title": "Gestão de Produtos",

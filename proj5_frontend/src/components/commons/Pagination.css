@@ -5,25 +5,34 @@
     margin-top: 20px;
     flex-wrap: wrap;
   }
-  
+
   .pagination-button {
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    background-color: var(--white-100); /* Cor base */
-    color: var(--text-color, #000); /* Fallback para texto */
+    background-color: var(--primary-300);
+    height: 30px;
+    border: none;
+    width: 30px;
+    /* Ajuste o tamanho conforme necessário */
+    color: var(--white-100);
+    font-weight: bold;
+    border-radius: 5px;
+    /* Opcional: para dar um aspeto arredondado */
+    margin: 5px;
+    /* Adicione margem para espaçamento */
     cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s ease-in-out;
+    transition: background-color 0.3s ease;
+    /* Adicione transição suave */
   }
   
   .pagination-button:hover {
-    background-color: var(--primary-100, #e0e0e0); /* Suave no hover */
+    background-color: var(--primary-400);
   }
   
+  /* Estilo para o botão ativo */
   .pagination-button.active {
-    background-color: var(--primary-400); /* Cor principal */
-    color: var(--white-100); /* Texto branco */
-    font-weight: bold;
-    border-color: var(--primary-400);
+    background-color: var(--primary-400);
+    /* Cor mais escura para o botão ativo */
+    color: var(--white-100);
   }
+  
+  
   

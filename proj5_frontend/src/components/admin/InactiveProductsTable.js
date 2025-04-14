@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import useTableData from '../../hooks/useTableData';
 import { productAPI } from '../../api/productAPI';
 import { PRODUCT_STATES } from '../product/productStates';
-import ProductFilterState from './ProductFilterState';
+import TableDataState from './TableDataState';
 import usePaginationTable from '../../hooks/usePaginationTable';
 import Pagination from '../commons/Pagination';
 
@@ -86,10 +86,12 @@ const InactiveProductsTable = () => {
 
   if (loading || error || isEmpty) {
     return (
-      <ProductFilterState
+      <TableDataState
         loading={loading}
         error={error}
         message={isEmpty ? 'empty' : null}
+        messagePrefix="admin.productTable"
+        image="/img/sem-produtos.png"
       />
     );
   }

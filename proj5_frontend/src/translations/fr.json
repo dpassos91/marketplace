@@ -272,7 +272,7 @@
   "admin.addCategory.error.generic": "Erreur lors de l'ajout de la catégorie.",
   "admin.common.add": "Ajouter",
 
-"admin.filterByCategory.error.loadCategories": "Erreur lors du chargement des catégories",
+  "admin.filterByCategory.error.loadCategories": "Erreur lors du chargement des catégories",
   "admin.filterByCategory.error.loadProducts": "Erreur lors de la récupération des produits",
   "admin.filterByCategory.window.confirm.suspendProduct": "Êtes-vous sûr de vouloir suspendre le produit {name} ?",
   "admin.filterByCategory.alert.success.suspendProduct": "Produit {name} suspendu avec succès !",
@@ -321,6 +321,13 @@
   "admin.alert.success.products.delete": "Produit {name} supprimé avec succès !",
   "admin.alert.error.products.delete": "Échec de la suppression du produit.",
 
-  "admin.filterByCategory.product.id": "ID"
+  "admin.filterByCategory.product.id": "ID",
+
+  "admin.filterByCategory.loading": "Chargement des produits...",
+  "admin.filterByCategory.error": "Erreur lors du chargement des produits. Veuillez réessayer.",
+  "admin.filterByCategory.empty": "Aucun produit dans cette catégorie.",
+
+  "admin.evaluationTable.error": "Erreur lors du chargement des évaluations. Veuillez réessayer.",
+  "admin.evaluationTable.empty": "Aucune évaluation trouvée."
 }
   

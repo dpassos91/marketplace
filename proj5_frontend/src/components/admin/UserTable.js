@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import useTableData from '../../hooks/useTableData';
 import { userAPI } from '../../api/userAPI';
 import { FormattedMessage, useIntl } from 'react-intl';
-import SpinnerLeaf from '../commons/SpinnerLeaf';
+import TableDataState from './TableDataState';
 import './UserTable.css';
 
 const USERS_PER_PAGE = 10;
@@ -45,8 +45,8 @@ const UserTable = () => {
     loading,
     error,
     refetch,
-    removeItem, // disponível se quiseres usar para delete direto
-    setData     // disponível para atualizações manuais
+    removeItem,
+    setData
   } = useTableData(userAPI.getTotalUsers);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -88,42 +88,25 @@ const UserTable = () => {
     }
   }, [refetch, intl]);
 
-  if (loading) {
-    return (
-      <div className="loading-users">
-        <SpinnerLeaf />
-        <div>
-          <FormattedMessage id="admin.userTable.loading" defaultMessage="A carregar utilizadores..." />
-        </div>
-      </div>
-    );
-  }
+  const isEmpty = !users || users.length === 0;
 
-  if (error) {
+  if (loading || error || isEmpty) {
     return (
-      <div className="error-users">
-        <img src="/img/erro-utilizadores.png" alt="Erro ao carregar utilizadores" />
-        <p>
-          <FormattedMessage id="admin.userTable.error" defaultMessage="Erro ao carregar utilizadores." />
-        </p>
-      </div>
-    );
-  }
-
-  if (!users || users.length === 0) {
-    return (
-      <div className="empty-users">
-        <img src="/img/sem-utilizadores.png" alt="Nenhum utilizador encontrado" />
-        <p>
-          <FormattedMessage id="admin.userTable.empty" defaultMessage="Nenhum utilizador encontrado." />
-        </p>
-      </div>
+      <TableDataState
+        loading={loading}
+        error={error}
+        message={isEmpty ? 'empty' : null}
+        messagePrefix="admin.userTable"
+        image="/img/sem-utilizadores.png"
+      />
     );
   }
 
   return (
     <div>
-      <h2 className="admin-title"> Gestão de Utilizadores </h2>
+      <h2 className="admin-title">
+        <FormattedMessage id="admin.userTable.title" defaultMessage="Gestão de Utilizadores" />
+      </h2>
       <table>
         <thead>
           <tr>
@@ -160,7 +143,6 @@ const UserTable = () => {
 };
 
 export default UserTable;
-
 
 
 

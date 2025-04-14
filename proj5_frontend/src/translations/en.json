@@ -321,5 +321,12 @@
   "admin.alert.success.products.delete": "Product {name} successfully deleted!",
   "admin.alert.error.products.delete": "Failed to delete the product.",
 
-  "admin.filterByCategory.product.id": "ID"
+  "admin.filterByCategory.product.id": "ID",
+
+  "admin.filterByCategory.loading": "Loading products...",
+  "admin.filterByCategory.error": "Error loading products. Please try again.",
+  "admin.filterByCategory.empty": "There are no products in this category.",
+
+  "admin.evaluationTable.error": "Error loading evaluations. Please try again.",
+  "admin.evaluationTable.empty": "No evaluations found."
 }

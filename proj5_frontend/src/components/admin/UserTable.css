@@ -91,60 +91,43 @@ table {
   background-color: var(--light-color);
 }
   
-  /* Paginação */
-  .pagination {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .pagination button {
-    margin: 0 5px;
-    padding: 5px 10px;
-    background-color: #f0f0f0;
-    color: #000;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .pagination button.active {
-    background-color: var(--primary-400);
-    color: #fff;
-    border: 1px solid var(--primary-400);
-  }
-  
   /* Estados especiais (vazio / erro) */
   .empty-users,
-  .error-users {
+  .error-users,
+  .error-state,
+  .empty-state {
     text-align: center;
     margin-top: 40px;
     opacity: 0.9;
   }
   
   .empty-users img,
-  .error-users img {
+  .error-users img,
+  .error-state img,
+  .empty-state img {
     max-width: 200px;
     opacity: 0.75;
     transition: transform 0.4s ease-in-out;
   }
   
   .empty-users img:hover,
-  .error-users img:hover {
+  .error-users img:hover,
+  .error-state img:hover,
+  .empty-state img:hover {
     transform: scale(1.05);
   }
   
   /* Spinner loading */
-  .loading-users {
+  .loading-state {
     text-align: center;
     margin-top: 40px;
   }
   
-  .loading-users p {
+  .loading-state p {
     margin-top: 10px;
   }
 
-  .loading-users .spinner-icon {
+  .loading-state .spinner-icon {
     width: 50px;
     height: 50px;
     animation: spin 1.2s linear infinite;
