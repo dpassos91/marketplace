@@ -4,6 +4,19 @@
   "addProduct.success": "Produto criado com sucesso!",
   "addProduct.title": "Adicionar Novo Produto",
 
+  "admin.productTable.title": "Produtos Inativos",
+  "admin.productTable.name": "Nome",
+  "admin.productTable.price": "Preço",
+  "admin.productTable.id": "ID Produto",
+  "admin.productTable.seller": "Username",
+  "admin.productTable.actions": "Ações",
+
+  "admin.productTable.delete": "Eliminar",
+  "admin.productTable.reactivate": "Reativar",
+
+  "admin.window.confirm.products.delete": "Tem certeza de que deseja eliminar o produto {name} (ID: {productId})?",
+  "admin.window.confirm.products.reactivate": "Tem certeza de que deseja reativar o produto {name} (ID: {productId})?",
+
   "admin.addCategory.title": "Adicionar Nova Categoria",
   "admin.addCategory.placeholder.name": "Nome da categoria",
   "admin.addCategory.success": "Nova categoria adicionada com sucesso!",
@@ -21,6 +34,10 @@
   "admin.alert.success.reactivate": "O utilizador {userId} foi reativado com sucesso.",
   "admin.alert.success.suspend": "O utilizador {userId} foi suspenso com sucesso.",
   "admin.alert.success.updateEvaluation": "Avaliação atualizada com sucesso!",
+  "admin.alert.sucess.products.reactivate": "Produto reativado com sucesso!",
+  "admin.alert.error.products.reactivate": "Erro ao tentar reativar o produto.",
+  "admin.alert.sucess.products.delete": "Produto eliminado com sucesso!",
+  "admin.alert.error.products.delete": "Erro ao tentar eliminar o produto.",
   "admin.common.add": "Adicionar",
   "admin.common.cancel": "Cancelar",
   "admin.common.save": "Guardar",
@@ -102,10 +119,10 @@
   "admin.welcomeSection.description": "Aqui poderá gerir avaliações, produtos e utilizadores do sistema.",
   "admin.welcomeSection.instruction": "Selecione uma opção no menu à esquerda para começar.",
   "admin.welcomeSection.title": "Bem-vindo ao Painel de Administração!",
-  "admin.window.confirm.delete": "Tem certeza de que deseja excluir o utilizador com ID {userId}?",
-  "admin.window.confirm.deleteEvaluation": "Tem certeza de que deseja eliminar esta avaliação?",
-  "admin.window.confirm.reactivate": "Tem certeza de que deseja reativar o utilizador com ID {userId}?",
-  "admin.window.confirm.suspend": "Tem certeza de que deseja suspender o utilizador com ID {userId}?",
+  "admin.window.confirm.delete": "Tem a certeza de que deseja excluir o utilizador com ID {userId}?",
+  "admin.window.confirm.deleteEvaluation": "Tem a certeza de que deseja eliminar esta avaliação?",
+  "admin.window.confirm.reactivate": "Tem a certeza de que deseja reativar o utilizador com ID {userId}?",
+  "admin.window.confirm.suspend": "Tem a erteza de que deseja suspender o utilizador com ID {userId}?",
 
   "admin.products.filter": "Filtrar produtos",
 

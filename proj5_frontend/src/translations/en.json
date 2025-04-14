@@ -302,6 +302,22 @@
   "admin.productTable.error": "Error loading products.",
   "admin.productTable.empty": "No products found.",
 
-  "admin.products.filter": "Filter products"
+  "admin.products.filter": "Filter products",
 
+  "admin.productTable.title": "Inactive Products",
+  "admin.productTable.name": "Name",
+  "admin.productTable.price": "Price",
+  "admin.productTable.id": "Product ID",
+  "admin.productTable.seller": "Username",
+  "admin.productTable.actions": "Actions",
+
+  "admin.productTable.delete": "Delete",
+  "admin.productTable.reactivate": "Reactivate",
+
+  "admin.window.confirm.products.delete": "Are you sure you want to delete the product {name} (ID: {productId})?",
+  "admin.window.confirm.products.reactivate": "Are you sure you want to reactivate the product {name} (ID: {productId})?",
+  "admin.alert.success.products.reactivate": "Product successfully reactivated!",
+  "admin.alert.error.products.reactivate": "Failed to reactivate the product.",
+  "admin.alert.success.products.delete": "Product successfully deleted!",
+  "admin.alert.error.products.delete": "Failed to delete the product."
 }

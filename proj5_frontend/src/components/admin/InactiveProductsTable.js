@@ -1,125 +1,145 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { apiConfig } from '../../api/apiConfig'; // Importe a configuração da API
+import React, { useState, useCallback, useMemo } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useTableData from '../../hooks/useTableData';
+import SpinnerLeaf from '../commons/SpinnerLeaf';
+import { productAPI } from '../../api/productAPI'; // assumindo que criaste esta API
+import { PRODUCT_STATES } from '../product/productStates';
 
 const PRODUCTS_PER_PAGE = 10;
 
-function InactiveProductsTable() {
-  const [products, setProducts] = useState([]);
+const ProductRow = React.memo(({ product, onAction }) => (
+  <tr>
+    <td>{product.title}</td>
+    <td>{product.price}</td>
+    <td>{product.id}</td>
+    <td>{product.sellerUsername}</td>
+    <td>
+      <div className="table-actions">
+        <button
+          className="btn-card tabela-btn btn-danger"
+          onClick={() => onAction(product.id, 'reactivate', product.title)}
+        >
+          <FormattedMessage id="admin.productTable.reactivate" defaultMessage="Reactivar" />
+        </button>
+        <button
+          className="btn-card tabela-btn btn-edit"
+          onClick={() => onAction(product.id, 'delete', product.title)}
+        >
+          <FormattedMessage id="admin.productTable.delete" defaultMessage="Eliminar" />
+        </button>
+      </div>
+    </td>
+  </tr>
+));
+
+const InactiveProductsTable = () => {
+  const intl = useIntl();
+
+  const {
+    data: products,
+    loading,
+    error,
+    refetch,
+    removeItem,
+  } = useTableData(productAPI.getInactiveProducts);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      setLoading(true);
-      try {
-        // Use a função apiCall da sua configuração
-        const data = await apiConfig.apiCall(apiConfig.API_ENDPOINTS.products.inactive);
-        if (!Array.isArray(data)) {
-          throw new Error('Unexpected data format');
-        }
-        setProducts(data);
-        setError(null);
-      } catch (err) {
-        console.error('Error:', err);
-        setError('Erro ao carregar produtos.');
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProducts();
-  }, []);
+  const totalPages = useMemo(() => Math.ceil((products?.length || 0) / PRODUCTS_PER_PAGE), [products]);
 
   const getProductsForPage = useCallback((page) => {
-    const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
-    const endIndex = startIndex + PRODUCTS_PER_PAGE;
-    return [...products].sort((a, b) => (a.title || '').localeCompare(b.title || '')).slice(startIndex, endIndex);
+    if (!products) return [];
+    const sorted = [...products].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    return sorted.slice((page - 1) * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE);
   }, [products]);
 
-  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
-
-  const handlePageChange = (newPage) => {
+  const handlePageChange = useCallback((newPage) => {
     setCurrentPage(newPage);
-  };
+  }, []);
 
-  const handleDeleteProduct = async (productId, productName) => {
-    if (window.confirm(`Tem certeza de que deseja excluir o produto "${productName}" (ID: ${productId})?`)) {
+  const handleAction = useCallback(async (productId, action, name) => {
+    const confirmMessage = intl.formatMessage(
+      { id: `admin.window.confirm.products.${action}` },
+      { productId, name }
+    );
+  
+    if (window.confirm(confirmMessage)) {
       try {
-        // Use a função apiCall para excluir o produto
-        await apiConfig.apiCall(apiConfig.API_ENDPOINTS.products.permanentDelete(productId), {
-          method: 'DELETE', // Especifica o método DELETE
-        });
-        setProducts(products.filter(product => product.id !== productId));
-        alert(`Produto "${productName}" excluído com sucesso.`);
+        if (action === 'delete') {
+          await productAPI.permanentlyDeleteProduct(productId);
+          removeItem(productId);
+        } else if (action === 'reactivate') {
+          await productAPI.reactivateProduct(productId, PRODUCT_STATES.DISPONIVEL.id);
+          removeItem(productId);
+        }
+  
+        alert(intl.formatMessage({ id: `admin.alert.success.products.${action}` }, { productId }));
       } catch (err) {
-        console.error('Erro ao excluir produto:', err);
-        alert('Erro ao excluir produto.');
+        console.error(err);
+        alert(intl.formatMessage({ id: `admin.alert.error.products.${action}` }));
       }
     }
-  };
+  }, [intl, removeItem]);
+  
 
   if (loading) {
-    return <div>A carregar produtos...</div>;
+    return (
+      <div className="loading-products">
+        <SpinnerLeaf />
+        <div>
+          <FormattedMessage id="admin.productTable.loading" defaultMessage="A carregar produtos..." />
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Erro: {error}</div>;
+    return (
+      <div className="error-products">
+        <p>
+          <FormattedMessage id="admin.productTable.error" defaultMessage="Erro ao carregar produtos." />
+        </p>
+      </div>
+    );
   }
 
-  if (products.length === 0) {
-    return <div>Nenhum produto inativo encontrado.</div>;
+  if (!products || products.length === 0) {
+    return (
+      <div className="empty-products">
+        <p>
+          <FormattedMessage id="admin.productTable.empty" defaultMessage="Nenhum produto inativo encontrado." />
+        </p>
+      </div>
+    );
   }
 
   return (
     <div>
-      <h2>Produtos Inativos</h2>
+      <h2 className="admin-title">
+        <FormattedMessage id="admin.productTable.title" defaultMessage="Produtos Inativos" />
+      </h2>
       <table>
         <thead>
           <tr>
-            <th style={{ textAlign: 'center' }}>Nome</th>
-            <th style={{ textAlign: 'center' }}>Preço</th>
-            <th style={{ textAlign: 'center' }}>ID Produto</th>
-            <th style={{ textAlign: 'center' }}>Username</th>
-            <th style={{ textAlign: 'center' }}>Ações</th>
+            <th><FormattedMessage id="admin.productTable.name" defaultMessage="Nome" /></th>
+            <th><FormattedMessage id="admin.productTable.price" defaultMessage="Preço" /></th>
+            <th><FormattedMessage id="admin.productTable.id" defaultMessage="ID Produto" /></th>
+            <th><FormattedMessage id="admin.productTable.seller" defaultMessage="Username" /></th>
+            <th><FormattedMessage id="admin.productTable.actions" defaultMessage="Ações" /></th>
           </tr>
         </thead>
         <tbody>
-          {getProductsForPage(currentPage).map(product => (
-            <tr key={product.id}>
-              <td style={{ textAlign: 'center' }}>{product.title}</td>
-              <td style={{ textAlign: 'center' }}>{product.price}</td>
-              <td style={{ textAlign: 'center' }}>{product.id}</td>
-              <td style={{ textAlign: 'center' }}>{product.sellerUsername}</td>
-              <td style={{ textAlign: 'center' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-                  <button
-                    className="btn-card tabela-btn btn-danger"
-                    onClick={() => handleDeleteProduct(product.id, product.title)}
-                  >
-                    Excluir
-                  </button>
-                </div>
-              </td>
-            </tr>
+          {getProductsForPage(currentPage).map((product) => (
+            <ProductRow key={product.id} product={product} onAction={handleAction} />
           ))}
         </tbody>
       </table>
 
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button
             key={page}
-            style={{
-              margin: '0 5px',
-              padding: '5px 10px',
-              backgroundColor: page === currentPage ? '#007bff' : '#f0f0f0',
-              color: page === currentPage ? '#fff' : '#000',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
+            className={page === currentPage ? 'active' : ''}
             onClick={() => handlePageChange(page)}
           >
             {page}
@@ -128,6 +148,7 @@ function InactiveProductsTable() {
       </div>
     </div>
   );
-}
+};
 
 export default InactiveProductsTable;
+
