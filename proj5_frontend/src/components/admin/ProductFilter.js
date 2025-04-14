@@ -8,6 +8,9 @@ import useProductStore from '../../stores/productStore';
 import SpinnerLeaf from '../commons/SpinnerLeaf';
 import { PRODUCT_STATES } from '../product/productStates';
 import './UserTable.css';
+import ProductFilterSelect from './ProductFilterSelect';
+import ProductFilterState from './ProductFilterState';
+import ProductTable from './ProductTable';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 
@@ -50,9 +53,15 @@ function ProductFilter({ isOpen, onClose }) {
   }, [selection]);
 
   useEffect(() => {
-    if (selection === 'seller' && sellerId.trim()) {
+    if (selection === 'seller') {
       const delayDebounce = setTimeout(() => {
-        handleSearch();
+        if (sellerId.trim() === '') return;
+        if (/^\d+$/.test(sellerId.trim())) {
+          handleSearch();
+        } else {
+          setProducts([]);
+          setMessage('invalid');
+        }
       }, 600);
       return () => clearTimeout(delayDebounce);
     }
@@ -69,11 +78,11 @@ function ProductFilter({ isOpen, onClose }) {
       if (selection.startsWith('cat-')) {
         const categoryId = selection.replace('cat-', '');
         data = await apiCall(API_ENDPOINTS.products.byCategory(categoryId));
-      } else if (selection === 'seller' && sellerId.trim()) {
+      } else if (selection === 'seller' && /^\d+$/.test(sellerId.trim())) {
         data = await apiCall(API_ENDPOINTS.products.bySeller(sellerId));
       } else {
         setLoading(false);
-        setMessage('empty');
+        setMessage('invalid');
         return;
       }
 
@@ -128,125 +137,29 @@ function ProductFilter({ isOpen, onClose }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={intl.formatMessage({ id: 'admin.productFilter.title', defaultMessage: 'Filtrar Produtos' })}>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <select
-          value={selection}
-          onChange={(e) => setSelection(e.target.value)}
-          required
-        >
-          <option value="" disabled hidden>
-            {intl.formatMessage({ id: 'admin.productFilter.selectOption', defaultMessage: 'Selecione uma opção' })}
-          </option>
-          <optgroup label={intl.formatMessage({ id: 'admin.productFilter.group.categories', defaultMessage: 'Categorias' })}>
-            {categories.map((category) => (
-              <option key={category.id} value={`cat-${category.id}`}>
-                {category.name}
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label={intl.formatMessage({ id: 'admin.productFilter.group.other', defaultMessage: 'Outros' })}>
-            <option value="seller">🔍 {intl.formatMessage({ id: 'admin.filterBySeller.title', defaultMessage: 'Procurar por vendedor' })}</option>
-          </optgroup>
-        </select>
+      <ProductFilterSelect
+        selection={selection}
+        setSelection={setSelection}
+        sellerId={sellerId}
+        setSellerId={setSellerId}
+        categories={categories}
+        onCancel={onClose}
+      />
 
-        {selection === 'seller' && (
-          <input
-            type="text"
-            value={sellerId}
-            onChange={(e) => setSellerId(e.target.value)}
-            placeholder={intl.formatMessage({ id: 'admin.filterBySeller.placeholder.sellerId', defaultMessage: 'ID do Vendedor' })}
-            required
-          />
-        )}
-
-        <button type="button" onClick={onClose}>
-          <FormattedMessage id="admin.common.cancel" defaultMessage="Cancelar" />
-        </button>
-      </form>
-
-      {loading && (
-        <div className="loading-products">
-          <SpinnerLeaf />
-          <div>
-            <FormattedMessage id="admin.productTable.loading" defaultMessage="A carregar produtos..." />
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="error-products">
-          <img src="/img/erro-produtos.png" alt="Erro ao carregar produtos" />
-          <p><FormattedMessage id="admin.productTable.error" defaultMessage="Erro ao carregar produtos." /></p>
-        </div>
-      )}
-
-      {message === 'empty' && (
-        <div className="empty-products">
-          <img src="/img/sem-produtos.png" alt="Nenhum produto encontrado" />
-          <p><FormattedMessage id="admin.productTable.empty" defaultMessage="Nenhum produto encontrado." /></p>
-        </div>
-      )}
+      <ProductFilterState loading={loading} error={error} message={message} sellerId={sellerId} selection={selection} />
 
       {!loading && !error && products.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th><FormattedMessage id="admin.filterByCategory.product.title" defaultMessage="Título" /></th>
-              <th><FormattedMessage id="admin.filterByCategory.product.price" defaultMessage="Preço" /></th>
-              <th><FormattedMessage id="admin.filterByCategory.product.actions" defaultMessage="Ações" /></th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id}>
-                <td>{product.title}</td>
-                <td>{product.price}€</td>
-                <td style={{ textAlign: 'center' }}>
-                  <button
-                    className="btn-card tabela-btn btn-info"
-                    onClick={() => {
-                      setProduct(product);
-                      setProductToEdit(product);
-                    }}
-                    disabled={!PRODUCT_STATES.isActive(PRODUCT_STATES.fromStatus(product.productState)?.id)}
-                  >
-                    <FormattedMessage id="admin.filterByCategory.product.edit" defaultMessage="Editar" />
-                  </button>
-
-                  <button
-                    className="btn-card tabela-btn btn-danger"
-                    onClick={() => handleSuspendProduct(product, product.id)}
-                    disabled={suspendingProductId === product.id}
-                  >
-                    {suspendingProductId === product.id ? (
-                      <>
-                        <FormattedMessage id="admin.loading.suspending" defaultMessage="A suspender..." />
-                        &nbsp;<SpinnerLeaf size={16} />
-                      </>
-                    ) : (
-                      <FormattedMessage id="admin.filterByCategory.product.suspend" defaultMessage="Suspender" />
-                    )}
-                  </button>
-
-                  <button
-                    className="btn-card tabela-btn btn-edit"
-                    onClick={() => handleDeleteProduct(product, product.id)}
-                    disabled={deletingProductId === product.id}
-                  >
-                    {deletingProductId === product.id ? (
-                      <>
-                        <FormattedMessage id="admin.loading.deleting" defaultMessage="A eliminar..." />
-                        &nbsp;<SpinnerLeaf size={16} />
-                      </>
-                    ) : (
-                      <FormattedMessage id="admin.filterByCategory.product.delete" defaultMessage="Eliminar" />
-                    )}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ProductTable
+          products={products}
+          suspendingProductId={suspendingProductId}
+          deletingProductId={deletingProductId}
+          onSuspend={handleSuspendProduct}
+          onDelete={handleDeleteProduct}
+          onEdit={(product) => {
+            setProduct(product);
+            setProductToEdit(product);
+          }}
+        />
       )}
 
       {productToEdit && (
@@ -269,3 +182,5 @@ function ProductFilter({ isOpen, onClose }) {
 }
 
 export default ProductFilter;
+
+
