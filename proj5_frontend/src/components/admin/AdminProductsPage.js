@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddCategoryModal from '../admin/AddCategoryModal';
-import FilterProductsByCategory from '../admin/FilterProductsByCategory';
-import FilterProductsBySeller from '../admin/FilterProductsBySeller';
+import ProductFilter from '../admin/ProductFilter';
 import './AdminProductsPage.css';
 import { FormattedMessage } from 'react-intl';
 
 function AdminProductsPage() {
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isFilterBySellerModalOpen, setIsFilterBySellerModalOpen] = useState(false);
+  const [isProductFilterModalOpen, setIsProductFilterModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleNavigateToAlterados = () => {
@@ -35,20 +33,16 @@ function AdminProductsPage() {
           <button className="btn-card products-btn btn-products" onClick={() => setIsAddCategoryModalOpen(true)}>
             <FormattedMessage id="admin.products.addCategory" defaultMessage="Adicionar categoria" />
           </button>
-          <button className="btn-card products-btn btn-products" onClick={() => setIsFilterModalOpen(true)}>
-            <FormattedMessage id="admin.products.filterByCategory" defaultMessage="Filtrar por categoria" />
-          </button>
-          <button className="btn-card products-btn btn-products" onClick={() => setIsFilterBySellerModalOpen(true)}>
-            <FormattedMessage id="admin.products.filterBySeller" defaultMessage="Filtrar por vendedor" />
+          <button className="btn-card products-btn btn-products" onClick={() => setIsProductFilterModalOpen(true)}>
+            <FormattedMessage id="admin.products.filter" defaultMessage="Filtrar produtos" />
           </button>
         </div>
 
         <div className="admin-actions-column">
-          
           <button className="btn-card products-btn btn-products" onClick={handleNavigateToAlterados}>
-          <FormattedMessage id="admin.products.showModified" defaultMessage="Mostrar produtos alterados" />
-        </button>
-        <button className="btn-card products-btn btn-products" onClick={handleNavigateToComprados}>
+            <FormattedMessage id="admin.products.showModified" defaultMessage="Mostrar produtos alterados" />
+          </button>
+          <button className="btn-card products-btn btn-products" onClick={handleNavigateToComprados}>
             <FormattedMessage id="admin.products.listBought" defaultMessage="Mostrar produtos comprados" />
           </button>
           <button className="btn-card products-btn btn-products" onClick={handleNavigateToInativos}>
@@ -68,20 +62,11 @@ function AdminProductsPage() {
         </div>
       )}
 
-      {isFilterModalOpen && (
+      {isProductFilterModalOpen && (
         <div style={{ zIndex: 9999 }}>
-          <FilterProductsByCategory
-            isOpen={isFilterModalOpen}
-            onClose={() => setIsFilterModalOpen(false)}
-          />
-        </div>
-      )}
-
-      {isFilterBySellerModalOpen && (
-        <div style={{ zIndex: 9999 }}>
-          <FilterProductsBySeller
-            isOpen={isFilterBySellerModalOpen}
-            onClose={() => setIsFilterBySellerModalOpen(false)}
+          <ProductFilter
+            isOpen={isProductFilterModalOpen}
+            onClose={() => setIsProductFilterModalOpen(false)}
           />
         </div>
       )}
@@ -90,4 +75,5 @@ function AdminProductsPage() {
 }
 
 export default AdminProductsPage;
+
 

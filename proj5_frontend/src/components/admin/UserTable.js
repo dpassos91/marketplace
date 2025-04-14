@@ -1,166 +1,210 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import useTableData from '../../hooks/useTableData';
-import { userAPI } from '../../api/userAPI';
-import { FormattedMessage, useIntl } from 'react-intl';
+import React, { useState, useCallback } from 'react';
+import Modal from '../commons/Modal';
+import { apiConfig } from '../../api/apiConfig';
+import EditProductForm from '../product/EditProductForm';
+import { PRODUCT_STATES } from '../product/productStates';
+import { useIntl, FormattedMessage } from 'react-intl';
 import SpinnerLeaf from '../commons/SpinnerLeaf';
-import './UserTable.css';
 
-const USERS_PER_PAGE = 10;
+const { apiCall, API_ENDPOINTS } = apiConfig;
 
-const UserRow = React.memo(({ user, onRedirect, onAction }) => {
-  const active = Boolean(user.active);
-
-  return (
-    <tr className={active ? '' : 'suspended-user'}>
-      <td>{user.username}</td>
-      <td>{user.email}</td>
-      <td>
-        <div className="table-actions">
-          <button className="btn-card tabela-btn btn-danger" onClick={() => onRedirect(user.id)}>
-            <FormattedMessage id="admin.userTable.profile" defaultMessage="Consultar perfil" />
-          </button>
-          {active ? (
-            <button className="btn-card tabela-btn btn-info" onClick={() => onAction(user.id, 'suspend')}>
-              <FormattedMessage id="admin.userTable.suspend" defaultMessage="Suspender" />
-            </button>
-          ) : (
-            <button className="btn-card tabela-btn btn-success" onClick={() => onAction(user.id, 'reactivate')}>
-              <FormattedMessage id="admin.userTable.reactivate" defaultMessage="Reativar" />
-            </button>
-          )}
-          <button className="btn-card tabela-btn btn-edit" onClick={() => onAction(user.id, 'delete')}>
-            <FormattedMessage id="admin.userTable.delete" defaultMessage="Eliminar" />
-          </button>
-        </div>
-      </td>
-    </tr>
-  );
-});
-
-const UserTable = () => {
+function FilterProductsBySeller({ isOpen, onClose }) {
+  const [sellerId, setSellerId] = useState('');
+  const [products, setProducts] = useState([]);
+  const [message, setMessage] = useState('');
+  const [productToEdit, setProductToEdit] = useState(null);
+  const [suspendingProductId, setSuspendingProductId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const intl = useIntl();
 
-  const {
-    data: users,
-    loading,
-    error,
-    refetch,
-    removeItem, // disponível se quiseres usar para delete direto
-    setData     // disponível para atualizações manuais
-  } = useTableData(userAPI.getTotalUsers);
+  const searchSellerProducts = useCallback(async () => {
+    if (!sellerId.trim()) {
+      setProducts([]);
+      setMessage('');
+      setError(false);
+      return;
+    }
 
-  const [currentPage, setCurrentPage] = useState(1);
+    setLoading(true);
+    setError(false);
+    setProducts([]);
+    setMessage('');
 
-  const totalPages = useMemo(() => Math.ceil((users?.length || 0) / USERS_PER_PAGE), [users]);
+    try {
+      const data = await apiCall(API_ENDPOINTS.products.bySeller(sellerId));
+      const availableProducts = data.filter((product) => {
+        const state = PRODUCT_STATES.fromStatus(product.productState);
+        return state && PRODUCT_STATES.isActive(state.id) && state.id !== PRODUCT_STATES.COMPRADO.id;
+      });
+      setProducts(availableProducts);
+      if (availableProducts.length === 0) {
+        setMessage('empty');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [sellerId]);
 
-  const getUsersForPage = useCallback((page) => {
-    if (!users) return [];
-    const start = (page - 1) * USERS_PER_PAGE;
-    return users.slice(start, start + USERS_PER_PAGE);
-  }, [users]);
-
-  const handlePageChange = useCallback((newPage) => {
-    setCurrentPage(newPage);
-  }, []);
-
-  const handleRedirectToProfile = useCallback((userId) => {
-    window.location.href = `http://localhost:3000/profile/${userId}`;
-  }, []);
-
-  const handleAction = useCallback(async (userId, action) => {
-    const confirmationMessage = intl.formatMessage(
-      { id: `admin.window.confirm.${action}` },
-      { userId }
+  const handleSuspendProduct = async (product, productId) => {
+    const confirmed = window.confirm(
+      intl.formatMessage({
+        id: 'admin.filterBySeller.window.confirm.suspendProduct',
+        defaultMessage: 'Tem certeza de que deseja suspender o produto {name}?'
+      }, { name: product.title })
     );
 
-    if (window.confirm(confirmationMessage)) {
+    if (confirmed) {
+      setSuspendingProductId(productId);
       try {
-        if (action === 'suspend') await userAPI.suspendUser(userId);
-        else if (action === 'reactivate') await userAPI.reactivateUser(userId);
-        else if (action === 'delete') await userAPI.deleteUser(userId);
-
-        alert(intl.formatMessage({ id: `admin.alert.success.${action}` }, { userId }));
-        refetch(); // ou usa removeItem(userId) se preferires performance
-      } catch (err) {
-        console.error(err);
-        alert(intl.formatMessage({ id: `admin.alert.error.${action}` }));
+        await apiCall(API_ENDPOINTS.products.deactivate(productId));
+        alert(
+          intl.formatMessage({
+            id: 'admin.filterBySeller.alert.success.suspendProduct',
+            defaultMessage: 'Produto {name} foi suspenso com sucesso.'
+          }, { name: product.title })
+        );
+        searchSellerProducts();
+      } catch (error) {
+        console.error('Erro ao suspender produto:', error);
+        alert(intl.formatMessage({
+          id: 'admin.filterBySeller.alert.error.suspendProduct',
+          defaultMessage: 'Erro ao suspender o produto. Tente novamente.'
+        }));
+      } finally {
+        setSuspendingProductId(null);
       }
     }
-  }, [refetch, intl]);
+  };
 
-  if (loading) {
-    return (
-      <div className="loading-users">
-        <SpinnerLeaf />
-        <div>
-          <FormattedMessage id="admin.userTable.loading" defaultMessage="A carregar utilizadores..." />
-        </div>
-      </div>
-    );
-  }
+  const handleInvalid = (e) => {
+    const message = intl.formatMessage({
+      id: 'admin.filterBySeller.error.required',
+      defaultMessage: 'Por favor, insira um ID de vendedor'
+    });
+    e.target.setCustomValidity(message);
+  };
 
-  if (error) {
-    return (
-      <div className="error-users">
-        <img src="/img/erro-utilizadores.png" alt="Erro ao carregar utilizadores" />
-        <p>
-          <FormattedMessage id="admin.userTable.error" defaultMessage="Erro ao carregar utilizadores." />
-        </p>
-      </div>
-    );
-  }
-
-  if (!users || users.length === 0) {
-    return (
-      <div className="empty-users">
-        <img src="/img/sem-utilizadores.png" alt="Nenhum utilizador encontrado" />
-        <p>
-          <FormattedMessage id="admin.userTable.empty" defaultMessage="Nenhum utilizador encontrado." />
-        </p>
-      </div>
-    );
-  }
+  const handleInput = (e) => {
+    e.target.setCustomValidity('');
+  };
 
   return (
-    <div>
-      <h2 className="admin-title"> Gestão de Utilizadores </h2>
-      <table>
-        <thead>
-          <tr>
-            <th><FormattedMessage id="admin.userTable.username" defaultMessage="Username" /></th>
-            <th><FormattedMessage id="admin.userTable.email" defaultMessage="Email" /></th>
-            <th><FormattedMessage id="admin.userTable.actions" defaultMessage="Ações" /></th>
-          </tr>
-        </thead>
-        <tbody>
-          {getUsersForPage(currentPage).map((user) => (
-            <UserRow
-              key={user.id}
-              user={user}
-              onRedirect={handleRedirectToProfile}
-              onAction={handleAction}
-            />
-          ))}
-        </tbody>
-      </table>
+    <Modal isOpen={isOpen} onClose={onClose} title={intl.formatMessage({ id: 'admin.filterBySeller.title', defaultMessage: 'Filtrar por Vendedor' })}>
+      <form onSubmit={(e) => { e.preventDefault(); searchSellerProducts(); }}>
+        <input
+          type="text"
+          placeholder={intl.formatMessage({ id: 'admin.filterBySeller.placeholder.sellerId', defaultMessage: 'ID do Vendedor' })}
+          value={sellerId}
+          onChange={(e) => setSellerId(e.target.value)}
+          required
+          onInvalid={handleInvalid}
+          onInput={handleInput}
+        />
+        <button type="submit" className="btn-card tabela-btn btn-success full-width">
+          <FormattedMessage id="admin.common.search" defaultMessage="Procurar" />
+        </button>
+        <button type="button" onClick={onClose} className="btn-card tabela-btn">
+          <FormattedMessage id="admin.common.cancel" defaultMessage="Cancelar" />
+        </button>
+      </form>
 
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            className={page === currentPage ? 'active' : ''}
-            onClick={() => handlePageChange(page)}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
-    </div>
+      {loading && (
+        <div className="loading-users">
+          <SpinnerLeaf />
+          <div>
+            <FormattedMessage id="admin.userTable.loading" defaultMessage="A carregar utilizadores..." />
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="error-users">
+          <img src="/img/erro-utilizadores.png" alt="Erro ao carregar utilizadores" />
+          <p>
+            <FormattedMessage id="admin.userTable.error" defaultMessage="Erro ao carregar utilizadores." />
+          </p>
+        </div>
+      )}
+
+      {message === 'empty' && (
+        <div className="empty-users">
+          <img src="/img/sem-utilizadores.png" alt="Nenhum produto encontrado" />
+          <p>
+            <FormattedMessage id="admin.userTable.empty" defaultMessage="Nenhum utilizador encontrado." />
+          </p>
+        </div>
+      )}
+
+      {!loading && !error && products.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th><FormattedMessage id="admin.filterBySeller.product.title" defaultMessage="Título" /></th>
+              <th><FormattedMessage id="admin.filterBySeller.product.price" defaultMessage="Preço" /></th>
+              <th><FormattedMessage id="admin.filterBySeller.product.actions" defaultMessage="Ações" /></th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id}>
+                <td>{product.title}</td>
+                <td>{product.price}€</td>
+                <td style={{ textAlign: 'center' }}>
+                  <button
+                    className="btn-card tabela-btn btn-danger"
+                    onClick={() => handleSuspendProduct(product, product.id)}
+                    disabled={suspendingProductId === product.id}
+                  >
+                    {suspendingProductId === product.id ? (
+                      <>
+                        <FormattedMessage id="admin.loading.suspending" defaultMessage="A suspender..." />
+                        &nbsp;<SpinnerLeaf size={16} />
+                      </>
+                    ) : (
+                      <FormattedMessage id="admin.filterBySeller.product.suspend" defaultMessage="Suspender" />
+                    )}
+                  </button>
+
+                  <button
+                    className="btn-card tabela-btn btn-edit"
+                    onClick={() => setProductToEdit(product)}
+                    disabled={!PRODUCT_STATES.isActive(PRODUCT_STATES.fromStatus(product.productState)?.id)}
+                  >
+                    <FormattedMessage id="admin.filterBySeller.product.edit" defaultMessage="Editar" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {productToEdit && (
+        <Modal
+          isOpen={!!productToEdit}
+          onClose={() => setProductToEdit(null)}
+          title={intl.formatMessage({ id: 'productDetails.modalTitle', defaultMessage: 'Editar Produto' })}
+        >
+          <EditProductForm
+            onSave={(updatedProduct) => {
+              setProducts((prev) =>
+                prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+              );
+              setProductToEdit(null);
+            }}
+            onCancel={() => setProductToEdit(null)}
+          />
+        </Modal>
+      )}
+    </Modal>
   );
-};
+}
 
-export default UserTable;
-
+export default FilterProductsBySeller;
 
 
 

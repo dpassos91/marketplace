@@ -17,11 +17,12 @@ function AdminPage() {
         <div className="admin-content">
           <Routes>
             <Route path="/" element={<WelcomeSection />} />
-            <Route path="/utilizadores" element={<UserTable />} />
-            <Route path="/produtos" element={<AdminProductsPage />} /> {/* Rota para a página de produtos */}
-            <Route path="/produtos/inativos" element={<InactiveProductsTable />} />
-            <Route path="/produtos/alterados" element={<AlteredProducts />} />
             <Route path="/avaliacoes" element={<EvaluationsTable />} />
+            <Route path="/produtos" element={<AdminProductsPage />} /> {/* Rota para a página de produtos */}
+            <Route path="/produtos/alterados" element={<AlteredProducts />} />
+            <Route path="/produtos/comprados" element={<AlteredProducts />} />
+            <Route path="/produtos/inativos" element={<InactiveProductsTable />} />
+            <Route path="/utilizadores" element={<UserTable />} />
             {/* Adicione outras rotas conforme necessário */}
           </Routes>
         </div>

@@ -5,6 +5,8 @@ import EditProductForm from '../product/EditProductForm';
 import { PRODUCT_STATES } from '../product/productStates';
 import { useIntl, FormattedMessage } from 'react-intl';
 import SpinnerLeaf from '../commons/SpinnerLeaf';
+import { productAPI } from '../../api/productAPI';
+import './UserTable.css';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 
@@ -14,16 +16,23 @@ function FilterProductsBySeller({ isOpen, onClose }) {
   const [message, setMessage] = useState('');
   const [productToEdit, setProductToEdit] = useState(null);
   const [suspendingProductId, setSuspendingProductId] = useState(null);
+  const [deletingProductId, setDeletingProductId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const intl = useIntl();
 
   const searchSellerProducts = useCallback(async () => {
     if (!sellerId.trim()) {
-      setMessage(intl.formatMessage({
-        id: 'admin.filterBySeller.error.noSellerId',
-        defaultMessage: 'Insira um ID de vendedor válido.'
-      }));
+      setProducts([]);
+      setMessage('empty');
+      setError(false);
       return;
     }
+
+    setLoading(true);
+    setError(false);
+    setProducts([]);
+    setMessage('');
 
     try {
       const data = await apiCall(API_ENDPOINTS.products.bySeller(sellerId));
@@ -31,23 +40,17 @@ function FilterProductsBySeller({ isOpen, onClose }) {
         const state = PRODUCT_STATES.fromStatus(product.productState);
         return state && PRODUCT_STATES.isActive(state.id) && state.id !== PRODUCT_STATES.COMPRADO.id;
       });
+      setProducts(availableProducts);
       if (availableProducts.length === 0) {
-        setMessage(intl.formatMessage({
-          id: 'admin.filterBySeller.message.noProducts',
-          defaultMessage: `Nenhum produto disponível para o vendedor {id}`
-        }, { id: sellerId }));
-      } else {
-        setMessage('');
-        setProducts(availableProducts);
+        setMessage('empty');
       }
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
-      setMessage(intl.formatMessage({
-        id: 'admin.filterBySeller.error.fetchProducts',
-        defaultMessage: 'Erro ao buscar produtos. Tente novamente.'
-      }));
+      setError(true);
+    } finally {
+      setLoading(false);
     }
-  }, [sellerId, intl]);
+  }, [sellerId]);
 
   const handleSuspendProduct = async (product, productId) => {
     const confirmed = window.confirm(
@@ -80,6 +83,47 @@ function FilterProductsBySeller({ isOpen, onClose }) {
     }
   };
 
+  const handleDeleteProduct = async (product, productId) => {
+    const confirmed = window.confirm(
+      intl.formatMessage(
+        {
+          id: 'admin.filterByCategory.window.confirm.deleteProduct',
+          defaultMessage: 'Tem certeza de que deseja eliminar o produto "{name}"?'
+        },
+        { name: product.title }
+      )
+    );
+
+    if (confirmed) {
+      setDeletingProductId(productId);
+
+      try {
+        await productAPI.permanentlyDeleteProduct(productId);
+        alert(
+          intl.formatMessage(
+            {
+              id: 'admin.filterByCategory.alert.success.deleteProduct',
+              defaultMessage: 'Produto {name} eliminado com sucesso!'
+            },
+            { name: product.title }
+          )
+        );
+
+        searchSellerProducts();
+      } catch (error) {
+        console.error(error);
+        alert(
+          intl.formatMessage({
+            id: 'admin.filterByCategory.alert.error.deleteProduct',
+            defaultMessage: 'Erro ao eliminar o produto. Tente novamente.'
+          })
+        );
+      } finally {
+        setDeletingProductId(null);
+      }
+    }
+  };
+
   const handleInvalid = (e) => {
     const message = intl.formatMessage({
       id: 'admin.filterBySeller.error.required',
@@ -104,22 +148,42 @@ function FilterProductsBySeller({ isOpen, onClose }) {
           onInvalid={handleInvalid}
           onInput={handleInput}
         />
-        <button
-          type="submit"
-        >
+        <button type="submit" className="btn-card tabela-btn btn-success full-width">
           <FormattedMessage id="admin.common.search" defaultMessage="Procurar" />
         </button>
-        <button
-          type="button"
-          onClick={onClose}
-        >
+        <button type="button" onClick={onClose} className="btn-card tabela-btn">
           <FormattedMessage id="admin.common.cancel" defaultMessage="Cancelar" />
         </button>
       </form>
 
-      {message && <p>{message}</p>}
+      {loading && (
+        <div className="loading-products">
+          <SpinnerLeaf />
+          <div>
+            <FormattedMessage id="admin.productTable.loading" defaultMessage="A carregar produtos..." />
+          </div>
+        </div>
+      )}
 
-      {products.length > 0 && (
+      {error && (
+        <div className="error-products">
+          <img src="/img/erro-produtos.png" alt="Erro ao carregar produtos" />
+          <p>
+            <FormattedMessage id="admin.productTable.error" defaultMessage="Erro ao carregar produtos." />
+          </p>
+        </div>
+      )}
+
+      {message === 'empty' && (
+        <div className="empty-products">
+          <img src="/img/sem-produtos.png" alt="Nenhum produto encontrado" />
+          <p>
+            <FormattedMessage id="admin.productTable.empty" defaultMessage="Nenhum produto encontrado." />
+          </p>
+        </div>
+      )}
+
+      {!loading && !error && products.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -156,6 +220,21 @@ function FilterProductsBySeller({ isOpen, onClose }) {
                   >
                     <FormattedMessage id="admin.filterBySeller.product.edit" defaultMessage="Editar" />
                   </button>
+
+                  <button
+                    className="btn-card tabela-btn btn-edit"
+                    onClick={() => handleDeleteProduct(product, product.id)}
+                    disabled={deletingProductId === product.id}
+                  >
+                    {deletingProductId === product.id ? (
+                      <>
+                        <FormattedMessage id="admin.loading.deleting" defaultMessage="A eliminar..." />
+                        &nbsp;<SpinnerLeaf size={16} />
+                      </>
+                    ) : (
+                      <FormattedMessage id="admin.filterByCategory.product.delete" defaultMessage="Eliminar" />
+                    )}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -185,6 +264,3 @@ function FilterProductsBySeller({ isOpen, onClose }) {
 }
 
 export default FilterProductsBySeller;
-
-
-
