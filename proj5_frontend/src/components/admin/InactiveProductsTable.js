@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useTableData from '../../hooks/useTableData';
-import SpinnerLeaf from '../commons/SpinnerLeaf';
-import { productAPI } from '../../api/productAPI'; // assumindo que criaste esta API
+import { productAPI } from '../../api/productAPI';
 import { PRODUCT_STATES } from '../product/productStates';
 import ProductFilterState from './ProductFilterState';
-
+import usePaginationTable from '../../hooks/usePaginationTable';
+import Pagination from '../commons/Pagination';
 
 const PRODUCTS_PER_PAGE = 10;
 
@@ -41,30 +41,26 @@ const InactiveProductsTable = () => {
     data: products,
     loading,
     error,
-    refetch,
     removeItem,
   } = useTableData(productAPI.getInactiveProducts);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = useMemo(() => Math.ceil((products?.length || 0) / PRODUCTS_PER_PAGE), [products]);
-
-  const getProductsForPage = useCallback((page) => {
-    if (!products) return [];
-    const sorted = [...products].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-    return sorted.slice((page - 1) * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE);
-  }, [products]);
-
-  const handlePageChange = useCallback((newPage) => {
-    setCurrentPage(newPage);
-  }, []);
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems,
+    handlePageChange,
+  } = usePaginationTable(
+    products,
+    PRODUCTS_PER_PAGE,
+    (a, b) => (a.title || '').localeCompare(b.title || '')
+  );
 
   const handleAction = useCallback(async (productId, action, name) => {
     const confirmMessage = intl.formatMessage(
       { id: `admin.window.confirm.products.${action}` },
       { productId, name }
     );
-  
+
     if (window.confirm(confirmMessage)) {
       try {
         if (action === 'delete') {
@@ -74,15 +70,18 @@ const InactiveProductsTable = () => {
           await productAPI.reactivateProduct(productId, PRODUCT_STATES.DISPONIVEL.id);
           removeItem(productId);
         }
-  
-        alert(intl.formatMessage({ id: `admin.alert.success.products.${action}` }, { productId, name }));
+
+        alert(intl.formatMessage(
+          { id: `admin.alert.success.products.${action}` },
+          { productId, name }
+        ));
       } catch (err) {
         console.error(err);
         alert(intl.formatMessage({ id: `admin.alert.error.products.${action}` }));
       }
     }
   }, [intl, removeItem]);
-  
+
   const isEmpty = !products || products.length === 0;
 
   if (loading || error || isEmpty) {
@@ -111,26 +110,21 @@ const InactiveProductsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {getProductsForPage(currentPage).map((product) => (
+          {paginatedItems.map((product) => (
             <ProductRow key={product.id} product={product} onAction={handleAction} />
           ))}
         </tbody>
       </table>
 
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            className={page === currentPage ? 'active' : ''}
-            onClick={() => handlePageChange(page)}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
 
 export default InactiveProductsTable;
+
 
