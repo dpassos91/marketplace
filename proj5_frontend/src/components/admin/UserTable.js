@@ -4,6 +4,8 @@ import { userAPI } from '../../api/userAPI';
 import { FormattedMessage, useIntl } from 'react-intl';
 import TableDataState from './TableDataState';
 import './UserTable.css';
+import usePaginationTable from '../../hooks/usePaginationTable';
+import Pagination from '../commons/Pagination';
 
 const USERS_PER_PAGE = 10;
 
@@ -49,19 +51,12 @@ const UserTable = () => {
     setData
   } = useTableData(userAPI.getTotalUsers);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = useMemo(() => Math.ceil((users?.length || 0) / USERS_PER_PAGE), [users]);
-
-  const getUsersForPage = useCallback((page) => {
-    if (!users) return [];
-    const start = (page - 1) * USERS_PER_PAGE;
-    return users.slice(start, start + USERS_PER_PAGE);
-  }, [users]);
-
-  const handlePageChange = useCallback((newPage) => {
-    setCurrentPage(newPage);
-  }, []);
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems,
+    handlePageChange,
+  } = usePaginationTable(users, USERS_PER_PAGE);
 
   const handleRedirectToProfile = useCallback((userId) => {
     window.location.href = `http://localhost:3000/profile/${userId}`;
@@ -116,7 +111,7 @@ const UserTable = () => {
           </tr>
         </thead>
         <tbody>
-          {getUsersForPage(currentPage).map((user) => (
+          {paginatedItems.map((user) => (
             <UserRow
               key={user.id}
               user={user}
@@ -127,17 +122,11 @@ const UserTable = () => {
         </tbody>
       </table>
 
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            className={page === currentPage ? 'active' : ''}
-            onClick={() => handlePageChange(page)}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
+      <Pagination
+  totalPages={totalPages}
+  currentPage={currentPage}
+  onPageChange={handlePageChange}
+/>
     </div>
   );
 };
