@@ -34,6 +34,9 @@ function AdminProductsPage() {
             <FormattedMessage id="admin.products.addCategory" defaultMessage="Adicionar categoria" />
           </button>
           <button className="btn-card products-btn btn-products" onClick={() => setIsProductFilterModalOpen(true)}>
+            <FormattedMessage id="admin.products.deleteProductsByUser" defaultMessage="Apagar produtos" />
+          </button>
+          <button className="btn-card products-btn btn-products" onClick={() => setIsProductFilterModalOpen(true)}>
             <FormattedMessage id="admin.products.filter" defaultMessage="Filtrar produtos" />
           </button>
         </div>

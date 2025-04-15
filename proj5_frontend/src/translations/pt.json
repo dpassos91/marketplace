@@ -112,6 +112,8 @@
 
 "admin.products.listBought": "Mostrar produtos comprados",
 
+"admin.products.deleteProductsByUser": "Eliminar produtos de utilizador",
+
 
   "evaluationForm.label.evaluator": "Avaliador",
   "evaluationForm.label.evaluated": "Avaliado",

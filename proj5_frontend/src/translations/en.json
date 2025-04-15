@@ -340,6 +340,7 @@
 "admin.product.id": "Product ID",
 "admin.product.username": "Username",
 "admin.product.editDate": "Edit Date",
-"admin.alteredProducts.empty": "No altered products found."
+"admin.alteredProducts.empty": "No altered products found.",
 
+"admin.products.deleteProductsByUser": "Delete all products by user"
 }

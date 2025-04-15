@@ -334,6 +334,8 @@
   "evaluationForm.label.evaluated": "Évalué",
   "evaluationForm.label.date": "Date",
 
+  "admin.products.deleteProductsByUser": "Supprimer les produits de l'utilisateur",
+
   "admin.alteredProducts.title": "Produits modifiés",
 "admin.product.name": "Nom",
 "admin.product.price": "Prix",
