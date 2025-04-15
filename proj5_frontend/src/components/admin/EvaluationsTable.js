@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { evaluationAPI } from '../../api/evaluationAPI';
 import Modal from '../commons/Modal';
 import { FormattedMessage, useIntl } from 'react-intl';
 import EvaluationForm from '../evaluation/EvaluationForm';
 import TableDataState from './TableDataState';
+import useTableData from '../../hooks/useTableData';
+import Pagination from '../commons/Pagination';
 
-const { getAllEvaluations, deleteEvaluation, getEvaluationById, updateEvaluation } = evaluationAPI;
+const { deleteEvaluation, getEvaluationById, updateEvaluation, getAllEvaluations } = evaluationAPI;
 
 const EvaluationRow = React.memo(({ evaluation, onEdit, onDelete }) => (
   <tr>
@@ -28,29 +30,27 @@ const EvaluationRow = React.memo(({ evaluation, onEdit, onDelete }) => (
 
 const EvaluationsTable = () => {
   const intl = useIntl();
-  const [evaluations, setEvaluations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const {
+    data: evaluations,
+    loading,
+    error,
+    refetch,
+    removeItem,
+    setData: setEvaluations,
+  } = useTableData(getAllEvaluations);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [evaluationToEdit, setEvaluationToEdit] = useState(null);
-  const [editedTitle, setEditedTitle] = useState('');
-  const [editedComment, setEditedComment] = useState('');
-  const [editedRating, setEditedRating] = useState('');
 
-  useEffect(() => {
-    const fetchEvaluations = async () => {
-      try {
-        const response = await getAllEvaluations();
-        setEvaluations(response);
-      } catch (err) {
-        setError(intl.formatMessage({ id: 'admin.alert.error.loadEvaluations', defaultMessage: 'Erro ao carregar as avaliações' }));
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
 
-    fetchEvaluations();
-  }, [intl]);
+  const paginatedEvaluations = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return evaluations.slice(start, end);
+  }, [evaluations, currentPage]);
 
   const handleDelete = async (id) => {
     const confirmed = window.confirm(
@@ -60,10 +60,10 @@ const EvaluationsTable = () => {
     if (confirmed) {
       try {
         await deleteEvaluation(id);
-        setEvaluations((prev) => prev.filter((evaluation) => evaluation.id !== id));
+        removeItem(id);
         alert(intl.formatMessage({ id: 'admin.alert.success.deleteEvaluation', defaultMessage: 'Avaliação eliminada com sucesso!' }));
       } catch (err) {
-        setError(intl.formatMessage({ id: 'admin.alert.error.deleteEvaluation', defaultMessage: 'Erro ao excluir a avaliação' }));
+        alert(intl.formatMessage({ id: 'admin.alert.error.deleteEvaluation', defaultMessage: 'Erro ao excluir a avaliação' }));
       }
     }
   };
@@ -72,12 +72,9 @@ const EvaluationsTable = () => {
     try {
       const evaluation = await getEvaluationById(id);
       setEvaluationToEdit(evaluation);
-      setEditedTitle(evaluation.title);
-      setEditedComment(evaluation.comment);
-      setEditedRating(evaluation.rating);
       setIsModalOpen(true);
     } catch (err) {
-      setError(intl.formatMessage({ id: 'admin.alert.error.getEvaluation', defaultMessage: 'Erro ao buscar avaliação para editar' }));
+      alert(intl.formatMessage({ id: 'admin.alert.error.getEvaluation', defaultMessage: 'Erro ao buscar avaliação para editar' }));
     }
   };
 
@@ -92,15 +89,15 @@ const EvaluationsTable = () => {
         ...evaluationToEdit,
         ...updatedEvaluationData,
       };
-  
+
       await updateEvaluation(updatedEvaluation.id, updatedEvaluation);
-  
+
       setEvaluations((prev) =>
         prev.map((evaluation) =>
           evaluation.id === updatedEvaluation.id ? updatedEvaluation : evaluation
         )
       );
-  
+
       handleCloseModal();
       alert(
         intl.formatMessage({
@@ -109,7 +106,7 @@ const EvaluationsTable = () => {
         })
       );
     } catch (err) {
-      setError(
+      alert(
         intl.formatMessage({
           id: 'admin.alert.error.updateEvaluation',
           defaultMessage: 'Erro ao salvar a avaliação',
@@ -117,7 +114,7 @@ const EvaluationsTable = () => {
       );
     }
   };
-  
+
   const isEmpty = !evaluations || evaluations.length === 0;
 
   if (loading || error || isEmpty) {
@@ -131,10 +128,10 @@ const EvaluationsTable = () => {
       />
     );
   }
-  
+
   return (
     <div>
-      <h2 className="admin-title"> Gestão de Avaliações </h2>
+      <h2 className="admin-title">Gestão de Avaliações</h2>
       <table>
         <thead>
           <tr>
@@ -146,7 +143,7 @@ const EvaluationsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {evaluations.map((evaluation) => (
+          {paginatedEvaluations.map((evaluation) => (
             <EvaluationRow
               key={evaluation.id}
               evaluation={evaluation}
@@ -157,42 +154,48 @@ const EvaluationsTable = () => {
         </tbody>
       </table>
 
-      <Modal
-  isOpen={isModalOpen}
-  onClose={handleCloseModal}
-  title={intl.formatMessage({ id: 'admin.modal.editEvaluation', defaultMessage: 'Editar Avaliação' })}
->
-  {evaluationToEdit && (
-    <>
-      <div style={{ marginBottom: '1rem' }}>
-        <p style={{ marginBottom: '0.5rem' }}>
-          <strong>
-            <FormattedMessage id="evaluationForm.label.evaluator" defaultMessage="Avaliador" />:
-          </strong>{' '}
-          {evaluationToEdit.evaluatorUsername}
-        </p>
-        <p style={{ marginBottom: '0.5rem' }}>
-          <strong>
-            <FormattedMessage id="evaluationForm.label.evaluated" defaultMessage="Avaliado" />:
-          </strong>{' '}
-          {evaluationToEdit.evaluatedUsername}
-        </p>
-        <p>
-          <strong>
-            <FormattedMessage id="evaluationForm.label.date" defaultMessage="Data" />:
-          </strong>{' '}
-          {new Date(evaluationToEdit.date).toLocaleDateString()}
-        </p>
-      </div>
-
-      <EvaluationForm
-        initialEvaluation={evaluationToEdit}
-        onSave={handleSave}
-        onCancel={handleCloseModal}
+      <Pagination
+        totalPages={Math.ceil(evaluations.length / rowsPerPage)}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
       />
-    </>
-  )}
-</Modal>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={intl.formatMessage({ id: 'admin.modal.editEvaluation', defaultMessage: 'Editar Avaliação' })}
+      >
+        {evaluationToEdit && (
+          <>
+            <div style={{ marginBottom: '1rem' }}>
+              <p style={{ marginBottom: '0.5rem' }}>
+                <strong>
+                  <FormattedMessage id="evaluationForm.label.evaluator" defaultMessage="Avaliador" />:
+                </strong>{' '}
+                {evaluationToEdit.evaluatorUsername}
+              </p>
+              <p style={{ marginBottom: '0.5rem' }}>
+                <strong>
+                  <FormattedMessage id="evaluationForm.label.evaluated" defaultMessage="Avaliado" />:
+                </strong>{' '}
+                {evaluationToEdit.evaluatedUsername}
+              </p>
+              <p>
+                <strong>
+                  <FormattedMessage id="evaluationForm.label.date" defaultMessage="Data" />:
+                </strong>{' '}
+                {new Date(evaluationToEdit.date).toLocaleDateString()}
+              </p>
+            </div>
+
+            <EvaluationForm
+              initialEvaluation={evaluationToEdit}
+              onSave={handleSave}
+              onCancel={handleCloseModal}
+            />
+          </>
+        )}
+      </Modal>
     </div>
   );
 };

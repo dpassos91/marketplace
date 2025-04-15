@@ -328,5 +328,9 @@
   "admin.filterByCategory.empty": "There are no products in this category.",
 
   "admin.evaluationTable.error": "Error loading evaluations. Please try again.",
-  "admin.evaluationTable.empty": "No evaluations found."
+  "admin.evaluationTable.empty": "No evaluations found.",
+
+  "evaluationForm.label.evaluator": "Evaluator",
+  "evaluationForm.label.evaluated": "Evaluated",
+  "evaluationForm.label.date": "Date"
 }

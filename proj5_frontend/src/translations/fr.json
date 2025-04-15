@@ -328,6 +328,10 @@
   "admin.filterByCategory.empty": "Aucun produit dans cette catégorie.",
 
   "admin.evaluationTable.error": "Erreur lors du chargement des évaluations. Veuillez réessayer.",
-  "admin.evaluationTable.empty": "Aucune évaluation trouvée."
+  "admin.evaluationTable.empty": "Aucune évaluation trouvée.",
+
+  "evaluationForm.label.evaluator": "Évaluateur",
+  "evaluationForm.label.evaluated": "Évalué",
+  "evaluationForm.label.date": "Date"
 }
   
