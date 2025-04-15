@@ -207,12 +207,35 @@ function ProductFilter({ isOpen, onClose }) {
           title={intl.formatMessage({ id: 'productDetails.modalTitle', defaultMessage: 'Editar Produto' })}
         >
           <EditProductForm
-            onSave={(updatedProduct) => {
-              setProducts((prev) => prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
-              setProductToEdit(null);
-            }}
-            onCancel={() => setProductToEdit(null)}
-          />
+  product={productToEdit}
+  onSave={async (updatedProduct) => {
+    try {
+      await productAPI.updateProduct(updatedProduct.id, updatedProduct);
+
+      setProducts((prev) =>
+        prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+      );
+
+      setProductToEdit(null);
+      alert(
+        intl.formatMessage({
+          id: 'admin.editProduct.alert.success',
+          defaultMessage: 'Produto atualizado com sucesso!',
+        })
+      );
+    } catch (err) {
+      console.error('Erro ao atualizar o produto no backend:', err);
+      alert(
+        intl.formatMessage({
+          id: 'admin.editProduct.alert.error',
+          defaultMessage: 'Erro ao atualizar o produto. Tente novamente.',
+        })
+      );
+    }
+  }}
+  onCancel={() => setProductToEdit(null)}
+/>
+
         </Modal>
       )}
     </Modal>
