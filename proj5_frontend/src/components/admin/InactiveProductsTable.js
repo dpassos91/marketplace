@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import useTableData from '../../hooks/useTableData';
-import { productAPI } from '../../api/productAPI';
+import Pagination from '../commons/Pagination';
 import { PRODUCT_STATES } from '../product/productStates';
 import TableDataState from './TableDataState';
 import usePaginationTable from '../../hooks/usePaginationTable';
-import Pagination from '../commons/Pagination';
+import useTableData from '../../hooks/useTableData';
+import { productAPI } from '../../api/productAPI';
 
 const PRODUCTS_PER_PAGE = 10;
 

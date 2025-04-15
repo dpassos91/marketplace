@@ -332,6 +332,15 @@
 
   "evaluationForm.label.evaluator": "Évaluateur",
   "evaluationForm.label.evaluated": "Évalué",
-  "evaluationForm.label.date": "Date"
+  "evaluationForm.label.date": "Date",
+
+  "admin.alteredProducts.title": "Produits modifiés",
+"admin.product.name": "Nom",
+"admin.product.price": "Prix",
+"admin.product.id": "ID du produit",
+"admin.product.username": "Nom d'utilisateur",
+"admin.product.editDate": "Date de modification",
+"admin.alteredProducts.empty": "Aucun produit modifié trouvé."
+
 }
   

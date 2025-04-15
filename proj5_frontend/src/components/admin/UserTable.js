@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import useTableData from '../../hooks/useTableData';
-import { userAPI } from '../../api/userAPI';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { userAPI } from '../../api/userAPI';
+import usePaginationTable from '../../hooks/usePaginationTable';
+import useTableData from '../../hooks/useTableData';
+import Pagination from '../commons/Pagination';
 import TableDataState from './TableDataState';
 import './UserTable.css';
-import usePaginationTable from '../../hooks/usePaginationTable';
-import Pagination from '../commons/Pagination';
 
 const USERS_PER_PAGE = 10;
 

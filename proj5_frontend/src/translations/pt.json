@@ -101,6 +101,21 @@
 
   "admin.evaluationTable.error": "Erro ao carregar avaliações. Por favor, tente novamente.",
   "admin.evaluationTable.empty": "Não existem avaliações registadas.",
+
+"admin.alteredProducts.title": "Produtos Alterados",
+"admin.product.name": "Nome",
+"admin.product.price": "Preço",
+"admin.product.id": "ID Produto",
+"admin.product.username": "Username",
+"admin.product.editDate": "Data de Alteração",
+"admin.alteredProducts.empty": "Nenhum produto alterado encontrado.",
+
+"admin.products.listBought": "Mostrar produtos comprados",
+
+
+  "evaluationForm.label.evaluator": "Avaliador",
+  "evaluationForm.label.evaluated": "Avaliado",
+  "evaluationForm.label.date": "Data",
   
   "admin.modal.editEvaluation": "Editar Avaliação",
   "admin.products.title": "Gestão de Produtos",
