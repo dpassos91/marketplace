@@ -191,7 +191,8 @@ public LoginResponseDto logIn(LoginRequestDto user) {
 
 public Response deleteUser(Long id, String token) {
     logger.info("Deleting user with id: {} by token: {}", id, token);
-    
+
+    // Autenticação e autorização
     Response authResponse = authenticateAuthorize(id, token, true, false);
     if (authResponse != null) return authResponse;
 
@@ -203,56 +204,55 @@ public Response deleteUser(Long id, String token) {
                 .build();
     }
 
-    // ⚠️ Forçar inicialização de coleções lazy
+    // ⚠️ Bloquear eliminação de utilizadores administradores
+    if (userEntity.isAdmin()) {
+        logger.warn("Attempted to delete an admin user with id: {}", id);
+        return Response.status(Response.Status.FORBIDDEN)
+                .entity("403: Cannot delete an admin user.")
+                .build();
+    }
+
+    // Inicializar coleções para evitar LazyInitializationException
     userEntity.getSoldProducts().size();
     userEntity.getPurchasedProducts().size();
     userEntity.getGivenEvaluations().size();
     userEntity.getReceivedEvaluations().size();
 
-    // 🔄 Anonimizar produtos vendidos (usar Iterator para remover da lista)
-    Iterator<ProductEntity> soldIterator = userEntity.getSoldProducts().iterator();
-    while (soldIterator.hasNext()) {
-        ProductEntity product = soldIterator.next();
+    // Anonimizar produtos vendidos
+    for (Iterator<ProductEntity> iterator = userEntity.getSoldProducts().iterator(); iterator.hasNext();) {
+        ProductEntity product = iterator.next();
         product.setSeller(null);
         product.setSellerName("Vendedor excluído");
-        userDao.mergeProduct(product); // ⚠️ merge obrigatório
-        soldIterator.remove(); // evitar referências circulares
+        userDao.mergeProduct(product);
     }
 
-    // 🔄 Remover avaliações dadas
-    Iterator<EvaluationEntity> givenIterator = userEntity.getGivenEvaluations().iterator();
-    while (givenIterator.hasNext()) {
-        EvaluationEntity eval = givenIterator.next();
-        eval.setEvaluator(null);
-        userDao.removeEvaluation(eval);
-        givenIterator.remove();
+    // Remover avaliações dadas
+    for (Iterator<EvaluationEntity> iterator = userEntity.getGivenEvaluations().iterator(); iterator.hasNext();) {
+        EvaluationEntity evaluation = iterator.next();
+        evaluation.setEvaluator(null);
+        userDao.removeEvaluation(evaluation);
     }
 
-    // 🔄 Remover avaliações recebidas
-    Iterator<EvaluationEntity> receivedIterator = userEntity.getReceivedEvaluations().iterator();
-    while (receivedIterator.hasNext()) {
-        EvaluationEntity eval = receivedIterator.next();
-        eval.setEvaluated(null);
-        userDao.removeEvaluation(eval);
-        receivedIterator.remove();
+    // Remover avaliações recebidas
+    for (Iterator<EvaluationEntity> iterator = userEntity.getReceivedEvaluations().iterator(); iterator.hasNext();) {
+        EvaluationEntity evaluation = iterator.next();
+        evaluation.setEvaluated(null);
+        userDao.removeEvaluation(evaluation);
     }
 
-    // 🔄 Anular referência a compras (caso existam)
-    Iterator<ProductEntity> purchasedIterator = userEntity.getPurchasedProducts().iterator();
-    while (purchasedIterator.hasNext()) {
-        ProductEntity product = purchasedIterator.next();
+    // Anular comprador nos produtos comprados (se existirem)
+    for (Iterator<ProductEntity> iterator = userEntity.getPurchasedProducts().iterator(); iterator.hasNext();) {
+        ProductEntity product = iterator.next();
         product.setBuyer(null);
         userDao.mergeProduct(product);
-        purchasedIterator.remove();
     }
 
-    // ✅ Preparar utilizador para eliminação (anonimização final)
+    // Preparar e eliminar o utilizador
     userEntity.prepareForPermanentDeletion();
-
-    // 🗑️ Remover utilizador
     boolean success = userDao.permanentlyDelete(userEntity);
     return processActionResult(success, id, "deleted permanently");
 }
+
 
 
     public Response suspendUser(Long id, String token) {
