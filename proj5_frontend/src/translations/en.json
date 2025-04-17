@@ -186,9 +186,9 @@
   "admin.window.confirm.reactivate": "Are you sure you want to reactivate the user with ID {userId}?",
   "admin.window.confirm.delete": "Are you sure you want to delete the user with ID {userId}?",
 
-  "admin.alert.success.suspend": "User {userId} has been successfully suspended.",
-  "admin.alert.success.reactivate": "User {userId} has been successfully reactivated.",
-  "admin.alert.success.delete": "User {userId} has been permanently deleted.",
+  "admin.alert.success.suspend": "User {username} ID: {userId} has been successfully suspended.",
+  "admin.alert.success.reactivate": "User {username} ID: {userId} has been successfully reactivated.",
+  "admin.alert.success.delete": "User {username} ID: {userId} has been permanently deleted.",
 
   "admin.alert.error.suspend": "Error trying to suspend the user.",
   "admin.alert.error.reactivate": "Error trying to reactivate the user.",

@@ -26,11 +26,11 @@ const UserRow = React.memo(({ user, onRedirect, onAction }) => {
               <FormattedMessage id="admin.userTable.suspend" defaultMessage="Suspender" />
             </button>
           ) : (
-            <button className="btn-card tabela-btn btn-success" onClick={() => onAction(user.id, 'reactivate')}>
+            <button className="btn-card tabela-btn btn-success" onClick={() => onAction(user.username, user.id, 'reactivate')}>
               <FormattedMessage id="admin.userTable.reactivate" defaultMessage="Reativar" />
             </button>
           )}
-          <button className="btn-card tabela-btn btn-edit" onClick={() => onAction(user.id, 'delete')}>
+          <button className="btn-card tabela-btn btn-edit" onClick={() => onAction(user.username, user.id, 'delete')}>
             <FormattedMessage id="admin.userTable.delete" defaultMessage="Eliminar" />
           </button>
         </div>
@@ -74,9 +74,7 @@ const UserTable = () => {
         else if (action === 'reactivate') await userAPI.updateUserStatus(userId, true );
         else if (action === 'delete') await userAPI.deleteUser(userId);
 
-        console.log('Username:', username);
-        console.log('User ID:', userId);
-        console.log('Action:', action);
+  
 
         alert(intl.formatMessage({ id: `admin.alert.success.${action}` }, { username, userId }));
         refetch(); // ou usa removeItem(userId) se preferires performance
