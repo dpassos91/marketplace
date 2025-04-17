@@ -22,7 +22,7 @@ const UserRow = React.memo(({ user, onRedirect, onAction }) => {
             <FormattedMessage id="admin.userTable.profile" defaultMessage="Consultar perfil" />
           </button>
           {active ? (
-            <button className="btn-card tabela-btn btn-info" onClick={() => onAction(user.id, 'suspend')}>
+            <button className="btn-card tabela-btn btn-info" onClick={() => onAction(user.username, user.id, 'suspend')}>
               <FormattedMessage id="admin.userTable.suspend" defaultMessage="Suspender" />
             </button>
           ) : (
@@ -62,10 +62,10 @@ const UserTable = () => {
     window.location.href = `http://localhost:3000/profile/${userId}`;
   }, []);
 
-  const handleAction = useCallback(async (userId, action) => {
+  const handleAction = useCallback(async (username, userId, action) => {
     const confirmationMessage = intl.formatMessage(
       { id: `admin.window.confirm.${action}` },
-      { userId }
+      { userId, username }
     );
 
     if (window.confirm(confirmationMessage)) {
@@ -74,7 +74,11 @@ const UserTable = () => {
         else if (action === 'reactivate') await userAPI.updateUserStatus(userId, true );
         else if (action === 'delete') await userAPI.deleteUser(userId);
 
-        alert(intl.formatMessage({ id: `admin.alert.success.${action}` }, { userId }));
+        console.log('Username:', username);
+        console.log('User ID:', userId);
+        console.log('Action:', action);
+
+        alert(intl.formatMessage({ id: `admin.alert.success.${action}` }, { username, userId }));
         refetch(); // ou usa removeItem(userId) se preferires performance
       } catch (err) {
         console.error(err);
