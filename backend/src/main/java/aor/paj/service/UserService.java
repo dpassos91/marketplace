@@ -1,7 +1,10 @@
 package aor.paj.service;
 
 import aor.paj.dto.LoginRequestDto;
+import aor.paj.dto.PasswordUpdateDto;
+import aor.paj.dto.StatusUpdateDto;
 import aor.paj.dto.UserDto;
+import aor.paj.entity.UserEntity;
 import aor.paj.bean.UserBean;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,8 +14,6 @@ import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-
 @Path("/users")
 public class UserService {
 
@@ -21,47 +22,18 @@ public class UserService {
     @Inject
     UserBean userBean;
 
+    // Criar novo utilizador
     @POST
-    @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(UserDto userDto) {
+    public Response createUser(UserDto userDto) {
         logger.info("Registration attempt by user: {}", userDto.getUsername());
         UserDto createdUser = userBean.registerUser(userDto);
-
         logger.info("User successfully registered: {}", createdUser.getUsername());
         return Response.ok(createdUser).build();
     }
 
-    @POST
-    @Path("/login")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response logIn(LoginRequestDto user){
-        logger.info("Login attempt by user: {}", user.getUsername());
-
-        String token = userBean.logIn(user);
-        if(token != null){
-            logger.info("Successful login by user: {}", user.getUsername());
-            return Response.status(200).entity(token).build();
-        }
-        logger.warn("Failed login attempt by user: {}", user.getUsername());
-        return Response.status(403).entity("Invalid Username or Password!").build();
-    }
-
-    @POST
-    @Path("/logout")
-    public Response logout(@HeaderParam("token") String token){
-        logger.info("Logout attempt with token: {}", token);
-
-        if (userBean.logOut(token)) {
-            logger.info("Successful logout with token: {}", token);
-            return Response.status(200).entity("Successfully logged out!").build();
-        }
-        logger.warn("Failed logout attempt with token: {}", token);
-        return Response.status(401).entity("Invalid Token!").build();
-    }
-
+    // Obter utilizador por ID
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -70,6 +42,7 @@ public class UserService {
         return Response.ok(userBean.getUserById(id)).build();
     }
 
+    // Atualizar utilizador
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -79,6 +52,7 @@ public class UserService {
         return userBean.updateUser(id, token, userDto);
     }
 
+    // Apagar utilizador
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -87,22 +61,21 @@ public class UserService {
         return userBean.deleteUser(id, token);
     }
 
+    // Atualizar status do utilizador (ativar/suspender)
     @PATCH
-    @Path("/{id}/suspend")
+    @Path("/{id}/status")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response suspendUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
-        logger.info("Received a request to suspend user with id: {}", id);
-        return userBean.suspendUser(id, token);
+    public Response updateUserStatus(@PathParam("id") Long id, @HeaderParam("token") String token, StatusUpdateDto statusUpdate) {
+        logger.info("Received a request to update status for user with id: {}", id);
+        if (statusUpdate.isActive()) {
+            return userBean.activateUser(id, token);
+        } else {
+            return userBean.suspendUser(id, token);
+        }
     }
 
-    @PATCH
-    @Path("/{id}/activate")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response activateUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
-        logger.info("Received a request to activate user with id: {}", id);
-        return userBean.activateUser(id, token);
-    }
-
+    // Buscar por username
     @GET
     @Path("/username/{username}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -117,19 +90,44 @@ public class UserService {
         }
     }
 
+    // Listar todos os utilizadores
     @GET
-    @Path("users/all")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllUsers() {
-        logger.info("Received a request to fetch all users.");
+    public Response getAllUsers(@QueryParam("active") Boolean active) {
+        logger.info("Received a request to fetch users. Active filter: {}", active);
+        if (active != null && active) {
+            return Response.ok(userBean.getAllActiveUsers()).build();
+        }
         return Response.ok(userBean.getAllUsers()).build();
     }
 
+    // Listar todos os utilizadores apagados (apenas para admin)
     @GET
-    @Path("users/active")
+    @Path("/deleted")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllActiveUsers() {
-        logger.info("Received a request to fetch all active users.");
-        return Response.ok(userBean.getAllActiveUsers()).build();
+    public Response getAllDeletedUsers(@HeaderParam("token") String token) {
+        logger.info("Received a request to fetch all deleted users with token: {}", token);
+
+        // Autorização (por ex., só admin pode ver apagados)
+        UserEntity user = userBean.getUserByToken(token);
+        if (user == null || !user.isAdmin()) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("401: Unauthorized access.").build();
+        }
+
+        return Response.ok(userBean.getAllDeletedUsers()).build();
     }
+
+    @PATCH
+@Path("/{id}/password")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public Response updatePassword(
+    @PathParam("id") Long id,
+    @HeaderParam("token") String token,
+    PasswordUpdateDto passwordUpdateDto
+) {
+    logger.info("Password update requested for user ID: {}", id);
+    return userBean.updatePassword(id, token, passwordUpdateDto);
+}
+
 }

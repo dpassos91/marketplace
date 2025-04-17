@@ -4,10 +4,15 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Iterator;
 
 import aor.paj.dao.UserDao;
 import aor.paj.dto.LoginRequestDto;
+import aor.paj.dto.LoginResponseDto;
+import aor.paj.dto.PasswordUpdateDto;
 import aor.paj.dto.UserDto;
+import aor.paj.entity.EvaluationEntity;
+import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -70,28 +75,25 @@ public class UserBean {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-    public String logIn(LoginRequestDto user) {
-        logger.info("Login attempt for user: {}", user.getUsername());
-        // procura a Entity através do username providenciado
-        UserEntity userEntity = userDao.findByUsername(user.getUsername());
-        // se encontrar verifica se é um user ativo
-        if (userEntity != null && userEntity.isActive()) {
-            // se estiver ativo compara a password providenciada
-            if (userEntity.checkPassword(user.getPassword())) {
-                // se as credênciais forem válidas gera a token e insere-a na base de dados
-                String token = generateNewToken();
-                userEntity.setToken(token);
+public LoginResponseDto logIn(LoginRequestDto user) {
+    logger.info("Login attempt for user: {}", user.getUsername());
+    UserEntity userEntity = userDao.findByUsername(user.getUsername());
 
-                userDao.update(userEntity);
+    if (userEntity != null && userEntity.isActive()) {
+        if (userEntity.checkPassword(user.getPassword())) {
+            String token = generateNewToken();
+            userEntity.setToken(token);
+            userDao.update(userEntity);
 
-                logger.info("Successful login for user: {}", user.getUsername());
-                // devolve a token
-                return token;
-            }
+            logger.info("Successful login for user: {}", user.getUsername());
+            return new LoginResponseDto(userEntity.getId(), token);
         }
-        logger.warn("Login failed for user: {}", user.getUsername());
-        return null;
     }
+
+    logger.warn("Login failed for user: {}", user.getUsername());
+    return null;
+}
+
 
     private String generateNewToken() {
         SecureRandom secureRandom = new SecureRandom();
@@ -166,31 +168,92 @@ public class UserBean {
         return Response.ok(toDto(userEntity)).build();
     }
 
-    public Response deleteUser(Long id, String token) {
-        logger.info("Deleting user with id: {} by token: {}", id, token);
-        // verifica se o user está autenticado e autorizado a proceder com esta funcionalidade
-        Response authResponse = authenticateAuthorize(id, token, true, false);
-        if (authResponse != null) return authResponse;
-        // vai buscar a Entity à base de dados para fazer o update
-        UserEntity userEntity = userDao.findById(id);
-        // se não for encontrada retorna
-        if (userEntity == null) {
-            logger.warn("User with id {} not found for deletion.", id);
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("404: User with ID " + id + " not found!")
-                    .build();
-        }
-        // verifica se está ativo
-        if (!userEntity.isActive()) {
-            logger.warn("Attempted to delete inactive user with id: {}", id);
-            return Response.status(Response.Status.FORBIDDEN)
-                    .entity("403: User account is inactive.")
-                    .build();
-        }
+    public Response updatePassword(Long id, String token, PasswordUpdateDto dto) {
+    Response auth = authenticateAuthorize(id, token, true, true);
+    if (auth != null) return auth;
 
-        boolean success = userDao.delete(id);
-        return processActionResult(success, id, "deleted");
+    UserEntity user = userDao.findById(id);
+    if (user == null) {
+        logger.warn("User not found for password update.");
+        return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
     }
+
+    if (!user.checkPassword(dto.getCurrentPassword())) {
+        logger.warn("Current password incorrect.");
+        return Response.status(Response.Status.FORBIDDEN).entity("403: Incorrect current password").build();
+    }
+
+    user.setPassword(dto.getNewPassword()); // já faz o hash internamente
+    userDao.update(user);
+    logger.info("Password updated successfully for user ID: {}", id);
+    return Response.ok("200: Password updated successfully").build();
+}
+
+public Response deleteUser(Long id, String token) {
+    logger.info("Deleting user with id: {} by token: {}", id, token);
+    
+    Response authResponse = authenticateAuthorize(id, token, true, false);
+    if (authResponse != null) return authResponse;
+
+    UserEntity userEntity = userDao.findByIdWithAssociations(id);
+    if (userEntity == null) {
+        logger.warn("User with id {} not found for deletion.", id);
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("404: User with ID " + id + " not found!")
+                .build();
+    }
+
+    // ⚠️ Forçar inicialização de coleções lazy
+    userEntity.getSoldProducts().size();
+    userEntity.getPurchasedProducts().size();
+    userEntity.getGivenEvaluations().size();
+    userEntity.getReceivedEvaluations().size();
+
+    // 🔄 Anonimizar produtos vendidos (usar Iterator para remover da lista)
+    Iterator<ProductEntity> soldIterator = userEntity.getSoldProducts().iterator();
+    while (soldIterator.hasNext()) {
+        ProductEntity product = soldIterator.next();
+        product.setSeller(null);
+        product.setSellerName("Vendedor excluído");
+        userDao.mergeProduct(product); // ⚠️ merge obrigatório
+        soldIterator.remove(); // evitar referências circulares
+    }
+
+    // 🔄 Remover avaliações dadas
+    Iterator<EvaluationEntity> givenIterator = userEntity.getGivenEvaluations().iterator();
+    while (givenIterator.hasNext()) {
+        EvaluationEntity eval = givenIterator.next();
+        eval.setEvaluator(null);
+        userDao.removeEvaluation(eval);
+        givenIterator.remove();
+    }
+
+    // 🔄 Remover avaliações recebidas
+    Iterator<EvaluationEntity> receivedIterator = userEntity.getReceivedEvaluations().iterator();
+    while (receivedIterator.hasNext()) {
+        EvaluationEntity eval = receivedIterator.next();
+        eval.setEvaluated(null);
+        userDao.removeEvaluation(eval);
+        receivedIterator.remove();
+    }
+
+    // 🔄 Anular referência a compras (caso existam)
+    Iterator<ProductEntity> purchasedIterator = userEntity.getPurchasedProducts().iterator();
+    while (purchasedIterator.hasNext()) {
+        ProductEntity product = purchasedIterator.next();
+        product.setBuyer(null);
+        userDao.mergeProduct(product);
+        purchasedIterator.remove();
+    }
+
+    // ✅ Preparar utilizador para eliminação (anonimização final)
+    userEntity.prepareForPermanentDeletion();
+
+    // 🗑️ Remover utilizador
+    boolean success = userDao.permanentlyDelete(userEntity);
+    return processActionResult(success, id, "deleted permanently");
+}
+
 
     public Response suspendUser(Long id, String token) {
         logger.info("Suspending user with id: {} by token: {}", id, token);
@@ -348,6 +411,10 @@ public class UserBean {
         return toDto(userEntity);
     }
 
+    public UserEntity getUserByToken(String token) {
+        return userDao.findByToken(token);
+    }    
+
     public List<UserDto> getAllUsers() {
         logger.info("Fetching all users from the database.");
 
@@ -373,6 +440,21 @@ public class UserBean {
         logger.info("All active users returned successfully.");
         return userDtos;
     }
+
+    public List<UserDto> getAllDeletedUsers() {
+        logger.info("Fetching all deleted users from the database.");
+    
+        List<UserEntity> deletedUsers = userDao.findAllDeleted();
+        List<UserDto> deletedUserDtos = new ArrayList<>();
+    
+        for (UserEntity userEntity : deletedUsers) {
+            deletedUserDtos.add(toDto(userEntity));
+        }
+    
+        logger.info("All deleted users returned successfully.");
+        return deletedUserDtos;
+    }
+    
 
     public UserEntity toEntity(UserDto userDto) {
         if (userDto == null) {

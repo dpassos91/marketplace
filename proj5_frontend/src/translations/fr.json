@@ -342,7 +342,9 @@
 "admin.product.id": "ID du produit",
 "admin.product.username": "Nom d'utilisateur",
 "admin.product.editDate": "Date de modification",
-"admin.alteredProducts.empty": "Aucun produit modifié trouvé."
+"admin.alteredProducts.empty": "Aucun produit modifié trouvé.",
+
+"admin.userTable.title": "Gestion des Utilisateurs"
 
 }
   

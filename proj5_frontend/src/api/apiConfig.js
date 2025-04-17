@@ -39,21 +39,25 @@ const API_ENDPOINTS = {
       `${API_BASE_URL}/products/${productId}/purchase/${buyerId}`, // Endpoint for purchasing products
   },
 
-  // User endpoints
-  users: {
-    base: `${API_BASE_URL}/users`,
-    all: `${API_BASE_URL}/users/users/all`,
-    login: `${API_BASE_URL}/users/login`,
-    register: `${API_BASE_URL}/users/register`,
-    logout: `${API_BASE_URL}/users/logout`,
-    byId: id => `${API_BASE_URL}/users/${id}`,
-    update: id => `${API_BASE_URL}/users/${id}`,
-    delete: id => `${API_BASE_URL}/users/${id}`,
-    byUsername: username => `${API_BASE_URL}/users/username/${username}`,
-    suspend: id => `${API_BASE_URL}/users/${id}/suspend`,
-    reactivate: id => `${API_BASE_URL}/users/${id}/activate`,
-  },
+// User endpoints
+users: {
+  base: `${API_BASE_URL}/users`,
+  byId: (id) => `${API_BASE_URL}/users/${id}`,
+  update: (id) => `${API_BASE_URL}/users/${id}`,
+  delete: (id) => `${API_BASE_URL}/users/${id}`,
+  updateStatus: (id) => `${API_BASE_URL}/users/${id}/status`,
+  updatePassword: (id) => `${API_BASE_URL}/users/${id}/password`,
+  byUsername: (username) => `${API_BASE_URL}/users/username/${username}`,
+  deleted: `${API_BASE_URL}/users/deleted`,
+},
 
+// Auth endpoints
+auth: {
+  login: `${API_BASE_URL}/auth/login`,
+  logout: `${API_BASE_URL}/auth/logout`
+},
+
+  
   // Category endpoints
   categories: {
     all: `${API_BASE_URL}/categories`,

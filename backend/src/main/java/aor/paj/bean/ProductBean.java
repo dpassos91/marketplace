@@ -574,7 +574,9 @@ public class ProductBean {
                 } else {
                     dto.setSellerUsername("Conta Cancelada");
                 }
-            }
+            } else {
+                // Caso utilizador tenha sido apagado permanentemente
+            } dto.setSellerUsername(entity.getSellerName() != null ? entity.getSellerName() : "Vendedo desconhecido");
 
             // Set buyer information if available
             if (entity.getBuyer() != null) {

@@ -146,7 +146,7 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                 ) : (
                     <>
                         <button type="submit">
-                            <FormattedMessage id="profileInfo.save" defaultMessage="Salvar Alterações" />
+                            <FormattedMessage id="profileInfo.save" defaultMessage="Guardar Alterações" />
                         </button>
                         <button type="button" onClick={toggleEditMode}>
                             <FormattedMessage id="profileInfo.cancel" defaultMessage="Cancelar" />

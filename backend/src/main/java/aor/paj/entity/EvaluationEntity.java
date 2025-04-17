@@ -44,11 +44,11 @@ public class EvaluationEntity implements Serializable {
   private Integer rating;
 
   @ManyToOne
-  @JoinColumn(name = "evaluator_id")
+  @JoinColumn(name = "evaluator_id", nullable = true)
   private UserEntity evaluator; // User who gives the evaluation
 
   @ManyToOne
-  @JoinColumn(name = "evaluated_id")
+  @JoinColumn(name = "evaluated_id", nullable = true)
   private UserEntity evaluated; // User who receives the evaluation
 
   @ManyToOne

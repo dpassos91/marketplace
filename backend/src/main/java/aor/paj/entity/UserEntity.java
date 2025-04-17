@@ -2,6 +2,7 @@ package aor.paj.entity;
 
 import java.io.Serializable;
 import java.util.Set;
+import java.util.UUID;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -21,34 +22,43 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table(name = "app_user")
 @NamedQueries({
-        @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user WHERE user.isDeleted = false"),
-        @NamedQuery(name = "User.findById", query = "SELECT user FROM UserEntity user WHERE user.id = :id AND user.isDeleted = false"),
-        @NamedQuery(name = "User.findByActive", query = "SELECT user FROM UserEntity user WHERE user.isActive = :isActive AND user.isDeleted = false"),
-        @NamedQuery(name = "User.findAllUsername", query = "SELECT user.username FROM UserEntity user WHERE user.isDeleted = false"),
-        @NamedQuery(name = "User.findByUsername", query = "SELECT user FROM UserEntity user WHERE user.username = :username AND user.isDeleted = false"),
-        @NamedQuery(name = "User.findByToken", query = "SELECT user FROM UserEntity user WHERE user.token = :token AND user.isDeleted = false")
+        @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user"),
+        @NamedQuery(
+    name = "User.findById",
+    query = "SELECT u FROM UserEntity u " +
+            "LEFT JOIN FETCH u.soldProducts " +
+            "LEFT JOIN FETCH u.purchasedProducts " +
+            "LEFT JOIN FETCH u.givenEvaluations " +
+            "LEFT JOIN FETCH u.receivedEvaluations " +
+            "WHERE u.id = :id"
+),
+        @NamedQuery(name = "User.findByActive", query = "SELECT user FROM UserEntity user WHERE user.isActive = :isActive"),
+        @NamedQuery(name = "User.findAllDeleted", query = "SELECT user FROM UserEntity user WHERE user.isActive = false AND user.username = 'Criador Excluído'"),
+        @NamedQuery(name = "User.findAllUsername", query = "SELECT user.username FROM UserEntity user"),
+        @NamedQuery(name = "User.findByUsername", query = "SELECT user FROM UserEntity user WHERE user.username = :username"),
+        @NamedQuery(name = "User.findByToken", query = "SELECT user FROM UserEntity user WHERE user.token = :token")
 })
 public class UserEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // gera o ID automaticamente
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false, unique = true, updatable = false)
     private Long id;
 
     @Column(name = "username", nullable = false, unique = true, updatable = false)
     private String username;
 
-    @Column(name = "first_name", nullable = false, unique = false, updatable = true)
+    @Column(name = "first_name", nullable = false, updatable = true)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, unique = false, updatable = true)
+    @Column(name = "last_name", nullable = false, updatable = true)
     private String lastName;
 
-    @Column(name = "password", nullable = false, unique = false, updatable = true)
+    @Column(name = "password", nullable = false, updatable = true)
     private String password;
 
-    @Column(name = "token", nullable = true, unique = true, updatable = true)
+    @Column(name = "token", unique = true, updatable = true)
     private String token;
 
     @NotBlank
@@ -57,51 +67,39 @@ public class UserEntity implements Serializable {
     private String email;
 
     @NotBlank
-    @Column(name = "phone", nullable = false, unique = false, updatable = true)
+    @Column(name = "phone", nullable = false, updatable = true)
     private String phone;
 
-    @Column(name = "picture", nullable = false, unique = false, updatable = true)
+    @Column(name = "picture", nullable = false, updatable = true)
     private String picture;
 
-    @Column(name = "is_active", nullable = false, unique = false, updatable = true)
+    @Column(name = "is_active", nullable = false, updatable = true)
     private boolean isActive;
 
-    @Column(name = "is_admin", nullable = false, unique = false, updatable = true)
+    @Column(name = "is_admin", nullable = false, updatable = true)
     private boolean isAdmin;
 
-    @Column(name = "is_deleted", nullable = false, unique = false, updatable = true)
-    private boolean isDeleted = false; // Valor padrão é false
-
-    // TODO: Dúvidas sobre "cascade" e "orphanRemoval"
-    // "cascade" permite que operações no UserEntity sejam propagadas para os
-    // produtos à venda. Faz sentido aplicá-lo aqui?
-    // "orphanRemoval" remove produtos se o UserEntity for apagado. Isso é
-    // desejável?
-    @OneToMany(mappedBy = "seller", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> soldProducts;
 
     @OneToMany(mappedBy = "buyer")
     private Set<ProductEntity> purchasedProducts;
 
-    @OneToMany(mappedBy = "evaluator", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "evaluator", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluationEntity> givenEvaluations;
 
-    @OneToMany(mappedBy = "evaluated", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "evaluated", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluationEntity> receivedEvaluations;
 
-    // Constructors
     public UserEntity() {
     }
 
     public UserEntity(String username, String firstName, String lastName, String password, String token,
-            String email, String phone, String picture, boolean isActive, boolean isAdmin) {
+                      String email, String phone, String picture, boolean isActive, boolean isAdmin) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
-        // Directly set the password to avoid calling an overridable method in the
-        // constructor
-        this.password = password != null && !password.startsWith("$2a$") ? BCrypt.hashpw(password, BCrypt.gensalt(12))
-                : password;
+        this.password = password != null && !password.startsWith("$2a$") ? BCrypt.hashpw(password, BCrypt.gensalt(12)) : password;
         this.token = token;
         this.email = email;
         this.phone = phone;
@@ -110,7 +108,6 @@ public class UserEntity implements Serializable {
         this.isAdmin = isAdmin;
     }
 
-    // Getters
     public Long getId() {
         return id;
     }
@@ -155,11 +152,6 @@ public class UserEntity implements Serializable {
         return isAdmin;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    // Setters
     public void setId(Long id) {
         this.id = id;
     }
@@ -176,16 +168,7 @@ public class UserEntity implements Serializable {
         this.lastName = lastName;
     }
 
-    /**
-     * Sets the password for the user. If the password is not already hashed, it
-     * will
-     * hash it using BCrypt.
-     *
-     * @param password the password to set
-     * @see org.mindrot.jbcrypt.BCrypt
-     */
     public void setPassword(String password) {
-        // Only hash if it's not already hashed (BCrypt passwords start with $2a$)
         if (password != null && !password.startsWith("$2a$")) {
             this.password = BCrypt.hashpw(password, BCrypt.gensalt(12));
         } else {
@@ -193,26 +176,11 @@ public class UserEntity implements Serializable {
         }
     }
 
-    /**
-     * Checks if the given password matches the user's password.
-     *
-     * @param plainPassword the password to check
-     * @return true if the password matches, false otherwise
-     * @see org.mindrot.jbcrypt.BCrypt
-     */
     public boolean checkPassword(String plainPassword) {
         return BCrypt.checkpw(plainPassword, this.password);
     }
 
-    /**
-     * Updates the user's password if the current password is correct.
-     *
-     * @param currentPassword the current password
-     * @param newPassword     the new password
-     * @return true if the password was updated, false otherwise
-     */
     public boolean updatePassword(String currentPassword, String newPassword) {
-        // Verify the current password is correct before updating
         if (checkPassword(currentPassword)) {
             setPassword(newPassword);
             return true;
@@ -242,10 +210,6 @@ public class UserEntity implements Serializable {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
-    }
-
-     public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
     }
 
     public Set<ProductEntity> getSoldProducts() {
@@ -280,45 +244,32 @@ public class UserEntity implements Serializable {
         this.receivedEvaluations = receivedEvaluations;
     }
 
-    public void markAsDeleted() {
-        this.username = "Criador Excluído";
+    public void prepareForPermanentDeletion() {
+        this.username = "utilizador_apagado_" + UUID.randomUUID();
         this.firstName = "Criador";
         this.lastName = "Excluído";
-        this.email = null; // Opcional: limpar o email para proteger dados
-        this.phone = null; // Opcional: limpar o telefone
+        this.email = null;
+        this.phone = null;
+        this.picture = null;
+        this.token = null;
         this.isActive = false;
-        this.isDeleted = true;
     }
 
     @Override
     public boolean equals(Object object) {
-        // Verifica se as instâncias são a mesma (mesmo endereço de memória)
         if (this == object) {
             return true;
         }
-        // Verifica se object é nulo ou de classe diferente
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        // Como já sabe que object é da classe UserEntity, faz o cast sem recear uma
-        // ClassCastException
         UserEntity that = (UserEntity) object;
-        // Verifica se o id da instância atual não é nulo (se não for, compara com o id
-        // do outro objeto)
-        if (id != null) {
-            return id.equals(that.id);
-        } else {
-            return that.id == null; // Se o id da instância for nulo, vai verificar se o id de object também é nulo
-        }
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return 0;
-        }
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
@@ -332,7 +283,6 @@ public class UserEntity implements Serializable {
                 ", phone='" + phone + '\'' +
                 ", isActive=" + isActive +
                 ", isAdmin=" + isAdmin +
-                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

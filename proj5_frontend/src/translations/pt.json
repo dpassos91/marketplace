@@ -131,6 +131,7 @@
   "admin.sidebar.produtos": "Gestão de Produtos",
   "admin.sidebar.title": "Painel de Administração",
   "admin.sidebar.utilizadores": "Gestão de Utilizadores",
+  "admin.userTable.title": "Gestão de Utilizadores",
   "admin.userTable.actions": "Ações",
   "admin.userTable.delete": "Eliminar",
   "admin.userTable.email": "Email",

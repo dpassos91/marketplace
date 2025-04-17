@@ -2,7 +2,8 @@ package aor.paj.dao;
 
 import java.util.List;
 
-import aor.paj.bean.UserBean;
+import aor.paj.entity.EvaluationEntity;
+import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
@@ -30,8 +31,8 @@ public class UserDao {
     public boolean delete(Long id) {
         UserEntity user = findById(id);
         if (user != null && !user.isAdmin()) {
-            entityManager.remove(user);
-            return true;
+            // Este método já não será usado para soft delete
+            return false;
         }
         logger.warn("Unable to delete user with id: {}", id);
         return false;
@@ -78,6 +79,11 @@ public class UserDao {
                 .getResultList();
     }
 
+    public List<UserEntity> findAllDeleted() {
+        return entityManager.createNamedQuery("User.findAllDeleted", UserEntity.class)
+                .getResultList();
+    }    
+
     public List<String> findAllUsername() {
         return entityManager.createNamedQuery("User.findAllUsername", String.class).getResultList();
     }
@@ -97,4 +103,39 @@ public class UserDao {
                 .orElse(null);
     }
 
-}
+    public UserEntity findByIdWithAssociations(Long id) {
+        return entityManager.createQuery(
+            "SELECT u FROM UserEntity u " +
+            "LEFT JOIN FETCH u.soldProducts " +
+            "LEFT JOIN FETCH u.purchasedProducts " +
+            "LEFT JOIN FETCH u.givenEvaluations " +
+            "LEFT JOIN FETCH u.receivedEvaluations " +
+            "WHERE u.id = :id", UserEntity.class)
+            .setParameter("id", id)
+            .getSingleResult();
+    }
+
+    public boolean permanentlyDelete(UserEntity user) {
+        try {
+            UserEntity managedUser = entityManager.merge(user); // Garantir que está gerido
+            entityManager.remove(managedUser);
+            logger.info("User with ID {} permanently deleted.", user.getId());
+            return true;
+        } catch (Exception e) {
+            logger.error("Error deleting user permanently: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public void removeEvaluation(EvaluationEntity evaluation) {
+        EvaluationEntity managedEvaluation = entityManager.contains(evaluation) ? evaluation : entityManager.merge(evaluation);
+        entityManager.remove(managedEvaluation);
+    }
+
+    public ProductEntity mergeProduct(ProductEntity product) {
+    return entityManager.merge(product);
+    }
+
+
+} 
+

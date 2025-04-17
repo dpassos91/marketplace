@@ -49,7 +49,7 @@ const UserTable = () => {
     refetch,
     removeItem,
     setData
-  } = useTableData(userAPI.getTotalUsers);
+  } = useTableData(userAPI.getAllUsers);
 
   const {
     currentPage,
@@ -70,8 +70,8 @@ const UserTable = () => {
 
     if (window.confirm(confirmationMessage)) {
       try {
-        if (action === 'suspend') await userAPI.suspendUser(userId);
-        else if (action === 'reactivate') await userAPI.reactivateUser(userId);
+        if (action === 'suspend') await userAPI.updateUserStatus(userId, false );
+        else if (action === 'reactivate') await userAPI.updateUserStatus(userId, true );
         else if (action === 'delete') await userAPI.deleteUser(userId);
 
         alert(intl.formatMessage({ id: `admin.alert.success.${action}` }, { userId }));
@@ -130,6 +130,8 @@ const UserTable = () => {
     </div>
   );
 };
+
+
 
 export default UserTable;
 

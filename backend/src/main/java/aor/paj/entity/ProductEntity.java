@@ -70,16 +70,17 @@ public class ProductEntity implements Serializable {
   private CategoryEntity category;
 
   @ManyToOne
-  @JoinColumn(name = "seller_id")
+  @JoinColumn(name = "seller_id", nullable = true)
   private UserEntity seller;
 
+  @Column(name = "seller_name")
+  private String sellerName;
+
   @ManyToOne
-  @JoinColumn(name = "buyer_id")
+  @JoinColumn(name = "buyer_id", nullable = true)
   private UserEntity buyer;
 
-  // Constructors
-  public ProductEntity() {
-  }
+  public ProductEntity() {}
 
   public ProductEntity(String title, String description, Double price, String location,
       Integer stateId, boolean active, LocalDate date, CategoryEntity category,
@@ -96,7 +97,6 @@ public class ProductEntity implements Serializable {
     this.imageUrl = imageUrl;
   }
 
-  // Alternate constructor that takes a status string
   public ProductEntity(String title, String description, Double price, String location,
       String statusDescription, boolean active, LocalDate date, CategoryEntity category,
       UserEntity seller, String imageUrl) {
@@ -117,7 +117,6 @@ public class ProductEntity implements Serializable {
     this.imageUrl = imageUrl;
   }
 
-  // Getter and setter methods
   public String getImageUrl() {
     return imageUrl;
   }
@@ -172,14 +171,11 @@ public class ProductEntity implements Serializable {
 
   public void setStateId(Integer stateId) {
     this.stateId = stateId;
-
-    // Update active property based on state
     if (stateId != null) {
       try {
         ProductStateId state = ProductStateId.fromStateId(stateId);
         this.active = state.isActive();
       } catch (IllegalArgumentException e) {
-        // Default to inactive for invalid states
         this.active = false;
       }
     }
@@ -252,6 +248,14 @@ public class ProductEntity implements Serializable {
 
   public void setSeller(UserEntity seller) {
     this.seller = seller;
+  }
+
+  public String getSellerName() {
+    return sellerName;
+  }
+
+  public void setSellerName(String sellerName) {
+    this.sellerName = sellerName;
   }
 
   @Override

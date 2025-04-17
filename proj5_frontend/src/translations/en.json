@@ -170,6 +170,7 @@
   "admin.common.cancel": "Cancel",
   "admin.common.save": "Save",
 
+  "admin.userTable.title": "User Management",
   "admin.userTable.profile": "View Profile",
   "admin.userTable.suspend": "Suspend",
   "admin.userTable.reactivate": "Reactivate",
