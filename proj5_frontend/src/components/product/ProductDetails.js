@@ -8,6 +8,7 @@ import useAuthStore from '../../stores/authStore.js';
 import useProductStore from '../../stores/productStore.js';
 import Modal from '../commons/Modal.js';
 import SpinnerLeaf from '../commons/SpinnerLeaf.js';
+import './ProductDetails.css';
 
 function ProductDetails() {
     const { formatMessage } = useIntl();

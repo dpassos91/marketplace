@@ -59,7 +59,7 @@ const UserTable = () => {
   } = usePaginationTable(users, USERS_PER_PAGE);
 
   const handleRedirectToProfile = useCallback((userId) => {
-    window.location.href = `http://localhost:3000/profile/${userId}`;
+    window.location.href = `http://localhost:3000/perfil/${userId}`;
   }, []);
 
   const handleAction = useCallback(async (username, userId, action) => {

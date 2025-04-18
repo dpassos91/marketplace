@@ -1,0 +1,124 @@
+/* Container geral */
+.detalhes-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* Mantém o conteúdo centrado */
+    align-items: flex-start;
+    padding: 40px 20px;
+    gap: 50px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto; /* Centraliza horizontalmente */
+    min-height: calc(100vh - 200px);
+  }
+  
+  /* Imagem */
+  .imagem {
+    flex: 1 1 400px;
+    max-width: 500px;
+    width: 100%; /* Adicionado para forçar a largura mínima */
+    text-align: center;
+    border: 5px solid #56303a;
+    border-radius: 15px;
+  }
+  
+  .imagem img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Detalhes do produto */
+  #detalhes-produto-form {
+    flex: 1 1 400px;
+    max-width: 600px;
+    width: 100%; /* Garante consistência lado a lado com a imagem */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center; /* Mantém o conteúdo centrado no form */
+    text-align: left; /* Mantém o texto alinhado à esquerda */
+  }
+  
+  /* Tipografia */
+  .detalhes-container h2 {
+    font-size: 22px;
+    color: #444;
+    margin: 0 0 10px 0;
+  }
+  
+  .detalhes-container p {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 10px;
+    max-width: 100%;
+  }
+  
+  .detalhes-container strong {
+    color: #333;
+  }
+  
+  /* Botões */
+  .detalhes-form-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .detalhes-container button {
+    background-color: var(--secondary-300);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .detalhes-container button:hover {
+    background-color: var(--secondary-color);
+  }
+  
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Link para perfil do vendedor */
+  .seller-profile-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #333;
+    font-size: 0.95em;
+    text-decoration: none;
+    transition: text-shadow 0.3s ease;
+  }
+  
+  .seller-profile-link:hover {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .detalhes-container {
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 15px;
+    }
+  
+    .imagem,
+    #detalhes-produto-form {
+      max-width: 100%;
+      width: 100%;
+    }
+  
+    .detalhes-form-buttons {
+      justify-content: center;
+    }
+  }
+  

@@ -40,33 +40,34 @@
   }
   
   .category-card h1 {
+    color: black !important;
     font-size: 1.2rem;
     margin-top: 5px;
     margin-bottom: 5px;
+    text-align: center;
   }
   
   .category-card p {
     margin: 10px 0;
     font-size: 0.9rem;
-    color: #666;
+    color: black;
     max-height: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   
   .category-card button {
-    background-color: var(--primary-400, #3e542f);
-    color: white;
+    background-color: var(--primary-300);
+    height: 30px;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 8px;
+    width: 100%;
+    color: var(--white-100);
+    font-weight: bold;
   }
   
   .category-card button:hover {
-    background-color: #45a049;
+    background-color: var(--primary-400);
+    cursor: pointer;
   }
 
   .category-card {

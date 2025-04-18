@@ -1,12 +1,13 @@
 // hooks/useMediaType.js
-import { useState, useEffect } from 'react';
-import { deviceStore } from '../stores/deviceStore'; // ou caminho correto
+import { useEffect } from 'react';
+import { deviceStore } from '../stores/deviceStore';
 
 function useMediaType() {
+  const mediaType = deviceStore((state) => state.mediaType);
   const updateMediaType = deviceStore((state) => state.updateMediaType);
 
   const handleResize = () => {
-    const mediaType = {
+    const newMediaType = {
       isDesktopOrLaptop: window.matchMedia('(min-width: 1224px)').matches,
       isBigScreen: window.matchMedia('(min-width: 1824px)').matches,
       isTabletOrMobile: window.matchMedia('(max-width: 1224px)').matches,
@@ -14,7 +15,7 @@ function useMediaType() {
       isRetina: window.matchMedia('(min-resolution: 2dppx)').matches,
     };
 
-    updateMediaType(mediaType);
+    updateMediaType(newMediaType);
   };
 
   useEffect(() => {
@@ -22,6 +23,8 @@ function useMediaType() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  return mediaType;
 }
 
 export default useMediaType;

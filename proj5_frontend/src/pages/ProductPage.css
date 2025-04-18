@@ -1,8 +1,16 @@
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Isto é crucial para centralizar */
+  gap: 20px;
+}
+
 .product-list-title {
     font-size: 2rem;
     margin-bottom: 1.5rem;
+    text-align: center;
   }
-  
+
   .empty-products {
     display: flex;
     flex-direction: column;
@@ -13,5 +21,21 @@
     width: 200px;
     opacity: 0.8;
     margin-bottom: 1rem;
+  }
+
+  .centered-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    text-align: center;
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
   }
   

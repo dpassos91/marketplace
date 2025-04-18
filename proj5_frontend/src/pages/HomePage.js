@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Aside from '../components/commons/Aside';
-import CategoryCard from '../components/category/CategoryCard';
 import ProductsCarousel from '../components/product/ProductsCarousel'; // Novo componente
 import { productAPI } from '../api/productAPI';
 import { categoryAPI } from '../api/categoryAPI';
 import { FormattedMessage } from 'react-intl'; // Importar FormattedMessage
 import '../components/product/ProductsCarousel.css'; // Estilos para o carousel
 import CategoriesCarousel from '../components/category/CategoriesCarousel';
+import './HomePage.css'
 
 function HomePage() {
   const [recentProducts, setRecentProducts] = useState([]);
