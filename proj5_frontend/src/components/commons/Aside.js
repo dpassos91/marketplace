@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './Aside.css'; // Certifique-se de que o caminho está correto
+import './Aside.css';
 import { FormattedMessage } from 'react-intl';
+import { deviceStore } from '../../stores/deviceStore';
+import useMediaType from '../../hooks/useMediaType';
 
 function Aside() {
+  useMediaType(); // Atualiza o estado na store
+  const { mediaType } = deviceStore();
+
   return (
-    <div className="aside-container">
+    <div className={`aside-container ${mediaType.isTabletOrMobile ? 'aside-mobile' : ''}`}>
       <div className="nav-pag">
         <Link to="/produtos">
           <button className="btn-produtos" type="button">

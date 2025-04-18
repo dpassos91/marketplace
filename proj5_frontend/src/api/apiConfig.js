@@ -37,6 +37,16 @@ const API_ENDPOINTS = {
       `${API_BASE_URL}/products/${productId}/status/${stateId}`,
     purchase: (productId, buyerId) =>
       `${API_BASE_URL}/products/${productId}/purchase/${buyerId}`, // Endpoint for purchasing products
+    filter: (categoryId, sellerId, includeStates) => {
+      const params = new URLSearchParams();
+      if (categoryId) params.append('categoryId', categoryId);
+      if (sellerId) params.append('sellerId', sellerId);
+      if (Array.isArray(includeStates)) {
+        includeStates.forEach(state => params.append('includeStates', state));
+      }
+    
+      return `${API_BASE_URL}/products/filter?${params.toString()}`;
+    }
   },
 
 // User endpoints

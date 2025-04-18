@@ -60,5 +60,59 @@
     margin-right: 8px;
   }
 
+  @media (max-width: 768px) {
+  .dropdown-button {
+    flex-direction: column; /* Empilha bandeira e texto verticalmente */
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .dropdown-flag {
+    margin: 0; /* Remove margin lateral */
+  }
+
+  .dropdown-label {
+    font-size: 12px;
+  }
+
+  .dropdown-arrow {
+    font-size: 10px;
+    margin-left: 0;
+  }
+}
+
+/* ESTILOS ADICIONAIS PARA O MODO RETRATO (portrait) */
+.language-dropdown.portrait {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.language-dropdown.portrait .dropdown-button {
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+}
+
+.language-dropdown.portrait .dropdown-flag {
+  margin: 0;
+  width: 24px;
+  height: auto;
+}
+
+.language-dropdown.portrait .dropdown-label {
+  font-size: 12px;
+  text-align: center;
+}
+
+.language-dropdown.portrait .dropdown-arrow {
+  font-size: 10px;
+  margin: 0;
+}
+
+
+
   
   

@@ -101,6 +101,31 @@ public class ProductDao {
         }
     }
 
+    public List<ProductEntity> findByCategorySellerAndStates(Long categoryId, Long sellerId, List<Integer> stateIds) {
+        String jpql = "SELECT p FROM ProductEntity p WHERE 1=1";
+    
+        if (categoryId != null) {
+            jpql += " AND p.category.id = :categoryId";
+        }
+    
+        if (sellerId != null) {
+            jpql += " AND p.seller.id = :sellerId";
+        }
+    
+        if (stateIds != null && !stateIds.isEmpty()) {
+            jpql += " AND p.stateId IN :stateIds";
+        }
+    
+        TypedQuery<ProductEntity> query = em.createQuery(jpql, ProductEntity.class);
+    
+        if (categoryId != null) query.setParameter("categoryId", categoryId);
+        if (sellerId != null) query.setParameter("sellerId", sellerId);
+        if (stateIds != null && !stateIds.isEmpty()) query.setParameter("stateIds", stateIds);
+    
+        return query.getResultList();
+    }
+    
+
     /**
      * Gets all products from the database
      * 

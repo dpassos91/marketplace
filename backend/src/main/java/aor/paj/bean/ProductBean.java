@@ -130,6 +130,16 @@ public class ProductBean {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductDto> getFilteredProducts(Long categoryId, Long sellerId, List<Integer> includeStates) {
+        logger.info("Filtering products by category={}, seller={}, states={}", categoryId, sellerId, includeStates);
+    
+        List<ProductEntity> entities = productDao.findByCategorySellerAndStates(categoryId, sellerId, includeStates);
+        
+        return entities.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
     /**
      * Gets products by seller with robust error handling
      * 

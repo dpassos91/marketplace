@@ -48,34 +48,37 @@ function ProductFilter({ isOpen, onClose }) {
     setMessage('');
     setError(false);
     setLoading(true);
-
+  
     try {
       let data = [];
+  
+      const includeStates = [
+        PRODUCT_STATES.DISPONIVEL.id,
+        PRODUCT_STATES.RESERVADO.id,
+        PRODUCT_STATES.RASCUNHO.id,
+      ];
+  
       if (selection.startsWith('cat-')) {
-        const categoryId = selection.replace('cat-', '');
-        data = await apiCall(API_ENDPOINTS.products.byCategory(categoryId));
+        const categoryId = parseInt(selection.replace('cat-', ''), 10);
+        data = await productAPI.getFilteredProducts({ categoryId, includeStates });
       } else if (selection === 'seller' && /^\d+$/.test(sellerId.trim())) {
-        data = await apiCall(API_ENDPOINTS.products.bySeller(sellerId));
+        data = await productAPI.getFilteredProducts({ sellerId: parseInt(sellerId), includeStates });
       } else {
         setLoading(false);
         setMessage('invalid');
         return;
       }
-
-      const availableProducts = data.filter((product) => {
-        const state = PRODUCT_STATES.fromStatus(product.productState);
-        return state && PRODUCT_STATES.isActive(state.id) && state.id !== PRODUCT_STATES.COMPRADO.id;
-      });
-
-      setProducts(availableProducts);
-      if (availableProducts.length === 0) setMessage('empty');
+  
+      setProducts(data);
+      if (data.length === 0) setMessage('empty');
     } catch (err) {
-      console.error('Erro ao buscar produtos:', err);
+      console.error('Erro ao buscar produtos filtrados:', err);
       setError(true);
     } finally {
       setLoading(false);
     }
   }, [selection, sellerId]);
+  
 
   useEffect(() => {
     setProducts([]);

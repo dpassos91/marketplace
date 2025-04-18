@@ -14,12 +14,17 @@ import './App.css';
 import useAuthStore from './stores/authStore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import AdminPage from './pages/AdminPage';
+import './responsive.css';
+import useMediaType from './hooks/useMediaType';
+
 
 function App() {
     const login = useAuthStore((state) => state.login);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Acesso ao store de usuário
+    useMediaType();
+
+    // Acesso ao store de utilizador
     const {
         locale,
         translations,

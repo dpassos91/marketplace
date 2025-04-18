@@ -31,6 +31,22 @@ const getAllActiveProducts = async () => {
   }
 };
 
+const getFilteredProducts = async ({ categoryId, sellerId, includeStates }) => {
+  try {
+    const query = new URLSearchParams();
+
+    if (categoryId) query.append('categoryId', categoryId);
+    if (sellerId) query.append('sellerId', sellerId);
+    includeStates?.forEach(state => query.append('includeStates', state));
+
+    return await apiCall(`${API_ENDPOINTS.products.base}/filter?${query.toString()}`);
+  } catch (error) {
+    console.error('Erro ao buscar produtos filtrados:', error);
+    return [];
+  }
+};
+
+
 /**
  * Fetches paginated products from the API.
  * @param {number} [page=0] - The page number to retrieve.
@@ -325,6 +341,7 @@ export const productAPI = {
   getAllEditedProducts,
   getAllProducts,
   getActiveProductCount,
+  getFilteredProducts,
   getInactiveProducts,
   getProductById,
   getProductCount,

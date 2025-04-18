@@ -354,6 +354,20 @@ public class ProductService {
         return Response.ok(products).build();
     }
 
+    @GET
+@Path("/filter")
+public Response getFilteredProducts(
+    @QueryParam("categoryId") Long categoryId,
+    @QueryParam("sellerId") Long sellerId,
+    @QueryParam("includeStates") List<Integer> includeStates // lista de stateId permitidos
+) {
+    logger.info("Filtering products by category={}, seller={}, states={}", categoryId, sellerId, includeStates);
+    
+    List<ProductDto> products = productBean.getFilteredProducts(categoryId, sellerId, includeStates);
+    return Response.ok(products).build();
+}
+
+
     /**
      * Get products from inactive users
      * 
