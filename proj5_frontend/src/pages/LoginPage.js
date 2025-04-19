@@ -48,8 +48,8 @@ function LoginPage() {
               value={username}
               onChange={handleChange}
               onInvalid={handleInvalid}
-              placeholder={intl.formatMessage({ id: 'login.placeholder.username', defaultMessage: 'Username' })}
-              title={intl.formatMessage({ id: 'login.error.usernameRequired', defaultMessage: 'Please enter your username.' })}
+              placeholder={intl.formatMessage({ id: 'login.placeholder.username', defaultMessage: 'Nome de Utilizador' })}
+              title={intl.formatMessage({ id: 'login.error.usernameRequired', defaultMessage: 'Por favor insira o seu nome de utilizador.' })}
             />
             <label htmlFor="password">
               <FormattedMessage id="login.password" defaultMessage="Password" />

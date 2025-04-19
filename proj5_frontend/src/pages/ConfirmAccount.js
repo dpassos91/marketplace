@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { userAPI } from '../api/userAPI';
 import SpinnerLeaf from '../components/commons/SpinnerLeaf';
+import './ConfirmAccount.css'
 
 function ConfirmAccount() {
   const [searchParams] = useSearchParams();
@@ -41,7 +42,7 @@ function ConfirmAccount() {
   }, [token, navigate]);
 
   return (
-    <div className="centered-message">
+    <div className="centered-message-confirm">
       {status === 'loading' && (
         <p>
           <FormattedMessage

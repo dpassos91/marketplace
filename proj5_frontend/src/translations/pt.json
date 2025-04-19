@@ -340,6 +340,9 @@
 
   "auth.login.unconfirmed": "A sua conta ainda não está confirmada. Verifique o link de confirmação na consola do browser.",
 
-  "confirmAccount.redirecting": "A redirecionar para a página de login..."
+  "confirmAccount.redirecting": "A redirecionar para a página de login...",
+
+  "login.error.usernameRequired": "Por favor, insira o seu Nome de Utilizador.",
+  "login.error.passwordRequired": "Por favor, insira a sua password."
 
 }

@@ -354,7 +354,10 @@
 
   "auth.login.unconfirmed": "Your account has not been confirmed yet. Please check the confirmation link.",
 
-  "confirmAccount.redirecting": "Redirecting to login page..."
+  "confirmAccount.redirecting": "Redirecting to login page...",
+
+  "login.error.usernameRequired": "Please enter your Username.",
+  "login.error.passwordRequired": "Please enter your password."
 
 
 

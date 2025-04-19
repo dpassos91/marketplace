@@ -4,7 +4,9 @@
     min-height: 100vh;
   }
   
-  .main-content {
+  main {
     flex: 1;
   }
+
+  
   

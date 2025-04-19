@@ -357,6 +357,9 @@
 
 "auth.login.unconfirmed": "Votre compte n'est pas encore confirmé. Veuillez vérifier le lien de confirmation.",
 
-"confirmAccount.redirecting": "Redirection vers la page de connexion..."
+"confirmAccount.redirecting": "Redirection vers la page de connexion...",
+
+  "login.error.usernameRequired": "Veuillez saisir votre nom d'utilisateur.",
+  "login.error.passwordRequired": "Veuillez saisir votre mot de passe."
 }
   

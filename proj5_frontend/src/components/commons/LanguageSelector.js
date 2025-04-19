@@ -27,7 +27,7 @@ function LanguageSelector() {
   };
 
   return (
-    <div className="language-selector-container">
+    <div className="language-dropdown">
       <button className="dropdown-button" onClick={() => setIsOpen(!isOpen)}>
         <img
           src={languages[locale].flag}

@@ -39,10 +39,6 @@
   src: url('../src/Fonts/Nature\ Impact\ Demo.otf') format('opentype');
 }
 
-
-
-
-
 /* Body */
 body {
   display: flex;
@@ -50,6 +46,12 @@ body {
   min-height: 100vh;
   margin: 0;
   background-color: var(--primary-100);
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 /* Admin Sidebar */
@@ -686,7 +688,7 @@ body {
   padding: 20px;
   border-radius: 8px;
   box-shadow: var(--box-shadow);
-  margin-bottom: 100px;
+  margin-bottom: 30px;
   width: 30vw;
 }
 
