@@ -25,18 +25,21 @@ import jakarta.validation.constraints.NotBlank;
         @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user"),
         @NamedQuery(
     name = "User.findById",
-    query = "SELECT u FROM UserEntity u " +
-            "LEFT JOIN FETCH u.soldProducts " +
-            "LEFT JOIN FETCH u.purchasedProducts " +
-            "LEFT JOIN FETCH u.givenEvaluations " +
-            "LEFT JOIN FETCH u.receivedEvaluations " +
-            "WHERE u.id = :id"
+    query = "SELECT user FROM UserEntity user " +
+            "LEFT JOIN FETCH user.soldProducts " +
+            "LEFT JOIN FETCH user.purchasedProducts " +
+            "LEFT JOIN FETCH user.givenEvaluations " +
+            "LEFT JOIN FETCH user.receivedEvaluations " +
+            "WHERE user.id = :id"
 ),
         @NamedQuery(name = "User.findByActive", query = "SELECT user FROM UserEntity user WHERE user.isActive = :isActive"),
         @NamedQuery(name = "User.findAllDeleted", query = "SELECT user FROM UserEntity user WHERE user.isActive = false AND user.username = 'Criador Excluído'"),
         @NamedQuery(name = "User.findAllUsername", query = "SELECT user.username FROM UserEntity user"),
         @NamedQuery(name = "User.findByUsername", query = "SELECT user FROM UserEntity user WHERE user.username = :username"),
-        @NamedQuery(name = "User.findByToken", query = "SELECT user FROM UserEntity user WHERE user.token = :token")
+        @NamedQuery(name = "User.findByToken", query = "SELECT user FROM UserEntity user WHERE user.token = :token"),
+        @NamedQuery(
+    name = "User.findByConfirmationToken",
+    query = "SELECT user FROM UserEntity user WHERE user.confirmationToken = :token")
 })
 public class UserEntity implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -78,6 +81,12 @@ public class UserEntity implements Serializable {
 
     @Column(name = "is_admin", nullable = false, updatable = true)
     private boolean isAdmin;
+
+    @Column(name = "confirmed", nullable = false)
+    private boolean confirmed = false;
+
+    @Column(name = "confirmation_token", unique = true)
+    private String confirmationToken;
 
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> soldProducts;
@@ -144,12 +153,20 @@ public class UserEntity implements Serializable {
         return picture;
     }
 
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
     public boolean isActive() {
         return isActive;
     }
 
     public boolean isAdmin() {
         return isAdmin;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
     }
 
     public void setId(Long id) {
@@ -174,6 +191,14 @@ public class UserEntity implements Serializable {
         } else {
             this.password = password;
         }
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+    
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
     }
 
     public boolean checkPassword(String plainPassword) {

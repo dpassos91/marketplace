@@ -19,11 +19,13 @@ public class AuthService {
     UserBean userBean;
 
     @POST
-    @Path("/login")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response logIn(LoginRequestDto user) {
-        logger.info("Login attempt by user: {}", user.getUsername());
+@Path("/login")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public Response logIn(LoginRequestDto user) {
+    logger.info("Login attempt by user: {}", user.getUsername());
+
+    try {
         LoginResponseDto loginResponse = userBean.logIn(user);
 
         if (loginResponse != null) {
@@ -32,8 +34,17 @@ public class AuthService {
         }
 
         logger.warn("Failed login attempt by user: {}", user.getUsername());
-        return Response.status(403).entity("Invalid Username or Password!").build();
+        return Response.status(Response.Status.FORBIDDEN)
+                .entity("Invalid Username or Password!").build();
+
+    } catch (SecurityException e) {
+        // ⚠️ Conta não confirmada
+        logger.warn("Login blocked for unconfirmed user: {}", user.getUsername());
+        return Response.status(Response.Status.FORBIDDEN)
+                .entity(e.getMessage())
+                .build();
     }
+}
 
     @POST
     @Path("/logout")

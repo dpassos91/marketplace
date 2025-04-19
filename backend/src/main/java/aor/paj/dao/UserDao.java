@@ -7,6 +7,7 @@ import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +22,7 @@ public class UserDao {
 
     public UserEntity create(UserEntity user) {
         entityManager.persist(user);
+        entityManager.flush();
         return user;
     }
 
@@ -114,6 +116,16 @@ public class UserDao {
             .setParameter("id", id)
             .getSingleResult();
     }
+
+    public UserEntity findByConfirmationToken(String token) {
+    try {
+        return entityManager.createNamedQuery("User.findByConfirmationToken", UserEntity.class)
+                 .setParameter("token", token)
+                 .getSingleResult();
+    } catch (NoResultException e) {
+        return null;
+    }
+}
 
     public boolean permanentlyDelete(UserEntity user) {
         try {

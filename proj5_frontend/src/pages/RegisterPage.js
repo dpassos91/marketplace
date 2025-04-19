@@ -27,25 +27,32 @@ function RegisterPage() {
       alert(formatMessage({ id: 'registeralert.passwordsMismatch', defaultMessage: 'As passwords não coincidem.' }));
       return;
     }
-
-  const dataToSend = { ...formData };
-  delete dataToSend.confirmPassword;
-
+  
+    const dataToSend = { ...formData };
+    delete dataToSend.confirmPassword;
+  
     console.log('Dados a serem enviados:', formData); // Adicione este log
-
-
+  
     try {
-      const success = await register(dataToSend);
-      if (success) {
+      const response = await register(dataToSend);
+  
+      // Mostrar o link de confirmação se estiver presente na resposta
+      if (response?.confirmationToken) {
+        console.log('🔗 Link de confirmação:');
+        console.log(`http://localhost:3000/confirmar?token=${response.confirmationToken}`);
+      }
+  
+      if (response) {
         navigate('/login');
       } else {
-        alert(formatMessage({ id: 'registeralert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.'}));
+        alert(formatMessage({ id: 'registeralert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.' }));
       }
     } catch (error) {
-      alert(formatMessage({ id: 'registeralert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.'}));
+      alert(formatMessage({ id: 'registeralert.registerFailed', defaultMessage: 'Erro ao registar utilizador. Tente novamente.' }));
       console.error(error);
     }
   };
+  
 
   return (
     <>

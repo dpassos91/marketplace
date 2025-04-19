@@ -52,6 +52,7 @@ const API_ENDPOINTS = {
 // User endpoints
 users: {
   base: `${API_BASE_URL}/users`,
+  confirm: (token) => `${API_BASE_URL}/users/confirm?token=${token}`,
   byId: (id) => `${API_BASE_URL}/users/${id}`,
   update: (id) => `${API_BASE_URL}/users/${id}`,
   delete: (id) => `${API_BASE_URL}/users/${id}`,
@@ -136,58 +137,68 @@ const DEFAULT_OPTIONS = {
   // Função genérica para fazer chamadas de API
   const apiCall = async (url, options = {}) => {
     console.log('Chamando API:', url, 'com opções:', options);
-
+  
     const token = sessionStorage.getItem('authToken');
     console.log('authToken no sessionStorage:', token);
-
+  
     const finalOptions = {
-        ...options,
-        headers: {
-            'token': token,
-            'Content-Type': 'application/json',
-            ...options.headers,
-        },
+      ...options,
+      headers: {
+        'token': token,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
     };
-
+  
     console.log('Headers:', finalOptions.headers);
     console.log('Opções finais:', finalOptions);
-
+  
     try {
-        const response = await fetch(url, finalOptions);
-        console.log('Resposta da API:', response.status, response.statusText);
-
-        const contentType = response.headers.get("content-type");
-        let responseBody = await response.text(); // Lê a resposta como texto
-
-        if (!response.ok) {
-            console.error('Corpo da resposta de erro:', responseBody);
-            throw new Error(`Erro na API: ${response.status} ${response.statusText}\n${responseBody}`);
-        }
-
-        if (responseBody.trim() === "") {
-            console.log('Resposta sem conteúdo');
-            return null; // Caso a resposta seja vazia
-        }
-
-        if (contentType && contentType.includes("application/json")) {
-            try {
-                const jsonData = JSON.parse(responseBody);
-                console.log('Dados JSON recebidos:', jsonData);
-                return jsonData;
-            } catch (jsonError) {
-                console.log('Texto recebido (após erro de parse JSON):', responseBody);
-                return responseBody; // Retorna o texto original se o JSON for inválido
-            }
-        } else {
-            console.log('Texto recebido (não é JSON):', responseBody);
-            return responseBody; // Retorna a resposta como texto se não for JSON
-        }
-    } catch (error) {
-        console.error('Erro completo:', error);
-        handleApiError(error);
+      const response = await fetch(url, finalOptions);
+      console.log('Resposta da API:', response.status, response.statusText);
+  
+      const contentType = response.headers.get("content-type");
+      let responseBody = await response.text(); // Lê a resposta como texto
+  
+      // ❌ Se a resposta não estiver OK (status 4xx ou 5xx)
+      if (!response.ok) {
+        console.error('Corpo da resposta de erro:', responseBody);
+  
+        const error = new Error(responseBody || 'Erro desconhecido da API');
+        error.status = response.status;
+        error.statusText = response.statusText;
+        error.body = responseBody;
         throw error;
+      }
+  
+      // ✅ Se a resposta não tiver conteúdo
+      if (responseBody.trim() === "") {
+        console.log('Resposta sem conteúdo');
+        return null;
+      }
+  
+      // ✅ Se a resposta for JSON
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          const jsonData = JSON.parse(responseBody);
+          console.log('Dados JSON recebidos:', jsonData);
+          return jsonData;
+        } catch (jsonError) {
+          console.warn('Erro ao processar JSON, devolvendo como texto:', responseBody);
+          return responseBody;
+        }
+      } else {
+        console.log('Texto recebido (não é JSON):', responseBody);
+        return responseBody;
+      }
+  
+    } catch (error) {
+      console.error('Erro completo:', error);
+      handleApiError(error); // Opcional: registo ou tratamento global
+      throw error; // ⚠️ re-lança para que o login() possa capturar
     }
-};
+  };
+  
   
   export const apiConfig = {
   API_BASE_URL,

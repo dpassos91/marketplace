@@ -545,7 +545,7 @@ public class ProductBean {
             logger.debug("Attempting to convert null entity to DTO");
             return null;
         }
-
+    
         try {
             ProductDto dto = new ProductDto();
             dto.setId(entity.getId());
@@ -554,51 +554,52 @@ public class ProductBean {
             dto.setPrice(entity.getPrice());
             dto.setLocation(entity.getLocation());
             dto.setImageUrl(entity.getImageUrl());
-
+    
             // Set state consistently using ProductStateId enum
             setProductStateFromEntity(dto, entity);
-
-            // No need to set active separately as it's derived from the state
-
+    
             // Format dates to strings
             if (entity.getDate() != null) {
                 dto.setDate(entity.getDate().format(DATE_FORMATTER));
             }
-
+    
             if (entity.getEditDate() != null) {
                 dto.setEditDate(entity.getEditDate().format(DATE_FORMATTER));
             }
-
+    
             // Set category information
             if (entity.getCategory() != null) {
                 dto.setCategoryId(entity.getCategory().getId());
                 dto.setCategoryName(entity.getCategory().getName());
             }
-
+    
             // Set seller information
             if (entity.getSeller() != null) {
                 dto.setSellerId(entity.getSeller().getId());
-                // Check if seller is active before showing username
-                if (entity.getSeller().isActive()) {
-                    dto.setSellerUsername(entity.getSeller().getUsername());
-                } else {
-                    dto.setSellerUsername("Conta Cancelada");
-                }
+                dto.setSellerUsername(
+                    entity.getSeller().isActive()
+                        ? entity.getSeller().getUsername()
+                        : "Conta Cancelada"
+                );
             } else {
-                // Caso utilizador tenha sido apagado permanentemente
-            } dto.setSellerUsername(entity.getSellerName() != null ? entity.getSellerName() : "Vendedo desconhecido");
-
+                // Utilizador foi apagado permanentemente
+                dto.setSellerUsername(
+                    entity.getSellerName() != null
+                        ? entity.getSellerName()
+                        : "Vendedor desconhecido"
+                );
+            }
+    
             // Set buyer information if available
             if (entity.getBuyer() != null) {
                 dto.setBuyerId(entity.getBuyer().getId());
-                // Check if buyer is active before showing username
-                if (entity.getBuyer().isActive()) {
-                    dto.setBuyerUsername(entity.getBuyer().getUsername());
-                } else {
-                    dto.setBuyerUsername("Conta Cancelada");
-                }
+                dto.setBuyerUsername(
+                    entity.getBuyer().isActive()
+                        ? entity.getBuyer().getUsername()
+                        : "Conta Cancelada"
+                );
             }
-
+    
             logger.trace("Successfully converted entity to DTO: id={}", entity.getId());
             return dto;
         } catch (Exception e) {
@@ -607,6 +608,7 @@ public class ProductBean {
             throw e;
         }
     }
+    
 
     /**
      * Converts a product DTO to an entity

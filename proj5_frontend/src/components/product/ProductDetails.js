@@ -78,6 +78,11 @@ function ProductDetails() {
                 return;
             }
 
+            if (!user.confirmed) {
+                alert('A sua conta ainda não está confirmada. Por favor, confirme através do link enviado.');
+                return;
+              }
+
             if (user.id === product.sellerId) {
                 alert(formatMessage({ id: 'productDetails.alert.ownProduct', defaultMessage: 'Não pode comprar o seu próprio produto.' }));
                 return;

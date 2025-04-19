@@ -18,6 +18,8 @@ public class UserDto {
     private String picture;
     private boolean isAdmin;
     private boolean isActive;
+    private boolean confirmed;
+    private String confirmationToken;
 
     public UserDto() {
     }
@@ -125,4 +127,22 @@ public class UserDto {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    @XmlElement
+    public boolean isConfirmed() {
+    return confirmed;
+}
+
+    public void setConfirmed(boolean confirmed) {
+    this.confirmed = confirmed;
+    }
+
+@XmlElement
+public String getConfirmationToken() {
+    return confirmationToken;
+}
+
+public void setConfirmationToken(String confirmationToken) {
+    this.confirmationToken = confirmationToken;
+}   
 }

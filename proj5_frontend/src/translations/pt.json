@@ -329,5 +329,17 @@
   "userProfile.loading": "A carregar informações do utilizador...",
   "userProfile.myProducts": "Os meus Produtos",
   "userProfile.sellerProducts": "Produtos do Vendedor",
-  "userProfile.title": "Página Pessoal"
+  "userProfile.title": "Página Pessoal",
+
+"confirmAccount.loading": "A confirmar a sua conta...",
+"confirmAccount.success": "Conta confirmada com sucesso! Já pode iniciar sessão.",
+"confirmAccount.goToLogin": "Iniciar Sessão",
+"confirmAccount.error": "Erro ao confirmar a conta. Token inválido ou conta já confirmada.",
+
+"alert.userNotConfirmed": "A sua conta ainda não está confirmada. Por favor, confirme através do link enviado.",
+
+  "auth.login.unconfirmed": "A sua conta ainda não está confirmada. Verifique o link de confirmação na consola do browser.",
+
+  "confirmAccount.redirecting": "A redirecionar para a página de login..."
+
 }

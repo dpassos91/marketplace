@@ -10,6 +10,18 @@ const registerUser = async (userData) => {
   });
 };
 
+const confirmUser = async (token) => {
+  const response = await apiCall(API_ENDPOINTS.users.confirm(token), {
+    method: 'POST',
+    // Se o backend espera corpo (não precisa neste caso), envia só se necessário
+    // body: JSON.stringify(token), // ← normalmente não é preciso, o token está na query param
+  });
+
+  console.log("Resposta da API (confirmUser):", response);
+  return response;
+};
+
+
 const loginUser = async (credentials) => {
   return apiCall(API_ENDPOINTS.auth.login, {
     method: 'POST',
@@ -79,6 +91,7 @@ const updatePassword = async (userId, passwordUpdateData) => {
 
 export const userAPI = {
   registerUser,
+  confirmUser,
   loginUser,
   logoutUser,
   getUserById,

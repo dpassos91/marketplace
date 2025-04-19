@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 import java.util.Iterator;
 
 import aor.paj.dao.UserDao;
@@ -30,69 +31,98 @@ public class UserBean {
     @Inject
     private UserDao userDao;
 
+
+    private boolean isValidUsername(String username) {
+        return userDao.findByUsername(username) == null;
+    }
+    
     public UserDto registerUser(UserDto userDto) {
-        // verifica se o username já existe na base de dados
         if (!isValidUsername(userDto.getUsername())) {
             logger.warn("Username already in use: {}", userDto.getUsername());
-            // caso exista interrompe o fluxo
             throw new IllegalArgumentException("Username already in use");
         }
-        // converte o Dto em Entity
+    
+        // Converte o Dto em Entity
         UserEntity userEntity = toEntity(userDto);
-        // faz 'set' da password em Hash, do estado e da condição de Admin
+    
+        // Guarda o token original antes de persistir
+        String confirmationToken = userEntity.getConfirmationToken();
+    
+        // Configurações adicionais
         userEntity.setPassword(hashPassword(userDto.getPassword()));
         userEntity.setActive(true);
         userEntity.setAdmin(false);
-        // tenta registar o novo utilizador
+    
         try {
-            userEntity = userDao.create(userEntity);
-            logger.info("User successfully registered: {}", userDto.getUsername());
+            userDao.create(userEntity); // sem reassinar
+    
+            logger.info("User successfully registered: {}", userEntity.getUsername());
+    
+            // Simula envio de e-mail
+            System.out.println("=== TOKEN DE CONFIRMAÇÃO ===");
+            System.out.println("Username: " + userEntity.getUsername());
+            System.out.println("Token: " + confirmationToken);
+            System.out.println("URL: http://localhost:3000/confirmar?token=" + confirmationToken);
+            System.out.println("============================");
+    
         } catch (Exception exception) {
             logger.error("Error during registration for user: {}", userDto.getUsername(), exception);
             throw exception;
         }
-        // retorna os dados para depuração
+    
         return toDto(userEntity);
-    }
-
-    private boolean isValidUsername(String username) {
-        logger.info("Checking if username {} is valid.", username);
-        // vai buscar a lista de usernames à base de dados
-        List<String> allUsername = userDao.findAllUsername();
-        // compara os usernames da lista com o novo
-        for (String existingUsername : allUsername) {
-            if (existingUsername.equals(username)) {
-                logger.warn("Username {} is already in use.", username);
-                return false;
-            }
-        }
-        logger.info("Username {} is valid.", username);
-        return true;
-    }
+    }    
 
     public String hashPassword(String password) {
         logger.info("Hashing password.");
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-public LoginResponseDto logIn(LoginRequestDto user) {
-    logger.info("Login attempt for user: {}", user.getUsername());
-    UserEntity userEntity = userDao.findByUsername(user.getUsername());
-
-    if (userEntity != null && userEntity.isActive()) {
-        if (userEntity.checkPassword(user.getPassword())) {
-            String token = generateNewToken();
-            userEntity.setToken(token);
-            userDao.update(userEntity);
-
-            logger.info("Successful login for user: {}", user.getUsername());
-            return new LoginResponseDto(userEntity.getId(), token);
+    public LoginResponseDto logIn(LoginRequestDto user) {
+        logger.info("Login attempt for user: {}", user.getUsername());
+    
+        UserEntity userEntity = userDao.findByUsername(user.getUsername());
+    
+        if (userEntity != null && userEntity.isActive()) {
+    
+            // ⚠️ NOVO: bloquear login se conta ainda não estiver confirmada
+            if (!userEntity.isConfirmed()) {
+                logger.warn("Login denied: User {} has not confirmed their account.", user.getUsername());
+    
+                // ✅ Verifica se há token — se não, gera e guarda
+                String token = userEntity.getConfirmationToken();
+                if (token == null || token.isBlank()) {
+                    token = UUID.randomUUID().toString();
+                    userEntity.setConfirmationToken(token);
+                    userDao.update(userEntity); // <- grava o novo token
+                    logger.info("Novo token de confirmação gerado e guardado: {}", token);
+                }
+    
+                // 🔁 Reenviar link de confirmação para a consola
+                System.out.println("=== TOKEN DE CONFIRMAÇÃO ===");
+                System.out.println("Username: " + userEntity.getUsername());
+                System.out.println("Token: " + token);
+                System.out.println("URL: http://localhost:3000/confirmar?token=" + token);
+                System.out.println("=======================================");
+    
+                throw new SecurityException("Conta ainda não confirmada. Token: " + token);
+            }
+    
+            if (userEntity.checkPassword(user.getPassword())) {
+                String sessionToken = generateNewToken();
+                userEntity.setToken(sessionToken);
+                userDao.update(userEntity);
+    
+                logger.info("Successful login for user: {}", user.getUsername());
+                return new LoginResponseDto(userEntity.getId(), sessionToken);
+            }
         }
+    
+        logger.warn("Login failed for user: {}", user.getUsername());
+        return null;
     }
-
-    logger.warn("Login failed for user: {}", user.getUsername());
-    return null;
-}
+    
+    
 
 
     private String generateNewToken() {
@@ -454,13 +484,21 @@ public Response deleteUser(Long id, String token) {
         logger.info("All deleted users returned successfully.");
         return deletedUserDtos;
     }
+
+    public UserEntity findByConfirmationToken(String token) {
+        return userDao.findByConfirmationToken(token);
+    }
+    
+    public void updateUser(UserEntity user) {
+        userDao.update(user);
+    }
     
 
     public UserEntity toEntity(UserDto userDto) {
         if (userDto == null) {
             return null;
         }
-
+    
         UserEntity entity = new UserEntity();
         entity.setUsername(userDto.getUsername());
         entity.setPassword(userDto.getPassword());
@@ -469,9 +507,14 @@ public Response deleteUser(Long id, String token) {
         entity.setEmail(userDto.getEmail());
         entity.setPhone(userDto.getPhone());
         entity.setPicture(userDto.getPicture());
-
+    
+        // novo utilizador: gerar token e marcar como não confirmado
+        entity.setConfirmed(false);
+        entity.setConfirmationToken(UUID.randomUUID().toString());
+    
         return entity;
     }
+    
 
     public UserDto toDto(UserEntity userEntity) {
         if (userEntity == null) {
@@ -489,6 +532,12 @@ public Response deleteUser(Long id, String token) {
         dto.setPicture(userEntity.getPicture());
         dto.setAdmin(userEntity.isAdmin());
         dto.setActive(userEntity.isActive());
+        dto.setConfirmed(userEntity.isConfirmed());
+
+        // Apenas para contas ainda não confirmadas: incluir o token no DTO
+        if (!userEntity.isConfirmed()) {
+            dto.setConfirmationToken(userEntity.getConfirmationToken());
+        }
         return dto;
     }
 }

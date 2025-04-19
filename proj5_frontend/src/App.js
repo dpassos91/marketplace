@@ -16,6 +16,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import AdminPage from './pages/AdminPage';
 import './responsive.css';
 import useMediaType from './hooks/useMediaType';
+import ConfirmAccount from './pages/ConfirmAccount';
 
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
                         <Route path="/produtos" element={<ProductPage />} />
                         <Route path="/detalhes-produto/:id" element={<ProductDetails />} />
                         <Route path="/perfil/:id" element={<UserProfilePage />} />
+                        <Route path="/confirmar" element={<ConfirmAccount />} />
                         <Route element={<ProtectedRoute />}>
                             <Route path="/perfil/:userId" element={<UserProfilePage />} />
                             <Route path="/admin/*" element={<AdminPage />} />

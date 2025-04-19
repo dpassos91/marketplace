@@ -13,7 +13,7 @@ export function useAuth() {
     alert(formatMessage({ id: errorMessageId, defaultMessage }) + ' ' + formatMessage({ id: 'auth.tryAgain', defaultMessage: 'Tente novamente.' }));
     return false;
   };
-
+  
   const login = async (credentials) => {
     try {
       const userData = await userAPI.loginUser(credentials);
@@ -26,11 +26,9 @@ export function useAuth() {
         admin: userData.admin
       };
   
-      // Armazena no estado e no localStorage
       useAuthStore.getState().login(userDataToStore);
       localStorage.setItem('userData', JSON.stringify(userDataToStore));
   
-      // Alerta internacionalizado
       alert(
         formatMessage(
           { id: 'auth.login.success', defaultMessage: 'Login bem sucedido! Bem-vindo/a {name}!' },
@@ -40,30 +38,54 @@ export function useAuth() {
   
       navigate('/');
       return true;
+  
     } catch (error) {
       console.error('Login falhou:', error);
-      alert(
-        formatMessage({
+  
+      // ⚠️ Conta ainda não confirmada
+
+if (error.status === 403 && error.message.includes('confirmada')) {
+  alert(formatMessage({
+    id: "auth.login.unconfirmed",
+    defaultMessage: "A sua conta ainda não está confirmada. Verifique o link de confirmação."
+  }));
+
+  const tokenMatch = error.message.match(/Token:\s(.+)/);
+  const token = tokenMatch ? tokenMatch[1].trim() : null;
+
+  if (token) {
+    console.warn("🔁 Link de confirmação:");
+    console.warn(`http://localhost:3000/confirmar?token=${token}`);
+  } else {
+    console.warn("⚠️ Token não encontrado na mensagem.");
+  }
+}
+ else {
+        // ❌ Login inválido
+        alert(formatMessage({
           id: 'auth.login.failed',
           defaultMessage: 'Login falhou! Por favor verifique as suas credenciais.'
-        })
-      );
+        }));
+      }
+  
       return false;
     }
-  };
-  
+  };  
 
   const register = async (newUser) => {
     console.log('A função de registro está sendo chamada com:', newUser);
     try {
       const userData = await userAPI.registerUser(newUser);
+  
       alert(formatMessage({ id: 'auth.register.success', defaultMessage: 'Utilizador registado! Por favor, faça login.' }));
-      navigate('/login');
-      return true;
+  
+      // Retorna os dados completos para que o componente os possa usar
+      return userData;
     } catch (error) {
       return handleAuthError(error, 'auth.register.failed', 'Erro ao registar utilizador:');
     }
-  };  
+  };
+  
 
   const logout = async () => {
     console.log('Função de logout chamada');

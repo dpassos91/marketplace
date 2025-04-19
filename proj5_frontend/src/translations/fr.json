@@ -183,7 +183,7 @@
 
   "admin.window.confirm.suspend": "Êtes-vous sûr de vouloir suspendre l'utilisateur {username} avec l'ID {userId} ?",
   "admin.window.confirm.reactivate": "Êtes-vous sûr de vouloir réactiver l'utilisateur {username} avec l'ID {userId} ?",
-  "admin.window.confirm.delete": "Êtes-vous sûr de vouloir supprimer l'utilisateur {username} avec l'ID {userId} ?",
+  "admin.window.confirm.delete": "Êtes-vous sûr de vouloir supprimer l'utilisateur {username} avec l'ID {userId}?",
 
   "admin.alert.success.suspend": "L'utilisateur {username} ID: {userId} a été suspendu avec succès.",
   "admin.alert.success.reactivate": "L'utilisateur {username} ID: {userId} a été réactivé avec succès.",
@@ -344,7 +344,19 @@
 "admin.product.editDate": "Date de modification",
 "admin.alteredProducts.empty": "Aucun produit modifié trouvé.",
 
-"admin.userTable.title": "Gestion des Utilisateurs"
+"admin.userTable.title": "Gestion des Utilisateurs",
 
+"confirmAccount.loading": "Confirmation de votre compte en cours...",
+"confirmAccount.success": "Compte confirmé avec succès ! Vous pouvez maintenant vous connecter.",
+"confirmAccount.goToLogin": "Se connecter",
+"confirmAccount.error": "Erreur lors de la confirmation du compte. Jeton invalide ou compte déjà confirmé.",
+
+"alert.userNotConfirmed": "Votre compte n’est pas encore confirmé. Veuillez le confirmer via le lien envoyé par e-mail.",
+
+"badge.unconfirmed": "Non confirmé",
+
+"auth.login.unconfirmed": "Votre compte n'est pas encore confirmé. Veuillez vérifier le lien de confirmation.",
+
+"confirmAccount.redirecting": "Redirection vers la page de connexion..."
 }
   

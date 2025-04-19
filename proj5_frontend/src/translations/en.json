@@ -343,5 +343,20 @@
 "admin.product.editDate": "Edit Date",
 "admin.alteredProducts.empty": "No altered products found.",
 
-"admin.products.deleteProductsByUser": "Delete all products by user"
+"admin.products.deleteProductsByUser": "Delete all products by user",
+
+"confirmAccount.loading": "Confirming your account...",
+"confirmAccount.success": "Account successfully confirmed! You can now log in.",
+"confirmAccount.goToLogin": "Log In",
+"confirmAccount.error": "Error confirming account. Invalid token or account already confirmed.",
+
+"alert.userNotConfirmed": "Your account is not yet confirmed. Please confirm it using the link sent to your email.",
+
+  "auth.login.unconfirmed": "Your account has not been confirmed yet. Please check the confirmation link.",
+
+  "confirmAccount.redirecting": "Redirecting to login page..."
+
+
+
+
 }

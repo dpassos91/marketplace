@@ -110,6 +110,7 @@ public class UserService {
 
         // Autorização (por ex., só admin pode ver apagados)
         UserEntity user = userBean.getUserByToken(token);
+        System.out.println(">> [CONFIRMAR] Utilizador encontrado: " + (user != null ? user.getUsername() : "null"));
         if (user == null || !user.isAdmin()) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("401: Unauthorized access.").build();
         }
@@ -128,6 +129,36 @@ public Response updatePassword(
 ) {
     logger.info("Password update requested for user ID: {}", id);
     return userBean.updatePassword(id, token, passwordUpdateDto);
+}
+
+@POST
+@Path("/confirm")
+public Response confirmAccount(@QueryParam("token") String token) {
+    System.out.println(">> [CONFIRMAR] Token recebido: " + token);
+    if (token == null || token.isEmpty()) {
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Token de confirmação em falta.")
+                .build();
+    }
+
+    UserEntity user = userBean.findByConfirmationToken(token);
+    if (user == null) {
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Token inválido ou conta já confirmada.")
+                .build();
+    }
+
+    if (user.isConfirmed()) {
+        return Response.status(Response.Status.CONFLICT)
+                .entity("Conta já confirmada anteriormente.")
+                .build();
+    }
+
+    user.setConfirmed(true);
+    user.setConfirmationToken(null); // limpa o token
+    userBean.updateUser(user); // garante persistência
+
+    return Response.ok("Conta confirmada com sucesso!").build();
 }
 
 }
