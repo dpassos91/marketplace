@@ -4,6 +4,7 @@ import aor.paj.dto.LoginRequestDto;
 import aor.paj.dto.PasswordUpdateDto;
 import aor.paj.dto.StatusUpdateDto;
 import aor.paj.dto.UserDto;
+import aor.paj.dto.UserProfileDto;
 import aor.paj.entity.UserEntity;
 import aor.paj.bean.UserBean;
 import jakarta.inject.Inject;
@@ -42,6 +43,35 @@ public class UserService {
         return Response.ok(userBean.getUserById(id)).build();
     }
 
+      // Obter utilizador por username
+      @GET
+      @Path("/username/{username}")
+      @Produces(MediaType.APPLICATION_JSON)
+      public Response getUserByUsername(@PathParam("username") String username) {
+          logger.info("Received a request to fetch a user by its username: {}", username);
+          try {
+              return Response.ok(userBean.getUserByUsername(username)).build();
+          } catch (EntityNotFoundException exception) {
+              return Response.status(Response.Status.NOT_FOUND)
+                      .entity("User with username " + username + " not found!")
+                      .build();
+          }
+      }
+
+// Obter perfil de utilizador
+      @GET
+@Path("/profile/{username}")
+@Produces(MediaType.APPLICATION_JSON)
+public Response getUserProfile(@PathParam("username") String username) {
+    logger.info("Requested profile for username: {}", username);
+    try {
+        UserProfileDto profile = userBean.getUserProfile(username);
+        return Response.ok(profile).build();
+    } catch (EntityNotFoundException e) {
+        return Response.status(Response.Status.NOT_FOUND).entity("Perfil não encontrado").build();
+    }
+}
+
     // Atualizar utilizador
     @PUT
     @Path("/{id}")
@@ -52,6 +82,20 @@ public class UserService {
         return userBean.updateUser(id, token, userDto);
     }
 
+     // Atualizar status do utilizador (ativar/suspender)
+     @PATCH
+     @Path("/{id}/status")
+     @Consumes(MediaType.APPLICATION_JSON)
+     @Produces(MediaType.APPLICATION_JSON)
+     public Response updateUserStatus(@PathParam("id") Long id, @HeaderParam("token") String token, StatusUpdateDto statusUpdate) {
+         logger.info("Received a request to update status for user with id: {}", id);
+         if (statusUpdate.isActive()) {
+             return userBean.activateUser(id, token);
+         } else {
+             return userBean.suspendUser(id, token);
+         }
+     }
+
     // Apagar utilizador
     @DELETE
     @Path("/{id}")
@@ -59,35 +103,6 @@ public class UserService {
     public Response deleteUser(@PathParam("id") Long id, @HeaderParam("token") String token) {
         logger.info("Received a request to delete user with id: {}", id);
         return userBean.deleteUser(id, token);
-    }
-
-    // Atualizar status do utilizador (ativar/suspender)
-    @PATCH
-    @Path("/{id}/status")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateUserStatus(@PathParam("id") Long id, @HeaderParam("token") String token, StatusUpdateDto statusUpdate) {
-        logger.info("Received a request to update status for user with id: {}", id);
-        if (statusUpdate.isActive()) {
-            return userBean.activateUser(id, token);
-        } else {
-            return userBean.suspendUser(id, token);
-        }
-    }
-
-    // Buscar por username
-    @GET
-    @Path("/username/{username}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserByUsername(@PathParam("username") String username) {
-        logger.info("Received a request to fetch a user by its username: {}", username);
-        try {
-            return Response.ok(userBean.getUserByUsername(username)).build();
-        } catch (EntityNotFoundException exception) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("User with username " + username + " not found!")
-                    .build();
-        }
     }
 
     // Listar todos os utilizadores
@@ -117,7 +132,7 @@ public class UserService {
 
         return Response.ok(userBean.getAllDeletedUsers()).build();
     }
-
+// Mudança de Password
     @PATCH
 @Path("/{id}/password")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -131,6 +146,7 @@ public Response updatePassword(
     return userBean.updatePassword(id, token, passwordUpdateDto);
 }
 
+// Confirmação de conta
 @POST
 @Path("/confirm")
 public Response confirmAccount(@QueryParam("token") String token) {

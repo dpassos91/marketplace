@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.Iterator;
+import java.util.Map;
 
 import aor.paj.dao.UserDao;
+import aor.paj.dao.ProductDao;
 import aor.paj.dto.LoginRequestDto;
 import aor.paj.dto.LoginResponseDto;
 import aor.paj.dto.PasswordUpdateDto;
 import aor.paj.dto.UserDto;
+import aor.paj.dto.UserProfileDto;
 import aor.paj.entity.EvaluationEntity;
 import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
@@ -30,6 +34,9 @@ public class UserBean {
 
     @Inject
     private UserDao userDao;
+
+    @Inject
+    private ProductDao productDao;
 
 
     private boolean isValidUsername(String username) {
@@ -122,8 +129,6 @@ public class UserBean {
         return null;
     }
     
-    
-
 
     private String generateNewToken() {
         SecureRandom secureRandom = new SecureRandom();
@@ -164,6 +169,36 @@ public class UserBean {
         logger.info("User with id: {} found.", id);
         return toDto(userEntity);
     }
+
+    public UserProfileDto getUserProfile(String username) {
+    UserEntity user = userDao.findByUsername(username); // ou usa o método interno apropriado
+    if (user == null) {
+        throw new EntityNotFoundException("Utilizador não encontrado com username: " + username);
+    }
+
+    // Buscar produtos vendidos pelo utilizador
+    List<ProductEntity> products = productDao.findBySeller(user.getId());
+
+    int totalProducts = products.size();
+
+    // Agrupar por estado textual (ex: "rascunho", "publicado"...)
+    Map<String, Long> productsByState = products.stream()
+            .collect(Collectors.groupingBy(
+                    ProductEntity::getStatus, // usa o método que converte stateId em descrição
+                    Collectors.counting()
+            ));
+
+    return new UserProfileDto(
+            user.getFirstName(),
+            user.getLastName(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getPicture(), // ou `getPhotoUrl()` se alterares o nome
+            totalProducts,
+            productsByState
+    );
+}
+
 
     public Response updateUser(Long id, String token, UserDto userDto) {
         // verifica se o user está autenticado e autorizado a proceder com esta funcionalidade
