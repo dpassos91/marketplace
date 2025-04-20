@@ -31,19 +31,20 @@ public class PasswordResetTokenBean {
      * @param email do utilizador
      * @return token gerado
      */
-    public String generateResetToken(String email) {
+    
+     public String generateResetToken(String email) {
         UserEntity user = userDao.findByEmail(email);
         if (user == null) {
-            logger.warn("Pedido de reset ignorado — utilizador com email '{}' não encontrado", email);
-            return null;
+            logger.warn("Pedido de reset rejeitado — utilizador com email '{}' não encontrado", email);
+            throw new IllegalArgumentException("Email não registado no sistema.");
         }
-
+    
         String tokenString = UUID.randomUUID().toString();
         LocalDateTime expiration = LocalDateTime.now().plusMinutes(15);
-
+    
         PasswordResetTokenEntity token = new PasswordResetTokenEntity(tokenString, user, expiration);
         passwordResetTokenDao.create(token);
-
+    
         logger.info("Token de recuperação gerado para utilizador '{}'", user.getUsername());
         return tokenString;
     }

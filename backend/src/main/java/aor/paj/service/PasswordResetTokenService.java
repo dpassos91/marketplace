@@ -24,10 +24,16 @@ public class PasswordResetTokenService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response requestReset(PasswordResetTokenRequestDto requestDto) {
-        logger.info("Password reset requested for email: {}", requestDto.getEmail());
-        String token = passwordResetTokenBean.generateResetToken(requestDto.getEmail());
-        return Response.ok("{\"token\": \"" + token + "\"}").build(); // token apresentado na consola
+        logger.info("Pedido de recuperação de password recebido para: {}", requestDto.getEmail());
+        try {
+            String token = passwordResetTokenBean.generateResetToken(requestDto.getEmail());
+            return Response.ok("{\"token\": \"" + token + "\"}").build();
+        } catch (IllegalArgumentException e) {
+            logger.warn("Pedido de recuperação rejeitado: {}", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
     }
+    
 
     @POST
     @Path("/reset-password")
