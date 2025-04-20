@@ -362,6 +362,21 @@
 
 
   "login.error.usernameRequired": "Veuillez saisir votre nom d'utilisateur.",
-  "login.error.passwordRequired": "Veuillez saisir votre mot de passe."
+  "login.error.passwordRequired": "Veuillez saisir votre mot de passe.",
+
+  "reset.title": "Réinitialiser le mot de passe",
+  "reset.newPassword": "Nouveau mot de passe",
+  "reset.confirmPassword": "Confirmer le mot de passe",
+  "reset.submit": "Soumettre",
+  "reset.success": "Mot de passe réinitialisé avec succès !",
+  "reset.passwordMismatch": "Les mots de passe ne correspondent pas.",
+  "reset.error.generic": "Une erreur est survenue lors de la réinitialisation du mot de passe.",
+
+  "forgotPassword.title": "Réinitialiser le mot de passe",
+  "forgotPassword.email": "Email :",
+  "forgotPassword.submit": "Demander la réinitialisation",
+  "forgotPassword.close": "Fermer",
+  "forgotPassword.success": "Un lien de récupération a été envoyé (voir la console). Ce lien est valable pendant 15 minutes.",
+  "forgotPassword.error": "La demande n’a pas pu être envoyée. Vérifiez l’adresse e-mail."
 }
   

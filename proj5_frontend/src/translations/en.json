@@ -359,9 +359,20 @@
 
 
   "login.error.usernameRequired": "Please enter your username.",
-  "login.error.passwordRequired": "Please enter your password."
+  "login.error.passwordRequired": "Please enter your password.",
 
+  "reset.title": "Reset Password",
+  "reset.newPassword": "New Password",
+  "reset.confirmPassword": "Confirm Password",
+  "reset.submit": "Submit",
+  "reset.success": "Password reset successfully!",
+  "reset.passwordMismatch": "Passwords do not match.",
+  "reset.error.generic": "An error occurred while resetting the password.",
 
-
-
+  "forgotPassword.title": "Reset Password",
+  "forgotPassword.email": "Email:",
+  "forgotPassword.submit": "Request Reset",
+  "forgotPassword.close": "Close",
+  "forgotPassword.success": "A recovery link has been sent (check the console). This link is valid for 15 minutes.",
+  "forgotPassword.error": "Could not process the request. Please check the email."
 }

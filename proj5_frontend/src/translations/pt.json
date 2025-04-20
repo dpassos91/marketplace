@@ -344,6 +344,20 @@
   "confirmAccount.redirect": "Será redirecionado para a página de login dentro de instantes.",
 
   "login.error.usernameRequired": "Por favor, insira o seu Nome de Utilizador.",
-  "login.error.passwordRequired": "Por favor, insira a sua password."
+  "login.error.passwordRequired": "Por favor, insira a sua password.",
 
+  "reset.title": "Redefinir Password",
+  "reset.newPassword": "Nova Password",
+  "reset.confirmPassword": "Confirmar Password",
+  "reset.submit": "Submeter",
+  "reset.success": "Password redefinida com sucesso!",
+  "reset.passwordMismatch": "As passwords não coincidem.",
+  "reset.error.generic": "Ocorreu um erro ao redefinir a password.",
+
+  "forgotPassword.title": "Recuperar Password",
+  "forgotPassword.email": "Email:",
+  "forgotPassword.submit": "Pedir recuperação",
+  "forgotPassword.close": "Fechar",
+  "forgotPassword.success": "Foi enviado um link de recuperação (ver consola). Este link é válido por 15 minutos.",
+  "forgotPassword.error": "Não foi possível enviar o pedido. Verifique o email."
 }
