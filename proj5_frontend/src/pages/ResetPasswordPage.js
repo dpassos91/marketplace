@@ -19,12 +19,15 @@ function ResetPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
+  
     if (newPassword !== confirmPassword) {
-      setError("As passwords não coincidem.");
+      setError(intl.formatMessage({
+        id: 'reset.passwordMismatch',
+        defaultMessage: 'As passwords não coincidem.',
+      }));
       return;
     }
-
+  
     try {
       await authAPI.resetPassword(token, newPassword);
       alert(intl.formatMessage({
@@ -34,15 +37,28 @@ function ResetPasswordPage() {
       navigate('/login');
     } catch (err) {
       console.error(err);
-      setError(err.body || 'Ocorreu um erro ao redefinir a password.');
+  
+      const mensagemErro = err.body?.toLowerCase?.() || '';
+  
+      if (mensagemErro.includes('expirou') || mensagemErro.includes('expired')) {
+        alert(intl.formatMessage({
+          id: 'reset.expired',
+          defaultMessage: 'Token de recuperação de password expirado. Solicite um novo pedido de recuperação.'
+        }));
+        setTimeout(() => navigate('/login'), 5000); // Redireciona em 5s
+      } else {
+        setError(intl.formatMessage({
+          id: 'reset.error.generic',
+          defaultMessage: 'Ocorreu um erro ao redefinir a password.'
+        }));
+      }
     }
-  };
-
+  };  
+  
   return (
     <main className="login">
       <div className="login-container">
         <h2><FormattedMessage id="reset.title" defaultMessage="Redefinir Password" /></h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
         <form id="formulario_login" onSubmit={handleSubmit}>
           <label htmlFor="newPassword">
             <FormattedMessage id="reset.newPassword" defaultMessage="Nova Password" />
@@ -66,6 +82,7 @@ function ResetPasswordPage() {
             required
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            onInput={(e) => e.target.setCustomValidity('')} // limpa mensagem se o utilizador voltar a digitar
           />
 
           <button type="submit">

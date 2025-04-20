@@ -362,5 +362,8 @@
   "forgotPassword.error": "Não foi possível enviar o pedido. Verifique o email.",
   "forgotPassword.emailNotFound": "Email não encontrado no sistema.",
 
-  "login.forgotPassword": "Esqueceu-se da sua password?"
+  "login.forgotPassword": "Esqueceu-se da sua password?",
+
+  "reset.expired": "Token de recuperação de password expirado. Solicite um novo pedido de recuperação."
+
 }

@@ -377,5 +377,8 @@
   "forgotPassword.error": "Could not process the request. Please check the email.",
   "forgotPassword.emailNotFound": "Email not found in the system.",
 
-  "login.forgotPassword": "Forgot your password?"
+  "login.forgotPassword": "Forgot your password?",
+
+  "reset.expired": "Password recovery token expired. Please request a new recovery link."
+
 }

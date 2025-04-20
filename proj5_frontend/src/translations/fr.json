@@ -380,6 +380,9 @@
   "forgotPassword.error": "La demande n’a pas pu être envoyée. Vérifiez l’adresse e-mail.",
   "forgotPassword.emailNotFound": "Adresse e-mail introuvable dans le système.",
 
-  "login.forgotPassword": "Vous avez oublié votre mot de passe ?"
+  "login.forgotPassword": "Vous avez oublié votre mot de passe ?",
+
+  "reset.expired": "Le lien de récupération a expiré. Veuillez en demander un nouveau."
+
 }
   
