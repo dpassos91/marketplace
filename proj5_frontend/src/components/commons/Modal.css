@@ -24,6 +24,7 @@
     margin-bottom: 1rem;
     color: var(--black); /* Verde escuro */
     font-size: 1.5rem;
+    text-align: left;
 }
   
 .modal-content form {
@@ -81,6 +82,7 @@
     margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
+    text-align: left;
   }
   
   .form-group input,

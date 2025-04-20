@@ -12,7 +12,7 @@ import './Header.css';
 function Header() {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, currentUser } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // ⚙️ Ativa o hook para atualizar deviceStore
@@ -28,8 +28,8 @@ function Header() {
   }, []);
 
   const handleProfileClick = useCallback(() => {
-    navigate(`/perfil/${user?.id}`);
-  }, [navigate, user?.id]);
+    navigate(`/painel-utilizador/${currentUser.id}`);
+  }, [navigate, currentUser?.id]);
 
   const profilePicture = useMemo(() => {
     return user?.picture || '/path/to/default/image.jpg';

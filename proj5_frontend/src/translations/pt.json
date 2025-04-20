@@ -364,6 +364,18 @@
 
   "login.forgotPassword": "Esqueceu-se da sua password?",
 
-  "reset.expired": "Token de recuperação de password expirado. Solicite um novo pedido de recuperação."
+  "reset.expired": "Token de recuperação de password expirado. Solicite um novo pedido de recuperação.",
 
-}
+    "profileInfo.changePassword": "Alterar Password",
+
+    "changePassword.title": "Alterar password",
+    "changePassword.current": "Password actual",
+    "changePassword.new": "Nova password",
+    "changePassword.confirm": "Confirmar nova password",
+    "changePassword.save": "Guardar",
+    "changePassword.cancel": "Cancelar",
+    "changePassword.error.mismatch": "As passwords não coincidem.",
+    "changePassword.error.generic": "Erro ao alterar a password.",
+    "changePassword.success": "Password alterada com sucesso!"
+  }
+  

@@ -379,6 +379,18 @@
 
   "login.forgotPassword": "Forgot your password?",
 
-  "reset.expired": "Password recovery token expired. Please request a new recovery link."
+  "reset.expired": "Password recovery token expired. Please request a new recovery link.",
+
+   "profileInfo.changePassword": "Change Password",
+
+   "changePassword.title": "Change Password",
+   "changePassword.current": "Current Password",
+   "changePassword.new": "New Password",
+   "changePassword.confirm": "Confirm New Password",
+   "changePassword.save": "Save",
+   "changePassword.cancel": "Cancel",
+   "changePassword.error.mismatch": "Passwords do not match.",
+   "changePassword.error.generic": "Error changing the password.",
+   "changePassword.success": "Password changed successfully!"
 
 }

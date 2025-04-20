@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useFormInput } from '../../hooks/useFormInput';
 import { FormattedMessage } from 'react-intl';
+import { FaLock } from 'react-icons/fa';
+import ChangePasswordModal from './ChangePasswordModal';
+import './ProfileInfo.css';
 
-function ProfileInfo({ user, isOwnProfile, onUpdate }) {
+function ProfileInfo({ user, canEdit, onUpdate }) {
     const [isEditMode, setIsEditMode] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [formData, handleInputChange, setFormData] = useFormInput({ ...user });
 
     useEffect(() => {
@@ -11,14 +15,14 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
     }, [user]);
 
     const toggleEditMode = () => {
-        if (isOwnProfile) {
+        if (canEdit) {
             setIsEditMode(!isEditMode);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (isOwnProfile) {
+        if (canEdit && isEditMode) {
             await onUpdate(formData);
             setIsEditMode(false);
         }
@@ -26,6 +30,8 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
 
     return (
         <form id="perfil-form" onSubmit={handleSubmit}>
+            {canEdit && (
+                <>
             <div>
                 <label htmlFor="username">
                     <FormattedMessage id="profileInfo.username" defaultMessage="Username:" />
@@ -37,6 +43,7 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                     value={formData.username || ''}
                     onChange={handleInputChange}
                     readOnly={!isEditMode}
+                    required
                 />
             </div>
             <div>
@@ -50,11 +57,24 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                     value={formData.email || ''}
                     onChange={handleInputChange}
                     readOnly={!isEditMode}
+                    required
                 />
             </div>
-
-            {isOwnProfile && (
-                <>
+                
+                <div>
+                        <label htmlFor="firstName">
+                            <FormattedMessage id="profileInfo.firstName" defaultMessage="Nome:" />
+                        </label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            name="firstName"
+                            value={formData.firstName || ''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                            required
+                        />
+                    </div>
                     <div>
                         <label htmlFor="lastName">
                             <FormattedMessage id="profileInfo.lastName" defaultMessage="Apelido:" />
@@ -66,19 +86,7 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                             value={formData.lastName || ''}
                             onChange={handleInputChange}
                             readOnly={!isEditMode}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="firstName">
-                            <FormattedMessage id="profileInfo.firstName" defaultMessage="Nome:" />
-                        </label>
-                        <input
-                            type="text"
-                            id="firstName"
-                            name="firstName"
-                            value={formData.firstName || ''}
-                            onChange={handleInputChange}
-                            readOnly={!isEditMode}
+                            required
                         />
                     </div>
                     <div>
@@ -94,6 +102,7 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                             value={formData.phone || ''}
                             onChange={handleInputChange}
                             readOnly={!isEditMode}
+                            required
                         />
                     </div>
                     <div>
@@ -107,56 +116,46 @@ function ProfileInfo({ user, isOwnProfile, onUpdate }) {
                             value={formData.picture || ''}
                             onChange={handleInputChange}
                             readOnly={!isEditMode}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="password">
-                            <FormattedMessage id="profileInfo.password" defaultMessage="Password:" />
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={''}
-                            onChange={handleInputChange}
-                            readOnly={!isEditMode}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="confirmPassword">
-                            <FormattedMessage id="profileInfo.confirmPassword" defaultMessage="Confirme a Password:" />
-                        </label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            value={''}
-                            onChange={handleInputChange}
-                            readOnly={!isEditMode}
+                            required
                         />
                     </div>
                 </>
             )}
 
-            {isOwnProfile && (
-                !isEditMode ? (
-                    <button type="button" onClick={toggleEditMode}>
-                        <FormattedMessage id="profileInfo.edit" defaultMessage="Editar Perfil" />
-                    </button>
-                ) : (
-                    <>
-                        <button type="submit">
-                            <FormattedMessage id="profileInfo.save" defaultMessage="Guardar Alterações" />
-                        </button>
-                        <button type="button" onClick={toggleEditMode}>
-                            <FormattedMessage id="profileInfo.cancel" defaultMessage="Cancelar" />
-                        </button>
-                    </>
-                )
+            {canEdit && !isEditMode && (
+                <button type="button" onClick={toggleEditMode}>
+                    <FormattedMessage id="profileInfo.edit" defaultMessage="Editar Perfil" />
+                </button>
             )}
+
+            {canEdit && isEditMode && (
+                <>
+                    <button type="submit">
+                        <FormattedMessage id="profileInfo.save" defaultMessage="Guardar Alterações" />
+                    </button>
+                    <button type="button" onClick={toggleEditMode}>
+                        <FormattedMessage id="profileInfo.cancel" defaultMessage="Cancelar" />
+                    </button>
+                </>
+            )}
+
+            {canEdit && (
+                <button
+                    type="button"
+                    className="password-change-button"
+                    onClick={() => setShowPasswordModal(true)}
+                >
+                    <FaLock /> <FormattedMessage id="profileInfo.changePassword" defaultMessage="Alterar Password" />
+                </button>
+            )}
+
+            <ChangePasswordModal
+                isOpen={showPasswordModal}
+                onClose={() => setShowPasswordModal(false)}
+                userId={user?.id}
+            />
         </form>
     );
 }
 
 export default ProfileInfo;
-

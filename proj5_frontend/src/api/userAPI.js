@@ -43,6 +43,11 @@ const getUserByUsername = async (username) => {
   return apiCall(API_ENDPOINTS.users.byUsername(username));
 };
 
+const getUserProfile = async (username) => {
+  const response = await apiCall.get(`/users/profile/${username}`);
+  return response.data;
+};
+
 const getAllUsers = async (active = null) => {
   const query = active !== null ? `?active=${active}` : '';
   return apiCall(`${API_ENDPOINTS.users.base}${query}`);
@@ -67,6 +72,7 @@ export const userAPI = {
   deleteUser,
   updateUserStatus,
   getUserByUsername,
+  getUserProfile,
   getAllUsers,
   getDeletedUsers,
   updatePassword,

@@ -864,55 +864,7 @@ body,
   margin-left: 10px;
 }
 
-/* rótulosEstilo geral para o formulário */
-#perfil-form {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: var(--white-100);
-}
 
-/* Estilo para as seções do formulário */
-#perfil-form section {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Estilo para os rótulos */
-#perfil-form label,
-#detalhes-produto-form label {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-/* Estilo para os campos de entrada */
-#perfil-form input[type="text"],
-#perfil-form input[type="email"],
-#perfil-form input[type="profile-pic"],
-#perfil-form input[type="password"],
-#detalhes-produto-form input[type="text"],
-#detalhes-produto-form textarea,
-#detalhes-produto-form select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  color: #333;
-  background-color: #fff;
-}
-
-/* Estilo para os campos de entrada em modo somente leitura */
-#perfil-form input[readonly],
-#detalhes-produto-form input[readonly],
-#detalhes-produto-form textarea[readonly] {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-}
 
 /*produto-total*/
 

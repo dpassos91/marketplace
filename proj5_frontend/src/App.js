@@ -6,7 +6,8 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProductPage from './pages/ProductPage';
-import UserProfilePage from './pages/UserProfilePage';
+import PublicUserProfilePage from './pages/PublicUserProfilePage';
+import PrivateUserProfilePage from './pages/PrivateUserProfilePage';
 import Layout from './components/commons/Layout';
 import ProtectedRoute from './utils/protectedRoute';
 import ProductDetails from './components/product/ProductDetails';
@@ -86,11 +87,11 @@ function App() {
                         <Route path="/registo" element={<RegisterPage />} />
                         <Route path="/produtos" element={<ProductPage />} />
                         <Route path="/detalhes-produto/:id" element={<ProductDetails />} />
-                        <Route path="/perfil/:id" element={<UserProfilePage />} />
+                        <Route path="/perfil/:username" element={<PublicUserProfilePage />} />
                         <Route path="/confirmar" element={<ConfirmAccount />} />
                         <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route element={<ProtectedRoute />}>
-                            <Route path="/perfil/:userId" element={<UserProfilePage />} />
+                            <Route path="/painel-utilizador/:userId" element={<PrivateUserProfilePage />} />
                             <Route path="/admin/*" element={<AdminPage />} />
                         </Route>
                     </Routes>
