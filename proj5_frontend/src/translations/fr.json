@@ -394,7 +394,14 @@
   "changePassword.cancel": "Annuler",
   "changePassword.error.mismatch": "Les mots de passe ne correspondent pas.",
   "changePassword.error.generic": "Erreur lors du changement du mot de passe.",
-  "changePassword.success": "Mot de passe modifié avec succès !"
+  "changePassword.success": "Mot de passe modifié avec succès !",
+
+  "userProfile.stats.title": "Statistiques des Produits",
+  "userProfile.stats.total": "Total des produits : {total}",
+  "userProfile.stats.disponível": "Disponible : {count}",
+  "userProfile.stats.vendido": "Vendu : {count}",
+  "userProfile.stats.reservado": "Réservé : {count}",
+  "userProfile.stats.rascunho": "Brouillon : {count}"
 
 }
   

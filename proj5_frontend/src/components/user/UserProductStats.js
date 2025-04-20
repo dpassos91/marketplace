@@ -1,5 +1,6 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
+import './UserProductStats.css';
 
 export default function UserProductStats({ products }) {
   const total = products.length;

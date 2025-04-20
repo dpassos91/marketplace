@@ -71,4 +71,32 @@
     align-self: flex-start;
     margin-top: 10px;
   }
+
+  .user-product-stats {
+    background-color: var(--white-100, #f5f5f5);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--primary-100, #d2deca);
+    box-shadow: var(--box-shadow);
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--black, #333);
+    text-align: left;
+  }
+  
+  .user-product-stats h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-400, #3e542f);
+  }
+  
+  .user-product-stats ul {
+    list-style-type: disc;
+    margin-left: 1rem;
+    padding-left: 0;
+  }
+  
+  .user-product-stats li {
+    margin-bottom: 4px;
+  }
   

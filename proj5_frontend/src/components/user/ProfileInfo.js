@@ -3,9 +3,10 @@ import { useFormInput } from '../../hooks/useFormInput';
 import { FormattedMessage } from 'react-intl';
 import { FaLock } from 'react-icons/fa';
 import ChangePasswordModal from './ChangePasswordModal';
+import UserProductStats from './UserProductStats';
 import './ProfileInfo.css';
 
-function ProfileInfo({ user, canEdit, onUpdate }) {
+function ProfileInfo({ user, canEdit, onUpdate, products = [] }) {
     const [isEditMode, setIsEditMode] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [formData, handleInputChange, setFormData] = useFormInput({ ...user });
@@ -32,36 +33,35 @@ function ProfileInfo({ user, canEdit, onUpdate }) {
         <form id="perfil-form" onSubmit={handleSubmit}>
             {canEdit && (
                 <>
-            <div>
-                <label htmlFor="username">
-                    <FormattedMessage id="profileInfo.username" defaultMessage="Username:" />
-                </label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formData.username || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                    required
-                />
-            </div>
-            <div>
-                <label htmlFor="email">
-                    <FormattedMessage id="profileInfo.email" defaultMessage="Email:" />
-                </label>
-                <input
-                    type="text"
-                    id="email"
-                    name="email"
-                    value={formData.email || ''}
-                    onChange={handleInputChange}
-                    readOnly={!isEditMode}
-                    required
-                />
-            </div>
-                
-                <div>
+                    <div>
+                        <label htmlFor="username">
+                            <FormattedMessage id="profileInfo.username" defaultMessage="Username:" />
+                        </label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            value={formData.username || ''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="email">
+                            <FormattedMessage id="profileInfo.email" defaultMessage="Email:" />
+                        </label>
+                        <input
+                            type="text"
+                            id="email"
+                            name="email"
+                            value={formData.email || ''}
+                            onChange={handleInputChange}
+                            readOnly={!isEditMode}
+                            required
+                        />
+                    </div>
+                    <div>
                         <label htmlFor="firstName">
                             <FormattedMessage id="profileInfo.firstName" defaultMessage="Nome:" />
                         </label>
@@ -154,8 +154,16 @@ function ProfileInfo({ user, canEdit, onUpdate }) {
                 onClose={() => setShowPasswordModal(false)}
                 userId={user?.id}
             />
+
+            {/* Estatísticas dos produtos */}
+            {products && products.length > 0 && (
+                <div className="outras-info">
+                    <UserProductStats products={products} />
+                </div>
+            )}
         </form>
     );
 }
 
 export default ProfileInfo;
+

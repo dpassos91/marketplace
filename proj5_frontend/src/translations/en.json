@@ -391,6 +391,13 @@
    "changePassword.cancel": "Cancel",
    "changePassword.error.mismatch": "Passwords do not match.",
    "changePassword.error.generic": "Error changing the password.",
-   "changePassword.success": "Password changed successfully!"
+   "changePassword.success": "Password changed successfully!",
+
+   "userProfile.stats.title": "Product Statistics",
+   "userProfile.stats.total": "Total products: {total}",
+   "userProfile.stats.disponível": "Available: {count}",
+   "userProfile.stats.vendido": "Purchased: {count}",
+   "userProfile.stats.rascunho": "Draft: {count}",
+   "userProfile.stats.reservado": "Reserved: {count}"
 
 }

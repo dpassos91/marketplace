@@ -116,25 +116,25 @@ export default function PrivateUserProfilePage() {
       <Aside />
       <div className="wrapper-pag-pessoal">
         <div className="info-pessoal">
-          <div className="perfil-utilizador">
-            <h2><FormattedMessage id="userProfile.title" defaultMessage="Página Pessoal" /></h2>
-            <ProfileInfo 
-              user={userToDisplay} 
-              canEdit={true} 
-              onUpdate={handleUpdateProfile} 
-              onPasswordChange={handlePasswordChange}
-            />
-            <UserProductStats products={userProducts} />
-          </div>
-          <div className="outras-info">
-            <section className="imagem-perfil-wrapper">
-              <img 
-                className="imagem-perfil" 
-                src={userToDisplay.picture} 
-                alt="foto-perfil" 
-              />
-            </section>
-          </div>
+        <div className="perfil-utilizador">
+  <h2><FormattedMessage id="userProfile.title" defaultMessage="Página Pessoal" /></h2>
+  <ProfileInfo 
+    user={userToDisplay} 
+    canEdit={true} 
+    onUpdate={handleUpdateProfile} 
+  />
+</div>
+
+<div className="outras-info">
+  <section className="imagem-perfil-wrapper">
+    <img 
+      className="imagem-perfil" 
+      src={userToDisplay.picture} 
+      alt="foto-perfil" 
+    />
+  </section>
+  <UserProductStats products={userProducts} />
+</div>
         </div>
 
         <div className="main-card-container">

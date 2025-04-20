@@ -1,0 +1,42 @@
+/* Estilos para UserProductStats */
+.user-product-stats {
+    background-color: var(--white-100, #f9f9f9);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    max-width: 300px;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .user-product-stats h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--primary-400, #3e542f);
+  }
+  
+  .user-product-stats p {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--black, #333);
+  }
+  
+  .user-product-stats ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .user-product-stats li {
+    margin-bottom: 0.5rem;
+    background-color: var(--primary-100, #e6efdd);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--black);
+  }
+
