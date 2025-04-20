@@ -359,5 +359,8 @@
   "forgotPassword.submit": "Pedir recuperação",
   "forgotPassword.close": "Fechar",
   "forgotPassword.success": "Foi enviado um link de recuperação (ver consola). Este link é válido por 15 minutos.",
-  "forgotPassword.error": "Não foi possível enviar o pedido. Verifique o email."
+  "forgotPassword.error": "Não foi possível enviar o pedido. Verifique o email.",
+  "forgotPassword.emailNotFound": "Email não encontrado no sistema.",
+
+  "login.forgotPassword": "Esqueceu-se da sua password?"
 }

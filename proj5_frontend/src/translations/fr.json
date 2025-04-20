@@ -377,6 +377,9 @@
   "forgotPassword.submit": "Demander la réinitialisation",
   "forgotPassword.close": "Fermer",
   "forgotPassword.success": "Un lien de récupération a été envoyé (voir la console). Ce lien est valable pendant 15 minutes.",
-  "forgotPassword.error": "La demande n’a pas pu être envoyée. Vérifiez l’adresse e-mail."
+  "forgotPassword.error": "La demande n’a pas pu être envoyée. Vérifiez l’adresse e-mail.",
+  "forgotPassword.emailNotFound": "Adresse e-mail introuvable dans le système.",
+
+  "login.forgotPassword": "Vous avez oublié votre mot de passe ?"
 }
   

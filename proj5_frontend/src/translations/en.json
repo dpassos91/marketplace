@@ -374,5 +374,8 @@
   "forgotPassword.submit": "Request Reset",
   "forgotPassword.close": "Close",
   "forgotPassword.success": "A recovery link has been sent (check the console). This link is valid for 15 minutes.",
-  "forgotPassword.error": "Could not process the request. Please check the email."
+  "forgotPassword.error": "Could not process the request. Please check the email.",
+  "forgotPassword.emailNotFound": "Email not found in the system.",
+
+  "login.forgotPassword": "Forgot your password?"
 }

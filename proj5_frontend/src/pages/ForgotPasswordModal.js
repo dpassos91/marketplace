@@ -31,17 +31,37 @@ function ForgotPasswordModal({ isOpen, onClose }) {
       );
     } catch (error) {
       console.error('Erro ao pedir recuperação:', error);
-      setStatusMessage(
-        intl.formatMessage({
-          id: 'forgotPassword.error',
-          defaultMessage: 'Não foi possível enviar o pedido. Verifique o email.',
-        })
-      );
+
+      if (
+        error?.body?.toLowerCase().includes("não encontrado") ||
+        error?.body?.toLowerCase().includes("not found")
+      ) {
+        setStatusMessage(
+          intl.formatMessage({
+            id: 'forgotPassword.emailNotFound',
+            defaultMessage: 'Email não encontrado no sistema.',
+          })
+        );
+      } else {
+        setStatusMessage(
+          intl.formatMessage({
+            id: 'forgotPassword.error',
+            defaultMessage: 'Não foi possível enviar o pedido. Verifique o email.',
+          })
+        );
+      }
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={intl.formatMessage({ id: 'forgotPassword.title', defaultMessage: 'Recuperar Password' })}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={intl.formatMessage({
+        id: 'forgotPassword.title',
+        defaultMessage: 'Recuperar Password',
+      })}
+    >
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">
@@ -69,4 +89,5 @@ function ForgotPasswordModal({ isOpen, onClose }) {
 }
 
 export default ForgotPasswordModal;
+
 
