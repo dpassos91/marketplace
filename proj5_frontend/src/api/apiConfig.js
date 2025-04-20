@@ -65,7 +65,9 @@ users: {
 // Auth endpoints
 auth: {
   login: `${API_BASE_URL}/auth/login`,
-  logout: `${API_BASE_URL}/auth/logout`
+  logout: `${API_BASE_URL}/auth/logout`,
+  requestResetPassword: `${API_BASE_URL}/auth/request-password-reset`,
+  resetPassword: `${API_BASE_URL}/auth/reset-password`
 },
 
   

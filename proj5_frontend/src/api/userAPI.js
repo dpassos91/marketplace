@@ -1,5 +1,4 @@
 import { apiConfig } from './apiConfig.js';
-import { removeAuthToken } from '../utils/authUtils.js';
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
 
@@ -11,38 +10,9 @@ const registerUser = async (userData) => {
 };
 
 const confirmUser = async (token) => {
-  const response = await apiCall(API_ENDPOINTS.users.confirm(token), {
+  return apiCall(API_ENDPOINTS.users.confirm(token), {
     method: 'POST',
-    // Se o backend espera corpo (não precisa neste caso), envia só se necessário
-    // body: JSON.stringify(token), // ← normalmente não é preciso, o token está na query param
   });
-
-  console.log("Resposta da API (confirmUser):", response);
-  return response;
-};
-
-
-const loginUser = async (credentials) => {
-  return apiCall(API_ENDPOINTS.auth.login, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  }).then(async (response) => {
-    const token = response.token;
-    sessionStorage.setItem('authToken', token);
-    const userInfo = await getUserByUsername(credentials.username);
-    return { ...userInfo, token };
-  });
-};
-
-const logoutUser = async () => {
-  const result = await apiCall(API_ENDPOINTS.auth.logout, { method: 'POST' });
-  if (result === "Successfully logged out!") {
-    removeAuthToken();
-    return true;
-  } else {
-    throw new Error("Logout falhou: " + result);
-  }
 };
 
 const getUserById = async (userId) => {
@@ -57,10 +27,11 @@ const updateUser = async (userId, userData) => {
 };
 
 const deleteUser = async (userId) => {
-  return apiCall(API_ENDPOINTS.users.delete(userId), { method: 'DELETE' });
+  return apiCall(API_ENDPOINTS.users.delete(userId), {
+    method: 'DELETE',
+  });
 };
 
-// Novo método genérico para ativar/suspender
 const updateUserStatus = async (userId, isActive) => {
   return apiCall(API_ENDPOINTS.users.updateStatus(userId), {
     method: 'PATCH',
@@ -88,12 +59,9 @@ const updatePassword = async (userId, passwordUpdateData) => {
   });
 };
 
-
 export const userAPI = {
   registerUser,
   confirmUser,
-  loginUser,
-  logoutUser,
   getUserById,
   updateUser,
   deleteUser,
@@ -101,6 +69,7 @@ export const userAPI = {
   getUserByUsername,
   getAllUsers,
   getDeletedUsers,
-  updatePassword
+  updatePassword,
 };
+
 

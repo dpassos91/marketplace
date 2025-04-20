@@ -1,0 +1,62 @@
+import { apiConfig } from './apiConfig.js';
+
+const { apiCall, API_ENDPOINTS } = apiConfig;
+
+const loginUser = async (credentials) => {
+  return apiCall(API_ENDPOINTS.auth.login, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      token: undefined,
+    },
+    body: JSON.stringify(credentials),
+  }).then(async (response) => {
+    const token = response.token;
+    sessionStorage.setItem('authToken', token);
+    return { ...response, token };
+  });
+};
+
+const logoutUser = async () => {
+  const result = await apiCall(API_ENDPOINTS.auth.logout, {
+    method: 'POST',
+    headers: { token: undefined }, // explícito para endpoints públicos
+  });
+
+  if (result === "Successfully logged out!") {
+    sessionStorage.removeItem('authToken');
+    return true;
+  } else {
+    throw new Error("Logout falhou: " + result);
+  }
+};
+
+const requestPasswordReset = async (email) => {
+  return apiCall(API_ENDPOINTS.auth.requestResetPassword, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      token: undefined,
+    },
+    body: JSON.stringify({ email }),
+  });
+};
+
+const resetPassword = async (token, newPassword) => {
+  return apiCall(API_ENDPOINTS.auth.resetPassword, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      token: undefined,
+    },
+    body: JSON.stringify({ token, newPassword }),
+  });
+};
+
+export const authAPI = {
+  loginUser,
+  logoutUser,
+  requestPasswordReset,
+  resetPassword,
+};
+

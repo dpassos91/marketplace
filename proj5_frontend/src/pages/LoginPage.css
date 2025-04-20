@@ -1,0 +1,68 @@
+.login {
+    display: flex;
+    justify-content: center;
+  }
+
+  #formulario_login {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    margin-top: auto;
+    width: 30vw;
+  }
+  
+  .login-container h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 50px;
+    padding: 15px;
+  }
+  
+  .login-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+  }
+  
+  .login-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--primary-100);
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary-300);
+    color: var(--white-100);
+    border: none;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .login-container button:hover {
+    background-color: var(--primary-400);
+  }
+  
+  .login-container a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+.forgot-password {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .forgot-password span {
+    cursor: pointer;
+    color: var(--primary-300);
+    text-decoration: underline;
+    font-weight: bold;
+  }

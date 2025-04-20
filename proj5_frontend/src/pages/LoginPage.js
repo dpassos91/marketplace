@@ -2,12 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { FormattedMessage, useIntl } from 'react-intl'; // Para textos traduzidos
-import '../App.css';
+import './LoginPage.css';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 function LoginPage() {
   const { login } = useAuth();
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const intl = useIntl();
 
   const handleSubmit = async (e) => {
@@ -16,11 +18,9 @@ function LoginPage() {
   };
 
   const handleInvalid = (e) => {
-    
     const errorId = `login.${e.target.name}.errorRequired`;
     e.target.setCustomValidity(intl.formatMessage({ id: errorId }));
-};
-
+  };
 
   const handleChange = (e) => {
     e.target.setCustomValidity(''); // Limpa a mensagem de validação customizada após ser mostrada uma vez
@@ -73,12 +73,20 @@ function LoginPage() {
                 <FormattedMessage id="login.register" defaultMessage="Register" />
               </button>
             </Link>
+            <p className="forgot-password">
+  <span onClick={() => {
+    console.log("🧪 Clicado no link de recuperação");
+    setIsModalOpen(true);
+  }}>
+    <FormattedMessage id="login.forgotPassword" defaultMessage="Esqueceu-se da sua password?" />
+  </span>
+</p>
           </form>
         </div>
+        <ForgotPasswordModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </main>
     </>
   );
 }
 
 export default LoginPage;
-
