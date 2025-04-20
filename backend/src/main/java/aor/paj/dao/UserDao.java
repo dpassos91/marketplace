@@ -70,6 +70,14 @@ public class UserDao {
                 .orElse(null);
     }
 
+    public UserEntity findByEmail(String email) {
+        return entityManager.createNamedQuery("User.findByEmail", UserEntity.class)
+                .setParameter("email", email)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+    }
+
     public List<UserEntity> findAll() {
         return entityManager.createNamedQuery("User.findAll", UserEntity.class)
                 .getResultList();

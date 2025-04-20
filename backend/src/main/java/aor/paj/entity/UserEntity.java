@@ -39,7 +39,8 @@ import jakarta.validation.constraints.NotBlank;
         @NamedQuery(name = "User.findByToken", query = "SELECT user FROM UserEntity user WHERE user.token = :token"),
         @NamedQuery(
     name = "User.findByConfirmationToken",
-    query = "SELECT user FROM UserEntity user WHERE user.confirmationToken = :token")
+    query = "SELECT user FROM UserEntity user WHERE user.confirmationToken = :token"),
+    @NamedQuery(name = "User.findByEmail", query = "SELECT user FROM UserEntity user WHERE user.email = :email")
 })
 public class UserEntity implements Serializable {
     private static final long serialVersionUID = 1L;
