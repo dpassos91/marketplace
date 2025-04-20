@@ -4,7 +4,6 @@ import './Modal.css';
 function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
 
-  console.log("🔍 Modal aberto?", isOpen);
   return (
     <div className="modal" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>

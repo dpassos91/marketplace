@@ -75,7 +75,6 @@ function LoginPage() {
             </Link>
             <p className="forgot-password">
   <span onClick={() => {
-    console.log("🧪 Clicado no link de recuperação");
     setIsModalOpen(true);
   }}>
     <FormattedMessage id="login.forgotPassword" defaultMessage="Esqueceu-se da sua password?" />

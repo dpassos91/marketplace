@@ -17,6 +17,7 @@ import AdminPage from './pages/AdminPage';
 import './responsive.css';
 import useMediaType from './hooks/useMediaType';
 import ConfirmAccount from './pages/ConfirmAccount';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
                         <Route path="/detalhes-produto/:id" element={<ProductDetails />} />
                         <Route path="/perfil/:id" element={<UserProfilePage />} />
                         <Route path="/confirmar" element={<ConfirmAccount />} />
+                        <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route element={<ProtectedRoute />}>
                             <Route path="/perfil/:userId" element={<UserProfilePage />} />
                             <Route path="/admin/*" element={<AdminPage />} />

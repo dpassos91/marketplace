@@ -9,7 +9,7 @@ function ForgotPasswordModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await authAPI.requestResetPassword(email);
+      const result = await authAPI.requestPasswordReset(email);
       setStatusMessage("Foi enviado um link de recuperação (ver consola)");
       console.log("🔗 Link de recuperação:", `http://localhost:3000/reset-password?token=${result.token}`);
     } catch (error) {
@@ -31,7 +31,7 @@ function ForgotPasswordModal({ isOpen, onClose }) {
           />
         </div>
         <div className="modal-actions">
-          <button type="submit">Pedir Recuperação</button>
+          <button type="submit">Pedir recuperação</button>
           <button type="button" onClick={onClose}>Fechar</button>
         </div>
         {statusMessage && <p>{statusMessage}</p>}
