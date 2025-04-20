@@ -1,21 +1,28 @@
 import { apiConfig } from './apiConfig.js';
+import { userAPI } from './userAPI.js'
 
 const { apiCall, API_ENDPOINTS } = apiConfig;
+const { getUserById } = userAPI;
 
 const loginUser = async (credentials) => {
-  return apiCall(API_ENDPOINTS.auth.login, {
+  const loginResponse = await apiCall(API_ENDPOINTS.auth.login, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      token: undefined,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
-  }).then(async (response) => {
-    const token = response.token;
-    sessionStorage.setItem('authToken', token);
-    return { ...response, token };
   });
+
+  const token = loginResponse.token;
+  sessionStorage.setItem('authToken', token);
+
+  // Aqui vai buscar os dados completos do utilizador
+  const userDetails = await userAPI.getUserById(loginResponse.userId);
+
+  return {
+    ...userDetails,
+    token,
+  };
 };
+
 
 const logoutUser = async () => {
   const result = await apiCall(API_ENDPOINTS.auth.logout, {

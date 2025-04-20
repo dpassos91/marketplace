@@ -18,6 +18,7 @@ export function useAuth() {
   const login = async (credentials) => {
     try {
       const userData = await authAPI.loginUser(credentials);
+      console.log("🔎 Dados recebidos no login:", userData);
 
       const fullName = `${userData.firstName} ${userData.lastName}`;
       const userDataToStore = {

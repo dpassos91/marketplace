@@ -11,6 +11,7 @@ import EvaluationModal from '../components/evaluation/EvaluationModal';
 import ProductCard from '../components/product/ProductCard';
 import { useIntl, FormattedMessage } from 'react-intl';
 import SpinnerLeaf from '../components/commons/SpinnerLeaf';
+import UserProductStats from '../components/user/UserProductStats';
 
 export default function UserProfilePage() {
   const { formatMessage } = useIntl();
@@ -167,6 +168,9 @@ export default function UserProfilePage() {
               isOwnProfile={isOwnProfile} 
               onUpdate={handleUpdateProfile} 
             />
+            {isOwnProfile && (
+  <UserProductStats products={userProducts} />
+)}
           </div>
           <div className="outras-info">
             <section className="imagem-perfil-wrapper">
