@@ -43,51 +43,77 @@ function ConfirmAccount() {
 
   return (
     <div className="centered-message-confirm">
-      {status === 'loading' && (
+  <div className="confirm-content">
+    {status === 'loading' && (
+      <>
+      <SpinnerLeaf />
+      <p>
+        <strong>
+        <FormattedMessage
+          id="confirmAccount.loading"
+          defaultMessage="A confirmar a sua conta..."
+        />
+        </strong>
+      </p>
+      </>
+    )}
+
+    {status === 'success' && (
+      <>
+        <img src="/img/confirm-success.png" alt="Conta confirmada" />
+        <p>
+          <strong>
+          <FormattedMessage
+            id="confirmAccount.success"
+            defaultMessage="Conta confirmada com sucesso! Já pode iniciar sessão."
+          />
+          </strong> 
+        </p>
         <p>
           <FormattedMessage
-            id="confirmAccount.loading"
-            defaultMessage="A confirmar a sua conta..."
+          id="confirmAccount.redirect"
+          defaultMessage="Será redirecionado para a página de login dentro de instantes."
           />
         </p>
-      )}
+      </>
+    )}
 
-      {status === 'success' && (
-        <>
-          <img src="/img/confirm-success.png" alt="Conta confirmada" style={{ width: '200px' }} />
-          <p>
-            <FormattedMessage
-              id="confirmAccount.success"
-              defaultMessage="Conta confirmada com sucesso! Já pode iniciar sessão."
-            />
-          </p>
-        </>
-      )}
+    {status === 'error' && (
+      <>
+        <img src="/img/confirm-error.png" alt="Erro na confirmação" />
+        <p>
+          <strong>
+          <FormattedMessage
+            id="confirmAccount.error"
+            defaultMessage="Erro ao confirmar a conta. Token inválido ou conta já confirmada."
+          />
+          </strong>
+        </p>
+        <p>
+          <FormattedMessage
+          id="confirmAccount.redirect"
+          defaultMessage="Será redirecionado para a página de login dentro de instantes."
+          />
+        </p>
+      </>
+    )}
 
-      {status === 'error' && (
-        <>
-          <img src="/img/confirm-error.png" alt="Erro na confirmação" style={{ width: '200px' }} />
-          <p>
-            <FormattedMessage
-              id="confirmAccount.error"
-              defaultMessage="Erro ao confirmar a conta. Token inválido ou conta já confirmada."
-            />
-          </p>
-        </>
-      )}
+    {status === 'redirecting' && (
+      <>
+        <SpinnerLeaf />
+        <p>
+          <strong>
+          <FormattedMessage
+            id="confirmAccount.redirecting"
+            defaultMessage="A redirecionar para a página de login..."
+          />
+          </strong>
+        </p>
+      </>
+    )}
+  </div>
+</div>
 
-      {status === 'redirecting' && (
-        <>
-          <SpinnerLeaf />
-          <p>
-            <FormattedMessage
-              id="confirmAccount.redirecting"
-              defaultMessage="A redirecionar para a página de login..."
-            />
-          </p>
-        </>
-      )}
-    </div>
   );
 }
 

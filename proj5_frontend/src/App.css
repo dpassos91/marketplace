@@ -688,7 +688,7 @@ body,
   padding: 20px;
   border-radius: 8px;
   box-shadow: var(--box-shadow);
-  margin-bottom: 30px;
+  margin-top: auto;
   width: 30vw;
 }
 
