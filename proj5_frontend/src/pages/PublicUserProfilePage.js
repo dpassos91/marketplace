@@ -7,9 +7,11 @@ import SpinnerLeaf from '../components/commons/SpinnerLeaf';
 import ProductCard from '../components/product/ProductCard';
 import SellerEvaluations from '../components/evaluation/SellerEvaluations';
 import { FormattedMessage, useIntl } from 'react-intl';
+import ChatWindow from '../components/chat/ChatWindow'; // ajusta o caminho conforme o teu projeto
 import './PublicUserProfilePage.css';
 
 export default function PublicUserProfilePage() {
+  const [showChat, setShowChat] = useState(false);
   const { formatMessage } = useIntl();
   const { username } = useParams();
   const [profile, setProfile] = useState(null);
@@ -74,6 +76,7 @@ export default function PublicUserProfilePage() {
   }
 
   return (
+    <>
     <main className="public-profile-container">
       <section className="user-info">
   <img src={profile.photoUrl} alt="Foto de perfil" className="profile-image" />
@@ -84,6 +87,9 @@ export default function PublicUserProfilePage() {
       ✉️ {profile.email}
     </p>
   </div>
+  <button onClick={() => setShowChat(true)} className="message-button">
+  <FormattedMessage id="userProfile.sendMessage" defaultMessage="Enviar mensagem" />
+</button>
 </section>
 
 <section className="user-stats">
@@ -153,6 +159,14 @@ export default function PublicUserProfilePage() {
         />
       </section>
     </main>
+
+       {showChat && (
+        <ChatWindow
+          receiverUsername={profile.username}
+          onClose={() => setShowChat(false)}
+        />
+      )}
+      </>
   );
 }
 
