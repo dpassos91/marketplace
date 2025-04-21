@@ -1,0 +1,105 @@
+.public-profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .profile-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #35562f;
+    margin-bottom: 1rem;
+  }
+  
+  .user-details h1 {
+    margin: 0.5rem 0;
+    font-size: 1.8rem;
+    color: #2f2f2f;
+  }
+  
+  .user-details .username {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.2rem;
+  }
+  
+  .user-details .email {
+    font-size: 1rem;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .user-stats {
+    text-align: center;
+    margin: 2rem auto;
+  }
+  
+  .user-stats h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: #2f2f2f;
+  }
+  
+  .stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .stat-card {
+    background-color: #f0f4f0;
+    padding: 1rem 1.2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    min-width: 110px;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .stat-card .label {
+    display: block;
+    margin-top: 0.4rem;
+    font-weight: bold;
+  }
+  
+  .stat-card .value {
+    display: block;
+    font-size: 1.2rem;
+    margin-top: 0.2rem;
+    color: #2d6a4f;
+  }
+  
+  .stat-card.total {
+    background-color: #dff3e3;
+    border: 2px solid #2d6a4f;
+  }
+
+  .products-section {
+    text-align: center;
+  }
+
+  .seller-evaluations {
+    text-align: center;
+  }
+
+  

@@ -43,9 +43,8 @@ const getUserByUsername = async (username) => {
   return apiCall(API_ENDPOINTS.users.byUsername(username));
 };
 
-const getUserProfile = async (username) => {
-  const response = await apiCall.get(`/users/profile/${username}`);
-  return response.data;
+const getUserProfile = (username) => {
+  return apiCall(API_ENDPOINTS.users.profile(username));
 };
 
 const getAllUsers = async (active = null) => {

@@ -1230,6 +1230,7 @@ body,
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .evaluation-actions {

@@ -167,20 +167,21 @@ function ProductDetails() {
         defaultMessage={product.status} // Caso a tradução não exista, exibe o valor original
       />
     </p>
-                <Link
-                    to={user ? `/perfil/${product.sellerId}` : '#'}
-                    className="seller-profile-link"
-                    title={formatMessage({ id: 'productDetails.viewSellerProfile', defaultMessage: 'Ver perfil do vendedor' })}
-                    onClick={(e) => {
-                        if (!user) {
-                            e.preventDefault();
-                            alert(formatMessage({ id: 'productDetails.alert.mustBeLoggedInToViewProfile', defaultMessage: 'Só pode aceder a este perfil se for membro da nossa comunidade. Registe-se e/ou faça login!' }));
-                            navigate('/login');
-                        }
-                    }}
-                >
-                    <i className="fa fa-user" aria-hidden="true"></i> <FormattedMessage id="productDetails.viewSellerProfile" defaultMessage="Ver perfil do vendedor" />
-                </Link>
+    <Link
+  to={user ? `/perfil/${product.sellerUsername}` : '#'}
+  className="seller-profile-link"
+  title={formatMessage({ id: 'productDetails.viewSellerProfile', defaultMessage: 'Ver perfil do vendedor' })}
+  onClick={(e) => {
+    if (!user) {
+      e.preventDefault();
+      alert(formatMessage({ id: 'productDetails.alert.mustBeLoggedInToViewProfile', defaultMessage: 'Só pode aceder a este perfil se for membro da nossa comunidade. Registe-se e/ou faça login!' }));
+      navigate('/login');
+    }
+  }}
+>
+  <i className="fa fa-user" aria-hidden="true"></i>
+  <FormattedMessage id="productDetails.viewSellerProfile" defaultMessage="Ver perfil do vendedor" />
+</Link>
 
                 <section className="detalhes-form-buttons">
                     {canBuy && (

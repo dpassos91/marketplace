@@ -56,6 +56,7 @@ users: {
   byId: (id) => `${API_BASE_URL}/users/${id}`,
   update: (id) => `${API_BASE_URL}/users/${id}`,
   delete: (id) => `${API_BASE_URL}/users/${id}`,
+  profile: (username) => `${API_BASE_URL}/users/profile/${username}`,
   updateStatus: (id) => `${API_BASE_URL}/users/${id}/status`,
   updatePassword: (id) => `${API_BASE_URL}/users/${id}/password`,
   byUsername: (username) => `${API_BASE_URL}/users/username/${username}`,

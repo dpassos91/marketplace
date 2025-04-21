@@ -25,9 +25,17 @@ const loginUser = async (credentials) => {
 
 
 const logoutUser = async () => {
+  const token = sessionStorage.getItem('authToken');
+
+  if (!token) {
+    throw new Error("Token inexistente no sessionStorage");
+  }
+
   const result = await apiCall(API_ENDPOINTS.auth.logout, {
     method: 'POST',
-    headers: { token: undefined }, // explícito para endpoints públicos
+    headers: {
+      token: token, // ou 'Authorization': `Bearer ${token}` se for o caso
+    },
   });
 
   if (result === "Successfully logged out!") {
@@ -37,6 +45,7 @@ const logoutUser = async () => {
     throw new Error("Logout falhou: " + result);
   }
 };
+
 
 const requestPasswordReset = async (email) => {
   return apiCall(API_ENDPOINTS.auth.requestResetPassword, {
