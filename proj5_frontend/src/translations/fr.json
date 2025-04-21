@@ -401,7 +401,12 @@
   "userProfile.stats.disponível": "Disponible : {count}",
   "userProfile.stats.vendido": "Vendu : {count}",
   "userProfile.stats.reservado": "Réservé : {count}",
-  "userProfile.stats.rascunho": "Brouillon : {count}"
+  "userProfile.stats.rascunho": "Brouillon : {count}",
+  
+  "userProfile.notFound": "Profil non trouvé.",
+  "userProfile.statsTitle": "Statistiques des produits",
+  "userProfile.totalProducts": "Total",
+  "userProfile.noAvailableProducts": "Ce vendeur n'a pas de produits disponibles pour le moment."
 
 }
   

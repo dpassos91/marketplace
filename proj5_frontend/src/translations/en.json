@@ -398,6 +398,11 @@
    "userProfile.stats.disponível": "Available: {count}",
    "userProfile.stats.vendido": "Purchased: {count}",
    "userProfile.stats.rascunho": "Draft: {count}",
-   "userProfile.stats.reservado": "Reserved: {count}"
+   "userProfile.stats.reservado": "Reserved: {count}",
+
+   "userProfile.notFound": "Profile not found.",
+   "userProfile.statsTitle": "Product Statistics",
+   "userProfile.totalProducts": "Total",
+   "userProfile.noAvailableProducts": "This seller has no available products at the moment."
 
 }

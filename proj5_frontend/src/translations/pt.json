@@ -383,7 +383,12 @@
       "userProfile.stats.disponível": "Disponível: {count}",
       "userProfile.stats.vendido": "Vendido: {count}",
       "userProfile.stats.reservado": "Reservado: {count}",
-      "userProfile.stats.rascunho": "Rascunho: {count}"
+      "userProfile.stats.rascunho": "Rascunho: {count}",
+
+      "userProfile.notFound": "Perfil não encontrado.",
+      "userProfile.statsTitle": "Estatísticas dos Produtos",
+      "userProfile.totalProducts": "Total",
+      "userProfile.noAvailableProducts": "Este vendedor não tem produtos disponíveis de momento."
   
     
   }
