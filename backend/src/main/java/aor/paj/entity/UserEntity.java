@@ -3,6 +3,7 @@ package aor.paj.entity;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
+import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -100,6 +101,12 @@ public class UserEntity implements Serializable {
 
     @OneToMany(mappedBy = "evaluated", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluationEntity> receivedEvaluations;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<MessageEntity> sentMessages;
+
+@OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<MessageEntity> receivedMessages;
 
     public UserEntity() {
     }

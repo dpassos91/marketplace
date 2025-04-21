@@ -11,8 +11,13 @@ public class MessageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String sender;
-    private String receiver;
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    private UserEntity sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private UserEntity receiver;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -31,20 +36,20 @@ public class MessageEntity {
         this.id = id;
     }
 
-    public String getSender() {
-        return sender;
+    public UserEntity getSender() { 
+        return sender; 
+    }
+    
+    public void setSender(UserEntity sender) {
+         this.sender = sender;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public UserEntity getReceiver() { 
+        return receiver; 
     }
 
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setReceiver(UserEntity receiver) {
+        this.receiver = receiver; 
     }
 
     public String getContent() {

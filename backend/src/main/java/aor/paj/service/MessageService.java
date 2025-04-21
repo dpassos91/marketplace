@@ -2,6 +2,7 @@ package aor.paj.service;
 
 import aor.paj.bean.MessageBean;
 import aor.paj.entity.MessageEntity;
+import aor.paj.dto.MessageDto;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -27,6 +28,17 @@ public class MessageService {
 
         return Response.ok(conversation).build();
     }
+
+    @POST
+    public Response sendMessage(MessageDto messageDto) {
+        messageBean.saveMessage(
+        messageDto.getSender(),
+        messageDto.getReceiver(),
+        messageDto.getContent()
+    );
+    return Response.status(Response.Status.CREATED).build();
+}
+
 }
 
 
