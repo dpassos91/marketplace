@@ -121,7 +121,7 @@ public class UserBean {
                 userDao.update(userEntity);
     
                 logger.info("Successful login for user: {}", user.getUsername());
-                return new LoginResponseDto(userEntity.getId(), sessionToken);
+                return new LoginResponseDto(userEntity.getId(), sessionToken, userEntity.getUsername());
             }
         }
     

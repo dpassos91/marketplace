@@ -7,13 +7,15 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 public class LoginResponseDto {
     private Long userId;
     private String token;
+    private String username; 
 
     public LoginResponseDto() {
     }
 
-    public LoginResponseDto(Long userId, String token) {
+    public LoginResponseDto(Long userId, String token, String username) {
         this.userId = userId;
         this.token = token;
+        this.username = username;
     }
 
     @XmlElement
@@ -33,4 +35,14 @@ public class LoginResponseDto {
     public void setToken(String token) {
         this.token = token;
     }
+
+    @XmlElement
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }
+

@@ -2,14 +2,14 @@ package aor.paj.bean;
 
 import aor.paj.entity.MessageEntity;
 import aor.paj.entity.UserEntity;
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Stateless
+@ApplicationScoped
 public class MessageBean {
 
     @PersistenceContext

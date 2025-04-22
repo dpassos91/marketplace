@@ -23,6 +23,7 @@ export function useAuth() {
       const fullName = `${userData.firstName} ${userData.lastName}`;
       const userDataToStore = {
         id: userData.id,
+        username: userData.username,
         name: fullName,
         picture: userData.picture,
         admin: userData.admin

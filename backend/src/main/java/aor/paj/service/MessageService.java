@@ -1,44 +1,66 @@
 package aor.paj.service;
 
 import aor.paj.bean.MessageBean;
-import aor.paj.entity.MessageEntity;
+import aor.paj.bean.UserBean;
 import aor.paj.dto.MessageDto;
-import jakarta.ejb.EJB;
+import aor.paj.entity.MessageEntity;
+import aor.paj.entity.UserEntity;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/messages")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class MessageService {
 
-    @EJB
+    @Inject
     MessageBean messageBean;
+
+    @Inject
+    UserBean userBean;
 
     @GET
     @Path("/{otherUser}")
-    public Response getConversation(@PathParam("otherUser") String otherUser) {
-        // ⚠️ Este valor será substituído futuramente pelo utilizador autenticado
-        String currentUser = "ana"; // Exemplo temporário
+    public Response getConversation(@PathParam("otherUser") String otherUser, @HeaderParam("token") String token) {
+        UserEntity currentUser = userBean.getUserByToken(token);
 
-        List<MessageEntity> conversation = messageBean.getConversation(currentUser, otherUser);
+        if (currentUser == null) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Token inválido ou sessão expirada.").build();
+        }
 
-        return Response.ok(conversation).build();
+        List<MessageEntity> conversation = messageBean.getConversation(currentUser.getUsername(), otherUser);
+        List<MessageDto> dtoList = conversation.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+
+        return Response.ok(dtoList).build();
     }
 
     @POST
     public Response sendMessage(MessageDto messageDto) {
         messageBean.saveMessage(
-        messageDto.getSender(),
-        messageDto.getReceiver(),
-        messageDto.getContent()
-    );
-    return Response.status(Response.Status.CREATED).build();
+                messageDto.getSender(),
+                messageDto.getReceiver(),
+                messageDto.getContent()
+        );
+        return Response.status(Response.Status.CREATED).build();
+    }
+
+    private MessageDto toDTO(MessageEntity entity) {
+        MessageDto dto = new MessageDto();
+        dto.setSender(entity.getSender().getUsername());
+        dto.setReceiver(entity.getReceiver().getUsername());
+        dto.setContent(entity.getContent());
+        return dto;
+    }
 }
 
-}
+
 
 
