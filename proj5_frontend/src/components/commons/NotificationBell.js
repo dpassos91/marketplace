@@ -15,11 +15,20 @@ function NotificationBell() {
   const username = JSON.parse(localStorage.getItem("userData"))?.username;
 
   useEffect(() => {
-    if (!username) return;
-
+    if (!username) {
+      console.warn("⚠️ NotificationBell: username não encontrado, WebSocket não será iniciado.");
+      return;
+    }
+  
+    console.log("🔄 NotificationBell montado para:", username);
+  
     const socket = new WebSocket(`ws://localhost:8080/diogopassos-proj5/websocket/chat/${username}`);
     socketRef.current = socket;
-
+  
+    socket.onopen = () => {
+      console.log("✅ WebSocket ligado (notificações) para:", username);
+    };
+  
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -31,14 +40,22 @@ function NotificationBell() {
             read: false,
           });
         }
-      } catch {
-        // Ignora mensagens não estruturadas
+      } catch (err) {
+        console.warn("❌ Erro a processar mensagem WebSocket:", err);
       }
     };
-
+  
+    socket.onerror = (err) => {
+      console.error("❌ Erro WebSocket (notificações):", err);
+    };
+  
+    socket.onclose = () => {
+      console.log("🔌 WebSocket fechado (notificações) para:", username);
+    };
+  
     return () => socket.close();
   }, [username, addNotification]);
-
+  
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
