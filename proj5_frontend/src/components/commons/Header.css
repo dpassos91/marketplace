@@ -13,6 +13,7 @@ header {
   margin: 0;
 }
 
+
 header a {
   color: inherit;
   text-decoration: none;
@@ -33,7 +34,8 @@ header .bem-vindo {
 .img-perfil {
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  margin-left: -50px;
+  gap: 10px;
 }
 
 .img-perfil img {

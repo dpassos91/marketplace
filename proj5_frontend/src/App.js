@@ -19,6 +19,7 @@ import AdminPage from './pages/AdminPage';
 import './App.css';
 import ChatWindow from './components/chat/ChatWindow';
 import { notificationStore } from './stores/notificationStore';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
   const login = useAuthStore((state) => state.login);

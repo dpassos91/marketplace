@@ -8,6 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import useMediaType from '../../hooks/useMediaType'; // Importa o hook
 import { deviceStore } from '../../stores/deviceStore'; // Acede ao estado
 import './Header.css';
+import NotificationBell from './NotificationBell';
 
 function Header() {
   const user = useAuthStore((state) => state.user);
@@ -65,19 +66,23 @@ function Header() {
         </div>
 
         {user && (
-          <div className="img-perfil" id="profile-picture-container" onClick={handleProfileClick}>
-            <img
-              src={profilePicture}
-              alt={user.name ? `Foto de perfil de ${user.name}` : 'Erro ao carregar a imagem'}
-              id="profile-picture"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/path/to/default/image.jpg';
-              }}
-              style={{ cursor: 'pointer' }}
-            />
-          </div>
-        )}
+  <div className="img-perfil" id="profile-picture-container">
+    <img
+      src={profilePicture}
+      alt={user.name ? `Foto de perfil de ${user.name}` : 'Erro ao carregar a imagem'}
+      id="profile-picture"
+      onClick={handleProfileClick}
+      onError={(e) => {
+        e.target.onerror = null;
+        e.target.src = '/path/to/default/image.jpg';
+      }}
+      style={{ cursor: 'pointer' }}
+    />
+    <div style={{ marginLeft: '8px' }}>
+      <NotificationBell />
+    </div>
+  </div>
+)}
 
         <nav className="navbar">
           {user ? (
