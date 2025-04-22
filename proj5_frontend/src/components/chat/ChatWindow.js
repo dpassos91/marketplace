@@ -20,13 +20,21 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`/rest/messages/${receiverUsername}`, {
+        const res = await fetch(`http://localhost:8080/diogopassos-proj5/rest/messages/${receiverUsername}`, {
           headers: {
             "Content-Type": "application/json",
             token: sessionStorage.getItem("authToken"),
           },
-        });
+        })
+  
+        console.log("✅ Fetch status:", res.status);
+  
+        if (!res.ok) {
+          throw new Error(`Erro HTTP ${res.status}`);
+        }
+  
         const data = await res.json();
+        console.log("📥 Dados recebidos no fetch:", data); // 👈 Aqui sim!
         setMessages(data);
       } catch (error) {
         console.error("Erro ao carregar mensagens:", error);
@@ -34,9 +42,11 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
         setLoading(false);
       }
     };
-
-    fetchMessages();
-  }, [receiverUsername]);
+  
+    fetchMessages(); // 👈 PRECISAS DE INVOCAR A FUNÇÃO AQUI
+  
+  }, [receiverUsername]); // 👈 DEPENDÊNCIA OK
+    
 
   // Scroll automático para o fim
   useEffect(() => {
@@ -45,7 +55,7 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
 
   // Conexão WebSocket
   useEffect(() => {
-    if (!currentUsername.current) return;
+    if (!currentUsername.current || !receiverUsername) return;
 
     const socket = new WebSocket(`ws://localhost:8080/diogopassos-proj5/websocket/chat/${currentUsername.current}`);
     socketRef.current = socket;
@@ -120,9 +130,9 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
           <p>Sem mensagens.</p>
         ) : (
           messages.map((msg, i) => (
-            <div key={i} className={`chat-message ${msg.sender === receiverUsername ? "received" : "sent"}`}>
-              <div className="bubble">{msg.content}</div>
-            </div>
+            <div key={i} className={`chat-message ${msg.sender === currentUsername.current ? "sent" : "received"}`}>
+            <div className="bubble">{msg.content}</div>
+          </div>
           ))
         )}
         <div ref={messagesEndRef} />

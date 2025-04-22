@@ -13,6 +13,8 @@ import { useIntl, FormattedMessage } from 'react-intl';
 import SpinnerLeaf from '../components/commons/SpinnerLeaf';
 import UserProductStats from '../components/user/UserProductStats';
 import ChangePasswordModal from '../components/user/ChangePasswordModal';
+import ChatWindow from '../components/chat/ChatWindow';
+import { notificationStore } from '../stores/notificationStore';
 
 export default function PrivateUserProfilePage() {
   const { formatMessage } = useIntl();
@@ -22,6 +24,8 @@ export default function PrivateUserProfilePage() {
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
   const [currentEvaluation, setCurrentEvaluation] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const chatUser = notificationStore((state) => state.chatUser);
+const closeChat = notificationStore((state) => state.closeChat);
 
   const { userId } = useParams();
   const { currentUser } = useAuth();
@@ -112,6 +116,7 @@ export default function PrivateUserProfilePage() {
   }
 
   return (
+    <>
     <main className="main-container">
       <Aside />
       <div className="wrapper-pag-pessoal">
@@ -179,6 +184,14 @@ export default function PrivateUserProfilePage() {
         )}
       </div>
     </main>
+    
+    {chatUser && (
+      <ChatWindow
+        receiverUsername={chatUser}
+        onClose={closeChat}
+      />
+    )}
+    </>
   );
 }
 

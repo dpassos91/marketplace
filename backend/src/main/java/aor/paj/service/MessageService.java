@@ -27,7 +27,10 @@ public class MessageService {
     @GET
     @Path("/{otherUser}")
     public Response getConversation(@PathParam("otherUser") String otherUser, @HeaderParam("token") String token) {
+        System.out.println("🔐 Token recebido no header: " + token);
         UserEntity currentUser = userBean.getUserByToken(token);
+        System.out.println("👤 Utilizador autenticado: " + (currentUser != null ? currentUser.getUsername() : "null"));
+
 
         if (currentUser == null) {
             return Response.status(Response.Status.UNAUTHORIZED)

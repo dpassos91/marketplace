@@ -4,20 +4,27 @@ import './Aside.css';
 import { FormattedMessage } from 'react-intl';
 import { deviceStore } from '../../stores/deviceStore';
 import useMediaType from '../../hooks/useMediaType';
+import NotificationBell from './NotificationBell';
 
 function Aside() {
-  useMediaType(); // Atualiza o estado na store
+  useMediaType();
   const { mediaType } = deviceStore();
 
   return (
     <div className={`aside-container ${mediaType.isTabletOrMobile ? 'aside-mobile' : ''}`}>
+      
       <div className="nav-pag">
+        <div className="notification-wrapper">
+          <NotificationBell />
+        </div>
+
         <Link to="/produtos">
           <button className="btn-produtos" type="button">
             <h2><FormattedMessage id="aside.products" defaultMessage="Produtos" /></h2>
           </button>
         </Link>
       </div>
+
       <aside>
         <div className="sobre_nos">
           <h1><FormattedMessage id="aside.aboutUs" defaultMessage="Sobre Nós" /></h1>
