@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./ChatWindow.css";
+import { messagesAPI } from "../../api/messagesAPI"; 
 
 const ChatWindow = ({ receiverUsername, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -16,85 +17,101 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
     console.warn("⚠️ userData inválido no localStorage", e);
   }
 
-  // Fetch histórico de mensagens
+  // Marcar mensagens como lidas
+  const markMessagesAsRead = async () => {
+    try {
+      const res = await messagesAPI.markMessagesAsReadFrom(receiverUsername);
+      console.log("📘 Mensagens marcadas como lidas:", res);
+    } catch (error) {
+      console.error("❌ Erro ao marcar mensagens como lidas:", error);
+    }
+  };
+
+  // Buscar histórico de mensagens
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/diogopassos-proj5/rest/messages/${receiverUsername}`, {
-          headers: {
-            "Content-Type": "application/json",
-            token: sessionStorage.getItem("authToken"),
-          },
-        })
-  
-        console.log("✅ Fetch status:", res.status);
-  
-        if (!res.ok) {
-          throw new Error(`Erro HTTP ${res.status}`);
-        }
-  
-        const data = await res.json();
-        console.log("📥 Dados recebidos no fetch:", data); // 👈 Aqui sim!
+        const data = await messagesAPI.getConversationWith(receiverUsername);
+        console.log("📥 Dados recebidos no fetch:", data);
         setMessages(data);
       } catch (error) {
         console.error("Erro ao carregar mensagens:", error);
       } finally {
         setLoading(false);
+        markMessagesAsRead(); // 👈 chamada após carregar
       }
     };
-  
-    fetchMessages(); // 👈 PRECISAS DE INVOCAR A FUNÇÃO AQUI
-  
-  }, [receiverUsername]); // 👈 DEPENDÊNCIA OK
-    
 
-  // Scroll automático para o fim
+    fetchMessages();
+  }, [receiverUsername]);
+
+  // Scroll automático
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Conexão WebSocket
+  // WebSocket
   useEffect(() => {
     if (!currentUsername.current || !receiverUsername) return;
 
     const socket = new WebSocket(`ws://localhost:8080/diogopassos-proj5/websocket/chat/${currentUsername.current}`);
     socketRef.current = socket;
 
-    socket.onopen = () => {
-      console.log("✅ WebSocket ligado");
-    };
-
+    socket.onopen = () => console.log("✅ WebSocket ligado");
     socket.onmessage = (event) => {
-      const content = event.data;
-      console.log("📨 Nova mensagem via WebSocket:", content);
-
-      // Evita re-renderizações por mensagens de confirmação ou erro
-      if (!content.startsWith("✔️") && !content.startsWith("❌")) {
-        setMessages((prev) => [...prev, {
-          content,
-          sender: receiverUsername // assumimos que a mensagem veio do outro
-        }]);
+      try {
+        const parsed = JSON.parse(event.data);
+    
+        if (parsed.type === "mensagem") {
+          // É uma notificação, não uma mensagem direta
+          console.log("🔔 Notificação WebSocket:", parsed.message);
+          return;
+        }
+    
+        if (parsed.content && parsed.sender) {
+          // Mensagem de chat com formato estruturado (opcional se implementares isso no futuro)
+          setMessages((prev) => [...prev, {
+            content: parsed.content,
+            sender: parsed.sender
+          }]);
+          return;
+        }
+    
+        // Se for um objeto inesperado, só mostra no log
+        console.warn("📦 Mensagem WebSocket desconhecida:", parsed);
+      } catch (e) {
+        // Se não for JSON (ou seja, texto plano), trata como mensagem direta
+        const content = event.data;
+    
+        if (!content.startsWith("✔️") && !content.startsWith("❌")) {
+          console.log("📨 Mensagem direta recebida:", content);
+          setMessages((prev) => [...prev, {
+            content,
+            sender: receiverUsername
+          }]);
+        }
       }
-    };
+    };    
+    socket.onerror = (error) => console.error("❌ Erro no WebSocket:", error);
+    socket.onclose = () => console.log("🔌 WebSocket desligado");
 
-    socket.onerror = (error) => {
-      console.error("❌ Erro no WebSocket:", error);
-    };
+      // 🕐 Ping de 60s para manter ligação ativa
+  const pingInterval = setInterval(() => {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send("ping");
+      console.log("📡 Ping enviado");
+    }
+  }, 60000); // 60 segundos
 
-    socket.onclose = () => {
-      console.log("🔌 WebSocket desligado");
-    };
-
-    return () => {
+    return () => { 
       socket.close();
+    clearInterval(pingInterval);
     };
   }, [receiverUsername]);
 
+  // Enviar mensagem
   const handleSend = () => {
     const sender = currentUsername.current;
-
-    console.log("👤 Utilizador atual:", sender);
-    console.log("🎯 Destinatário da mensagem:", receiverUsername);
 
     if (newMessage.trim() === "") return;
 
@@ -106,7 +123,6 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
 
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       const msg = JSON.stringify(messageObject);
-      console.log("📤 A enviar mensagem via WebSocket:", msg);
       socketRef.current.send(msg);
       setMessages((prev) => [...prev, messageObject]);
     } else {
@@ -131,8 +147,8 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
         ) : (
           messages.map((msg, i) => (
             <div key={i} className={`chat-message ${msg.sender === currentUsername.current ? "sent" : "received"}`}>
-            <div className="bubble">{msg.content}</div>
-          </div>
+              <div className="bubble">{msg.content}</div>
+            </div>
           ))
         )}
         <div ref={messagesEndRef} />
