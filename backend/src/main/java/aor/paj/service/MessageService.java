@@ -62,6 +62,23 @@ public class MessageService {
         dto.setContent(entity.getContent());
         return dto;
     }
+
+    @PUT
+@Path("/read-from/{otherUser}")
+public Response markMessagesAsRead(@PathParam("otherUser") String otherUser,
+                                   @HeaderParam("token") String token) {
+
+    UserEntity currentUser = userBean.getUserByToken(token);
+
+    if (currentUser == null) {
+        return Response.status(Response.Status.UNAUTHORIZED)
+                .entity("Token inválido ou sessão expirada.").build();
+    }
+
+    int updatedCount = messageBean.markMessagesAsRead(otherUser, currentUser.getUsername());
+
+    return Response.ok("Mensagens marcadas como lidas: " + updatedCount).build();
+}
 }
 
 

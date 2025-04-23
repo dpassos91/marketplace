@@ -56,6 +56,23 @@ public class MessageBean {
             .getResultList();
     }
 
+    @Transactional
+    public int markMessagesAsRead(String senderUsername, String receiverUsername) {
+        List<MessageEntity> unreadMessages = em.createQuery(
+            "SELECT m FROM MessageEntity m WHERE m.sender.username = :sender AND m.receiver.username = :receiver AND m.isRead = false",
+            MessageEntity.class)
+            .setParameter("sender", senderUsername)
+            .setParameter("receiver", receiverUsername)
+            .getResultList();
+    
+        for (MessageEntity message : unreadMessages) {
+            message.setIsRead(true); // marca como lida
+            em.merge(message); // persiste a alteração
+        }
+    
+        return unreadMessages.size(); // devolve quantas foram atualizadas
+    }    
+
 }
 
 
