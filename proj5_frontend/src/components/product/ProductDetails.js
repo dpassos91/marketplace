@@ -9,8 +9,10 @@ import useProductStore from '../../stores/productStore.js';
 import Modal from '../commons/Modal.js';
 import SpinnerLeaf from '../commons/SpinnerLeaf.js';
 import './ProductDetails.css';
+import ChatWindow from '../chat/ChatWindow.js';
 
 function ProductDetails() {
+  const [showChat, setShowChat] = useState(false);
   const { formatMessage } = useIntl();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ function ProductDetails() {
 
   const isOwner = user && product && user.id === product.sellerId;
   const canBuy = user && !isOwner;
+  const canMessage = user && product && user.username !== product.sellerUsername;
 
   const canEditOrDelete = user && (
     (isOwner && product.status !== PRODUCT_STATES.COMPRADO.defaultText && product.status !== PRODUCT_STATES.INATIVO.defaultText) ||
@@ -223,6 +226,15 @@ function ProductDetails() {
             </button>
           )}
 
+{canMessage && (
+  <button
+    onClick={() => setShowChat(true)}
+    title={formatMessage({ id: "userProfile.sendMessage", defaultMessage: "Enviar mensagem" })}
+  >
+    <FormattedMessage id="userProfile.sendMessage" defaultMessage="Enviar mensagem" />
+  </button>
+)}
+
           {canEditOrDelete && (
             <>
               <button
@@ -256,6 +268,13 @@ function ProductDetails() {
           onCancel={closeModal}
         />
       </Modal>
+
+      {showChat && (
+      <ChatWindow
+        receiverUsername={product.sellerUsername}
+        onClose={() => setShowChat(false)}
+      />
+    )}
     </div>
   );
 }
