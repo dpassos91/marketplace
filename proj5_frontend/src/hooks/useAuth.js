@@ -91,7 +91,9 @@ export function useAuth() {
 
       logoutStore();
       localStorage.removeItem('userData');
+      localStorage.removeItem('notification-store');
       sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('user-store');
 
       alert(formatMessage({
         id: 'auth.logout.success',
