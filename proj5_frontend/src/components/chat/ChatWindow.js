@@ -142,19 +142,32 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
       </div>
 
       <div className="chat-messages">
-        {loading ? (
-          <p>A carregar...</p>
-        ) : messages.length === 0 ? (
-          <p>Sem mensagens.</p>
-        ) : (
-          messages.map((msg, i) => (
-            <div key={i} className={`chat-message ${msg.sender === currentUsername ? "sent" : "received"}`}>
-              <div className="bubble">{msg.content}</div>
+  {loading ? (
+    <p>A carregar...</p>
+  ) : messages.length === 0 ? (
+    <p>Sem mensagens.</p>
+  ) : (
+    messages.map((msg, i) => {
+      const isSender = msg.sender === currentUsername;
+      return (
+        <div key={i} className={`chat-message ${isSender ? "sent" : "received"}`}>
+          {!isSender && (
+            <div className="message-meta">
+              <div className="user-icon">
+                <i className="fa fa-user-circle" aria-hidden="true"></i>
+              </div>
+              <span>@{msg.sender}</span>
             </div>
-          ))
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+          )}
+          <div className="bubble">{msg.content}</div>
+        </div>
+      );
+    })
+  )}
+  <div ref={messagesEndRef} />
+</div>
+
+
 
       <div className="chat-input-area">
         <input
