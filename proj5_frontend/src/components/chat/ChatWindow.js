@@ -1,21 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./ChatWindow.css";
-import { messagesAPI } from "../../api/messagesAPI"; 
+import { messagesAPI } from "../../api/messagesAPI";
 
 const ChatWindow = ({ receiverUsername, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newMessage, setNewMessage] = useState("");
+  const [currentUsername, setCurrentUsername] = useState(null);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
-  const currentUsername = useRef(null);
-  try {
-    const storedData = JSON.parse(localStorage.getItem("userData"));
-    currentUsername.current = storedData?.username;
-  } catch (e) {
-    console.warn("⚠️ userData inválido no localStorage", e);
-  }
+  // Obter username do utilizador atual a partir do localStorage
+  useEffect(() => {
+    try {
+      const storedData = JSON.parse(localStorage.getItem("userData"));
+      setCurrentUsername(storedData?.username);
+    } catch (e) {
+      console.warn("⚠️ userData inválido no localStorage", e);
+    }
+  }, []);
 
   // Marcar mensagens como lidas
   const markMessagesAsRead = async () => {
@@ -29,6 +32,8 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
 
   // Buscar histórico de mensagens
   useEffect(() => {
+    if (!receiverUsername || !currentUsername) return;
+  
     const fetchMessages = async () => {
       try {
         const data = await messagesAPI.getConversationWith(receiverUsername);
@@ -38,51 +43,50 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
         console.error("Erro ao carregar mensagens:", error);
       } finally {
         setLoading(false);
-        markMessagesAsRead(); // 👈 chamada após carregar
+        markMessagesAsRead();
       }
     };
-
+  
     fetchMessages();
-  }, [receiverUsername]);
+  }, [receiverUsername, currentUsername]); // ✅ agora espera pelos dois
+  
 
   // Scroll automático
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // WebSocket
+  // WebSocket (apenas quando currentUsername estiver disponível)
   useEffect(() => {
-    if (!currentUsername.current || !receiverUsername) return;
+    if (!currentUsername || !receiverUsername) return;
 
-    const socket = new WebSocket(`ws://localhost:8080/diogopassos-proj5/websocket/chat/${currentUsername.current}`);
+    console.log("🧪 Tentativa de abrir WebSocket com:", currentUsername, receiverUsername);
+
+    const socket = new WebSocket(`ws://localhost:8080/diogopassos-proj5/websocket/chat/${currentUsername}`);
     socketRef.current = socket;
 
     socket.onopen = () => console.log("✅ WebSocket ligado");
+
     socket.onmessage = (event) => {
       try {
         const parsed = JSON.parse(event.data);
-    
+
         if (parsed.type === "mensagem") {
-          // É uma notificação, não uma mensagem direta
           console.log("🔔 Notificação WebSocket:", parsed.message);
           return;
         }
-    
+
         if (parsed.content && parsed.sender) {
-          // Mensagem de chat com formato estruturado (opcional se implementares isso no futuro)
           setMessages((prev) => [...prev, {
             content: parsed.content,
             sender: parsed.sender
           }]);
           return;
         }
-    
-        // Se for um objeto inesperado, só mostra no log
+
         console.warn("📦 Mensagem WebSocket desconhecida:", parsed);
       } catch (e) {
-        // Se não for JSON (ou seja, texto plano), trata como mensagem direta
         const content = event.data;
-    
         if (!content.startsWith("✔️") && !content.startsWith("❌")) {
           console.log("📨 Mensagem direta recebida:", content);
           setMessages((prev) => [...prev, {
@@ -91,32 +95,30 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
           }]);
         }
       }
-    };    
+    };
+
     socket.onerror = (error) => console.error("❌ Erro no WebSocket:", error);
     socket.onclose = () => console.log("🔌 WebSocket desligado");
 
-      // 🕐 Ping de 60s para manter ligação ativa
-  const pingInterval = setInterval(() => {
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send("ping");
-      console.log("📡 Ping enviado");
-    }
-  }, 60000); // 60 segundos
+    const pingInterval = setInterval(() => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send("ping");
+        console.log("📡 Ping enviado");
+      }
+    }, 60000);
 
-    return () => { 
+    return () => {
       socket.close();
-    clearInterval(pingInterval);
+      clearInterval(pingInterval);
     };
-  }, [receiverUsername]);
+  }, [currentUsername, receiverUsername]);
 
   // Enviar mensagem
   const handleSend = () => {
-    const sender = currentUsername.current;
-
-    if (newMessage.trim() === "") return;
+    if (newMessage.trim() === "" || !currentUsername) return;
 
     const messageObject = {
-      sender,
+      sender: currentUsername,
       receiver: receiverUsername,
       content: newMessage.trim()
     };
@@ -146,7 +148,7 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
           <p>Sem mensagens.</p>
         ) : (
           messages.map((msg, i) => (
-            <div key={i} className={`chat-message ${msg.sender === currentUsername.current ? "sent" : "received"}`}>
+            <div key={i} className={`chat-message ${msg.sender === currentUsername ? "sent" : "received"}`}>
               <div className="bubble">{msg.content}</div>
             </div>
           ))
@@ -169,4 +171,5 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
 };
 
 export default ChatWindow;
+
 

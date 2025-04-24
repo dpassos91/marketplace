@@ -98,6 +98,7 @@ function App() {
           {/* Chat global (abre a partir de notificações) */}
           {chatUser && (
             <ChatWindow
+            key={chatUser}
               receiverUsername={chatUser}
               onClose={closeChat}
             />

@@ -71,9 +71,11 @@ function NotificationBell() {
   return (
     <div className="notification-bell">
       <button className="bell-icon" onClick={toggleDropdown}>
-        🔔
-        {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
-      </button>
+  <span className="icon-wrapper">
+    <i className="fa fa-bell"></i>
+    {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+  </span>
+</button>
       <div className={`notification-dropdown ${isOpen ? "open" : ""}`}>
         {notifications.length === 0 ? (
           <p>Sem notificações.</p>
