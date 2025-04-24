@@ -97,7 +97,7 @@
 
   "auth.login.success": "Connexion réussie ! Bienvenue {name} !",
   "auth.login.failed": "Échec de la connexion ! Veuillez vérifier vos identifiants.",
-  "auth.register.success": "Utilisateur enregistré ! Veuillez vous connecter.",
+  "auth.register.success": "Utilisateur enregistré ! Veuillez confirmer votre compte en utilisant le lien affiché dans la console.",
   "auth.register.failed": "Erreur lors de l'enregistrement de l'utilisateur :",
   "auth.logout.success": "Déconnexion réussie ! À bientôt :)",
   "auth.logout.failed": "Un problème est survenu lors de la déconnexion. Veuillez réessayer.",
@@ -406,7 +406,20 @@
   "userProfile.notFound": "Profil non trouvé.",
   "userProfile.statsTitle": "Statistiques des produits",
   "userProfile.totalProducts": "Total",
-  "userProfile.noAvailableProducts": "Ce vendeur n'a pas de produits disponibles pour le moment."
+  "userProfile.noAvailableProducts": "Ce vendeur n'a pas de produits disponibles pour le moment.",
+
+  "chat.withUser": "Conversation avec @{username}",
+  "chat.loading": "Chargement...",
+  "chat.noMessages": "Aucun message.",
+  "chat.placeholder": "Écrivez un message...",
+  "chat.send": "Envoyer",
+  "chat.warn.invalidUserData": "Données utilisateur invalides dans le localStorage.",
+  "chat.error.markAsRead": "Erreur lors du marquage des messages comme lus.",
+  "chat.error.fetchMessages": "Erreur lors du chargement des messages.",
+  "chat.warn.websocketNotConnected": "Le WebSocket n'est pas connecté.",
+  "chat.log.websocketOpened": "WebSocket connecté",
+  "chat.log.websocketClosed": "WebSocket déconnecté",
+  "chat.log.pingSent": "Ping envoyé"
 
 }
   

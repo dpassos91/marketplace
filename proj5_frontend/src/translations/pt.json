@@ -173,7 +173,7 @@
   "auth.logout.failed": "Houve um problema ao fazer logout. Por favor, tente novamente.",
   "auth.logout.success": "Logout realizado com sucesso! Até breve :)",
   "auth.register.failed": "Erro ao registar utilizador:",
-  "auth.register.success": "Utilizador registado! Por favor, faça login.",
+  "auth.register.success": "Utilizador registado! Por favor, confirme a sua conta através do link disponibilizado na consola.",
   "auth.tryAgain": "Tente novamente.",
 
   "categoriesCarousel.notLoaded": "Nenhuma categoria disponível.",
@@ -388,7 +388,21 @@
       "userProfile.notFound": "Perfil não encontrado.",
       "userProfile.statsTitle": "Estatísticas dos Produtos",
       "userProfile.totalProducts": "Total",
-      "userProfile.noAvailableProducts": "Este vendedor não tem produtos disponíveis de momento."
+      "userProfile.noAvailableProducts": "Este vendedor não tem produtos disponíveis de momento.",
+
+      "chat.withUser": "Conversa com @{username}",
+      "chat.loading": "A carregar...",
+      "chat.noMessages": "Sem mensagens.",
+      "chat.placeholder": "Escreva uma mensagem...",
+      "chat.send": "Enviar",
+
+  "chat.warn.invalidUserData": "Dados de utilizador inválidos no localStorage.",
+  "chat.error.markAsRead": "Erro ao marcar mensagens como lidas.",
+  "chat.error.fetchMessages": "Erro ao carregar mensagens.",
+  "chat.warn.websocketNotConnected": "O WebSocket não está ligado.",
+  "chat.log.websocketOpened": "WebSocket ligado",
+  "chat.log.websocketClosed": "WebSocket desligado",
+  "chat.log.pingSent": "Ping enviado"
   
     
   }

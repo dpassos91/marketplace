@@ -76,7 +76,7 @@ export function useAuth() {
     try {
       const userData = await userAPI.registerUser(newUser);
 
-      alert(formatMessage({ id: 'auth.register.success', defaultMessage: 'Utilizador registado! Por favor, faça login.' }));
+      alert(formatMessage({ id: 'auth.register.success', defaultMessage: 'Utilizador registado! Por favor, confirme a sua conta através do link disponibilizado na consola.' }));
 
       return userData;
     } catch (error) {

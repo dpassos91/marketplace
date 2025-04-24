@@ -21,16 +21,6 @@ function AddProductModal({ isOpen, onClose }) {
         );
       }
 
-      if (!user.confirmed) {
-        alert(
-          intl.formatMessage({
-            id: "alert.userNotConfirmed",
-            defaultMessage: "A sua conta ainda não está confirmada. Por favor, confirme através do link enviado."
-          })
-        );
-        return;
-      }
-
       const productToSave = {
         ...productData,
         sellerId: user.id,

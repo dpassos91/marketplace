@@ -97,7 +97,7 @@
 
   "auth.login.success": "Login successful! Welcome {name}!",
   "auth.login.failed": "Login failed! Please check your credentials.",
-  "auth.register.success": "User registered! Please log in.",
+  "auth.register.success": "User registered! Please confirm your account using the link provided in the console.",
   "auth.register.failed": "Error registering user:",
   "auth.logout.success": "Successfully logged out! See you soon :)",
   "auth.logout.failed": "There was a problem logging out. Please try again.",
@@ -403,6 +403,19 @@
    "userProfile.notFound": "Profile not found.",
    "userProfile.statsTitle": "Product Statistics",
    "userProfile.totalProducts": "Total",
-   "userProfile.noAvailableProducts": "This seller has no available products at the moment."
+   "userProfile.noAvailableProducts": "This seller has no available products at the moment.",
+
+   "chat.withUser": "Chat with @{username}",
+   "chat.loading": "Loading...",
+   "chat.noMessages": "No messages.",
+   "chat.placeholder": "Type a message...",
+   "chat.send": "Send",
+   "chat.warn.invalidUserData": "Invalid user data in localStorage.",
+   "chat.error.markAsRead": "Error marking messages as read.",
+   "chat.error.fetchMessages": "Error loading messages.",
+   "chat.warn.websocketNotConnected": "WebSocket is not connected.",
+   "chat.log.websocketOpened": "WebSocket connected",
+   "chat.log.websocketClosed": "WebSocket disconnected",
+   "chat.log.pingSent": "Ping sent"
 
 }
