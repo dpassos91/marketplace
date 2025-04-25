@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.Iterator;
 import java.util.Map;
+import java.time.Duration;
+import java.time.Instant;
 
 import aor.paj.dao.UserDao;
 import aor.paj.dao.ProductDao;
@@ -38,6 +40,8 @@ public class UserBean {
     @Inject
     private ProductDao productDao;
 
+    @Inject
+    SettingsBean settingsBean;
 
     private boolean isValidUsername(String username) {
         return userDao.findByUsername(username) == null;
@@ -118,6 +122,7 @@ public class UserBean {
             if (userEntity.checkPassword(user.getPassword())) {
                 String sessionToken = generateNewToken();
                 userEntity.setToken(sessionToken);
+                userEntity.setLastActivityTime(Instant.now());
                 userDao.update(userEntity);
     
                 logger.info("Successful login for user: {}", user.getUsername());
@@ -476,9 +481,34 @@ public Response deleteUser(Long id, String token) {
         return toDto(userEntity);
     }
 
-    public UserEntity getUserByToken(String token) {
-        return userDao.findByToken(token);
-    }    
+
+
+public UserEntity getUserByToken(String token) {
+    UserEntity user = userDao.findByToken(token);
+
+    if (user == null) return null;
+
+    Instant now = Instant.now();
+    Instant lastActivity = user.getLastActivityTime();
+    int timeout = settingsBean.getSessionTimeoutMinutes();
+
+    if (lastActivity != null && Duration.between(lastActivity, now).toMinutes() > timeout) {
+        logger.info("Sessão expirada para utilizador: {}", user.getUsername());
+
+        // Invalida sessão
+        user.setToken(null);
+        user.setLastActivityTime(null);
+        userDao.update(user);
+        return null;
+    }
+
+    // Sessão ainda válida → atualiza lastActivity
+    user.setLastActivityTime(now);
+    userDao.update(user);
+
+    return user;
+}
+
 
     public List<UserDto> getAllUsers() {
         logger.info("Fetching all users from the database.");

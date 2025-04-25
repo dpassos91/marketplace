@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 import java.util.List;
+import java.time.Instant;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -90,6 +91,9 @@ public class UserEntity implements Serializable {
     @Column(name = "confirmation_token", unique = true)
     private String confirmationToken;
 
+    @Column(name = "last_activity_time")
+    private Instant lastActivityTime;
+
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> soldProducts;
 
@@ -163,6 +167,10 @@ private List<MessageEntity> receivedMessages;
 
     public String getConfirmationToken() {
         return confirmationToken;
+    }
+
+    public Instant getLastActivityTime() {
+        return lastActivityTime;
     }
 
     public boolean isActive() {
@@ -275,6 +283,10 @@ private List<MessageEntity> receivedMessages;
 
     public void setReceivedEvaluations(Set<EvaluationEntity> receivedEvaluations) {
         this.receivedEvaluations = receivedEvaluations;
+    }
+
+    public void setLastActivityTime(Instant lastActivityTime) {
+        this.lastActivityTime = lastActivityTime;
     }
 
     public void prepareForPermanentDeletion() {
