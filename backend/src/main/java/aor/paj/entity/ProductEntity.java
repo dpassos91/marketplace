@@ -16,7 +16,7 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 @NamedQueries({
     @NamedQuery(name = "Product.findAll", query = "SELECT p FROM ProductEntity p"),
     @NamedQuery(name = "Product.findById", query = "SELECT p FROM ProductEntity p WHERE p.id = :id"),

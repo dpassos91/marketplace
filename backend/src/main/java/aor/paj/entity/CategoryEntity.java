@@ -15,7 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 @NamedQueries({
     @NamedQuery(name = "Category.findAll", query = "SELECT c FROM CategoryEntity c"),
     @NamedQuery(name = "Category.findById", query = "SELECT c FROM CategoryEntity c WHERE c.id = :id"),

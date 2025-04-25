@@ -15,7 +15,7 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "evaluation")
+@Table(name = "evaluations")
 @NamedQueries({
     @NamedQuery(name = "Evaluation.findAll", query = "SELECT e FROM EvaluationEntity e"),
     @NamedQuery(name = "Evaluation.findById", query = "SELECT e FROM EvaluationEntity e WHERE e.id = :id"),

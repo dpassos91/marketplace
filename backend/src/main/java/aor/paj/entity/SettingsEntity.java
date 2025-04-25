@@ -3,7 +3,7 @@ package aor.paj.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Settings")
+@Table(name = "settings")
 public class SettingsEntity {
 
     @Id

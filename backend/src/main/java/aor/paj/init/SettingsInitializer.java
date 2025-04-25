@@ -1,17 +1,30 @@
 package aor.paj.init;
 
 import aor.paj.dao.SettingsDao;
+import aor.paj.dao.UserDao;
 import aor.paj.entity.SettingsEntity;
+import aor.paj.entity.UserEntity;
+import aor.paj.bean.UserBean;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
+
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-@ApplicationScoped
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;	
+
+@Singleton
+@Startup
 public class SettingsInitializer {
 
     @Inject
     SettingsDao settingsDao;
+
+    @Inject
+    UserDao userDao;
+
+    @Inject
+    UserBean userBean;
 
     @Transactional
     @PostConstruct
@@ -28,5 +41,24 @@ public class SettingsInitializer {
         } else {
             System.out.println("⚙️ Configuração de sessão já existe.");
         }
+
+        if (userDao.countAdmins() == 0) {
+            UserEntity admin = new UserEntity();
+            admin.setUsername("admin");
+            admin.setEmail("admin@admin.com");
+            admin.setFirstName("Administrador");
+            admin.setLastName("Sistema");
+            admin.setPhone("911111111");
+            admin.setPicture("https://via.placeholder.com/150");
+            admin.setPassword(userBean.hashPassword("admin123")); // usa método do bean
+            admin.setAdmin(true);
+            admin.setConfirmed(true);
+            admin.setActive(true);
+
+            userDao.create(admin);
+
+            System.out.println("🛡️ Administrador criado automaticamente:");
+        }
     }
 }
+

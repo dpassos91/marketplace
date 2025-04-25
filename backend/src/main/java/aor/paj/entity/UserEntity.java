@@ -22,7 +22,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "app_users")
 @NamedQueries({
         @NamedQuery(name = "User.findAll", query = "SELECT user FROM UserEntity user"),
         @NamedQuery(

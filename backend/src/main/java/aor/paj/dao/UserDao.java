@@ -113,6 +113,11 @@ public class UserDao {
                 .orElse(null);
     }
 
+    public long countAdmins() {
+        return entityManager.createQuery("SELECT COUNT(u) FROM UserEntity u WHERE u.isAdmin = true", Long.class)
+                 .getSingleResult();
+    }    
+
     public UserEntity findByIdWithAssociations(Long id) {
         return entityManager.createQuery(
             "SELECT u FROM UserEntity u " +
