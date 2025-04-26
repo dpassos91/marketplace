@@ -105,6 +105,7 @@ auth: {
       `${API_BASE_URL}/evaluations/evaluated/${userId}/count`,
     eligible: userId => `${API_BASE_URL}/evaluations/eligible/${userId}`,
   },
+
 // Message endpoints
 messages: {
   conversationWith: (username) =>
@@ -112,7 +113,10 @@ messages: {
   readFrom: (senderUsername) =>
     `${API_BASE_URL}/messages/read-from/${senderUsername}`,
   send: `${API_BASE_URL}/messages`,
-}
+},
+
+// Outros endpoints
+dashboardOverview: `${API_BASE_URL}/dashboard/overview`, // Dashboard overview endpoint
 };
 
 // HTTP request default options

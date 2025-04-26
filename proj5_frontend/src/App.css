@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   --primary-color: #809671;
   --primary-100: #d2deca;
@@ -1274,6 +1278,34 @@ body,
 
 .star.active {
   color: gold; /* Cor quando está dourada */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 2.25rem; /* Aproximadamente 36px */
+}
+
+h2 {
+  font-size: 1.875rem; /* Aproximadamente 30px */
+}
+
+h3 {
+  font-size: 1.5rem; /* Aproximadamente 24px */
+}
+
+h4 {
+  font-size: 1.25rem; /* Aproximadamente 20px */
+}
+
+h5 {
+  font-size: 1rem; /* Aproximadamente 16px */
+}
+
+h6 {
+  font-size: 0.875rem; /* Aproximadamente 14px */
 }
 
 

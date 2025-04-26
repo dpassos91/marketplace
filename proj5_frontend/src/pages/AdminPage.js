@@ -6,7 +6,8 @@ import UserTable from '../components/admin/UserTable';
 import EvaluationsTable from '../components/admin/EvaluationsTable';
 import InactiveProductsTable from '../components/admin/InactiveProductsTable';
 import AlteredProducts from '../components/admin/AlteredProducts';
-import AdminProductsPage from '../components/admin/AdminProductsPage'; // Importe a página de produtos
+import AdminProductsPage from '../components/admin/AdminProductsPage'; 
+import AdminDashboard from '../components/admin/AdminDashboard'; // Importa o componente Dashboard
 
 function AdminPage() {
   return (
@@ -23,6 +24,7 @@ function AdminPage() {
             {/*<Route path="/produtos/comprados" element={<AlteredProducts />} /> */}
             <Route path="/produtos/inativos" element={<InactiveProductsTable />} />
             <Route path="/utilizadores" element={<UserTable />} />
+            <Route path="/dashboard" element={<AdminDashboard />} />
             {/* Adicione outras rotas conforme necessário */}
           </Routes>
         </div>

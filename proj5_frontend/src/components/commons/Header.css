@@ -110,6 +110,7 @@ header .fa {
   height: auto;
   margin: 0;
   padding: 0;
+  margin-right: 15px;
 }
 
 /* Responsividade */
@@ -142,6 +143,7 @@ header .fa {
     justify-content: center;
     margin-top: 10px;
     margin-bottom: 10px;
+    margin-left: 1px;
   }
 
   .img-perfil {
