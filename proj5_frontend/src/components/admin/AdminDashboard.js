@@ -1,4 +1,5 @@
 import React from "react";
+import { useIntl } from "react-intl"; // Importação para internacionalizar
 import DashboardCard from "./DashboardCard";
 import useDashboardData from "../../hooks/useDashboardData";
 import SpinnerLeaf from "../commons/SpinnerLeaf";
@@ -6,6 +7,7 @@ import LineChartComponent from "./LineChartComponent";
 
 function AdminDashboard() {
   const { data, loading, error } = useDashboardData();
+  const intl = useIntl(); // Hook para traduzir
 
   const NA_Badge = (
     <span className="inline-block bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-1 rounded-full">
@@ -13,10 +15,10 @@ function AdminDashboard() {
     </span>
   );
 
-  const NoDataMessage = ({ message }) => (
+  const NoDataMessage = ({ messageId }) => (
     <div className="flex flex-col items-center justify-center text-gray-500 p-6">
       <div className="text-4xl mb-2">📭</div>
-      <p className="text-sm">{message}</p>
+      <p className="text-sm">{intl.formatMessage({ id: messageId })}</p>
     </div>
   );
 
@@ -29,26 +31,28 @@ function AdminDashboard() {
   }
 
   if (error) {
-    return <div>Erro ao carregar o dashboard.</div>;
+    return <div>{intl.formatMessage({ id: "admin.dashboard.loadingError" })}</div>;
   }
 
   return (
     <main className="p-6 space-y-8">
-      <h1 className="text-3xl font-bold mb-6">📊 Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        {intl.formatMessage({ id: "admin.dashboard.title" })}
+      </h1>
 
       {/* Secção dos Cards (Resumo Rápido) */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <DashboardCard title="Total de Utilizadores" value={data?.totalUsers > 0 ? data.totalUsers : NA_Badge} />
-        <DashboardCard title="Utilizadores Confirmados" value={data?.confirmedUsers > 0 ? data.confirmedUsers : NA_Badge} />
-        <DashboardCard title="Total de Produtos" value={data?.totalProducts > 0 ? data.totalProducts : NA_Badge} />
-        <DashboardCard title="Produtos Publicados" value={data?.publishedProducts > 0 ? data.publishedProducts : NA_Badge} />
+        <DashboardCard title={intl.formatMessage({ id: "admin.dashboard.cards.totalUsers" })} value={data?.totalUsers > 0 ? data.totalUsers : NA_Badge} />
+        <DashboardCard title={intl.formatMessage({ id: "admin.dashboard.cards.confirmedUsers" })} value={data?.confirmedUsers > 0 ? data.confirmedUsers : NA_Badge} />
+        <DashboardCard title={intl.formatMessage({ id: "admin.dashboard.cards.totalProducts" })} value={data?.totalProducts > 0 ? data.totalProducts : NA_Badge} />
+        <DashboardCard title={intl.formatMessage({ id: "admin.dashboard.cards.publishedProducts" })} value={data?.publishedProducts > 0 ? data.publishedProducts : NA_Badge} />
       </section>
 
       <hr className="my-6 border-gray-200" />
 
       {/* Secção de Categorias Ordenadas */}
       <section className="bg-white shadow rounded-2xl p-6">
-        <h2 className="text-2xl font-semibold mb-4">🏷️ Categorias Populares</h2>
+        <h2 className="text-2xl font-semibold mb-4">{intl.formatMessage({ id: "admin.dashboard.categories.title" })}</h2>
         {data?.popularCategories?.length > 0 ? (
           <ul className="list-disc pl-5 text-sm">
             {data.popularCategories.map((category, index) => (
@@ -58,7 +62,7 @@ function AdminDashboard() {
             ))}
           </ul>
         ) : (
-          <NoDataMessage message="Nenhuma categoria popular ainda." />
+          <NoDataMessage messageId="admin.dashboard.categories.noData" />
         )}
       </section>
 
@@ -66,18 +70,18 @@ function AdminDashboard() {
 
       {/* Secção de Produtos por Utilizador */}
       <section className="bg-white shadow rounded-2xl p-6">
-        <h2 className="text-2xl font-semibold mb-4">👤 Produtos por Utilizador</h2>
+        <h2 className="text-2xl font-semibold mb-4">{intl.formatMessage({ id: "admin.dashboard.productsPerUser.title" })}</h2>
         {data?.productsPerUser?.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto text-sm">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="px-4 py-2 text-left">🧑 Utilizador</th>
-                  <th className="px-4 py-2 text-left">📦 Total</th>
-                  <th className="px-4 py-2 text-left">✏️ Rascunhos</th>
-                  <th className="px-4 py-2 text-left">📢 Publicados</th>
-                  <th className="px-4 py-2 text-left">📌 Reservados</th>
-                  <th className="px-4 py-2 text-left">🛒 Comprados</th>
+                  <th className="px-4 py-2 text-left">{intl.formatMessage({ id: "admin.dashboard.productsPerUser.user" })}</th>
+                  <th className="px-4 py-2 text-left">{intl.formatMessage({ id: "admin.dashboard.productsPerUser.total" })}</th>
+                  <th className="px-4 py-2 text-left">{intl.formatMessage({ id: "admin.dashboard.productsPerUser.drafts" })}</th>
+                  <th className="px-4 py-2 text-left">{intl.formatMessage({ id: "admin.dashboard.productsPerUser.published" })}</th>
+                  <th className="px-4 py-2 text-left">{intl.formatMessage({ id: "admin.dashboard.productsPerUser.reserved" })}</th>
+                  <th className="px-4 py-2 text-left">{intl.formatMessage({ id: "admin.dashboard.productsPerUser.purchased" })}</th>
                 </tr>
               </thead>
               <tbody>
@@ -98,7 +102,7 @@ function AdminDashboard() {
             </table>
           </div>
         ) : (
-          <NoDataMessage message="Nenhum produto associado a utilizadores." />
+          <NoDataMessage messageId="admin.dashboard.productsPerUser.noData" />
         )}
       </section>
 
@@ -106,7 +110,7 @@ function AdminDashboard() {
 
       {/* Secção do Tempo Médio para Compra */}
       <section className="bg-white shadow rounded-2xl p-6 text-center">
-        <h2 className="text-2xl font-semibold mb-4">⏳ Tempo Médio até Compra</h2>
+        <h2 className="text-2xl font-semibold mb-4">{intl.formatMessage({ id: "admin.dashboard.avgPurchaseTime.title" })}</h2>
         {data?.averageTimeToPurchase && data.averageTimeToPurchase > 0 ? (
           <p className="text-4xl font-bold">{data.averageTimeToPurchase.toFixed(2)} dias</p>
         ) : (
@@ -119,28 +123,28 @@ function AdminDashboard() {
       {/* Secção dos Gráficos */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white shadow rounded-2xl p-6">
-          <h2 className="text-2xl font-semibold mb-4">👥 Utilizadores ao Longo do Tempo</h2>
+          <h2 className="text-2xl font-semibold mb-4">{intl.formatMessage({ id: "admin.dashboard.usersOverTime.title" })}</h2>
           {data?.usersOverTime?.length > 0 ? (
             <LineChartComponent
               data={data.usersOverTime}
               dataKey="registeredUsers"
-              dataKeyLabel="Utilizadores"
+              dataKeyLabel={intl.formatMessage({ id: "admin.dashboard.productsPerUser.user" })}
             />
           ) : (
-            <NoDataMessage message="Sem registos de utilizadores ainda." />
+            <NoDataMessage messageId="admin.dashboard.usersOverTime.noData" />
           )}
         </div>
 
         <div className="bg-white shadow rounded-2xl p-6">
-          <h2 className="text-2xl font-semibold mb-4">🛒 Produtos Comprados ao Longo do Tempo</h2>
+          <h2 className="text-2xl font-semibold mb-4">{intl.formatMessage({ id: "admin.dashboard.productsPurchasedOverTime.title" })}</h2>
           {data?.productsPurchasedOverTime?.length > 0 ? (
             <LineChartComponent
               data={data.productsPurchasedOverTime}
               dataKey="purchasedProducts"
-              dataKeyLabel="Comprados"
+              dataKeyLabel={intl.formatMessage({ id: "admin.dashboard.productsPerUser.purchased" })}
             />
           ) : (
-            <NoDataMessage message="Sem compras registadas ainda." />
+            <NoDataMessage messageId="admin.dashboard.productsPurchasedOverTime.noData" />
           )}
         </div>
       </section>
@@ -149,4 +153,5 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+
 

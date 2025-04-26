@@ -402,7 +402,29 @@
   "chat.warn.websocketNotConnected": "O WebSocket não está ligado.",
   "chat.log.websocketOpened": "WebSocket ligado",
   "chat.log.websocketClosed": "WebSocket desligado",
-  "chat.log.pingSent": "Ping enviado"
+  "chat.log.pingSent": "Ping enviado",
+
+  "admin.dashboard.title": "📊 Dashboard",
+  "admin.dashboard.cards.totalUsers": "Total de Utilizadores",
+  "admin.dashboard.cards.confirmedUsers": "Utilizadores Confirmados",
+  "admin.dashboard.cards.totalProducts": "Total de Produtos",
+  "admin.dashboard.cards.publishedProducts": "Produtos Publicados",
+  "admin.dashboard.categories.title": "🏷️ Categorias Populares",
+  "admin.dashboard.categories.noData": "Nenhuma categoria popular ainda.",
+  "admin.dashboard.productsPerUser.title": "👤 Produtos por Utilizador",
+  "admin.dashboard.productsPerUser.noData": "Nenhum produto associado a utilizadores.",
+  "admin.dashboard.productsPerUser.user": "🧑 Utilizador",
+  "admin.dashboard.productsPerUser.total": "📦 Total",
+  "admin.dashboard.productsPerUser.drafts": "✏️ Rascunhos",
+  "admin.dashboard.productsPerUser.published": "📢 Publicados",
+  "admin.dashboard.productsPerUser.reserved": "📌 Reservados",
+  "admin.dashboard.productsPerUser.purchased": "🛒 Comprados",
+  "admin.dashboard.avgPurchaseTime.title": "⏳ Tempo Médio até Compra",
+  "admin.dashboard.usersOverTime.title": "👥 Utilizadores ao Longo do Tempo",
+  "admin.dashboard.usersOverTime.noData": "Sem registos de utilizadores ainda.",
+  "admin.dashboard.productsPurchasedOverTime.title": "🛒 Produtos Comprados ao Longo do Tempo",
+  "admin.dashboard.productsPurchasedOverTime.noData": "Sem compras registadas ainda.",
+  "admin.dashboard.loadingError": "Erro ao carregar o dashboard."
   
     
   }
