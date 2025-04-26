@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.List;
 import java.time.Instant;
+import java.time.LocalDate;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -88,6 +89,9 @@ public class UserEntity implements Serializable {
     @Column(name = "confirmed", nullable = false)
     private boolean confirmed = false;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDate createdAt;
+
     @Column(name = "confirmation_token", unique = true)
     private String confirmationToken;
 
@@ -165,6 +169,10 @@ private List<MessageEntity> receivedMessages;
         return picture;
     }
 
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
     public String getConfirmationToken() {
         return confirmationToken;
     }
@@ -211,6 +219,10 @@ private List<MessageEntity> receivedMessages;
 
     public void setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
     
     public void setConfirmationToken(String confirmationToken) {

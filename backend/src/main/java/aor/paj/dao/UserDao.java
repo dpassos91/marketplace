@@ -1,5 +1,7 @@
 package aor.paj.dao;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import aor.paj.entity.EvaluationEntity;
@@ -118,6 +120,18 @@ public class UserDao {
                  .getSingleResult();
     }    
 
+    public long countAllUsers() {
+        return entityManager.createQuery(
+                "SELECT COUNT(u) FROM UserEntity u", Long.class)
+                .getSingleResult();
+    }
+
+    public long countConfirmedUsers() {
+        return entityManager.createQuery(
+                "SELECT COUNT(u) FROM UserEntity u WHERE u.confirmed = true", Long.class)
+                .getSingleResult();
+    }
+
     public UserEntity findByIdWithAssociations(Long id) {
         return entityManager.createQuery(
             "SELECT u FROM UserEntity u " +
@@ -139,6 +153,30 @@ public class UserDao {
         return null;
     }
 }
+
+public List<Object[]> countRegistrationsPerDay() {
+    List<Object[]> rawResults = entityManager.createQuery(
+        "SELECT FUNCTION('DATE', u.createdAt), COUNT(u) " +
+        "FROM UserEntity u " +
+        "GROUP BY FUNCTION('DATE', u.createdAt) " +
+        "ORDER BY FUNCTION('DATE', u.createdAt)",
+        Object[].class
+    ).getResultList();
+
+    List<Object[]> convertedResults = new ArrayList<>();
+
+    for (Object[] row : rawResults) {
+        java.sql.Date sqlDate = (java.sql.Date) row[0];
+        LocalDate localDate = sqlDate.toLocalDate(); // 🚀 Converte corretamente
+        Long count = (Long) row[1];
+
+        convertedResults.add(new Object[]{localDate, count});
+    }
+
+    return convertedResults;
+}
+
+
 
     public boolean permanentlyDelete(UserEntity user) {
         try {

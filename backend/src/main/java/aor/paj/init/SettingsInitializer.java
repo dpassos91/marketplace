@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;	
 
+import java.time.LocalDate;
+
 @Singleton
 @Startup
 public class SettingsInitializer {
@@ -49,11 +51,13 @@ public class SettingsInitializer {
             admin.setFirstName("Administrador");
             admin.setLastName("Sistema");
             admin.setPhone("911111111");
-            admin.setPicture("https://via.placeholder.com/150");
+            admin.setPicture("https://cptstatic.s3.amazonaws.com/imagens/enviadas/materias/materia25719/administrador-de-empresas-uma-unica-pessoa-em-varios-papeis-artigos-cursos-cpt.jpg");
             admin.setPassword(userBean.hashPassword("admin123")); // usa método do bean
             admin.setAdmin(true);
             admin.setConfirmed(true);
             admin.setActive(true);
+            admin.setCreatedAt(LocalDate.now());
+
 
             userDao.create(admin);
 

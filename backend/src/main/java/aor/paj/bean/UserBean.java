@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 
 import aor.paj.dao.UserDao;
 import aor.paj.dao.ProductDao;
@@ -18,6 +19,7 @@ import aor.paj.dto.LoginResponseDto;
 import aor.paj.dto.PasswordUpdateDto;
 import aor.paj.dto.UserDto;
 import aor.paj.dto.UserProfileDto;
+import aor.paj.dto.UserRegistrationStatsDto;
 import aor.paj.entity.EvaluationEntity;
 import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
@@ -55,6 +57,7 @@ public class UserBean {
     
         // Converte o Dto em Entity
         UserEntity userEntity = toEntity(userDto);
+        userEntity.setCreatedAt(LocalDate.now());
     
         // Guarda o token original antes de persistir
         String confirmationToken = userEntity.getConfirmationToken();
@@ -557,6 +560,38 @@ public UserEntity getUserByToken(String token) {
     public void updateUser(UserEntity user) {
         userDao.update(user);
     }
+
+    public int countTotalUsers() {
+        logger.info("Counting total users.");
+        return (int) userDao.countAllUsers();
+    }
+
+    public int countConfirmedUsers() {
+        logger.info("Counting confirmed users.");
+        return (int) userDao.countConfirmedUsers();
+    }
+
+    public List<UserRegistrationStatsDto> getUsersOverTime() {
+    logger.info("Fetching user registrations over time.");
+
+    List<Object[]> results = userDao.countRegistrationsPerDay();
+    List<UserRegistrationStatsDto> stats = new ArrayList<>();
+
+    for (Object[] row : results) {
+        LocalDate date = (LocalDate) row[0];
+        Long registeredUsers = (Long) row[1];
+
+        UserRegistrationStatsDto dto = new UserRegistrationStatsDto();
+        dto.setDate(date);
+        dto.setRegisteredUsers(registeredUsers.intValue());
+
+        stats.add(dto);
+    }
+
+    logger.info("Fetched {} user registration stats.", stats.size());
+    return stats;
+}
+
     
 
     public UserEntity toEntity(UserDto userDto) {

@@ -453,6 +453,52 @@ public class ProductDao {
         }
     }
 
+    public long countByState(int stateId) {
+        return em.createQuery(
+                "SELECT COUNT(p) FROM ProductEntity p WHERE p.stateId = :stateId", Long.class)
+                .setParameter("stateId", stateId)
+                .getSingleResult();
+    }
+
+    public List<ProductEntity> findByState(int stateId) {
+        return em.createQuery(
+                "SELECT p FROM ProductEntity p WHERE p.stateId = :stateId", ProductEntity.class)
+                .setParameter("stateId", stateId)
+                .getResultList();
+    }
+
+    public List<Object[]> countProductsByCategory() {
+        return em.createQuery(
+            "SELECT p.category.id, p.category.name, COUNT(p) " +
+            "FROM ProductEntity p " +
+            "GROUP BY p.category.id, p.category.name " +
+            "ORDER BY COUNT(p) DESC",
+            Object[].class
+        ).getResultList();
+    }
+
+    public List<Object[]> countProductsGroupedByUserAndState() {
+        return em.createQuery(
+            "SELECT p.seller.username, p.stateId, COUNT(p) " +
+            "FROM ProductEntity p " +
+            "GROUP BY p.seller.username, p.stateId",
+            Object[].class
+        ).getResultList();
+    }
+
+    public List<Object[]> countPurchasesPerDay() {
+        return em.createQuery(
+            "SELECT FUNCTION('DATE', p.editDate), COUNT(p) " +
+            "FROM ProductEntity p " +
+            "WHERE p.stateId = :stateId " +
+            "GROUP BY FUNCTION('DATE', p.editDate) " +
+            "ORDER BY FUNCTION('DATE', p.editDate)"
+        , Object[].class)
+        .setParameter("stateId", ProductStateId.COMPRADO.getStateId())
+        .getResultList();
+    }
+    
+
     /**
      * Permanently deletes a product that is in INATIVO state
      * 

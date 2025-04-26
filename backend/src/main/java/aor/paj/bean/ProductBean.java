@@ -2,8 +2,11 @@ package aor.paj.bean;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +14,10 @@ import org.apache.logging.log4j.Logger;
 import aor.paj.dao.CategoryDao;
 import aor.paj.dao.ProductDao;
 import aor.paj.dao.UserDao;
+import aor.paj.dto.CategoryCountDto;
 import aor.paj.dto.ProductDto;
+import aor.paj.dto.ProductPurchaseStatsDto;
+import aor.paj.dto.UserProductStatsDto;
 import aor.paj.entity.CategoryEntity;
 import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
@@ -533,6 +539,140 @@ public class ProductBean {
 
         return results;
     }
+
+    public int countDraftProducts() {
+        logger.info("Counting draft products.");
+        return (int) productDao.countByState(ProductStateId.RASCUNHO.getStateId());
+    }
+    
+    public int countPublishedProducts() {
+        logger.info("Counting published products.");
+        return (int) productDao.countByState(ProductStateId.DISPONIVEL.getStateId());
+    }
+    
+    public int countReservedProducts() {
+        logger.info("Counting reserved products.");
+        return (int) productDao.countByState(ProductStateId.RESERVADO.getStateId());
+    }
+    
+    public int countPurchasedProducts() {
+        logger.info("Counting purchased products.");
+        return (int) productDao.countByState(ProductStateId.COMPRADO.getStateId());
+    }
+
+    public int countInactiveProducts() {
+        logger.info("Counting inactive products.");
+        return (int) productDao.countByState(ProductStateId.INATIVO.getStateId());
+    }
+
+    public double calculateAverageTimeToPurchase() {
+        logger.info("Calculating average time to purchase.");
+    
+        List<ProductEntity> purchasedProducts = productDao.findByState(ProductStateId.COMPRADO.getStateId());
+    
+        if (purchasedProducts.isEmpty()) {
+            logger.warn("No purchased products found. Returning 0.");
+            return 0.0;
+        }
+    
+        double totalDays = 0.0;
+        int count = 0;
+    
+        for (ProductEntity product : purchasedProducts) {
+            if (product.getDate() != null && product.getEditDate() != null) {
+                long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(product.getDate(), product.getEditDate());
+                if (daysBetween >= 0) { // só considerar se a diferença for válida
+                    totalDays += daysBetween;
+                    count++;
+                }
+            }
+        }
+    
+        if (count == 0) {
+            logger.warn("No valid purchased products with both dates found. Returning 0.");
+            return 0.0;
+        }
+    
+        double average = totalDays / count;
+        logger.info("Average time to purchase calculated: {} days", average);
+        return average;
+    }
+
+    public List<CategoryCountDto> getPopularCategories() {
+        logger.info("Fetching popular categories.");
+    
+        List<Object[]> results = productDao.countProductsByCategory();
+        List<CategoryCountDto> popularCategories = new ArrayList<>();
+    
+        for (Object[] row : results) {
+            String categoryName = (String) row[0];
+            Long productCount = (Long) row[1];
+    
+            CategoryCountDto dto = new CategoryCountDto();
+            dto.setCategoryName(categoryName);
+            dto.setProductCount(productCount.intValue());
+    
+            popularCategories.add(dto);
+        }
+    
+        logger.info("Fetched {} popular categories.", popularCategories.size());
+        return popularCategories;
+    }
+
+    public List<UserProductStatsDto> getProductsPerUser() {
+        logger.info("Fetching product statistics per user.");
+    
+        List<Object[]> results = productDao.countProductsGroupedByUserAndState();
+        Map<String, UserProductStatsDto> userStatsMap = new HashMap<>();
+    
+        for (Object[] row : results) {
+            String username = (String) row[0];
+            Integer stateId = (Integer) row[1];
+            Long count = (Long) row[2];
+    
+            UserProductStatsDto stats = userStatsMap.getOrDefault(username, new UserProductStatsDto(username));
+    
+            stats.setTotalProducts(stats.getTotalProducts() + count.intValue());
+    
+            if (stateId != null) {
+                switch (stateId) {
+                    case 1 -> stats.setDraftProducts(stats.getDraftProducts() + count.intValue()); // Rascunho
+                    case 2 -> stats.setPublishedProducts(stats.getPublishedProducts() + count.intValue()); // Disponível
+                    case 3 -> stats.setReservedProducts(stats.getReservedProducts() + count.intValue()); // Reservado
+                    case 4 -> stats.setPurchasedProducts(stats.getPurchasedProducts() + count.intValue()); // Comprado
+                    case 5 -> stats.setInactiveProducts(stats.getInactiveProducts() + count.intValue()); // Inativo
+                    default -> logger.warn("Unknown stateId {} for user {}", stateId, username);
+                }
+            }
+    
+            userStatsMap.put(username, stats);
+        }
+    
+        logger.info("Fetched statistics for {} users.", userStatsMap.size());
+        return new ArrayList<>(userStatsMap.values());
+    }
+    
+
+public List<ProductPurchaseStatsDto> getProductsPurchasedOverTime() {
+    logger.info("Fetching products purchased over time.");
+
+    List<Object[]> results = productDao.countPurchasesPerDay();
+    List<ProductPurchaseStatsDto> stats = new ArrayList<>();
+
+    for (Object[] row : results) {
+        LocalDate date = (LocalDate) row[0];
+        Long purchasedProducts = (Long) row[1];
+
+        ProductPurchaseStatsDto dto = new ProductPurchaseStatsDto();
+        dto.setDate(date);
+        dto.setPurchasedProducts(purchasedProducts.intValue());
+
+        stats.add(dto);
+    }
+
+    logger.info("Fetched {} product purchase stats.", stats.size());
+    return stats;
+}
 
     /**
      * Converts a product entity to a DTO
