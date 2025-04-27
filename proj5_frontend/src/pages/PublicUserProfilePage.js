@@ -120,7 +120,7 @@ export default function PublicUserProfilePage() {
           </button>
 
           {canEvaluate && (
-            <button onClick={() => setShowEvaluationModal(true)} className="avaliar-button">
+            <button onClick={() => setShowEvaluationModal(true)} className="message-button">
               <FormattedMessage id="userProfile.addEvaluation" defaultMessage="Adicionar Avaliação" />
             </button>
           )}
