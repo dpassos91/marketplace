@@ -441,7 +441,19 @@
   "admin.dashboard.usersOverTime.noData": "Aucun utilisateur enregistré pour l'instant.",
   "admin.dashboard.productsPurchasedOverTime.title": "🛒 Produits achetés au fil du temps",
   "admin.dashboard.productsPurchasedOverTime.noData": "Aucun achat enregistré pour l'instant.",
-  "admin.dashboard.loadingError": "Erreur lors du chargement du tableau de bord."
+  "admin.dashboard.loadingError": "Erreur lors du chargement du tableau de bord.",
+
+  "admin.sidebar.configuracoes": "Paramètres",
+
+  "admin.settings.title": "Paramètres",
+  "admin.settings.sessionTimeout": "Durée de session (minutes)",
+  "admin.settings.resetTokenTimeout": "Expiration du jeton de réinitialisation (minutes)",
+  "admin.settings.confirmTokenTimeout": "Expiration du jeton de confirmation (minutes)",
+  "admin.settings.save": "Mettre à jour les paramètres",
+  "admin.settings.saving": "Mise à jour...",
+  "admin.settings.success": "Paramètres mis à jour avec succès !",
+  "admin.settings.errorLoad": "Erreur lors du chargement des paramètres.",
+  "admin.settings.errorUpdate": "Erreur lors de la mise à jour des paramètres."
 
 }
   

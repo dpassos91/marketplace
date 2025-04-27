@@ -40,5 +40,18 @@ public class Notifier {
     public boolean isConnected(String username) {
         return activeSessions.containsKey(username);
     }
+
+    public void broadcast(String json) {
+        System.out.println("📣 A enviar broadcast: " + json);
+        for (Session session : activeSessions.values()) {
+            if (session.isOpen()) {
+                try {
+                    session.getBasicRemote().sendText(json);
+                } catch (IOException e) {
+                    System.err.println("❌ Erro ao fazer broadcast: " + e.getMessage());
+                }
+            }
+        }
+    }
 }
 

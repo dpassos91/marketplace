@@ -7,9 +7,12 @@ import org.apache.logging.log4j.Logger;
 
 import aor.paj.bean.ProductBean;
 import aor.paj.dto.ProductDto;
+import aor.paj.util.WebSocketUtils;
 import aor.paj.exception.BadRequestException;
 import aor.paj.exception.ResourceNotFoundException;
 import aor.paj.util.ProductStateId;
+import aor.paj.websocket.Notifier;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -24,6 +27,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+@RequestScoped
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,6 +37,9 @@ public class ProductService {
 
     @Inject
     private ProductBean productBean;
+
+    @Inject
+    private Notifier notifier;
 
     /**
      * Get all products
@@ -235,6 +242,12 @@ public class ProductService {
             throw new BadRequestException("Could not create product. Verify that the seller and category exist.");
         }
 
+        // ✨ Criar JSON para o novo produto
+        String json = WebSocketUtils.createProductCreatedMessage(createdProduct);
+
+        // ✨ Enviar para todos via WebSocket
+        notifier.broadcast(json);
+
         logger.info("Product created successfully: id={}, title='{}'", createdProduct.getId(),
                 createdProduct.getTitle());
         return Response.status(Response.Status.CREATED).entity(createdProduct).build();
@@ -270,6 +283,13 @@ public class ProductService {
         if (updatedProduct == null) {
             throw new ResourceNotFoundException("Product with id " + id + " not found");
         }
+
+        
+// ✨ Criar JSON para o evento
+String json = WebSocketUtils.createProductUpdatedMessage(updatedProduct);
+
+// ✨ Enviar para todos via WebSocket
+notifier.broadcast(json);
 
         logger.info("Product updated successfully: id={}", id);
         return Response.ok(updatedProduct).build();

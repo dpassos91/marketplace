@@ -438,6 +438,18 @@
    "admin.dashboard.usersOverTime.noData": "No user registrations yet.",
    "admin.dashboard.productsPurchasedOverTime.title": "🛒 Products Purchased Over Time",
    "admin.dashboard.productsPurchasedOverTime.noData": "No purchases recorded yet.",
-   "admin.dashboard.loadingError": "Error loading the dashboard."
+   "admin.dashboard.loadingError": "Error loading the dashboard.",
+
+   "admin.sidebar.configuracoes": "Settings",
+
+   "admin.settings.title": "Settings",
+   "admin.settings.sessionTimeout": "Session Timeout (minutes)",
+   "admin.settings.resetTokenTimeout": "Reset Token Expiration (minutes)",
+   "admin.settings.confirmTokenTimeout": "Confirmation Token Expiration (minutes)",
+   "admin.settings.save": "Update Settings",
+   "admin.settings.saving": "Updating...",
+   "admin.settings.success": "Settings updated successfully!",
+   "admin.settings.errorLoad": "Error loading settings.",
+   "admin.settings.errorUpdate": "Error updating settings."
 
 }

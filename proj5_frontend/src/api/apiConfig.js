@@ -8,60 +8,6 @@ const API_BASE_URL = 'http://localhost:8080/diogopassos-proj5/rest';
 
 // API Endpoints
 const API_ENDPOINTS = {
-  // Product endpoints
-  products: {
-    base: `${API_BASE_URL}/products`,
-    all: `${API_BASE_URL}/products`, // Get all products endpoint
-    active: `${API_BASE_URL}/products/active`, // Get all active products
-    edited: `${API_BASE_URL}/products/edited`, // Get all edited products
-    byId: id => `${API_BASE_URL}/products/${id}`,
-    create: `${API_BASE_URL}/products`,
-    update: id => `${API_BASE_URL}/products/${id}`,
-    deactivate: id => `${API_BASE_URL}/products/${id}/deactivate`,
-    permanentDelete: id => `${API_BASE_URL}/products/${id}/permanent`,
-    inactive: `${API_BASE_URL}/products/inactive`, // For listing inactive products
-    reactivate: (id, stateId) =>
-      `${API_BASE_URL}/products/${id}/reactivate/${stateId}`,
-    paginated: (page = 0, size = 10) =>
-      `${API_BASE_URL}/products/paginated?page=${page}&size=${size}`,
-    count: `${API_BASE_URL}/products/count`, // Get total number of products
-    activeCount: `${API_BASE_URL}/products/active/count`, // Get count of active products
-    byCategory: categoryId => `${API_BASE_URL}/products/category/${categoryId}`,
-    bySeller: sellerId => `${API_BASE_URL}/products/seller/${sellerId}`,
-    search: title =>
-      `${API_BASE_URL}/products/search?title=${encodeURIComponent(title)}`, // Search by title
-    byLocation: location =>
-      `${API_BASE_URL}/products/location/${encodeURIComponent(location)}`,
-    byStatus: status => `${API_BASE_URL}/products/status/${status}`,
-    updateStatus: (productId, stateId) =>
-      `${API_BASE_URL}/products/${productId}/status/${stateId}`,
-    purchase: (productId, buyerId) =>
-      `${API_BASE_URL}/products/${productId}/purchase/${buyerId}`, // Endpoint for purchasing products
-    filter: (categoryId, sellerId, includeStates) => {
-      const params = new URLSearchParams();
-      if (categoryId) params.append('categoryId', categoryId);
-      if (sellerId) params.append('sellerId', sellerId);
-      if (Array.isArray(includeStates)) {
-        includeStates.forEach(state => params.append('includeStates', state));
-      }
-    
-      return `${API_BASE_URL}/products/filter?${params.toString()}`;
-    }
-  },
-
-// User endpoints
-users: {
-  base: `${API_BASE_URL}/users`,
-  confirm: (token) => `${API_BASE_URL}/users/confirm?token=${token}`,
-  byId: (id) => `${API_BASE_URL}/users/${id}`,
-  update: (id) => `${API_BASE_URL}/users/${id}`,
-  delete: (id) => `${API_BASE_URL}/users/${id}`,
-  profile: (username) => `${API_BASE_URL}/users/profile/${username}`,
-  updateStatus: (id) => `${API_BASE_URL}/users/${id}/status`,
-  updatePassword: (id) => `${API_BASE_URL}/users/${id}/password`,
-  byUsername: (username) => `${API_BASE_URL}/users/username/${username}`,
-  deleted: `${API_BASE_URL}/users/deleted`,
-},
 
 // Auth endpoints
 auth: {
@@ -71,7 +17,6 @@ auth: {
   resetPassword: `${API_BASE_URL}/auth/reset-password`
 },
 
-  
   // Category endpoints
   categories: {
     all: `${API_BASE_URL}/categories`,
@@ -115,7 +60,68 @@ messages: {
   send: `${API_BASE_URL}/messages`,
 },
 
-// Outros endpoints
+  // Product endpoints
+  products: {
+    base: `${API_BASE_URL}/products`,
+    all: `${API_BASE_URL}/products`, // Get all products endpoint
+    active: `${API_BASE_URL}/products/active`, // Get all active products
+    edited: `${API_BASE_URL}/products/edited`, // Get all edited products
+    byId: id => `${API_BASE_URL}/products/${id}`,
+    create: `${API_BASE_URL}/products`,
+    update: id => `${API_BASE_URL}/products/${id}`,
+    deactivate: id => `${API_BASE_URL}/products/${id}/deactivate`,
+    permanentDelete: id => `${API_BASE_URL}/products/${id}/permanent`,
+    inactive: `${API_BASE_URL}/products/inactive`, // For listing inactive products
+    reactivate: (id, stateId) =>
+      `${API_BASE_URL}/products/${id}/reactivate/${stateId}`,
+    paginated: (page = 0, size = 10) =>
+      `${API_BASE_URL}/products/paginated?page=${page}&size=${size}`,
+    count: `${API_BASE_URL}/products/count`, // Get total number of products
+    activeCount: `${API_BASE_URL}/products/active/count`, // Get count of active products
+    byCategory: categoryId => `${API_BASE_URL}/products/category/${categoryId}`,
+    bySeller: sellerId => `${API_BASE_URL}/products/seller/${sellerId}`,
+    search: title =>
+      `${API_BASE_URL}/products/search?title=${encodeURIComponent(title)}`, // Search by title
+    byLocation: location =>
+      `${API_BASE_URL}/products/location/${encodeURIComponent(location)}`,
+    byStatus: status => `${API_BASE_URL}/products/status/${status}`,
+    updateStatus: (productId, stateId) =>
+      `${API_BASE_URL}/products/${productId}/status/${stateId}`,
+    purchase: (productId, buyerId) =>
+      `${API_BASE_URL}/products/${productId}/purchase/${buyerId}`, // Endpoint for purchasing products
+    filter: (categoryId, sellerId, includeStates) => {
+      const params = new URLSearchParams();
+      if (categoryId) params.append('categoryId', categoryId);
+      if (sellerId) params.append('sellerId', sellerId);
+      if (Array.isArray(includeStates)) {
+        includeStates.forEach(state => params.append('includeStates', state));
+      }
+    
+      return `${API_BASE_URL}/products/filter?${params.toString()}`;
+    }
+  },
+
+  // Settings endpoints
+  settings: {
+    getSettings: `${API_BASE_URL}/settings`,
+    updateSettings: `${API_BASE_URL}/settings`,
+  },
+
+// User endpoints
+users: {
+  base: `${API_BASE_URL}/users`,
+  confirm: (token) => `${API_BASE_URL}/users/confirm?token=${token}`,
+  byId: (id) => `${API_BASE_URL}/users/${id}`,
+  update: (id) => `${API_BASE_URL}/users/${id}`,
+  delete: (id) => `${API_BASE_URL}/users/${id}`,
+  profile: (username) => `${API_BASE_URL}/users/profile/${username}`,
+  updateStatus: (id) => `${API_BASE_URL}/users/${id}/status`,
+  updatePassword: (id) => `${API_BASE_URL}/users/${id}/password`,
+  byUsername: (username) => `${API_BASE_URL}/users/username/${username}`,
+  deleted: `${API_BASE_URL}/users/deleted`,
+},
+
+// Dashboard endpoint
 dashboardOverview: `${API_BASE_URL}/dashboard/overview`, // Dashboard overview endpoint
 };
 

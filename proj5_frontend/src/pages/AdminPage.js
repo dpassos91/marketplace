@@ -8,6 +8,7 @@ import InactiveProductsTable from '../components/admin/InactiveProductsTable';
 import AlteredProducts from '../components/admin/AlteredProducts';
 import AdminProductsPage from '../components/admin/AdminProductsPage'; 
 import AdminDashboard from '../components/admin/AdminDashboard'; // Importa o componente Dashboard
+import AdminSettingsPage from './AdminSettingsPage';
 
 function AdminPage() {
   return (
@@ -25,6 +26,7 @@ function AdminPage() {
             <Route path="/produtos/inativos" element={<InactiveProductsTable />} />
             <Route path="/utilizadores" element={<UserTable />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
+            <Route path="/configuracoes" element={<AdminSettingsPage />} />
             {/* Adicione outras rotas conforme necessário */}
           </Routes>
         </div>

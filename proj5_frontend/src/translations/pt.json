@@ -424,7 +424,19 @@
   "admin.dashboard.usersOverTime.noData": "Sem registos de utilizadores ainda.",
   "admin.dashboard.productsPurchasedOverTime.title": "🛒 Produtos Comprados ao Longo do Tempo",
   "admin.dashboard.productsPurchasedOverTime.noData": "Sem compras registadas ainda.",
-  "admin.dashboard.loadingError": "Erro ao carregar o dashboard."
+  "admin.dashboard.loadingError": "Erro ao carregar o dashboard.",
+
+  "admin.sidebar.configuracoes": "Configurações",
+
+  "admin.settings.title": "Configurações",
+  "admin.settings.sessionTimeout": "Tempo de sessão (minutos)",
+  "admin.settings.resetTokenTimeout": "Tempo de expiração do reset token (minutos)",
+  "admin.settings.confirmTokenTimeout": "Tempo de expiração do token de confirmação (minutos)",
+  "admin.settings.save": "Atualizar Configurações",
+  "admin.settings.saving": "A atualizar...",
+  "admin.settings.success": "Configurações atualizadas com sucesso!",
+  "admin.settings.errorLoad": "Erro ao carregar configurações.",
+  "admin.settings.errorUpdate": "Erro ao atualizar configurações."
   
     
   }

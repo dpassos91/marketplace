@@ -2,7 +2,7 @@ package aor.paj.bean;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
+import jakarta.transaction.Transactional;
 import aor.paj.dao.SettingsDao;
 import aor.paj.entity.SettingsEntity;
 
@@ -24,6 +24,7 @@ public class SettingsBean {
         return settingsDao.getSettings().getConfirmTokenTimeoutMinutes();
     }
 
+    @Transactional
     public void updateAllTimeouts(int session, int reset, int confirm) {
     SettingsEntity settings = settingsDao.getSettings();
     settings.setSessionTimeoutMinutes(session);

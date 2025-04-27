@@ -10,6 +10,11 @@ function AdminSidebar() {
       </h2>
       <nav>
         <ul>
+        <li>
+            <Link to="/admin/configuracoes" className="btn-produtos" id="configuracoes">
+              <FormattedMessage id="admin.sidebar.configuracoes" defaultMessage="Configuracões" />
+            </Link>
+          </li>
           <li>
             <Link to="/admin/dashboard" className="btn-produtos" id="dashboard">
               <FormattedMessage id="admin.sidebar.dashboard" defaultMessage="Dashboard" />

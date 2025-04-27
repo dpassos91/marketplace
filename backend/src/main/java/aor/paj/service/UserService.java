@@ -5,7 +5,9 @@ import aor.paj.dto.StatusUpdateDto;
 import aor.paj.dto.UserDto;
 import aor.paj.dto.UserProfileDto;
 import aor.paj.entity.UserEntity;
+import aor.paj.util.WebSocketUtils;
 import aor.paj.bean.UserBean;
+import aor.paj.websocket.Notifier;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.ws.rs.*;
@@ -22,6 +24,9 @@ public class UserService {
     @Inject
     UserBean userBean;
 
+    @Inject
+    Notifier notifier;
+
     // Criar novo utilizador
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -29,6 +34,13 @@ public class UserService {
     public Response createUser(UserDto userDto) {
         logger.info("Registration attempt by user: {}", userDto.getUsername());
         UserDto createdUser = userBean.registerUser(userDto);
+
+        // ✨ Criar JSON para o novo produto
+        String json = WebSocketUtils.createUserCreatedMessage(createdUser);
+        
+        // ✨ Enviar para todos via WebSocket
+        notifier.broadcast(json);
+        
         logger.info("User successfully registered: {}", createdUser.getUsername());
         return Response.ok(createdUser).build();
     }
