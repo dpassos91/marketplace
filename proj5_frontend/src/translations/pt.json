@@ -436,7 +436,12 @@
   "admin.settings.saving": "A atualizar...",
   "admin.settings.success": "Configurações atualizadas com sucesso!",
   "admin.settings.errorLoad": "Erro ao carregar configurações.",
-  "admin.settings.errorUpdate": "Erro ao atualizar configurações."
+  "admin.settings.errorUpdate": "Erro ao atualizar configurações.",
+
+  "notifications.none": "Sem notificações",
+  "notifications.productCreated": "Novo produto adicionado!",
+  "notifications.productUpdated": "Produto atualizado!",
+  "notifications.userCreated": "Novo utilizador registado!"
   
     
   }

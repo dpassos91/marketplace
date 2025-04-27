@@ -453,7 +453,12 @@
   "admin.settings.saving": "Mise à jour...",
   "admin.settings.success": "Paramètres mis à jour avec succès !",
   "admin.settings.errorLoad": "Erreur lors du chargement des paramètres.",
-  "admin.settings.errorUpdate": "Erreur lors de la mise à jour des paramètres."
+  "admin.settings.errorUpdate": "Erreur lors de la mise à jour des paramètres.",
+
+  "notifications.none": "Pas de notifications",
+  "notifications.productCreated": "Nouveau produit ajouté!",
+  "notifications.productUpdated": "Produit mis à jour!",
+  "notifications.userCreated": "Nouvel utilisateur enregistré!"
 
 }
   

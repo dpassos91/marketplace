@@ -20,6 +20,7 @@ import './App.css';
 import ChatWindow from './components/chat/ChatWindow';
 import { notificationStore } from './stores/notificationStore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import NotificationBell from './components/commons/NotificationBell';
 
 function App() {
   const login = useAuthStore((state) => state.login);

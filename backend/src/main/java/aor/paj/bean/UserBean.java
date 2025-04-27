@@ -14,6 +14,7 @@ import java.time.LocalDate;
 
 import aor.paj.dao.UserDao;
 import aor.paj.dao.ProductDao;
+import aor.paj.websocket.Notifier;
 import aor.paj.dto.LoginRequestDto;
 import aor.paj.dto.LoginResponseDto;
 import aor.paj.dto.PasswordUpdateDto;
@@ -23,6 +24,7 @@ import aor.paj.dto.UserRegistrationStatsDto;
 import aor.paj.entity.EvaluationEntity;
 import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
+import aor.paj.util.WebSocketUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
@@ -44,6 +46,9 @@ public class UserBean {
 
     @Inject
     SettingsBean settingsBean;
+
+    @Inject
+    private Notifier notifier;
 
     private boolean isValidUsername(String username) {
         return userDao.findByUsername(username) == null;
@@ -67,22 +72,27 @@ public class UserBean {
         userEntity.setActive(true);
         userEntity.setAdmin(false);
     
-        try {
-            userDao.create(userEntity); // sem reassinar
-    
-            logger.info("User successfully registered: {}", userEntity.getUsername());
-    
-            // Simula envio de e-mail
-            System.out.println("=== TOKEN DE CONFIRMAÇÃO ===");
-            System.out.println("Username: " + userEntity.getUsername());
-            System.out.println("Token: " + confirmationToken);
-            System.out.println("URL: http://localhost:3000/confirmar?token=" + confirmationToken);
-            System.out.println("============================");
-    
-        } catch (Exception exception) {
-            logger.error("Error during registration for user: {}", userDto.getUsername(), exception);
-            throw exception;
-        }
+try {
+    userDao.create(userEntity); // sem reassinar
+
+    logger.info("User successfully registered: {}", userEntity.getUsername());
+
+    // 📣 Enviar broadcast do novo utilizador para o dashboard
+    String jsonMessage = WebSocketUtils.createUserCreatedMessage(toDto(userEntity));
+    notifier.broadcast(jsonMessage);
+
+    // Simula envio de e-mail
+    System.out.println("=== TOKEN DE CONFIRMAÇÃO ===");
+    System.out.println("Username: " + userEntity.getUsername());
+    System.out.println("Token: " + confirmationToken);
+    System.out.println("URL: http://localhost:3000/confirmar?token=" + confirmationToken);
+    System.out.println("============================");
+
+} catch (Exception exception) {
+    logger.error("Error during registration for user: {}", userDto.getUsername(), exception);
+    throw exception;
+}
+
     
         return toDto(userEntity);
     }    

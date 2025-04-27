@@ -19,6 +19,7 @@ public class WebSocketUtils {
                 .add("categoryId", product.getCategoryId())
                 .add("sellerId", product.getSellerId())
                 .add("active", product.isActive())
+                .add("imageUrl", (product.getImageUrl() != null && !product.getImageUrl().isBlank()) ? product.getImageUrl() : "")
             )
             .build();
         return message.toString();
@@ -36,7 +37,7 @@ public class WebSocketUtils {
                 .add("categoryId", product.getCategoryId())
                 .add("sellerId", product.getSellerId())
                 .add("active", product.isActive())
-                .add("imageUrl", product.getImageUrl() == null ? "" : product.getImageUrl()) // 👉 Aqui adicionamos imagem
+                .add("imageUrl", (product.getImageUrl() != null && !product.getImageUrl().isBlank()) ? product.getImageUrl() : "")
             )
             .build();
         return message.toString();
@@ -53,12 +54,11 @@ public class WebSocketUtils {
                 .add("email", user.getEmail())
                 .add("phone", user.getPhone())
                 .add("picture", user.getPicture())
-                .add("active", user.getActive())  // <= corrigido aqui
-                .add("admin", user.getAdmin())    // <= corrigido aqui
+                .add("active", user.getActive())
+                .add("admin", user.getAdmin())
             )
             .build();
         return message.toString();
-    }    
-    
+    }
 }
 

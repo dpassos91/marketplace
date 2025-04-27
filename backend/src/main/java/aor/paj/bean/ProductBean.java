@@ -23,6 +23,8 @@ import aor.paj.entity.CategoryEntity;
 import aor.paj.entity.ProductEntity;
 import aor.paj.entity.UserEntity;
 import aor.paj.util.ProductStateId;
+import aor.paj.util.WebSocketUtils;
+import aor.paj.websocket.Notifier;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.PersistenceException;
@@ -40,6 +42,9 @@ public class ProductBean {
     @Inject
     private CategoryDao categoryDao;
 
+    @Inject
+    private Notifier notifier;  
+
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     /**
@@ -56,37 +61,36 @@ public class ProductBean {
             return null;
         }
 
-        // Check if seller and category exist
         UserEntity seller = userDao.findById(productDto.getSellerId());
         CategoryEntity category = categoryDao.findById(productDto.getCategoryId());
 
-        if (seller == null) {
-            logger.warn("Product creation failed: seller not found, id={}", productDto.getSellerId());
-            return null;
-        }
-        if (category == null) {
-            logger.warn("Product creation failed: category not found, id={}", productDto.getCategoryId());
+        if (seller == null || category == null) {
+            logger.warn("Product creation failed: seller or category not found");
             return null;
         }
 
-        // Convert DTO to Entity
-        ProductEntity productEntity = convertDtoToEntity(productDto);
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setTitle(productDto.getTitle());
+        productEntity.setDescription(productDto.getDescription());
+        productEntity.setPrice(productDto.getPrice());
+        productEntity.setLocation(productDto.getLocation());
         productEntity.setSeller(seller);
         productEntity.setCategory(category);
         productEntity.setDate(LocalDate.now());
-        productEntity.setActive(true);
         productEntity.setStateId(ProductStateId.DISPONIVEL.getStateId());
+        productEntity.setActive(true);
+        productEntity.setImageUrl(productDto.getImageUrl());
 
-        // Save product to database
-        logger.debug("Saving new product to database");
-        long startTime = System.currentTimeMillis();
         ProductEntity savedProduct = productDao.create(productEntity);
-        long endTime = System.currentTimeMillis();
+        ProductDto savedDto = convertEntityToDto(savedProduct);
 
-        logger.info("Product created successfully: id={}, title='{}', took {}ms",
-                savedProduct.getId(), savedProduct.getTitle(), (endTime - startTime));
+        System.out.println("🔔 A enviar broadcast de criação de produto: " + savedDto.getTitle());
 
-        return convertEntityToDto(savedProduct);
+        // 📣 Broadcast a criação
+        String jsonMessage = WebSocketUtils.createProductCreatedMessage(savedDto);
+        notifier.broadcast(jsonMessage);
+
+        return savedDto;
     }
 
     /**
@@ -286,9 +290,12 @@ public class ProductBean {
 
         // Save the updated entity
         ProductEntity updatedProduct = productDao.update(existingProduct);
+        ProductDto updatedDto = convertEntityToDto(updatedProduct);
+        String jsonMessage = WebSocketUtils.createProductUpdatedMessage(updatedDto);
+        notifier.broadcast(jsonMessage);
 
         // Return the updated entity as DTO
-        return convertEntityToDto(updatedProduct);
+        return updatedDto;
     }
 
     /**
@@ -307,20 +314,17 @@ public class ProductBean {
             return null;
         }
 
-        int oldStateId = product.getStateId();
-        ProductStateId newState = ProductStateId.fromStateId(stateId);
-
-        logger.debug("Product state transition: id={}, {} -> {}",
-                productId, ProductStateId.fromStateId(oldStateId).name(), newState.name());
-
-        product.setStateId(newState.getStateId());
+        product.setStateId(stateId);
         product.setEditDate(LocalDate.now());
 
         ProductEntity updatedProduct = productDao.update(product);
-        logger.info("Product status updated successfully: id={}, new state={}",
-                productId, newState.name());
+        ProductDto updatedDto = convertEntityToDto(updatedProduct);
 
-        return convertEntityToDto(updatedProduct);
+        // 📣 Broadcast atualização
+        String jsonMessage = WebSocketUtils.createProductUpdatedMessage(updatedDto);
+        notifier.broadcast(jsonMessage);
+
+        return updatedDto;
     }
 
     /**

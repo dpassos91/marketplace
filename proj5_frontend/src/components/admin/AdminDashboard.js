@@ -5,6 +5,8 @@ import useDashboardData from "../../hooks/useDashboardData";
 import SpinnerLeaf from "../commons/SpinnerLeaf";
 import LineChartComponent from "./LineChartComponent";
 import { connectGlobalWebSocket, disconnectGlobalWebSocket } from "../../websocket/globalWebSocket";
+import { notificationStore } from "../../stores/notificationStore"; // Importa o store de notificações
+
 
 function AdminDashboard() {
   const { data, loading, error } = useDashboardData();
@@ -15,8 +17,16 @@ function AdminDashboard() {
     const username = storedData?.username;
   
     if (username) {
-      connectGlobalWebSocket(username, (data) => {
-        console.log("🚀 WebSocket Global Message:", data);
+      connectGlobalWebSocket(username, (message) => {
+        console.log("🚀 WebSocket Global Message:", message);
+  
+        // Adicionar a notificação
+        notificationStore.getState().addNotification(message);
+  
+        // Se quiseres abrir chat automático com alguém:
+        if (message.type === "chat") {
+          notificationStore.getState().openChatWith(message.senderUsername);
+        }
       });
     }
   

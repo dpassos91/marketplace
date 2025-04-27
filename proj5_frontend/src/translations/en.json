@@ -450,6 +450,11 @@
    "admin.settings.saving": "Updating...",
    "admin.settings.success": "Settings updated successfully!",
    "admin.settings.errorLoad": "Error loading settings.",
-   "admin.settings.errorUpdate": "Error updating settings."
+   "admin.settings.errorUpdate": "Error updating settings.",
+
+   "notifications.none": "No notifications",
+   "notifications.productCreated": "New product added!",
+   "notifications.productUpdated": "Product updated!",
+   "notifications.userCreated": "New user registered!"
 
 }

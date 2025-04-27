@@ -181,7 +181,15 @@ const DEFAULT_OPTIONS = {
       const contentType = response.headers.get("content-type");
       let responseBody = await response.text(); // Lê a resposta como texto
   
-      // ❌ Se a resposta não estiver OK (status 4xx ou 5xx)
+      // NOVO: Tratamento especial para 401 Unauthorized
+      if (response.status === 401) {
+        alert('Sessão expirada. Por favor faça login novamente.');
+        sessionStorage.removeItem('authToken');
+        localStorage.removeItem('userData');
+        window.location.href = '/login';
+        return; // para parar aqui
+      }
+  
       if (!response.ok) {
         console.error('Corpo da resposta de erro:', responseBody);
   
@@ -192,13 +200,11 @@ const DEFAULT_OPTIONS = {
         throw error;
       }
   
-      // ✅ Se a resposta não tiver conteúdo
       if (responseBody.trim() === "") {
         console.log('Resposta sem conteúdo');
         return null;
       }
   
-      // ✅ Se a resposta for JSON
       if (contentType && contentType.includes("application/json")) {
         try {
           const jsonData = JSON.parse(responseBody);
@@ -216,9 +222,10 @@ const DEFAULT_OPTIONS = {
     } catch (error) {
       console.error('Erro completo:', error);
       handleApiError(error); // Opcional: registo ou tratamento global
-      throw error; // ⚠️ re-lança para que o login() possa capturar
+      throw error;
     }
   };
+  
   
   
   export const apiConfig = {

@@ -25,22 +25,6 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
     }
   }, []);
 
-  // Marcar mensagens como lidas
-  const markMessagesAsRead = async () => {
-    try {
-      const res = await messagesAPI.markMessagesAsReadFrom(receiverUsername);
-      console.log("📘", intl.formatMessage({
-        id: "chat.log.markAsRead",
-        defaultMessage: "Mensagens marcadas como lidas."
-      }), res);
-    } catch (error) {
-      console.error("❌", intl.formatMessage({
-        id: "chat.error.markAsRead",
-        defaultMessage: "Erro ao marcar mensagens como lidas."
-      }), error);
-    }
-  };
-
   // Buscar histórico de mensagens
   useEffect(() => {
     if (!receiverUsername || !currentUsername) return;
@@ -67,12 +51,28 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
     fetchMessages();
   }, [receiverUsername, currentUsername]);
 
-  // Scroll automático
+  // Marcar mensagens como lidas
+  const markMessagesAsRead = async () => {
+    try {
+      const res = await messagesAPI.markMessagesAsReadFrom(receiverUsername);
+      console.log("📘", intl.formatMessage({
+        id: "chat.log.markAsRead",
+        defaultMessage: "Mensagens marcadas como lidas."
+      }), res);
+    } catch (error) {
+      console.error("❌", intl.formatMessage({
+        id: "chat.error.markAsRead",
+        defaultMessage: "Erro ao marcar mensagens como lidas."
+      }), error);
+    }
+  };
+
+  // Scroll automático para a última mensagem
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // WebSocket
+  // WebSocket para receber mensagens em tempo real
   useEffect(() => {
     if (!currentUsername || !receiverUsername) return;
 
@@ -133,10 +133,20 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
       defaultMessage: "Erro no WebSocket:"
     }), error);
 
-    socket.onclose = () => console.log("🔌", intl.formatMessage({
-      id: "chat.log.websocketClosed",
-      defaultMessage: "WebSocket desligado"
-    }));
+    socket.onclose = () => {
+      console.log("🔌", intl.formatMessage({
+        id: "chat.log.websocketClosed",
+        defaultMessage: "WebSocket desligado"
+      }));
+    
+      const token = sessionStorage.getItem('authToken');
+      if (!token) {
+        alert('Sessão expirada. Por favor faça login novamente.');
+        sessionStorage.removeItem('authToken');
+        localStorage.removeItem('userData');
+        window.location.href = '/login';
+      }
+    };
 
     const pingInterval = setInterval(() => {
       if (socket.readyState === WebSocket.OPEN) {
@@ -154,7 +164,7 @@ const ChatWindow = ({ receiverUsername, onClose }) => {
     };
   }, [currentUsername, receiverUsername]);
 
-  // Enviar mensagem
+  // Enviar nova mensagem
   const handleSend = () => {
     if (newMessage.trim() === "" || !currentUsername) return;
 

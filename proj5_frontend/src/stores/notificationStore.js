@@ -9,10 +9,19 @@ export const notificationStore = create(
       chatUser: null,
 
       addNotification: (notification) =>
-        set((state) => ({
-          notifications: [...state.notifications, notification],
-          unreadCount: state.unreadCount + 1,
-        })),
+        set((state) => {
+          const alreadyExists = state.notifications.some((n) => n.id === notification.id);
+      
+          if (alreadyExists) {
+            return state; // não altera nada se já existir
+          }
+      
+          return {
+            notifications: [...state.notifications, notification],
+            unreadCount: state.unreadCount + 1,
+          };
+        }),
+      
 
       markAllAsRead: () =>
         set((state) => ({
