@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { evaluationAPI } from '../../api/evaluationAPI';
 
-function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData = null }) {
+function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData = null, eligibleProducts = [] }) {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState(initialData || {
     title: '',
@@ -13,22 +13,25 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
   const isEditMode = !!initialData;
 
   useEffect(() => {
-    async function fetchEligibleProducts() {
-      try {
-        if (currentUser && currentUser.id) {
-          const fetchedProducts = await evaluationAPI.checkEligibility(currentUser.id);
-          const sellerProducts = fetchedProducts.filter(product => product.sellerId == sellerId);
-          setProducts(sellerProducts);
-        } else {
-          console.warn("currentUser ou currentUser.id não estão definidos!");
+    if (eligibleProducts.length > 0) {
+      setProducts(eligibleProducts);
+    } else {
+      async function fetchEligibleProducts() {
+        try {
+          if (currentUser && currentUser.id) {
+            const fetchedProducts = await evaluationAPI.checkEligibility(currentUser.id);
+            const sellerProducts = fetchedProducts.filter(product => product.sellerId == sellerId);
+            setProducts(sellerProducts);
+          } else {
+            console.warn("currentUser ou currentUser.id não estão definidos!");
+          }
+        } catch (error) {
+          console.error('Erro ao buscar produtos elegíveis:', error);
         }
-      } catch (error) {
-        console.error('Erro ao buscar produtos elegíveis:', error);
       }
+      fetchEligibleProducts();
     }
-
-    fetchEligibleProducts();
-  }, [sellerId, currentUser]);
+  }, [sellerId, currentUser, eligibleProducts]);
 
   useEffect(() => {
     if (initialData) {
@@ -79,11 +82,10 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
         title: formData.title
       };
 
-      let result;
       if (isEditMode) {
-        result = await evaluationAPI.updateEvaluation(evaluationData); // Atualiza a avaliação existente
+        await evaluationAPI.updateEvaluation(evaluationData.id, evaluationData);
       } else {
-        result = await evaluationAPI.addEvaluation(evaluationData); // Adiciona uma nova avaliação
+        await evaluationAPI.addEvaluation(evaluationData);
       }
 
       alert(isEditMode ? 'Avaliação atualizada com sucesso!' : 'Avaliação adicionada com sucesso!');
@@ -111,7 +113,7 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
                 value={formData.productId}
                 onChange={handleInputChange}
                 required={!isEditMode}
-                disabled={isEditMode} // Desativa a seleção de produto no modo de edição
+                disabled={isEditMode}
               >
                 <option value="">Selecione um produto</option>
                 {products.map((product) => (
@@ -168,6 +170,5 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
 }
 
 export default EvaluationModal;
-
 
 

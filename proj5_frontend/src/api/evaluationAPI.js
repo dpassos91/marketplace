@@ -138,7 +138,13 @@ const countEvaluationsByUser = async (userId) => {
  * @returns {Promise<Object>} A lista de usuários elegíveis para avaliação.
  */
 const checkEligibility = async (userId) => {
-  return apiCall(API_ENDPOINTS.evaluations.eligible(userId), { method: 'GET' });
+  try {
+    const result = await apiCall(API_ENDPOINTS.evaluations.eligible(userId), { method: 'GET' });
+    return Array.isArray(result) ? result : [];
+  } catch (error) {
+    console.error('Erro ao verificar produtos elegíveis para avaliação:', error);
+    return [];
+  }
 };
 
 export const evaluationAPI = {

@@ -22,13 +22,14 @@ function ProductDetails() {
   const [isBuying, setIsBuying] = useState(false);
 
   const isOwner = user && product && user.id === product.sellerId;
-  const canBuy = user && !isOwner;
+  const canBuy = user && !isOwner && product && product.status === PRODUCT_STATES.DISPONIVEL.defaultText;
+
   const canMessage = user && product && user.username !== product.sellerUsername;
 
-  const canEditOrDelete = user && (
-    (isOwner && product.status !== PRODUCT_STATES.COMPRADO.defaultText && product.status !== PRODUCT_STATES.INATIVO.defaultText) ||
-    user.isAdmin === true
-  );
+  const canEditOrDelete = user && isOwner && 
+  product.status !== PRODUCT_STATES.COMPRADO.defaultText &&
+  product.status !== PRODUCT_STATES.INATIVO.defaultText;
+
 
   useEffect(() => {
     async function fetchProductDetails() {
@@ -91,7 +92,7 @@ function ProductDetails() {
         return;
       }
 
-      const productState = PRODUCT_STATES.fromDescription(product.status);
+      const productState = PRODUCT_STATES.fromStatus(product.status);
       if (!productState || productState.id !== PRODUCT_STATES.DISPONIVEL.id) {
         alert(formatMessage({ id: 'productDetails.alert.notAvailable', defaultMessage: 'Este produto não está disponível para compra.' }));
         return;

@@ -27,7 +27,8 @@ export function useAuth() {
         name: fullName,
         picture: userData.picture,
         admin: userData.admin,
-        isAdmin: userData.admin
+        isAdmin: userData.admin,
+        confirmed: userData.confirmed
       };
 
       useAuthStore.getState().login(userDataToStore);
