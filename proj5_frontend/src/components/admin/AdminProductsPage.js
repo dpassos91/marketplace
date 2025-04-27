@@ -14,10 +14,6 @@ function AdminProductsPage() {
     navigate('/admin/produtos/alterados');
   };
 
-  const handleNavigateToComprados = () => {
-    navigate('/admin/produtos/comprados');
-  };
-
   const handleNavigateToInativos = () => {
     navigate('/admin/produtos/inativos');
   };
@@ -44,9 +40,6 @@ function AdminProductsPage() {
         <div className="admin-actions-column">
           <button className="btn-card products-btn btn-products" onClick={handleNavigateToAlterados}>
             <FormattedMessage id="admin.products.showModified" defaultMessage="Mostrar produtos alterados" />
-          </button>
-          <button className="btn-card products-btn btn-products" onClick={handleNavigateToComprados}>
-            <FormattedMessage id="admin.products.listBought" defaultMessage="Mostrar produtos comprados" />
           </button>
           <button className="btn-card products-btn btn-products" onClick={handleNavigateToInativos}>
             <FormattedMessage id="admin.products.listInactive" defaultMessage="Mostrar produtos inativos" />

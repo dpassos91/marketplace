@@ -32,7 +32,9 @@ const closeChat = notificationStore((state) => state.closeChat);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!currentUser || String(currentUser.id) !== userId) {
+    if (currentUser === undefined) return; // espera pelo carregamento!
+  
+    if (!currentUser || (!currentUser.isAdmin && String(currentUser.id) !== userId)) {
       navigate('/');
     } else {
       fetchUserData();
@@ -125,7 +127,7 @@ const closeChat = notificationStore((state) => state.closeChat);
   <h2><FormattedMessage id="userProfile.title" defaultMessage="Página Pessoal" /></h2>
   <ProfileInfo 
     user={userToDisplay} 
-    canEdit={true} 
+    canEdit={currentUser.isAdmin || String(currentUser.id) === userId} 
     onUpdate={handleUpdateProfile} 
   />
 </div>

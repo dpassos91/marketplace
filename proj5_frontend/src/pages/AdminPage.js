@@ -22,7 +22,6 @@ function AdminPage() {
             <Route path="/avaliacoes" element={<EvaluationsTable />} />
             <Route path="/produtos" element={<AdminProductsPage />} /> {/* Rota para a página de produtos */}
             <Route path="/produtos/alterados" element={<AlteredProducts />} />
-            {/*<Route path="/produtos/comprados" element={<AlteredProducts />} /> */}
             <Route path="/produtos/inativos" element={<InactiveProductsTable />} />
             <Route path="/utilizadores" element={<UserTable />} />
             <Route path="/dashboard" element={<AdminDashboard />} />

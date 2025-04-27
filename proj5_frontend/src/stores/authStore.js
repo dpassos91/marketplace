@@ -6,6 +6,8 @@ const useAuthStore = create((set) => ({
   login: (userData) => set({ user: userData, isAuthenticated: true }),
   logout: () => {
     localStorage.removeItem('userData');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('user-store');
     set({ user: null, isAuthenticated: false });
   },
 }));

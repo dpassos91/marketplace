@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const socketRef = useRef(null);
-  const intl = useIntl(); // CORRETO
+  const intl = useIntl(); 
 
   const notifications = notificationStore((state) => state.notifications);
   const unreadCount = notificationStore((state) => state.unreadCount);

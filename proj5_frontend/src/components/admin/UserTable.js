@@ -6,6 +6,7 @@ import useTableData from '../../hooks/useTableData';
 import Pagination from '../commons/Pagination';
 import TableDataState from './TableDataState';
 import './UserTable.css';
+import { useNavigate } from 'react-router-dom';
 
 const USERS_PER_PAGE = 10;
 
@@ -41,7 +42,8 @@ const UserRow = React.memo(({ user, onRedirect, onAction }) => {
 
 const UserTable = () => {
   const intl = useIntl();
-
+  const navigate = useNavigate();
+  
   const {
     data: users,
     loading,
@@ -59,8 +61,8 @@ const UserTable = () => {
   } = usePaginationTable(users, USERS_PER_PAGE);
 
   const handleRedirectToProfile = useCallback((userId) => {
-    window.location.href = `http://localhost:3000/perfil/${userId}`;
-  }, []);
+    navigate(`/painel-utilizador/${userId}`);
+  }, [navigate]);
 
   const handleAction = useCallback(async (username, userId, action) => {
     const confirmationMessage = intl.formatMessage(
