@@ -32,36 +32,38 @@ function NotificationBell() {
     };
 
     socket.onmessage = (event) => {
+      console.log("📥 Mensagem recebida via WebSocket (bruta):", event.data);
+
       try {
         const data = JSON.parse(event.data);
     
         switch (data.type) {
           case "chat_message":
             console.log("📩 Nova mensagem de chat recebida:", data);
-            // Aqui podes:
-            // - Atualizar o chat ativo
-            // - Ou simplesmente logar para já
             break;
     
-          case "mensagem":
-            addNotification({
-              type: "mensagem",
-              message: data.message,
-              from: data.from,
-              read: false,
-            });
-            break;
+            case "mensagem":
+              addNotification({
+                id: Date.now(), // <- adicionar id aqui também!
+                type: "mensagem",
+                message: data.message,
+                from: data.from,
+                read: false,
+              });
+              break;
     
-          case "productCreated":
-            addNotification({
-              type: "productCreated",
-              message: intl.formatMessage({ id: "notifications.productCreated", defaultMessage: "Novo produto adicionado!" }),
-              read: false,
-            });
-            break;
+            case "productCreated":
+              addNotification({
+                id: Date.now(), // <- Gerar ID único no frontend
+                type: "productCreated",
+                message: intl.formatMessage({ id: "notifications.productCreated", defaultMessage: "Novo produto adicionado!" }),
+                read: false,
+              });
+              break;
     
           case "productUpdated":
             addNotification({
+              id: Date.now(), // <- Gerar ID único no frontend
               type: "productUpdated",
               message: intl.formatMessage({ id: "notifications.productUpdated", defaultMessage: "Produto atualizado!" }),
               read: false,
@@ -70,6 +72,7 @@ function NotificationBell() {
     
           case "userCreated":
             addNotification({
+              id: Date.now(), // <- Gerar ID único no frontend
               type: "userCreated",
               message: intl.formatMessage({ id: "notifications.userCreated", defaultMessage: "Novo utilizador registado!" }),
               read: false,
