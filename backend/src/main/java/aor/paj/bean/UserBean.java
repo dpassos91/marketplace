@@ -582,7 +582,7 @@ public UserEntity getUserByToken(String token) {
         Long registeredUsers = (Long) row[1];
 
         UserRegistrationStatsDto dto = new UserRegistrationStatsDto();
-        dto.setDate(date);
+        dto.setDate(date.toString());
         dto.setRegisteredUsers(registeredUsers.intValue());
 
         stats.add(dto);

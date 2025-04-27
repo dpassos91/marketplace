@@ -1,25 +1,23 @@
 package aor.paj.dto;
 
-import java.time.LocalDate;
-
 public class UserRegistrationStatsDto {
 
-    private LocalDate date; 
+    private String date;
     private int registeredUsers;
 
     public UserRegistrationStatsDto() {
     }
 
-    public UserRegistrationStatsDto(LocalDate date, int registeredUsers) {
+    public UserRegistrationStatsDto(String date, int registeredUsers) {
         this.date = date;
         this.registeredUsers = registeredUsers;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

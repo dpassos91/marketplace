@@ -1,6 +1,7 @@
 package aor.paj.bean;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -605,8 +606,8 @@ public class ProductBean {
         List<CategoryCountDto> popularCategories = new ArrayList<>();
     
         for (Object[] row : results) {
-            String categoryName = (String) row[0];
-            Long productCount = (Long) row[1];
+            String categoryName = (String) row[1];    // Nome da categoria
+            Long productCount = (Long) row[2];         // Número de produtos
     
             CategoryCountDto dto = new CategoryCountDto();
             dto.setCategoryName(categoryName);
@@ -618,6 +619,7 @@ public class ProductBean {
         logger.info("Fetched {} popular categories.", popularCategories.size());
         return popularCategories;
     }
+    
 
     public List<UserProductStatsDto> getProductsPerUser() {
         logger.info("Fetching product statistics per user.");
@@ -652,27 +654,24 @@ public class ProductBean {
         return new ArrayList<>(userStatsMap.values());
     }
     
-
-public List<ProductPurchaseStatsDto> getProductsPurchasedOverTime() {
-    logger.info("Fetching products purchased over time.");
-
-    List<Object[]> results = productDao.countPurchasesPerDay();
-    List<ProductPurchaseStatsDto> stats = new ArrayList<>();
-
-    for (Object[] row : results) {
-        LocalDate date = (LocalDate) row[0];
-        Long purchasedProducts = (Long) row[1];
-
-        ProductPurchaseStatsDto dto = new ProductPurchaseStatsDto();
-        dto.setDate(date);
-        dto.setPurchasedProducts(purchasedProducts.intValue());
-
-        stats.add(dto);
+    public List<ProductPurchaseStatsDto> getProductsPurchasedOverTime() {
+        List<Object[]> results = productDao.countPurchasesPerDay();
+        List<ProductPurchaseStatsDto> stats = new ArrayList<>();
+    
+        for (Object[] row : results) {
+            java.sql.Date sqlDate = (java.sql.Date) row[0];
+            LocalDate localDate = sqlDate.toLocalDate();
+            Long purchasedProducts = (Long) row[1];
+    
+            ProductPurchaseStatsDto dto = new ProductPurchaseStatsDto();
+            dto.setDate(localDate.toString());
+            dto.setPurchasedProducts(purchasedProducts.intValue());
+    
+            stats.add(dto);
+        }
+    
+        return stats;
     }
-
-    logger.info("Fetched {} product purchase stats.", stats.size());
-    return stats;
-}
 
     /**
      * Converts a product entity to a DTO

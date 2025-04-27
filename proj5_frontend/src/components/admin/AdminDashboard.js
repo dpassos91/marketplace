@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useEffect} from "react";
 import { useIntl } from "react-intl"; // Importação para internacionalizar
 import DashboardCard from "./DashboardCard";
 import useDashboardData from "../../hooks/useDashboardData";
 import SpinnerLeaf from "../commons/SpinnerLeaf";
 import LineChartComponent from "./LineChartComponent";
+import { connectGlobalWebSocket, disconnectGlobalWebSocket } from "../../websocket/globalWebSocket";
 
 function AdminDashboard() {
   const { data, loading, error } = useDashboardData();
   const intl = useIntl(); // Hook para traduzir
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userData"));
+    const username = storedData?.username;
+  
+    if (username) {
+      connectGlobalWebSocket(username, (data) => {
+        console.log("🚀 WebSocket Global Message:", data);
+      });
+    }
+  
+    return () => {
+      disconnectGlobalWebSocket();
+    };
+  }, []);
 
   const NA_Badge = (
     <span className="inline-block bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-1 rounded-full">
@@ -52,19 +68,27 @@ function AdminDashboard() {
 
       {/* Secção de Categorias Ordenadas */}
       <section className="bg-white shadow rounded-2xl p-6">
-        <h2 className="text-2xl font-semibold mb-4">{intl.formatMessage({ id: "admin.dashboard.categories.title" })}</h2>
-        {data?.popularCategories?.length > 0 ? (
-          <ul className="list-disc pl-5 text-sm">
-            {data.popularCategories.map((category, index) => (
-              <li key={index}>
-                {category.categoryName} ({category.productCount})
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <NoDataMessage messageId="admin.dashboard.categories.noData" />
-        )}
-      </section>
+  <h2 className="text-2xl font-semibold mb-4">
+    {intl.formatMessage({ id: "admin.dashboard.categories.title" })}
+  </h2>
+  {data?.popularCategories?.length > 0 ? (
+  <ul className="list-none pl-0 flex flex-wrap justify-center gap-2 text-sm">
+    {data.popularCategories
+      .filter((category) => category.categoryName && category.categoryName.trim() !== "")
+      .map((category, index) => (
+        <li
+          key={index}
+          className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full shadow-sm"
+        >
+          {category.categoryName} ({category.productCount})
+        </li>
+      ))}
+  </ul>
+) : (
+  <NoDataMessage messageId="admin.dashboard.categories.noData" />
+)}
+</section>
+
 
       <hr className="my-6 border-gray-200" />
 

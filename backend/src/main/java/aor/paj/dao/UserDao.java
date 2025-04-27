@@ -1,8 +1,10 @@
 package aor.paj.dao;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Instant;
 
 import aor.paj.entity.EvaluationEntity;
 import aor.paj.entity.ProductEntity;
@@ -166,12 +168,25 @@ public List<Object[]> countRegistrationsPerDay() {
     List<Object[]> convertedResults = new ArrayList<>();
 
     for (Object[] row : rawResults) {
-        java.sql.Date sqlDate = (java.sql.Date) row[0];
-        LocalDate localDate = sqlDate.toLocalDate(); // 🚀 Converte corretamente
-        Long count = (Long) row[1];
+    Object rawDate = row[0];
+    LocalDate localDate;
 
-        convertedResults.add(new Object[]{localDate, count});
+    if (rawDate instanceof java.sql.Date) {
+        localDate = ((java.sql.Date) rawDate).toLocalDate();
+    } else if (rawDate instanceof java.time.LocalDate) {
+        localDate = (LocalDate) rawDate;
+    } else if (rawDate instanceof Long) {
+        localDate = Instant.ofEpochMilli((Long) rawDate)
+                           .atZone(ZoneId.systemDefault())
+                           .toLocalDate();
+    } else {
+        throw new IllegalArgumentException("Formato de data inesperado: " + rawDate.getClass());
     }
+
+    Long count = (Long) row[1];
+
+    convertedResults.add(new Object[]{localDate, count});
+}
 
     return convertedResults;
 }
