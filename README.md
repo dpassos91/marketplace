@@ -18,7 +18,7 @@ This fullstack e-commerce platform allows users to buy and sell products, intera
 ## 🛠️ Technologies Used
 
 - **Backend:** Java EE (JAX-RS, EJBs), Jakarta, RESTful APIs  
-- **Frontend:** React.js, Tailwind CSS  
+- **Frontend:** React.js 
 - **Database:** PostgreSQL with Hibernate (JPA)  
 - **State Management:** Zustand  
 - **Real-time Communication:** WebSockets  
