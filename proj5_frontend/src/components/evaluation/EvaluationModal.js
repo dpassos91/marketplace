@@ -49,53 +49,61 @@ function EvaluationModal({ sellerId, onClose, onSubmit, currentUser, initialData
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  
     if (!formData.productId && !isEditMode) {
       alert('Por favor, selecione um produto.');
       return;
     }
-
+  
     if (!formData.title.trim()) {
       alert('Por favor preencha o título.');
       return;
     }
-
+  
     if (formData.rating === 0) {
       alert('Por favor selecione um valor para esta avaliação.');
       return;
     }
-
+  
     if (!formData.comment.trim()) {
       alert('Por favor preencha o comentário.');
       return;
     }
-
+  
     try {
       const evaluationData = {
-        id: initialData ? initialData.id : null,
-        evaluatorId: currentUser.id,
-        evaluatedId: sellerId,
-        productId: formData.productId,
+        evaluator: currentUser.id,  // Alterado
+        evaluated: sellerId,        // Alterado
+        product: formData.productId,  // Alterado
         rating: formData.rating,
-        comment: formData.comment,
-        title: formData.title
+        title: formData.title,
+        comment: formData.comment
       };
-
+      
+  
+      console.log('A enviar avaliação:', evaluationData); // 👈 Debug importante
+  
+      let result;
       if (isEditMode) {
-        await evaluationAPI.updateEvaluation(evaluationData.id, evaluationData);
+        result = await evaluationAPI.updateEvaluation(formData.id, evaluationData);
       } else {
-        await evaluationAPI.addEvaluation(evaluationData);
+        result = await evaluationAPI.addEvaluation(evaluationData);
       }
-
+  
       alert(isEditMode ? 'Avaliação atualizada com sucesso!' : 'Avaliação adicionada com sucesso!');
       onSubmit();
       onClose();
     } catch (error) {
-      console.error('Erro ao ' + (isEditMode ? 'atualizar' : 'adicionar') + ' avaliação:', error);
-      alert('Falha ao ' + (isEditMode ? 'atualizar' : 'adicionar') + ' avaliação.');
+      console.error('Erro completo ao ' + (isEditMode ? 'atualizar' : 'adicionar') + ' avaliação:', error);
+      if (error.body) {
+        alert('Erro: ' + error.body);
+      } else {
+        alert('Falha ao ' + (isEditMode ? 'atualizar' : 'adicionar') + ' avaliação.');
+      }
     }
   };
+  
+  
 
   return (
     <div className="custom-modal-overlay">

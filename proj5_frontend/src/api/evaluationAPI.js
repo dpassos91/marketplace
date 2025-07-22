@@ -58,11 +58,21 @@ const getAverageRating = async (userId) => {
  * @returns {Promise<Object>} A avaliação criada.
  */
 const addEvaluation = async (evaluationData) => {
+  const adaptedData = {
+    evaluator_id: evaluationData.evaluatorId,
+    evaluated_id: evaluationData.evaluatedId,
+    product_id: evaluationData.productId,
+    rating: evaluationData.rating,
+    title: evaluationData.title,
+    comment: evaluationData.comment
+  };
+
   return apiCall(API_ENDPOINTS.evaluations.create, {
     method: 'POST',
-    body: JSON.stringify(evaluationData),
+    body: JSON.stringify(adaptedData)
   });
 };
+
 
 /**
  * Função para atualizar uma avaliação existente.
