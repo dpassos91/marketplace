@@ -23,7 +23,7 @@ This fullstack e-commerce platform allows users to buy and sell products, intera
 - **State Management:** Zustand  
 - **Real-time Communication:** WebSockets  
 - **Testing:** JUnit  
-- **Internationalization:** react-intl (EN / PT)  
+- **Internationalization:** react-intl (EN / FR / PT)  
 - **Other:** JSON Web Tokens (JWT), Role-based Access Control, Logs
 
 ## 🖥️ Installation
@@ -63,7 +63,7 @@ To run the project locally:
 - 💬 Real-time 1-on-1 messaging between users
 - 🔔 Notification system with real-time updates and counters
 - 📈 Admin dashboard with graphs and statistics
-- 🌍 Internationalization (EN/FR/ PT) and responsive layout
+- 🌍 Internationalization (EN / FR / PT) and responsive layout
 - 📜 Logging of all critical actions (product updates, profile changes, etc.)
 
 ## 📸 Screenshots
