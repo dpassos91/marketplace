@@ -48,8 +48,8 @@ To run the project locally:
    ```
 
 5. Open your browser and navigate to:
-   - Frontend: https://localhost:3000  
-   - Backend: http://localhost:8443  
+   - Frontend: http://localhost:3000  
+   - Backend: http://localhost:8080  
 
 > Ensure the PostgreSQL database is correctly connected.
 
