@@ -1,4 +1,4 @@
-# 🛒 E-Commerce Web Application
+# 🛒 Marketplace
 
 This repository was developed as part of the final project for the **Advanced Java Programming course (PAJ)**, in the 2nd trimester of the academic year 2024/2025.
 
