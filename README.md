@@ -1,5 +1,11 @@
 # 🛒 Marketplace Platform
 
+![Java](https://img.shields.io/badge/Java-21-red)
+![Jakarta EE](https://img.shields.io/badge/Jakarta_EE-10-orange)
+![React](https://img.shields.io/badge/React-18-61DAFB)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue)
+![WebSockets](https://img.shields.io/badge/WebSockets-Real--Time-success)
+
 > A modern full-stack marketplace application built with **Java (Jakarta EE)** and **React**, featuring secure authentication, real-time messaging, live notifications and multilingual support.
 
 ![Homepage](assets/Homepage.png)
@@ -14,6 +20,16 @@
 - ⭐ Seller evaluations
 - 📊 Administration dashboard with statistics
 - 🌍 Internationalization (Portuguese, English and French)
+
+## 📸 Screenshots
+
+A quick look at some of the application's main interfaces.
+
+![Homepage](assets/Homepage.png)
+
+![Product Details](assets/Article.png)
+
+![Profile](assets/Profile.png)
 
 ## 🛠 Tech Stack
 
@@ -100,14 +116,6 @@ marketplace/
 └── README.md
 ```
 
-## 📸 Screenshots
-
-![Homepage](assets/Homepage.png)
-
-![Product Details](assets/Article.png)
-
-![Profile](assets/Profile.png)
-
 ## 🚀 Installation
 
 ### Prerequisites
@@ -178,5 +186,5 @@ More importantly, it taught me how to organise a growing codebase into maintaina
 
 ---
 
-Originally developed as a project of the **Java Fullstack Development Programme** (Acertar o Rumo - Universidade de Coimbra).
+Originally developed as the final project of the Java Fullstack Development Programme (Acertar o Rumo – University of Coimbra).
 
