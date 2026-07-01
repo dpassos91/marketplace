@@ -70,7 +70,7 @@
 
 The backend follows a layered architecture separating REST resources, business logic, persistence and real-time communication. The frontend is organised into reusable components, pages, hooks, stores and API modules.
 
-# 📂 Project Structure
+## 📂 Project Structure
 
 ```text
 marketplace/
@@ -98,6 +98,7 @@ marketplace/
 │   └── websocket/
 │
 └── README.md
+```
 
 ## 📸 Screenshots
 
